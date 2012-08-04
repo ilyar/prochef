@@ -1,0 +1,311 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Knife Bootstrap</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Knife Bootstrap
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class='navmenu' style='float:right; width:320px; background:#eeeeee; border:4px solid #d7d4c3; margin:16px; padding:10px'><div class="" align="center"><p><font color="navy"><b>Knife commands all have the same form</b></font></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife sub-command [ARGUMENTS] (options)</pre>
+		</div>
+</div></div></div>
+ </div>
+<p><br class="atl-forced-newline" /></p>
+<hr />
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 528x701" href='http://wiki.opscode.com/download../attachments/7275534/Bootstrapping.png'><img src="../attachments/thumbnails/7275534/14057524" hspace="20" vspace="10" style="border: 0px solid black"/></a></span></p>
+<h3><a name="KnifeBootstrap-TheBootstrapsubcommandforKnifeperformsaChefBootstraponthetargetnode."></a>The Bootstrap subcommand for Knife performs a Chef Bootstrap on the target node. </h3>
+
+<h3><a name="KnifeBootstrap-"></a><font color="#f7681a">The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server (or Hosted Chef).</font> </h3>
+
+<p><br class="atl-forced-newline" /></p>
+<h5><a name="KnifeBootstrap-ThemainassumptionisabaselineOSinstallationexists.ThissubcommandisusedinternallybysomecloudcomputingservercreatecommandsLaunchCloudInstanceswithKnifeandtheotherswillbemigratedinafutureversionofChef...."></a>The main assumption is a baseline OS installation exists. This sub-command is used internally by some <a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">cloud computing server create commands</a> and the others will be migrated in a future version of Chef. It is primarily intended for <a href="Chef Client.html" title="Chef Client">Chef Client</a> systems that talk to a Chef server. </h5>
+<p><br class="atl-forced-newline" /></p>
+<hr />
+<div class='navmenu' style='float:right; width:330px; background:#f4f2e6; margin:16px; padding:10px'><div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Man Page in Chef 0.10+</b><br /><br class="atl-forced-newline" />
+Additional knife-bootstrap detail is available on your local system as a man page. Type <tt>knife help bootstrap</tt> to view it.</td></tr></table></div></div>
+<p><br class="atl-forced-newline" />
+<font color="#f7681a">As of Chef 0.9.8, the bootstrap sub-command supports supplying a template to perform the bootstrap steps.</font> If the distro is not specified (via <tt>&#45;d</tt> or <tt>--distro</tt> option), an Ubuntu 10.04 with RubyGems is assumed. The <tt>DISTRO</tt> value corresponds to the base filename of the template, in other words <tt>DISTRO.erb</tt>. A template file can be specified with the <tt>&#45;&#45;template&#45;file</tt> option in which case the <tt>DISTRO</tt> is not used. The sub-command looks in the following locations for the template to use:</p>
+
+<ul>
+	<li><tt>bootstrap</tt> directory in the installed Chef Knife library (Location varies depending how you installed Chef).</li>
+	<li><tt>bootstrap</tt> directory in the <tt>$PWD/.chef</tt>, e.g. in <tt>~/chef-repo/.chef</tt>.</li>
+	<li><tt>bootstrap</tt> directory in the users <tt>$HOME/.chef</tt>.</li>
+</ul>
+
+
+<p><b>Additional Options</b></p>
+
+<ul>
+	<li><tt>&#45;i</tt>, <tt>&#45;&#45;identity&#45;file IDENTITY_FILE</tt>:<br/>
+    The SSH identity file used for authentication</li>
+	<li><tt>&#45;N</tt>, <tt>&#45;&#45;node&#45;name NAME</tt>:<br/>
+    The Chef node name for your new node</li>
+	<li><tt>&#45;P</tt>, <tt>&#45;&#45;ssh&#45;password PASSWORD</tt>:<br/>
+    The ssh password</li>
+	<li><tt>&#45;x</tt>, <tt>&#45;&#45;ssh&#45;user USERNAME</tt>:<br/>
+    The ssh username</li>
+	<li><tt>&#45;p</tt>, <tt>&#45;&#45;ssh&#45;port PORT</tt>:<br/>
+    The ssh port</li>
+	<li><tt>&#45;&#45;bootstrap&#45;version VERSION</tt>:<br/>
+    The version of Chef to install</li>
+	<li><tt>&#45;&#45;bootstrap&#45;proxy PROXY_URL</tt>:<br/>
+    The proxy server for the node being bootstrapped</li>
+	<li><tt>&#45;&#45;prerelease</tt>:<br/>
+    Install pre&#45;release Chef gems</li>
+	<li><tt>&#45;r</tt>, <tt>&#45;&#45;run&#45;list RUN_LIST</tt>:<br/>
+    Comma separated list of roles/recipes to apply</li>
+	<li><tt>&#45;&#45;template&#45;file TEMPLATE</tt>:<br/>
+    Full path to location of template to use</li>
+	<li><tt>&#45;&#45;sudo</tt>:<br/>
+    Execute the bootstrap via sudo</li>
+	<li><tt>&#45;d</tt>, <tt>&#45;&#45;distro DISTRO</tt>:<br/>
+    Bootstrap a distro using a template</li>
+	<li><tt>&#45;&#45;no&#45;host&#45;key&#45;verify</tt>:<br/>
+    Disable host key verification</li>
+	<li><tt>&#45;j</tt>, <tt>&#45;&#45;json&#45;attributes JSON_ATTRIBS</tt>:<br/>
+    A JSON string that is added to the first run of a Chef Client.</li>
+</ul>
+
+
+<h3><a name="KnifeBootstrap-SupportedDistros"></a>Supported Distros</h3>
+<p><font color="#f7681a">The default bootstrap templates are scripts that get copied to the target node (FQDN).</font> As of Chef 10.12, the following distros are supported:</p>
+
+<ul>
+	<li>centos5-gems</li>
+	<li>fedora13-gems</li>
+	<li>ubuntu10.04-gems</li>
+	<li>ubuntu10.04-apt</li>
+	<li>ubuntu12.04-gems</li>
+</ul>
+
+
+<h3><a name="KnifeBootstrap-Authentication"></a>Authentication</h3>
+<p><font color="#f7681a"><tt>Knife bootstrap</tt> communicates with the target node over SSH.</font>  We recommend using key-based authentication.  You can pass the path to the private key used to authenticate to the node using the <tt>-i</tt> command line option or use a program such as <tt>ssh-agent</tt> to manage your keys automatically. <tt>knife bootstrap</tt> also supports password-based authentication.  You can use the <tt>-P</tt> option to pass the password directly on the command line or, with Chef 0.10.6+, allow <tt>knife bootstrap</tt> to prompt you for a password.</p>
+
+<h4><a name="KnifeBootstrap-Examples"></a>Examples</h4>
+<p>Here are two example bootstrap commands, using different types of authentication. In this example we pass it the SSH password as part of the command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap IP_ADDRESS -x ubuntu -P PASSWORD --sudo</pre>
+		</div>
+</div></div>
+<p>And in this example, we use a private key file:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap IP_ADDRESS -x ubuntu -i ~/.ssh/id_rsa --sudo</pre>
+		</div>
+</div></div>
+<p>Afterwards you'll be prompted for your sudo password on the node you are SSHing into. You will want to change IP_ADDRESS to the ip or hostname you are trying to bootstrap, and this assumes you want to login with the username 'ubuntu'.</p>
+
+<h4><a name="KnifeBootstrap-KnownAuthenticationBug"></a>Known Authentication Bug</h4>
+<p><em>If you have not customized your ssh configuration, you will most likely <b>not</b> be affected by this bug.</em></p>
+
+<p>Knife uses the <b>net-ssh</b> gem to create ssh connections to your nodes.  Currently, net-ssh processes your ssh configuration files (e.g. ~/.ssh/config) differently than your system's ssh client.  One difference is that if you explicitly set various authentication methods to "yes", then all authentications <em>not</em> explicitly set to "yes" will be excluded.  For example, if you set the following in your configuration file:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">PasswordAuthentication yes</pre>
+		</div>
+</div></div>
+
+<p>Other methods of authentication, such as key based authentication, will not be attempted.  You can fix this either by removing the explicit authentication directive in your configuration file, or by ensuring that <b>all</b> methods you want to use are set to "yes", even if "yes" is typically their default value on your system.  To explicitly allow key-based authentication, use the following setting</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">PubkeyAuthentication yes</pre>
+		</div>
+</div></div>
+
+<p>For more information about this bug see <a href="http://tickets.opscode.com/browse/CHEF-2783">CHEF-2783</a>.</p>
+
+<h3><a name="KnifeBootstrap-CreatingCustomBootstrapTemplates"></a>Creating Custom Bootstrap Templates</h3>
+<p>Custom bootstrap templates can be created and stored in <tt>.chef/bootstrap/DISTRO.erb</tt>, replacing <tt>DISTRO</tt> with the value passed with the <tt>&#45;d</tt> or <tt>&#45;&#45;distro</tt> option. <font color="#f7681a"><b><a href="Custom Knife Bootstrap Script.html" title="Custom Knife Bootstrap Script">Custom Knife Bootstrap Script</a></b> has a couple of examples on the creation of a custom bootstrap template.</font>.</p>
+
+<h3><a name="KnifeBootstrap-InstallsRubyGemsandChefasagem"></a>Installs RubyGems and Chef as a gem</h3>
+<p>The gems installations will use RubyGems 1.3.6 and Chef installed as a gem. A future release will install RubyGems 1.3.7, though you can customize this yourself by copying the template to one of the locations specified above. The apt installation will use the Opscode APT repository.</p>
+
+<h3><a name="KnifeBootstrap-WritesConfigFiles"></a>Writes Config Files</h3>
+<p>In addition to handling the software installation, these bootstrap templates do the following:</p>
+
+<ul class="alternate" type="square">
+	<li>Write the validation.pem per the local knife configuration.</li>
+	<li>Write a default config file for Chef (<tt>/etc/chef/client.rb</tt>) using values from the <tt>knife.rb</tt>.</li>
+	<li>Create a JSON attributes file containing the specified run list and run Chef.</li>
+</ul>
+
+
+<p>In the case of the RubyGems, the <tt>client.rb</tt> will be written from scratch with a minimal set of values, and you may want to customize it. In the case of APT Package installation, <tt>client.rb</tt> will have the <tt>validation_client_name</tt> appended if it is not set to <tt>chef-validator</tt> (default config value), and the <tt>node_name</tt> will be added if <tt>chef_node_name</tt> option is specified.</p>
+
+<h4><a name="KnifeBootstrap-Usingencrypteddatabags"></a>Using encrypted data bags</h4>
+
+<p>As of 0.10.6, <tt>knife bootstrap</tt> supports the 'encrypted_data_bag_secret' setting in knife.rb. You will want to add this line to your knife.rb:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">encrypted_data_bag_secret '/path/to/your/data_bag_key'</pre>
+		</div>
+</div></div>
+<p>And change '/path/to/your/data_bag_key' to the location of where the data bag key is located. When you run knife bootstrap afterwards it automatically adds this line to the client.rb for the node you are bootstrapping and copies the key over.</p>
+
+<h4><a name="KnifeBootstrap-Alternatechefclientlocation"></a>Alternate chef-client location</h4>
+<p>As of Chef 0.10.10, you can specify an alternate location for chef-client if needed by adding this line to your knife.rb:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef_client_path '/usr/somewhere/bin/chef-client'</pre>
+		</div>
+</div></div>
+<p>By default it uses <tt>/usr/bin/chef-client</tt>, but if chef has been installed using a custom gem or an alternate ruby it might not be there.</p>
+
+<h1><a name="KnifeBootstrap-CompletedState"></a>Completed State</h1>
+
+<p>When this is complete, the bootstrapped node will have:</p>
+
+<ul class="alternate" type="square">
+	<li>Latest Chef version installed from RubyGems or APT Packages from Opscode. This may be a later version than the local system.</li>
+	<li>Be validated with the configured Chef Server.</li>
+	<li>Have run Chef with its default run list if one is specified.</li>
+</ul>
+
+
+<h3><a name="KnifeBootstrap-IfTheRunDoesNotComplete"></a>If The Run Does Not Complete</h3>
+<p>The run list for the first run of a newly provisioned node is passed in by knife as a file with the special command line:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef-client -j /etc/chef/first-boot.json</pre>
+		</div>
+</div></div>
+<p>At the end of the first run, the node object is saved with this list, shows up on the console and knife commands, and is used on subsequent chef-client runs.  If the run does not complete, (the instance is created but the installs are not completed), then the node with the run list applied to it is never saved.</p>
+
+<p>Run the above command if this occurs.  <font color="#f7681a">The normal state is for the first chef-client run to complete - an incomplete run is the sort of thing that will happen while debugging changes and new recipes.</font>  A typical cause is an unmet dependency in cookbooks.  Review the metadata.rb files of the cookbooks in your base role, or any other roles being established in the initial run for any dependencies.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Knife Built In Subcommands.html" title="Knife Built In Subcommands"><span class="image-wrap" style="float: left"><img src="../attachments/7275534/21463138.png" hspace="4" style="border: 0px solid black"/></span> Knife Built In Subcommands </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Custom Knife Bootstrap Script.html" title="Custom Knife Bootstrap Script"><span class="image-wrap" style="float: right"><img src="../attachments/7275534/21463137.png" hspace="4" style="border: 0px solid black"/></span> Custom Knife Bootstrap Script </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275534/14057524.png">Bootstrapping.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275534/21463137.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275534/21463138.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-8257839"></a>
+                                    <font class="smallfont"><p>Is there a reason that the ubuntu10.04-gems.erb does not configure the node to run chef automatically?<br/>
+What is the recommended way to mutate the node after launch bootstrap to setup automatically running chef via runit or whatever?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Dec 11, 2010 23:16
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-8257931"></a>
+                                    <font class="smallfont"><p>Check the <a href="https://github.com/opscode/cookbooks/blob/master/chef/README.md">README.md</a> file from the 'chef' cookbook. I found this in there:</p>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>The client service setup has been moved from the chef::bootstrap_client recipe into its own 
+recipe, chef::client_service. This is to improve use with Knife bootstrap which already configures 
+the client configuration file.</pre>
+</div></div>
+
+<p>and further down is the description of the service itself:</p>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>client_service
+
+Use this recipe on systems that should have a chef-client daemon running, such as when Knife 
+bootstrap was used to install Chef on a new system.
+
+This recipe sets up the chef-client service depending on the init_style attribute (see above). 
+It is included by the chef::bootstrap_client recipe.
+</pre>
+</div></div></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ringods at Jan 11, 2011 13:00
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-8257934"></a>
+                                    <font class="smallfont"><p>There's also now a separate chef-client cookbook that deals only with the chef client.</p>
+
+<p><a href="https://github.com/opscode/cookbooks/blob/master/chef-client/README.md">README</a></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jtimberman at Jan 12, 2011 14:58
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

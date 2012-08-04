@@ -1,0 +1,427 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Exception and Report Handlers</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Exception and Report Handlers
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/8257609/14876683.gif" hspace="30" vspace="4" style="border: 0px solid black"/></span></p>
+
+<p><b><font color="#f7681a">Exception and Report handlers are a feature of Chef that allow you to run code in response to a Chef run succeeding or failing.</font> <font color="#f7681a">The most obvious use is to dispatch notifications if a Chef run fails, though it is also possible to gather rich data about your chef usage for trending and analysis.</font></b></p>
+
+<h1><a name="ExceptionandReportHandlers-Anatomyofahandler"></a>Anatomy of a handler</h1>
+
+<p>A handler is a class inheriting from <tt>Chef::Handler</tt> and implementing <tt>report()</tt> function. Before <tt>report()</tt> is actually run, <tt>run_status</tt> is initialized by chef. <tt>run_status</tt> is an instance of <tt>Chef::RunStatus</tt>, a class that keeps track of the chef run status (gee, there's a surprise...). <tt>run_status</tt> provides several useful properties for reporting, have a look at the table:</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Name </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> success?/failed? </th>
+<td class='confluenceTd'> Whether the chef run was successful </td>
+</tr>
+<tr>
+<th class='confluenceTh'> backtrace </th>
+<td class='confluenceTd'> The backtrace from exception, if any </td>
+</tr>
+<tr>
+<th class='confluenceTh'> exception </th>
+<td class='confluenceTd'> The raw exception, if any </td>
+</tr>
+<tr>
+<th class='confluenceTh'> formatted_exception </th>
+<td class='confluenceTd'> The exception as a formatted string, e.g. "ExceptionClass: message" </td>
+</tr>
+<tr>
+<th class='confluenceTh'> node </th>
+<td class='confluenceTd'> The node for the client run </td>
+</tr>
+<tr>
+<th class='confluenceTh'> all_resources </th>
+<td class='confluenceTd'> The list of all resources in the current run context's <tt>resource_collection</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> updated_resources </th>
+<td class='confluenceTd'> The list of all resources in the current run context's <tt>resource_collection</tt> that are marked as updated </td>
+</tr>
+<tr>
+<th class='confluenceTh'> elapsed_time </th>
+<td class='confluenceTd'> The time elapsed between the start and finish of the chef run </td>
+</tr>
+<tr>
+<th class='confluenceTh'> start_time/end_time </th>
+<td class='confluenceTd'> The time the chef run started or ended </td>
+</tr>
+<tr>
+<th class='confluenceTh'> run_context </th>
+<td class='confluenceTd'> An instance <tt>Chef::RunContext</tt> that keep track of the context of the chef run. It provides access several useful properties: <tt>cookbook_collection</tt>, <tt>resource_collection</tt>, <tt>definitions</tt> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><b>A handler may be assigned as a report or exception handler, there's no real difference in the code.</b> Use <tt>success?</tt> or <tt>failed?</tt> if you need to know what situation caused it to run.</p></td>
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" />
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ExceptionandReportHandlers-Anatomyofahandler'>Anatomy of a handler</a></li>
+    <li><a href='#ExceptionandReportHandlers-WritingaHandler'>Writing a Handler</a></li>
+    <li><a href='#ExceptionandReportHandlers-InstallingandConfiguringaHandler'>Installing and Configuring a Handler</a></li>
+<ul>
+    <li><a href='#ExceptionandReportHandlers-InarecipewiththechefhandlerLWRP'>In a recipe with the chef_handler LWRP</a></li>
+    <li><a href='#ExceptionandReportHandlers-IntheChefconfig%28client.rb%29file'>In the Chef config (client.rb) file</a></li>
+</ul>
+    <li><a href='#ExceptionandReportHandlers-DistributingChefHandlers'> Distributing Chef Handlers</a></li>
+    <li><a href='#ExceptionandReportHandlers-ExistingHandlers'>Existing Handlers</a></li>
+    <li><a href='#ExceptionandReportHandlers-CommunityBasedHandlers'>Community Based Handlers</a></li>
+</ul></div>
+</div></div><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<div class="" align="center">
+<h4><a name="ExceptionandReportHandlers-"></a><font color="#f7681a">Tutorials from the Community</font></h4></div>
+
+<hr />
+<ul>
+	<li><h6><a name="ExceptionandReportHandlers-Averysimplereporthandlerhttps%3A%2F%2Fjtimberman.posterous.com%2Fasimplereporthandler"></a><a href="https://jtimberman.posterous.com/a-simple-report-handler">A very simple report handler</a></h6></li>
+</ul>
+
+
+<p>Opscode team member <a href="http://community.opscode.com/users/jtimberman">Joshua Timberman</a> demonstrates a very simple report handler to make it clearer what resources were actually configured in the Chef run.</p>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="7%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<h1><a name="ExceptionandReportHandlers-WritingaHandler"></a>Writing a Handler</h1>
+
+<p><font color="#f7681a">Let's start by writing a simple handler to send an email when a chef run fails.</font> We'll keep things simple by using the <a href="http://github.com/benprew/pony">pony library</a> to send the email. For this example to work, you'll need to be able to send mail via <tt>/usr/sbin/sendmail</tt> or SMTP to localhost, but it should be pretty easy to extend the example if you need to.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">require 'rubygems'
+require 'pony'
+
+module MyOrganization
+  class EmailMe &lt; Chef::Handler
+
+    def initialize(from_address, to_address)
+      @from_address = from_address
+      @to_address   = to_address
+    end
+
+    def report
+      # The Node is available as +node+
+      subject = "Chef run failed on #{node.name}\n"
+      # +run_status+ is a value object with all of the run status data
+      message = "#{run_status.formatted_exception}\n"
+      # Join the backtrace lines. Coerce to an array just in case.
+      message &lt;&lt; Array(backtrace).join("\n")
+
+      Pony.mail(:to =&gt; @to_address, :from =&gt; @from_address, :subject =&gt; subject, :body =&gt; message)
+
+
+    end
+  end
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="ExceptionandReportHandlers-InstallingandConfiguringaHandler"></a>Installing and Configuring a Handler</h1>
+
+<p><font color="#f7681a">You can install and configure handlers either through use of the chef-handler LWRP, or manually.</font></p>
+
+<h3><a name="ExceptionandReportHandlers-InarecipewiththechefhandlerLWRP"></a>In a recipe with the chef_handler LWRP</h3>
+
+<p>The <a href="http://wiki.opscode.com/display/chef/Opscode+LWRP+Resources#OpscodeLWRPResources-chefhandler"><tt>chef_handler</tt> LWRP</a> that ships as part of the <a href="http://cookbooks.opscode.com/cookbooks/chef_handler">chef_handler</a> cookbook provides an easy to use idempotent resource that can be included in your recipe code.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Configuring the Handler with chef_handler LWRP</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">chef_handler "MyOrganization::EmailMe" do
+  source "/var/chef/handlers/email_me"
+  action :enable
+end</pre>
+		</div>
+</div></div>
+
+<p>To manually install and configure a handler, you'll need to use edit the Chef config file.</p>
+
+<h3><a name="ExceptionandReportHandlers-IntheChefconfig%28client.rb%29file"></a>In the Chef config (client.rb) file</h3>
+
+<p>There is currently no default install location for handlers. The simplest way to distribute and install them is via rubygems, though any method of distributing the code (i.e., github, HTTP, etc.) will work. Once the handler is installed on the system, enable it in your client.rb file by requiring it. If you're using rubygems, you can require the handler by name:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Loading a Handler Installed via Rubygems</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># /etc/chef/client.rb
+require "rubygems"
+require "my-sweet-handler"</pre>
+		</div>
+</div></div>
+
+<p>If you installed the handler by some other method, you will probably need to require it using the full path to the file:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Loading a Handler Installed to an Arbitrary Location</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># /etc/chef/client.rb
+require "/var/chef/handlers/my-awesome-handler"</pre>
+		</div>
+</div></div>
+
+<p>Once the handler is enabled, you may need to configure it. The way this is done will vary for each handler. If you have a simple handler that requires no additional configuration, you will most likely just need to create a new instance of the handler.</p>
+
+<p>For example, if you have a handler <tt>MyOrganization::EmailMe</tt> in which you hardcoded all the values it needs to send email, you would simply create a new instance of it:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create a New Instance of the MyOrganization::EmailMe Handler</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">email_handler = MyOrganization::EmailMe.new</pre>
+		</div>
+</div></div>
+
+<p>Finally, configure the handler to notify you for either failed chef runs or successful ones.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Configuring Chef to Use Your Handler</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">report_handlers &lt;&lt; email_handler     # these fire at the end of a successful run
+exception_handlers &lt;&lt; email_handler  # these fire at the end of a failed run</pre>
+		</div>
+</div></div>
+
+<p>Putting it all together, your <tt>client.rb</tt> file would have a section like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Configuring the Handler in Your client.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># your handler is installed in /var/chef/handlers/email_me.rb
+require "/var/chef/handlers/email_me"
+
+# Assuming your handler is simple and doesn't need to be configured
+email_handler = MyOrganization::EmailMe.new
+
+# Configure Chef to use your handler
+report_handlers &lt;&lt; email_handler     # these fire at the end of a successful run
+exception_handlers &lt;&lt; email_handler  # these fire at the end of a failed run</pre>
+		</div>
+</div></div>
+
+<h1><a name="ExceptionandReportHandlers-DistributingChefHandlers"></a><a href="Distributing Chef Handlers.html" title="Distributing Chef Handlers">Distributing Chef Handlers</a></h1>
+
+<p>See <a href="Distributing Chef Handlers.html" title="Distributing Chef Handlers">Distributing Chef Handlers</a> for use of the Opscode provided cookbook to accomplish this task.</p>
+
+<h1><a name="ExceptionandReportHandlers-ExistingHandlers"></a>Existing Handlers</h1>
+
+<p><font color="#f7681a">Chef ships with a handler that will serialize the run status data to a JSON file.</font> To use it, put the following in /etc/chef/client.rb or /etc/chef/solo.rb.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/chef/client.rb to use Chef's JsonFile handler</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">require 'chef/handler/json_file'
+report_handlers &lt;&lt; Chef::Handler::JsonFile.new(:path =&gt; "/var/chef/reports")
+exception_handlers &lt;&lt; Chef::Handler::JsonFile.new(:path =&gt; "/var/chef/reports")</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>LWRP entry to use Chef's JsonFile handler</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">chef_handler "Chef::Handler::JsonFile" do
+  source "chef/handler/json_file"
+  arguments :path =&gt; '/var/chef/reports'
+  action :enable
+end</pre>
+		</div>
+</div></div>
+
+<p>The data can be loaded and inspected via irb:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">irb(main):001:0&gt; require 'rubygems'
+=&gt; true
+irb(main):002:0&gt; require 'json'
+=&gt; true
+irb(main):003:0&gt; require 'chef'
+=&gt; true
+irb(main):004:0&gt; r = JSON.parse(IO.read("/var/chef/reports/chef-run-report-20110322060731.json"))
+=&gt; ... output truncated
+irb(main):005:0&gt; r.keys
+=&gt; ["end_time", "node", "updated_resources", "exception", "all_resources", "success", "elapsed_time", "start_time",
+ "backtrace"]
+irb(main):006:0&gt; r['elapsed_time']
+=&gt; 0.00246</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="ExceptionandReportHandlers-CommunityBasedHandlers"></a>Community Based Handlers</h1>
+
+<p><font color="#f7681a"><b>Exception and report handlers from the Chef Open Source Community.</b></font></p>
+</div></div>
+<p><span class="image-wrap" style="float: right"><img src="../attachments/8257609/21463222.png" hspace="260" style="border: 0px solid black"/></span></p>
+<ul>
+	<li><b><a href="https://github.com/morgoth/airbrake_handler">Airbrake exceptions</a></b><br/>
+Chef handler for sending exceptions to Airbrake (exceptions only)</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/rottenbytes/chef/tree/master/async_handler">Asynchronous Resources Handler</a></b><br/>
+Chef report handler that pushes changes to a stomp queue, see <a href="http://www.rottenbytes.info/2011/07/28/asynchronous-reporting-with-chef/">blog post</a></li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/ampledata/chef-handler-campfire">Campfire handler</a></b><br/>
+Chef handler for sending exceptions and reports to campfire</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/imeyer/chef-handler-graphite">chef-handler-graphite</a></b><br/>
+Chef report handler to push metrics to graphite. YEAH&#33;</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://rubygems.org/gems/chef-irc-snitch">chef-irc-snitch</a></b><br/>
+An exception handler for Opscode Chef runs (github gists &amp; IRC)</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/ampledata/chef/blob/master/chef/lib/chef/handler/cloudkick_handler.rb">Cloudkick handler</a></b><br/>
+Chef handler for sending exceptions and reports to cloudkick</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/DataDog/chef-handler-datadog">Datadog handler</a></b><br/>
+Chef handler for getting Chef stats directly into the Datadog newsfeed each time the client runs, extended into a Rubygem from <a href="https://github.com/adamhjk/chef-datadog">chef-datadog</a>. See <a href="http://www.miketheman.net/2011/11/28/ask-your-systems-whats-going-on/">blog post</a></li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/jellybob/chef-gelf/">GELF/Graylog2 handler</a></b><br/>
+Chef handler which can report run status, including any changes that were made, to a Graylog2 server.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://rubygems.org/gems/chef-handler-growl">Growl handler</a></b><br/>
+Chef report handler to send Growl notification</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/mojotech/hipchat/blob/master/lib/hipchat/chef.rb">HipChat room message</a></b><br/>
+HipChat HTTP API Wrapper in Ruby with Capistrano hooks (exceptions only)</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://rubygems.org/gems/chef-handler-mail">Mail report handler</a></b><br/>
+Simple Chef report handler that sends Erubis template based reports via the Pony gem</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/ranjibd/nsca_handler">nsca based chef report handler</a></b><br/>
+Chef report/exception handler plugin that submits passive checks to nagios via nsca</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://rubygems.org/gems/chef-handler-updated-resources">Simple Updated Resources Handler</a></b><br/>
+Chef report handler to display resources updated in the Chef Run, see <a href="http://jtimberman.posterous.com/a-simple-report-handler">blog post</a></li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://ampledata.org/splunk_storm_chef_handler.html">Splunk Storm Handler</a></b><br/>
+Chef Exception and Report Handler for <a href="https://www.splunkstorm.com">Splunk Storm</a>.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /> <font color="navy"><b>There are</b></font> <font color="navy"><b><a href="Community Plugins.html" title="Community Plugins">Community Plugins</a></b></font> <font color="navy"><b>for Chef, Ohai, and Knife as well.</b></font></p>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Environments.html" title="Environments"><span class="image-wrap" style="float: left"><img src="../attachments/8257609/20840633.png" hspace="4" style="border: 0px solid black"/></span> Environments </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Distributing Chef Handlers.html" title="Distributing Chef Handlers"><span class="image-wrap" style="float: right"><img src="../attachments/8257609/20840632.png" hspace="4" style="border: 0px solid black"/></span> Distributing Chef Handlers </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257609/14876683.gif">111-antipatterns.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257609/20840632.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257609/20840633.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257609/21463223.png">9038413-speech-bubbles-vector-sticker-set.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257609/21463222.png">9038413-speech-bubbles-vector-sticker-set.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

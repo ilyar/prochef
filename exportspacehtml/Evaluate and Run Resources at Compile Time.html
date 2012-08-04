@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Evaluate and Run Resources at Compile Time</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Evaluate and Run Resources at Compile Time
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/7897335/14876697.jpg" hspace="10" vspace="14" style="border: 0px solid black"/></span> </p>
+<h4><a name="EvaluateandRunResourcesatCompileTime-"></a><font color="#f7681a">Chef processes recipes in two phases, <a href="Anatomy of a Chef Run.html#AnatomyofaChefRun-CompileResourceCollection">Compile</a> and <a href="Anatomy of a Chef Run.html#AnatomyofaChefRun-ConfigureNode">Execute</a>.</font></h4>
+<h6><a name="EvaluateandRunResourcesatCompileTime-1.DuringthecompileAnatomyofaChefRun%23CompileResourceCollectionphase%2CtherecipesareevaluatedasRubycodeandrecognizedresourcesareaddedtotheresourcecollection."></a>1. During the <a href="Anatomy of a Chef Run.html#AnatomyofaChefRun-CompileResourceCollection">compile</a> phase, the recipes are evaluated as Ruby code and recognized resources are added to the resource collection.</h6>
+<h6><a name="EvaluateandRunResourcesatCompileTime-2.DuringtheexecuteAnatomyofaChefRun%23ConfigureNodephase%2CCheftakestheappropriateProviderProvidersactiononeachresource."></a>2. During the <a href="Anatomy of a Chef Run.html#AnatomyofaChefRun-ConfigureNode">execute</a> phase, Chef takes the appropriate <a href="Providers.html" title="Providers">Provider</a> action on each resource.</h6>
+
+<h4><a name="EvaluateandRunResourcesatCompileTime-"></a><font color="#f7681a">This is the normal way Chef runs, but sometimes you want to make sure that a resource is configured before anything else.</font></h4>
+<h6><a name="EvaluateandRunResourcesatCompileTime-Youdothisbysettingupa%7B%7BChef%3A%3AResource%7D%7Dobjectoftheappropriateresourcetype%2Candthencallingthemethodthatrunstheaction."></a>You do this by setting up a <tt>Chef::Resource</tt> object of the appropriate resource type, and then calling the method that runs the action. </h6>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+
+<div class="panel" style="border-width: 1px;"><div class="panelContent">
+<h3><a name="EvaluateandRunResourcesatCompileTime-ExampleOne%3AUpdatePackageCache"></a>Example One: Update Package Cache</h3>
+</div></div>
+<p>It is important to make sure that your operating system's package cache is up to date before Chef tries to install packages, otherwise it might have stale references to versions that don't exist anymore. For example, on Debian and Ubuntu systems, the APT cache needs to be updated.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">e = execute "apt-get update" do
+  action :nothing
+end
+
+e.run_action(:run)</pre>
+		</div>
+</div></div>
+
+<p>This creates <tt>e</tt> as a "<tt>Chef::Resource::Execute</tt>" Ruby object. The action is set to nothing because we're going to call the <tt>run_action</tt> method to tell Chef to run the specified command.</p>
+
+<p>Opscode provides a cookbook for doing this with <a href="http://cookbooks.opscode.com/cookbooks/apt">apt</a> (Debian/Ubuntu) and <a href="http://cookbooks.opscode.com/cookbooks/pacman">pacman</a> (ArchLinux). Put the recipe at the top of your node's run list to ensure it happens before Chef tries to install your packages.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+
+<div class="panel" style="border-width: 1px;"><div class="panelContent">
+<h3><a name="EvaluateandRunResourcesatCompileTime-ExampleTwo%3AInstallingaRubyGemtouselater"></a>Example Two: Installing a RubyGem to use later</h3>
+</div></div>
+<p>One of the goals of Chef is that a single run should completely configure a system. One of the features of Chef is that it uses Ruby as the recipe language, which means you can do anything in <a href="Recipes.html" title="Recipes">Recipes</a> that you can do in Ruby.</p>
+
+<p>However, you might need to install a RubyGem first. For example, if you would like to interact with a MySQL database in a recipe directly with Ruby, you can do that by using the Compile phase resource creation.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">g = gem_package "mysql" do
+  action :nothing
+end
+
+g.run_action(:install)
+
+Gem.clear_paths
+require 'mysql'</pre>
+		</div>
+</div></div>
+
+<p>Just like the earlier example, we're creating a new Ruby object. This time, "<tt>Chef::Resource::Package</tt>" using the Rubygems provider. Do note that in this case the <tt>mysql</tt> RubyGem compiles native extensions in C, so you'll need to have the appropriate packages for your OS installed. We introduce two new lines at the end here. The first, <tt>Gem.clear_paths</tt> ensures that Chef reloads the cache of available Rubygems. The second loads the mysql gem so it can be used to connect to a MySQL database.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+
+<div class="panel" style="border-width: 1px;"><div class="panelContent">
+<h3><a name="EvaluateandRunResourcesatCompileTime-ExampleThree%3AAnAntiPattern"></a>Example Three: An Anti-Pattern</h3>
+</div></div>
+<p>Unfortunately, resources executed during compile-time cannot notify resources which still remain to be placed in the Resource Collection and executed,<br/>
+as in the following example</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">execute "ifconfig"
+
+p = package 'vim-enhanced' do
+   action :nothing
+   notifies :run, "execute[ifconfig]", :immediately
+end
+p.run_action(:install)</pre>
+		</div>
+</div></div>
+
+<p>In fact, you might just choose to install the package during compile-time, and then know that it will be there and control the run of the execute resource based on its presence or absence.<br/>
+Alternatively, you could do something like this as a workaround</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">p = package "foo" do
+   #parameters
+end
+p.run_action(:install)
+
+if p.updated_by_last_action?
+  #Call the resource that we want to "notify"   
+end</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run"><span class="image-wrap" style="float: left"><img src="../attachments/7897335/20840485.png" hspace="4" style="border: 0px solid black"/></span> Anatomy of a Chef Run </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Chef Client.html" title="Chef Client"><span class="image-wrap" style="float: right"><img src="../attachments/7897335/19005484.png" hspace="4" style="border: 0px solid black"/></span> Chef Client </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897335/14876697.jpg">6818815-magnifying-glass-inspecting-a-code-stream-digital-illustration.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897335/19005483.png">arrowup.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897335/19005484.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897335/20840485.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

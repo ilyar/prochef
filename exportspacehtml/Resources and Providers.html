@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Resources and Providers</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Resources and Providers
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Nov 27, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 147x200" href='http://wiki.opscode.com/download../attachments/21397621/resource-definition.jpg'><img src="../attachments/thumbnails/21397621/21463123" hspace="20" vspace="20" style="border: 0px solid black"/></a></span></p>
+<div class='navmenu' style='float:right; width:400px; background:#eeeeee; border:4px solid #d7d4c3; margin:20px; padding:4px'><div class="" align="center"><h2><a name="ResourcesandProviders-"></a><font color="navy">More Information</font></h2></div>
+ 
+<h4><a name="ResourcesandProviders-Resources"></a><a href="Resources.html" title="Resources">Resources</a></h4>
+<h4><a name="ResourcesandProviders-Providers"></a><a href="Providers.html" title="Providers">Providers</a></h4>
+<h4><a name="ResourcesandProviders-LightweightResourcesandProviders%28LWRP%29"></a><a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers &#40;LWRP&#41;</a></h4>
+<h4><a name="ResourcesandProviders-OpscodeLWRPResources"></a><a href="Opscode LWRP Resources.html" title="Opscode LWRP Resources">Opscode LWRP Resources</a></h4>
+<p><br class="atl-forced-newline" /></p></div>
+
+<h4><a name="ResourcesandProviders-"></a><font color="#f7681a"> In Chef, <a href="Resources.html" title="Resources">Resources</a> represent a piece of system state and Providers are the underlying implementation which brings them into that state.</font></h4>
+<p>(All database vendors support the abstract concept of database creation, but the underlying implementation is different for each.)</p>
+
+<p>Resources are the basic units of work in Chef - a cross platform abstraction of a system's configuration that are declared in <a href="Recipes.html" title="Recipes">Recipes</a> and <a href="Definitions.html" title="Definitions">Definitions</a>, and applied to your nodes. For example, packages may be installed via apt, yum, or the BSD ports and packages systems, but the package resource abstracts these differences away so you can specify that a package should be installed in a cross-platform way. Chef's resources are mostly just containers for data, with some basic validation functionality.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: right"><img src="../attachments/21397621/21463122.png" hspace="20" style="border: 0px solid black"/></span></p>
+<h4><a name="ResourcesandProviders-"></a><font color="#f7681a"><a href="Providers.html" title="Providers">Providers</a> take a resource, compare that resource to the current state of the part of the system it is managing, and then takes the Action specified in the resource.</font></h4>
+<p>Providers are the way that Chef supports multiple platforms with a single Resource. Providers are applicable for an individual resource type. For instance, on Red Hat or CentOS, a package resource will use the yum package provider to get the package installed, but on Debian and Ubuntu, the apt package provider will be used. Providers contain most of the intelligence: they're responsible for making Chef idempotent by checking if an action needs to be taken and issuing the commands to the system to take that action.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/21397621/21463121.jpg" hspace="20" style="border: 0px solid black"/></span></p>
+<h4><a name="ResourcesandProviders-"></a><font color="#f7681a">While typical Resources and Providers are implemented in Chef's core using Ruby classes, implementing <a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers &#40;LWRP&#41;</a> is quick and easy, requiring less Ruby knowledge than their heavier counterparts.</font></h4>
+<p>(LWRP's also become Ruby classes, but this is done for you, behind the scenes.) LWRPs are loaded from files in a Cookbook's "resources" and "providers" directories; through use of a DSL you can create custom LWRPs for your environment and infrastructure automation.</p>
+
+<h4><a name="ResourcesandProviders-"></a><font color="#f7681a"><a href="Opscode LWRP Resources.html" title="Opscode LWRP Resources">Opscode LWRP Resources</a> are a set of LWRPs, provided by Opscode, that can be used in Opscode's public open source cookbooks.</font></h4>
+<p>These Opscode LWRP Resources are ready made for use within <a href="Recipes.html" title="Recipes">Recipes</a> to increase automation of your environment.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/21397621/21463120.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Ohai.html" title="Ohai">Ohai</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/21397621/21463119.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Resources.html" title="Resources">Resources</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397621/21463119.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397621/21463120.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397621/21463121.jpg">5059886-close-up-of-white-feather-falling-to-hand.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397621/21463122.png">7697215-a-green-two-way-street-sign-with-arrows-and-the-words-you-decide.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397621/21463123.jpg">resource-definition.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

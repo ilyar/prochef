@@ -1,0 +1,836 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Knife Built In Subcommands</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Knife Built In Subcommands
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><a name="KnifeBuiltInSubcommands-top"></a>
+<br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 193x200" href='http://wiki.opscode.com/download../attachments/21397636/chefknife.png'><img src="../attachments/thumbnails/21397636/21463127" hspace="6" vspace="12" style="border: 0px solid black"/></a></span></p>
+<h4><a name="KnifeBuiltInSubcommands-"></a><font color="#f7681a">Subcommands for managing components from the Knife command line interface</font></h4>
+<hr />
+<h4><a name="KnifeBuiltInSubcommands-Thispagecontainsdocumentationforeachofthebuiltinknifesubcommandsaswellaspopularplugins."></a>This page contains documentation for each of the built-in knife sub-commands as well as popular plugins.  </h4>
+
+<h4><a name="KnifeBuiltInSubcommands-Manysubcommandsaredocumentedontheirownpages%2Cthoughallarelistedhereforcompleteness."></a>Many sub-commands are documented on their own pages, though all are listed here for completeness.</h4>
+<div class='navmenu' style='float:right; width:320px; background:#eeeeee; border:4px solid #d7d4c3; margin:14px; padding:6px'><div class="" align="center"><p><font color="navy"><b>Knife commands all have the same form</b></font></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife sub-command [ARGUMENTS] (options)</pre>
+		</div>
+</div></div></div>
+ </div>
+<p><a href="Knife.html#Knife-CommonOptions">Common Options</a> provides detail on the options can be passed to any subcommand, while sub-command specific options are reviewed in the relevant section of this page. <a href="Knife.html#Knife-OutputFormats">Output Formats</a> information on the amount of content displayed and modification options for the output.</p>
+
+<p>For all commands and subcommands, there is <a href="Knife.html#Knife-ContextualHelp">Contextual Help</a> for the options available, including direct access to manpages.</p>
+
+<h5><a name="KnifeBuiltInSubcommands-"></a><font color="#f7681a">Knife sub-commands are structured such that commands have the form: <tt>NOUN verb NOUN</tt> (options).</font></h5>
+<div class="" align="center"></div>
+ 
+<p>Because the Chef Server API is RESTful, the <tt>verb</tt> of a knife command is generally a  CRUD operation:</p>
+
+<ul>
+	<li><b>create</b> (create)</li>
+	<li><b>list</b> and show (read)</li>
+	<li><b>edit</b> (update)</li>
+	<li><b>delete</b> (destroy)</li>
+</ul>
+
+</td>
+<td class="confluenceTd" valign="top" width="28%">
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#KnifeBuiltInSubcommands-BuiltInSubcommands'>Built In Subcommands</a></li>
+<ul>
+    <li><a href='#KnifeBuiltInSubcommands-Bootstrap'>Bootstrap</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-Client'>Client</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-CloudPlugins'>Cloud Plugins</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-Configure'>Configure</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-Cookbook'>Cookbook</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-CookbookSite'>Cookbook Site</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-DataBag'>Data Bag</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-Environment'>Environment</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-Exec'>Exec</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-Node'>Node</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-Recipe'>Recipe</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-Role'>Role</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-Search'>Search</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-SSH'>SSH</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-Status'>Status</a></li>
+    <li><a href='#KnifeBuiltInSubcommands-Tag'>Tag</a></li>
+</ul>
+    <li><a href='#KnifeBuiltInSubcommands-Extras'>Extras</a></li>
+<ul>
+    <li><a href='#KnifeBuiltInSubcommands-Bashcommandcompletion'>Bash command completion</a></li>
+</ul>
+</ul></div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h1><a name="KnifeBuiltInSubcommands-BuiltInSubcommands"></a>Built In Subcommands</h1>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Bootstrap"></a>Bootstrap</h2>
+
+<p>The <b><a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a></b> page explains the bootstrap subcommand.  For Chef versions 0.10 and greater, the <b><a href="Knife Windows Bootstrap.html" title="Knife Windows Bootstrap">Knife Windows Bootstrap</a></b> page describes the knife-windows plugin, which allows one to bootstrap Windows nodes.</p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Client"></a>Client</h2>
+<p>The <b><a href="Managing API Clients With Knife.html" title="Managing API Clients With Knife">Managing API Clients With Knife</a></b> page explains the client subcommand used to manage API clients.  </p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-CloudPlugins"></a>Cloud Plugins</h2>
+<p>Using the cloud provider subcommands is explained on the <b><a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a></b> page.</p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Configure"></a>Configure</h2>
+<p><font color="#f7681a">The configure sub-commands provides an easy way to create <tt>knife.rb</tt> and <tt>client.rb</tt> files that can then be distributed to workstations and nodes.</font></p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em>  </p>
+
+<p>There are two configure commands:</p>
+
+<h3><a name="KnifeBuiltInSubcommands-configure"></a>configure</h3>
+<p>Create a configuration file for knife. This will prompt for values to enter into the file. Default values are listed in square brackets if no other entry is typed.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife configure (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+<ul>
+	<li><tt>&#45;i</tt>, <tt>&#45;&#45;initial</tt>:<br/>
+    Create an initial API Client</li>
+	<li><tt>&#45;r</tt>, <tt>&#45;&#45;repository REPO</tt>:<br/>
+    The path to your chef&#45;repo</li>
+</ul>
+
+
+<p>Use <tt>-i</tt> if you would like to create an admin client (<b>Hosted Chef</b> users should note that creating a client as an admin does not change its permissions.)</p>
+
+<h3><a name="KnifeBuiltInSubcommands-configureclient"></a>configure client</h3>
+<p>Read the <tt>knife.rb</tt> config file and generate a config file suitable for use in <tt>/etc/chef/client.rb</tt> and copy the validation certificate into the specified directory.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife configure client DIRECTORY</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Cookbook"></a>Cookbook</h2>
+<p><b><a href="Managing Cookbooks With Knife.html" title="Managing Cookbooks With Knife">Managing Cookbooks With Knife</a></b> provides detail on the use of this command to interact with cookbooks on your Chef Server.</p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-CookbookSite"></a>Cookbook Site</h2>
+<p><b><a href="Managing Cookbooks With Knife.html" title="Managing Cookbooks With Knife">Managing Cookbooks With Knife</a></b> provides detail on the use of this command to interact with cookbooks on the <a href="http://community.opscode.com/">Opscode Community Site</a>.</p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-DataBag"></a>Data Bag</h2>
+<p>Data bags are stores of arbitrary JSON data that and indexed and available via search. <b><a href="Managing Data Bags With Knife.html" title="Managing Data Bags With Knife">Managing Data Bags With Knife</a></b> provides detail on the use of this command for managing data bags and data bag items.  </p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Environment"></a>Environment</h2>
+<p>The environment sub-command allows you to manage environments. See <b><a href="Managing Environments With Knife.html" title="Managing Environments With Knife">Managing Environments With Knife</a></b> for use of the environments subcommand. </p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Exec"></a>Exec</h2>
+<p><tt>knife exec</tt> allows you to run Ruby scripts in a context similar to that of <a href="Shef.html" title="Shef">Shef</a>.  See <b><a href="Knife Exec.html" title="Knife Exec">Knife Exec</a></b> for documentation on this command.</p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Node"></a>Node</h2>
+<p>See <b><a href="Managing Nodes With Knife.html" title="Managing Nodes With Knife">Managing Nodes With Knife</a></b> on use of the node command to modify the <a href="Nodes.html" title="Nodes">Nodes</a> supported by the Chef Server.</p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Recipe"></a>Recipe</h2>
+<p><font color="#f7681a">Recipes on the Chef Server can be listed using the recipe list sub-command.</font> </p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p>Specify <b>PATTERN</b> as a regular expression to limit the results.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">% knife recipe list 'couchdb::*'
+  couchdb::main_monitors
+  couchdb::master
+  couchdb::default
+  couchdb::org_cleanu</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Role"></a>Role</h2>
+<p>The role sub-commands allow you to manage roles saved on the Chef server and are structured similarly to the other knife sub-commands. See <b><a href="Managing Roles With Knife.html" title="Managing Roles With Knife">Managing Roles With Knife</a></b> for details on its use.</p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Search"></a>Search</h2>
+<p><font color="#f7681a">Search is one of the most useful features of Chef Server.</font> </p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p>Search query syntax is covered in greater depth in <b><a href="Search.html" title="Search">Search</a></b>.  The following is the basic structure of the <tt>knife search</tt> command as well as some useful examples.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife search INDEX QUERY (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;a</tt>, <tt>&#45;&#45;attribute ATTR</tt>:<br/>
+    Show only one attribute</li>
+	<li><tt>&#45;i</tt>, <tt>&#45;&#45;id&#45;only</tt>:<br/>
+    Show only the ID of matching objects</li>
+	<li><tt>&#45;q</tt>, <tt>&#45;&#45;query QUERY</tt>:<br/>
+    The search query; useful to protect queries starting with &#45;</li>
+	<li><tt>&#45;R</tt>, <tt>&#45;&#45;rows INT</tt>:<br/>
+    The number of rows to return</li>
+	<li><tt>&#45;r</tt>, <tt>&#45;&#45;run&#45;list</tt>:<br/>
+    Show only the run list</li>
+	<li><tt>&#45;o</tt>, <tt>&#45;&#45;sort SORT</tt>:<br/>
+    The order to sort the results in</li>
+	<li><tt>&#45;b</tt>, <tt>&#45;&#45;start ROW</tt>:<br/>
+    The row to start returning results at</li>
+	<li><tt>&#45;m</tt>, <tt>&#45;&#45;medium</tt>:<br/>
+    Display medium sized output when searching nodes using the default<br/>
+    summary format</li>
+	<li><tt>&#45;l</tt>, <tt>&#45;&#45;long</tt>:<br/>
+    Display long output when searching nodes using the default summary<br/>
+    format</li>
+</ul>
+
+
+<p><b>Examples</b>:</p>
+
+
+<p>Search for the ids of all nodes running in EC2:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">&gt; knife search node 'ec2:*' -i
+4 items found
+
+ip-0A7CA19F.ec2.internal
+
+ip-0A58CF8E.ec2.internal
+
+ip-0A58E134.ec2.internal
+
+ip-0A7CFFD5.ec2.internal</pre>
+		</div>
+</div></div>
+
+<p>Search for the EC2 instance type (flavor) of all nodes running in EC2</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">&gt; knife search node 'ec2:*' -a ec2.instance_type
+4 items found
+
+ec2.instance_type:  m1.large
+id:                 ip-0A7CA19F.ec2.internal
+
+ec2.instance_type:  m1.large
+id:                 ip-0A58CF8E.ec2.internal
+
+ec2.instance_type:  m1.large
+id:                 ip-0A58E134.ec2.internal
+
+ec2.instance_type:  m1.large
+id:                 ip-0A7CFFD5.ec2.internal</pre>
+		</div>
+</div></div>
+
+<p>Search for all nodes running Ubuntu:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife search node 'platform:ubuntu'</pre>
+		</div>
+</div></div>
+
+<p>Search for all nodes running CentOS in the production environment.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife search node 'chef_environment:production AND platform:centos'</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-SSH"></a>SSH</h2>
+<p><font color="#f7681a">The SSH subcommand allows you to invoke commands in parallel on a subset of the nodes in your infrastructure.</font></p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p><b>Usage</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ssh QUERY COMMAND (options)</pre>
+		</div>
+</div></div>
+<p>The QUERY part of the command uses the same <a href="Search.html#Search-QuerySyntax">syntax as the search subcommand</a>. This will return a list of servers that it will ssh into and run the COMMAND you've listed.</p>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;a</tt>, <tt>&#45;&#45;attribute ATTR</tt>:<br/>
+    The attribute to use for opening the connection &#45; default is fqdn</li>
+	<li><tt>&#45;C</tt>, <tt>&#45;&#45;concurrency NUM</tt>:<br/>
+    The number of concurrent connections</li>
+	<li><tt>&#45;m</tt>, <tt>&#45;&#45;manual&#45;list</tt>:<br/>
+    QUERY is a space separated list of servers</li>
+	<li><tt>&#45;P</tt>, <tt>&#45;&#45;ssh&#45;password PASSWORD</tt>:<br/>
+    The ssh password</li>
+	<li><tt>&#45;x</tt>, <tt>&#45;&#45;ssh&#45;user USERNAME</tt>:<br/>
+    The ssh username</li>
+	<li><tt>&#45;i</tt>, <tt>&#45;&#45;identity&#45;file IDENTITY_FILE</tt>:<br/>
+    The SSH identity file used for authentication</li>
+	<li><tt>&#45;p</tt>, <tt>&#45;&#45;ssh&#45;port PORT</tt>:<br/>
+    The ssh port</li>
+	<li><tt>&#45;&#45;no&#45;host&#45;key&#45;verify</tt>:<br/>
+    Disable host key verification</li>
+</ul>
+
+
+<p><b>Examples</b>:</p>
+
+<p>Here's a simple example of this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ssh "role:webserver" "sudo chef-client"</pre>
+		</div>
+</div></div>
+<p>This would ssh into all nodes that have the role "webserver" and run the command "sudo chef-client".</p>
+
+<p>You could also use this to upgrade all of your nodes:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ssh name:* "sudo aptitude upgrade -y"</pre>
+		</div>
+</div></div>
+<p>The SSH Subcommand could also be used to find the uptime of all your web servers:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">% knife ssh "role:web" "uptime" -x ubuntu -a ec2.public_hostname
+ec2-174-129-127-206.compute-1.amazonaws.com  13:50:47 up 1 day, 23:26,  1 user,  load average: 0.25, 0.18, 0.11
+ec2-67-202-63-102.compute-1.amazonaws.com    13:50:47 up 1 day, 23:33,  1 user,  load average: 0.12, 0.13, 0.10
+ec2-184-73-9-250.compute-1.amazonaws.com     13:50:48 up 16:45,  1 user,  load average: 0.30, 0.22, 0.13
+ec2-75-101-240-230.compute-1.amazonaws.com   13:50:48 up 1 day, 22:59,  1 user,  load average: 0.24, 0.17, 0.11
+ec2-184-73-60-141.compute-1.amazonaws.com    13:50:48 up 1 day, 23:30,  1 user,  load average: 0.32, 0.17, 0.15</pre>
+		</div>
+</div></div>
+
+<p>Force a Chef run on each node returned by the search query:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">% knife ssh "role:web" "sudo chef-client" -x ubuntu -a ec2.public_hostname
+ec2-67-202-63-102.compute-1.amazonaws.com   [Fri, 22 Oct 2010 14:18:37 +0000] INFO: Starting Chef Run (Version 0.9.10)
+ec2-174-129-127-206.compute-1.amazonaws.com [Fri, 22 Oct 2010 14:18:37 +0000] INFO: Starting Chef Run (Version 0.9.10)
+ec2-184-73-9-250.compute-1.amazonaws.com    [Fri, 22 Oct 2010 14:18:38 +0000] INFO: Starting Chef Run (Version 0.9.10)
+ec2-75-101-240-230.compute-1.amazonaws.com  [Fri, 22 Oct 2010 14:18:38 +0000] INFO: Starting Chef Run (Version 0.9.10)
+ec2-184-73-60-141.compute-1.amazonaws.com   [Fri, 22 Oct 2010 14:18:38 +0000] INFO: Starting Chef Run (Version 0.9.10)
+ec2-174-129-127-206.compute-1.amazonaws.com [Fri, 22 Oct 2010 14:18:39 +0000] INFO: Chef Run complete in 1.419243 seconds
+ec2-174-129-127-206.compute-1.amazonaws.com [Fri, 22 Oct 2010 14:18:39 +0000] INFO: cleaning the checksum cache
+ec2-174-129-127-206.compute-1.amazonaws.com [Fri, 22 Oct 2010 14:18:39 +0000] INFO: Running report handlers
+ec2-174-129-127-206.compute-1.amazonaws.com [Fri, 22 Oct 2010 14:18:39 +0000] INFO: Report handlers complete
+ec2-67-202-63-102.compute-1.amazonaws.com   [Fri, 22 Oct 2010 14:18:39 +0000] INFO: Chef Run complete in 1.578265 seconds
+ec2-67-202-63-102.compute-1.amazonaws.com   [Fri, 22 Oct 2010 14:18:39 +0000] INFO: cleaning the checksum cache
+ec2-67-202-63-102.compute-1.amazonaws.com   [Fri, 22 Oct 2010 14:18:39 +0000] INFO: Running report handlers
+ec2-67-202-63-102.compute-1.amazonaws.com   [Fri, 22 Oct 2010 14:18:39 +0000] INFO: Report handlers complete
+ec2-184-73-9-250.compute-1.amazonaws.com    [Fri, 22 Oct 2010 14:18:40 +0000] INFO: Chef Run complete in 1.638884 seconds
+ec2-184-73-9-250.compute-1.amazonaws.com    [Fri, 22 Oct 2010 14:18:40 +0000] INFO: cleaning the checksum cache
+ec2-184-73-9-250.compute-1.amazonaws.com    [Fri, 22 Oct 2010 14:18:40 +0000] INFO: Running report handlers
+ec2-184-73-9-250.compute-1.amazonaws.com    [Fri, 22 Oct 2010 14:18:40 +0000] INFO: Report handlers complete
+ec2-75-101-240-230.compute-1.amazonaws.com  [Fri, 22 Oct 2010 14:18:40 +0000] INFO: Chef Run complete in 1.540257 seconds
+ec2-75-101-240-230.compute-1.amazonaws.com  [Fri, 22 Oct 2010 14:18:40 +0000] INFO: cleaning the checksum cache
+ec2-75-101-240-230.compute-1.amazonaws.com  [Fri, 22 Oct 2010 14:18:40 +0000] INFO: Running report handlers
+ec2-75-101-240-230.compute-1.amazonaws.com  [Fri, 22 Oct 2010 14:18:40 +0000] INFO: Report handlers complete
+ec2-184-73-60-141.compute-1.amazonaws.com   [Fri, 22 Oct 2010 14:18:40 +0000] INFO: Chef Run complete in 1.502489 seconds
+ec2-184-73-60-141.compute-1.amazonaws.com   [Fri, 22 Oct 2010 14:18:40 +0000] INFO: cleaning the checksum cache
+ec2-184-73-60-141.compute-1.amazonaws.com   [Fri, 22 Oct 2010 14:18:40 +0000] INFO: Running report handlers
+ec2-184-73-60-141.compute-1.amazonaws.com   [Fri, 22 Oct 2010 14:18:40 +0000] INFO: Report handlers complete</pre>
+		</div>
+</div></div>
+
+<p><b>Note</b> the <tt>&#45;x</tt> option tells knife to invoke ssh as the "ubuntu" user. The <tt>&#45;a</tt> option tells knife to use the "ec2.public_hostname" attribute for opening the connection - default is fqdn.</p>
+
+<h4><a name="KnifeBuiltInSubcommands-InterpolationRulesfortheSSHSubcommand"></a>Interpolation Rules for the SSH Subcommand</h4>
+
+<p><font color="#f7681a">Because knife runs at a command prompt, it is important to be clear about interpolation rules for the SSH subcommand.</font></p>
+
+<p>For example: assume that the nodes in a db role have a schema that is the same as the node, and that said schema contains a table named "dollars".</p>
+
+<p>The command below will be interpolated in the context of the local machine.  That is to say the <tt>$(hostname)</tt> will be the name of the machine from which knife was invoked.  This is to be expected because the local shell sees double quotes and makes the substitution <b>before</b> the command is sent to the node(s).  A mysql error from each node should be expected in this case.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife ssh "role:db" "mysql $(hostname) -u&lt;username&gt; -p&lt;secret&gt; -e 'select count(*) from dollars'"</pre>
+		</div>
+</div></div>
+
+<p>Now consider the next command.  It will be interpolated in the context of the node.  That is to say the <tt>$(hostname)</tt> will be that of the node on which the command is run for each node in the db role.  This is to be expected because the local shell sees single quotes and takes the string as a literal.  The command is then interpolated by the each node's shell.  A count of the number of rows in the dollars table from each node should be expected in this case.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife ssh "role:db" 'mysql $(hostname) -u&lt;username&gt; -p&lt;secret&gt; -e "select count(*) from dollars"'</pre>
+		</div>
+</div></div>
+
+<p><em>The lesson here is to keep the interpolation rules of your local shell in mind when passing a command to your nodes via knife ssh.</em></p>
+
+<h4><a name="KnifeBuiltInSubcommands-NodeEnvironmentCustomizationConsiderations"></a>Node Environment Customization Considerations</h4>
+
+<p><font color="#f7681a">The interpolation rules for the SSH command can cause the behavior of knife ssh to appear erratic when custom configurations are used on the node.</font>  To understand how this can happen, consider the following scenario:</p>
+
+<p>A user named "fred" places a .my.cnf file in his home directory on all of his nodes.  Below is a template for this.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[client]
+user        = fred
+password    = myex-wifesmaidenname
+database    = #{node[:hostname]}</pre>
+		</div>
+</div></div>
+
+<p>The .my.cnf file is read when a mysql client is invoked and substitutes the username, password and database behind the scenes so they do not need to be typed.</p>
+
+<p>If, on his local machine, Fred invokes knife like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife ssh "role:db" "mysql ${hostname} -e 'select count(*) from dollars'"</pre>
+		</div>
+</div></div>
+
+<p>The result in this case will still be a count of rows in the dollars table for each node.  In other words, it <b>appears</b> that interpolation takes place in the context of the node rather than locally.</p>
+
+<p>However, what actually happened is the command <tt>mysql -e 'select count&#40;*&#41; from dollars'</tt> was sent to the node and the mysql client read the coincidentally correct database name from the .my.cnf file.  Note that there are curly braces around the hostname, not parenthesis, so <tt>${hostname</tt>} will evaluate to an empty string.  It becomes quickly apparent that setting a different database name in the .my.cnf table from that of the node in this case could lead to even greater confusion when mysql returns saying the table does not exist in that schema.  Or, if another user issues the same knife command and has no .my.cnf set, they will get an authentication error from mysql.</p>
+
+<p><em>The lesson here is to be aware of any personal and global customizations because they can cause apparently erratic behavior that is, in fact, exactly correct.</em></p>
+
+<h4><a name="KnifeBuiltInSubcommands-EnsuringProcessRunsSurviveSSHSession"></a>Ensuring Process Runs Survive SSH Session</h4>
+
+<p>When a node script is run to start a background process, the script can complete and exit correctly, however the service that was to be run in the background had not completed prior to script closure.  This appears most often with custom start-up scripts in <tt>/etc/init.d</tt>.  <font color="#f7681a">These apparent inconsistencies are a product of how ssh handles terminal connections remotely, not issues with the knife-ssh subcommand.</font></p>
+
+<p>Consider a custom server process called spaminatord, that connects to various university websites and gathers student information.  If the start up script contains the below line to start spaminatord, it is at risk for exhibiting this behavior.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">su -l spaminator -c "spaminatord --host=$PRIVATE_IP &gt;&gt; /var/log/my-corp/spaminatord.start.log &amp;"</pre>
+		</div>
+</div></div>
+
+<p>To insure the process runs beyond the life of the ssh session, the following need to be added to the command starting the process.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">su -l spaminator -c "nohup spaminatord --host=$PRIVATE_IP &gt;&gt; /var/log/my-corp/spaminatord.start.log 2&gt;&gt; spaminatord.start.log &lt; /dev/null &amp;"</pre>
+		</div>
+</div></div>
+
+<p>It is important to note that <tt>nohup</tt> and the redirection rules are all necessary to insure a clean start.</p>
+
+<h3><a name="KnifeBuiltInSubcommands-AlternateSSHModes"></a>Alternate SSH Modes</h3>
+
+<p><font color="#f7681a">The SSH subcommand supports a few alternate modes.</font></p>
+
+<h4><a name="KnifeBuiltInSubcommands-InteractiveMode"></a>Interactive Mode</h4>
+
+<p>start an interactive ssh session.  Commands will run agains all nodes (or a subset) returned by search query.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">% knife ssh "role:web" interactive -x ubuntu -a ec2.public_hostname
+Connected to ec2-184-73-9-250.compute-1.amazonaws.com, ec2-75-101-240-230.compute-1.amazonaws.com,
+ec2-174-129-127-206.compute-1.amazonaws.com, ec2-67-202-63-102.compute-1.amazonaws.com and
+ec2-184-73-60-141.compute-1.amazonaws.com
+
+To run a command on a list of servers, do:
+  on SERVER1 SERVER2 SERVER3; COMMAND
+  Example: on latte foamy; echo foobar
+
+To exit interactive mode, use 'quit!'
+
+knife-ssh&gt; uptime
+ec2-174-129-127-206.compute-1.amazonaws.com  13:59:31 up 1 day, 23:35,  1 user,  load average: 0.06, 0.11, 0.09
+ec2-67-202-63-102.compute-1.amazonaws.com    13:59:31 up 1 day, 23:42,  1 user,  load average: 0.08, 0.11, 0.09
+ec2-184-73-9-250.compute-1.amazonaws.com     13:59:31 up 16:53,  1 user,  load average: 0.08, 0.13, 0.10
+ec2-75-101-240-230.compute-1.amazonaws.com   13:59:31 up 1 day, 23:08,  1 user,  load average: 0.11, 0.15, 0.10
+ec2-184-73-60-141.compute-1.amazonaws.com    13:59:31 up 1 day, 23:39,  1 user,  load average: 0.17, 0.16, 0.14
+knife-ssh&gt; sudo service apache2 status
+ec2-75-101-240-230.compute-1.amazonaws.com  Apache is running (pid 10551).
+ec2-184-73-60-141.compute-1.amazonaws.com   Apache is running (pid 10330).
+ec2-184-73-9-250.compute-1.amazonaws.com    Apache is running (pid 6013).
+ec2-174-129-127-206.compute-1.amazonaws.com Apache is running (pid 10453).
+ec2-67-202-63-102.compute-1.amazonaws.com   Apache is running (pid 29696).</pre>
+		</div>
+</div></div>
+
+<p><b>terminal multiplexer support</b> &#45; launch a tmux (or gnu screen) session with a window for each node returned by the search query:</p>
+
+<h4><a name="KnifeBuiltInSubcommands-tmux"></a>tmux</h4>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef 10.6 and tmux</b><br />Typically, sessions are given names that match the search term used. Chef 0.10.6+ replaces any occurrences of ':' with '=' when generating the session name, since ':' is an illegal character for tmux session names.</td></tr></table></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">% knife ssh "role:web" tmux -x ubuntu -a ec2.public_hostname
+
+Warning: Permanently added 'ec2-184-73-9-250.compute-1.amazonaws.com,184.73.9.25
+0' (RSA) to the list of known hosts.
+Linux domU-12-31-38-00-39-D1 2.6.32-308-ec2 #16-Ubuntu SMP Thu Sep 16 14:28:38 U
+TC 2010 i686 GNU/Linux
+Ubuntu 10.04.1 LTS
+
+Welcome to Ubuntu!
+ * Documentation:  https://help.ubuntu.com/
+
+  System information as of Fri Oct 22 14:02:21 UTC 2010
+
+  System load:  0.08             Processes:           59
+  Usage of /:   7.2% of 9.84GB   Users logged in:     0
+  Memory usage: 10%              IP address for eth0: 10.252.62.31
+  Swap usage:   0%
+
+  Graph this data and manage this system at https://landscape.canonical.com/
+---------------------------------------------------------------------
+At the moment, only the core of the system is installed. To tune the
+system to your needs, you can choose to install one or more
+predefined collections of software by running the following
+command:
+
+   sudo tasksel --section server
+---------------------------------------------------------------------
+
+27 packages can be updated.
+12 updates are security updates.
+
+A newer build of the Ubuntu lucid server image is available.
+It is named 'release' and has build serial '20101020'.
+Last login: Fri Oct 22 14:01:23 2010 from c-76-20-240-131.hsd1.ga.comcast.net
+ubuntu@domU-12-31-38-00-39-D1:~$
+
+
+[knife] 0:zsh- 1:ec2-184-73-9-250.compute-1.amazonaws.com* 2:ec2-75-101-240-230.compute-1.a&gt; "helsinki.chisamore.com" 10:02 22-Oct-10</pre>
+		</div>
+</div></div>
+
+<h4><a name="KnifeBuiltInSubcommands-GNUScreen"></a>GNU Screen</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">Warning: Permanently added 'ec2-184-73-60-141.compute-1.amazonaws.com,184.73.60.141' (RSA) to the list of known hosts.
+Linux domU-12-31-38-00-7C-B7 2.6.32-308-ec2 #16-Ubuntu SMP Thu Sep 16 14:28:38 UTC 2010 i686 GNU/Linux
+Ubuntu 10.04.1 LTS
+
+Welcome to Ubuntu!
+ * Documentation:  https://help.ubuntu.com/
+
+  System information as of Fri Oct 22 14:12:08 UTC 2010
+
+  System load:  0.15             Processes:           61
+  Usage of /:   7.2% of 9.84GB   Users logged in:     1
+  Memory usage: 10%              IP address for eth0: 10.252.131.69
+  Swap usage:   0%
+
+  Graph this data and manage this system at https://landscape.canonical.com/
+---------------------------------------------------------------------
+At the moment, only the core of the system is installed. To tune the
+system to your needs, you can choose to install one or more
+predefined collections of software by running the following
+command:
+
+   sudo tasksel --section server
+---------------------------------------------------------------------
+
+27 packages can be updated.
+12 updates are security updates.
+
+Last login: Fri Oct 22 14:06:50 2010 from c-76-20-240-131.hsd1.ga.comcast.net
+ubuntu@domU-12-31-38-00-7C-B7:~$
+
+
+
+
+-129-127-206.  3- ec2-67-202-63-102.co  4* ec2-184-73-60-141.compute-1.amazonaws
+knife ssh role:web</pre>
+		</div>
+</div></div>
+
+<h4><a name="KnifeBuiltInSubcommands-csshX"></a>csshX</h4>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>key-based authentication</b><br />Using csshX requires that you can authenticate to your nodes using key-based authentication and that your key has been added to your ssh-agent.</td></tr></table></div>
+
+<p>You can launch concurrent ssh sessions using csshX:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ssh 'ec2:*' -a ec2.public_hostname -x ubuntu csshx</pre>
+		</div>
+</div></div>
+
+<p>This will open a new terminal window for each machine as well as a master terminal which can be used to send commands to all of the nodes.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/21397636/21463136.png" style="border: 0px solid black"/></span></p>
+
+<h4><a name="KnifeBuiltInSubcommands-MacTerminal"></a>Mac Terminal</h4>
+
+<p>launch a new terminal window with a separate tab (and ssh session) for each node returned by the search query.</p>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>This sub-command requires extra gems!</b><br />The ssh macterm sub-command interact with mac terminal via applescript. You will need to install the rb-appscript gem on your local management workstation where you use knife.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo gem install rb-appscript</pre>
+		</div>
+</div></div></td></tr></table></div>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">%knife ssh "role:web" macterm -x ubuntu -a ec2.public_hostname</pre>
+		</div>
+</div></div>
+
+<p><span class="image-wrap" style=""><img src="../attachments/21397636/21463135.jpg" style="border: 0px solid black"/></span></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Status"></a>Status</h2>
+<p><font color="#f7681a">The <tt>status</tt> sub-command is used to display a brief summary of the nodes on a Chef Server, including the time of the most recent successful Chef Client run.</font></p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife status QUERY(options)</pre>
+		</div>
+</div></div>
+
+<p>Specifying a QUERY allows you to restrict the results to a subset of the nodes.</p>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;r</tt>, <tt>&#45;&#45;run-list RUN_LIST</tt>:<br/>
+    Show the run list</li>
+</ul>
+
+
+<p><b>Examples</b>:</p>
+
+<p><font color="#f7681a">Show the status of all nodes in your organization</font></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">% knife status
+20 hours ago, dev-vm.chisamore.com, ubuntu 10.04, dev-vm.chisamore.com, 10.66.44.126
+3 hours ago, i-225f954f, ubuntu 10.04, ec2-67-202-63-102.compute-1.amazonaws.com, 67.202.63.102
+3 hours ago, i-a45298c9, ubuntu 10.04, ec2-174-129-127-206.compute-1.amazonaws.com, 174.129.127.206
+3 hours ago, i-5272a43f, ubuntu 10.04, ec2-184-73-9-250.compute-1.amazonaws.com, 184.73.9.250
+3 hours ago, i-226ca64f, ubuntu 10.04, ec2-75-101-240-230.compute-1.amazonaws.com, 75.101.240.230
+3 hours ago, i-f65c969b, ubuntu 10.04, ec2-184-73-60-141.compute-1.amazonaws.com, 184.73.60.141</pre>
+		</div>
+</div></div>
+
+<p>Include the nodes' run list in the status</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">% knife status --run-list
+20 hours ago, dev-vm.chisamore.com, ubuntu 10.04, dev-vm.chisamore.com, 10.66.44.126, role[lb].
+3 hours ago, i-225f954f, ubuntu 10.04, ec2-67-202-63-102.compute-1.amazonaws.com, 67.202.63.102, role[web].
+3 hours ago, i-a45298c9, ubuntu 10.04, ec2-174-129-127-206.compute-1.amazonaws.com, 174.129.127.206, role[web].
+3 hours ago, i-5272a43f, ubuntu 10.04, ec2-184-73-9-250.compute-1.amazonaws.com, 184.73.9.250, role[web].
+3 hours ago, i-226ca64f, ubuntu 10.04, ec2-75-101-240-230.compute-1.amazonaws.com, 75.101.240.230, role[web].
+3 hours ago, i-f65c969b, ubuntu 10.04, ec2-184-73-60-141.compute-1.amazonaws.com, 184.73.60.141, role[web].</pre>
+		</div>
+</div></div>
+
+<p>show the status of a subset of nodes returned by a search query</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">% knife status "role:web" --run-list
+3 hours ago, i-225f954f, ubuntu 10.04, ec2-67-202-63-102.compute-1.amazonaws.com, 67.202.63.102, role[web].
+3 hours ago, i-a45298c9, ubuntu 10.04, ec2-174-129-127-206.compute-1.amazonaws.com, 174.129.127.206, role[web].
+3 hours ago, i-5272a43f, ubuntu 10.04, ec2-184-73-9-250.compute-1.amazonaws.com, 184.73.9.250, role[web].
+3 hours ago, i-226ca64f, ubuntu 10.04, ec2-75-101-240-230.compute-1.amazonaws.com, 75.101.240.230, role[web].
+3 hours ago, i-f65c969b, ubuntu 10.04, ec2-184-73-60-141.compute-1.amazonaws.com, 184.73.60.141, role[web].</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Tag"></a>Tag</h2>
+<p><font color="#f7681a">Apply tags to nodes on a Chef Server.</font></p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<h4><a name="KnifeBuiltInSubcommands-create"></a>create</h4>
+<p>Adds one or more tags to node.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife tag create NODE TAGS...</pre>
+		</div>
+</div></div>
+
+<h4><a name="KnifeBuiltInSubcommands-delete"></a>delete</h4>
+<p>Removes one or more tags from node.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife tag delete NODE TAGS...</pre>
+		</div>
+</div></div>
+
+<h4><a name="KnifeBuiltInSubcommands-list"></a>list</h4>
+<p>Lists the tags applied to node.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife tag list NODES...</pre>
+		</div>
+</div></div>
+
+<p>See also <a href="http://wiki.opscode.com/display/chef/Nodes#Nodes-ManagingNodesviaKnife">Managing Nodes with Knife</a>
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<hr />
+<h1><a name="KnifeBuiltInSubcommands-Extras"></a>Extras</h1>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="KnifeBuiltInSubcommands-Bashcommandcompletion"></a>Bash command completion</h2>
+<p><font color="#f7681a">Additional convenience may be provided using bash command completion.</font> </p>
+</div></div>
+<p><em><a href="#KnifeBuiltInSubcommands-top">return to top of page</a></em></p>
+
+<p>Download the <a href="https://gist.github.com/1050685">script</a> and either source it in <tt>.bashrc</tt> or drop it in <tt>/etc/bash_completion.d/</tt>.</p>
+
+<p>The completion employs optional caching if the directory <tt>$CHEF_HOME/.completion_cache</tt> exists and is writable (<tt>CHEF_HOME</tt> is <tt>~/.chef</tt> by default).  To clear the cache (e.g. because new roles or nodes are available) erase the files in the cache directory, they will be regenerated on the next completion run.</p>
+
+<p><em>Note for OSX users</em>: The script requires GNU sed to work, install <tt>gsed</tt> with macports or <tt>gnu-sed</tt> with Homebrew. You will also need the <tt>bash-completion</tt> script library if you do not already have it installed &#8211; a package exists named as such in macports and Homebrew (e.g. <tt>brew install bash-completion</tt>). Use the <tt>etc/bash_completion.d</tt> prefix appropriate for your environment.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Knife.html" title="Knife"><span class="image-wrap" style="float: left"><img src="../attachments/21397636/21463126.png" hspace="4" style="border: 0px solid black"/></span> Knife </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Knife Bootstrap.html" title="Knife Bootstrap"><span class="image-wrap" style="float: right"><img src="../attachments/21397636/21463125.png" hspace="4" style="border: 0px solid black"/></span> Knife Bootstrap </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397636/21463124.jpg">chefknife.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397636/21463125.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397636/21463126.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397636/21463127.png">chefknife.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397636/24182785.png">csshx_screenshot.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397636/21463135.jpg">macterm_screenshot.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397636/21463136.png">csshx_screenshot.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

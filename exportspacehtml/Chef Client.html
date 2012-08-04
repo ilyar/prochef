@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Chef Client</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Chef Client
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/1179889/14876681.png" hspace="40" vspace="4" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+<h3><a name="ChefClient-"></a><font color="#f7681a">The Chef Client is where almost all of the work in Chef is done.  <br/>
+<br/>
+It communicates with the <a href="Chef Server.html" title="Chef Server">Chef Server</a> via REST, authenticates via <a href="Authentication and Authorization.html" title="Authentication and Authorization">Signed Header Authentication</a>, and compiles and executes <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a>.</font></h3>
+</div></div>
+
+<h3><a name="ChefClient-ClientsdoworkforoneormanyNodes"></a>Clients do work for one or many Nodes</h3>
+<p>A Chef Client does work on behalf of a <a href="Nodes.html" title="Nodes">Node</a>.  A single Chef Client can run recipes for multiple <a href="Nodes.html" title="Nodes">Nodes</a>.  </p>
+
+<h3><a name="ChefClient-Clientsdoallthework"></a>Clients do all the work</h3>
+<p>Clients are where all the action happens - the <a href="Chef Server.html" title="Chef Server">Chef Server</a> and <a href="Chef Indexer.html" title="Chef Indexer">Chef Indexer</a> are largely services that exist only to provide the Client with information.</p>
+
+<h2><a name="ChefClient-Youcanruntheclientperiodically"></a>You can run the client periodically</h2>
+<p>If you want, you can run the Chef Client as a persistent daemon.  To do this, make your startup script for the chef client execute something like:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Chef Client Interval and Splay</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$ chef-client -i 3600 -s 600</pre>
+		</div>
+</div></div>
+
+<p>The <tt>-i</tt> option provides an <em>Interval</em> - it's how often the Chef client will attempt to wake up and Converge this <a href="Nodes.html" title="Nodes">Node</a>.  The <tt>-s</tt> option is the <em>Splay</em> - a random piece of time added to the interval, which helps avoid the <a href="http://en.wikipedia.org/wiki/Thundering_herd_problem">thundering herd problem</a>. </p>
+
+<h2><a name="ChefClient-Youcantriggerarunonthedaemonizedclient"></a>You can trigger a run on the daemonized client</h2>
+<p>You can wake up the chef-client daemon and cause it to start a run by sending the process a SIGUSR1.  On Linux you can do something like:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Trigger Chef Client to Start a Run on Linux</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$ sudo killall -USR1 chef-client</pre>
+		</div>
+</div></div>
+
+<p>If `killall` doesn't work that way on your OS, you will want to find the process and send the signal directly:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$ ps auxw|grep chef-client
+root           66066   0.9  0.0  2488880    264 s001  S+   10:26AM   0:03.05 /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby /usr/bin/chef-client -i 3600 -s 20
+$ sudo kill -USR1 66066</pre>
+		</div>
+</div></div>
+</td> 
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" /> 
+<br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b><a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">Anatomy of a Chef Run</a></b><br /><br class="atl-forced-newline" />
+<a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">Anatomy of a Chef Run</a> describes the process taken by the <a href="" title="Chef Client">Chef Client</a> to configure an individual <a href="Nodes.html" title="Nodes">Node</a> in detail.</td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b><em>Chef-Client Cookbook</em></b>  
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+The <a href="http://community.opscode.com/cookbooks/chef-client">Opscode chef-client cookbook</a> is available for use on systems that should have a `chef-client` daemon running, such as when Knife bootstrap was used to install Chef on a new system.  
+
+<p>It includes the interval set at 1800 seconds and the splay set at 20 seconds, as configurable defaults, and additional configurable detail information as detailed on this page.</p></td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p>The entire set of options available can be found with the incantation:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Chef Client Option List</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ chef-client --help
+Usage: /usr/bin/chef-client (options)
+    -S, --server CHEFSERVERURL       The chef server URL
+    -k, --client_key KEY_FILE        Set the client key file location
+    -c, --config CONFIG              The configuration file to use
+    -d, --daemonize                  Daemonize the process
+    -E, --environment ENVIRONMENT    Set the Chef Environment on the node
+    -g, --group GROUP                Group to set privilege to
+    -i, --interval SECONDS           Run chef-client periodically, in seconds
+    -j JSON_ATTRIBS,                 Load attributes from a JSON file or URL
+        --json-attributes
+    -l, --log_level LEVEL            Set the log level (debug, info, warn, error, fatal)
+    -L, --logfile LOGLOCATION        Set the log file location, defaults to STDOUT - recommended for daemonizing
+    -N, --node-name NODE_NAME        The node name for this client
+        --once                       Cancel any interval or splay options, run chef once and exit
+    -o RunlistItem,RunlistItem...,   Replace current run list with specified items
+        --override-runlist
+    -P, --pid PIDFILE                Set the PID file location, defaults to /tmp/chef-client.pid
+    -s, --splay SECONDS              The splay time for running at intervals, in seconds
+    -u, --user USER                  User to set privilege to
+    -K, --validation_key KEY_FILE    Set the validation key file location, used for registering new clients
+    -v, --version                    Show chef version
+    -h, --help                       Show this message</pre>
+		</div>
+</div></div>
+
+<p>The JSON_ATTRIBS can be a <tt><a href="Setting the run_list in JSON during run time.html" title="Setting the run_list in JSON during run time">run_list</a></tt> and used to specify roles and/or recipes to add to the node.</p>
+
+<h2><a name="ChefClient-ChefClientConfigurationSettings"></a>Chef-Client Configuration Settings</h2>
+<p><a href="Chef Configuration Settings.html" title="Chef Configuration Settings">Chef Configuration Settings</a> has detail on the configuration settings available for chef-client, and all the Chef executables. </p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Evaluate and Run Resources at Compile Time.html" title="Evaluate and Run Resources at Compile Time"><span class="image-wrap" style="float: left"><img src="../attachments/1179889/20840499.png" hspace="4" style="border: 0px solid black"/></span> Evaluate and Run Resources at Compile Time </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Chef Solo.html" title="Chef Solo"><span class="image-wrap" style="float: right"><img src="../attachments/1179889/20840498.png" hspace="4" style="border: 0px solid black"/></span> Chef Solo </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179889/14876681.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179889/20840498.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179889/20840499.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Workstation Setup for Debian and Ubuntu</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Workstation Setup for Debian and Ubuntu
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Nov 26, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 607x158" href='http://wiki.opscode.com/download../attachments/11666229/transparent_ubuntu_logo.png'><img src="../attachments/thumbnails/11666229/19005518" hspace="28" vspace="4" style="border: 0px solid black"/></a></span></p>
+
+<h3><a name="WorkstationSetupforDebianandUbuntu-"></a><font color="#f7681a">This article explains how to setup a Chef Workstation on Ubuntu or Debian.</font> </h3>
+<p><br class="atl-forced-newline" /></p>
+<h5><a name="WorkstationSetupforDebianandUbuntu-AChefworkstationiswhereyoudevelopcookbooks%2Candinteractwithyourchefserverandnodes."></a>A Chef workstation is where you develop cookbooks, and interact with your chef-server and nodes.  </h5>
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+
+<p><b>Such a workstation typically includes:</b></p>
+
+<ul class="alternate" type="square">
+	<li>A local repository of your cookbooks and possibly other data.</li>
+	<li>A well-configured knife client</li>
+</ul>
+
+
+<p><b>To create such a workstation, this article explains how to</b></p>
+
+<ul class="alternate" type="square">
+	<li>Install Ruby and other Chef dependencies</li>
+	<li>Install Chef</li>
+	<li>Install Git</li>
+	<li>Create a bare-bones chef repository</li>
+	<li>Configure Knife</li>
+</ul>
+
+</td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="32%">
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><tr><td><span class="image-wrap" style="float: right"><a class="confluence-thumbnail-link 300x395" href='http://wiki.opscode.com/download../attachments/11666229/Debian_logo.png'><img src="../attachments/thumbnails/11666229/19005519" style="border: 0px solid black"/></a></span>
+
+<p>This workstation setup has been tested and verified on the following versions of Debian:</p>
+
+<ul>
+	<li>Debian 5.0 (Lenny)</li>
+	<li>Debian 6.0</li>
+	<li>Ubuntu 10.04</li>
+	<li>Ubuntu 10.10</li>
+	<li>Ubuntu 11.04</li>
+</ul>
+</td></tr></table></div>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<p><h2><a name="WorkstationSetupforDebianandUbuntu-InstallRubyandotherDependencies"></a>Install Ruby and other Dependencies</h2>
+<p><font color="#f7681a">Chef is written in Ruby and thus requires Ruby as well as other system dependencies to run.</font> Run the following command to install ruby and other required dependencies:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo apt-get install ruby ruby-dev libopenssl-ruby rdoc ri irb build-essential wget ssl-cert curl]]></script>
+</div></div>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef 10.X Note</b><br />There are open issues with Chef 10.x and Ruby 1.8.6.  If you are using Chef 10.x, you should get 1.8.7 with SSL bindings. If you'd like to use 1.9.1 or 1.9.2, you'll want to follow the <a href="Installing Chef Client on Other Operating Systems.html" title="Installing Chef Client on Other Operating Systems">Installing Chef Client on Other Operating Systems</a> directions to install manually with gems.</td></tr></table></div>
+<br/>
+<h2><a name="WorkstationSetupforDebianandUbuntu-InstallRubyGemsfromSource"></a>Install RubyGems from Source</h2>
+
+<p><font color="#f7681a">We prefer to install RubyGems from source rather than use the OS-provided version (if any), as it is cross platform, so we know what to expect.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install RubyGems</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[cd /tmp
+curl -O http://production.cf.rubygems.org/rubygems/rubygems-1.8.10.tgz
+tar zxf rubygems-1.8.10.tgz
+cd rubygems-1.8.10
+sudo ruby setup.rb --no-format-executable]]></script>
+</div></div>
+
+<h2><a name="WorkstationSetupforDebianandUbuntu-InstallChefGem"></a>Install Chef Gem</h2>
+
+<p><font color="#f7681a">To install Chef and its dependencies, run the following code:</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Chef</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[sudo gem install chef --no-ri --no-rdoc]]></script>
+</div></div>
+</p>
+
+<h2><a name="WorkstationSetupforDebianandUbuntu-Git%28optional%29"></a>Git (optional)</h2>
+
+<p>Git is easily installed from Debians's main apt repository</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$ sudo apt-get -y install git-core
+$ git --version
+git version 1.5.6.5</pre>
+		</div>
+</div></div>
+
+<p>For more in depth Git information please refer to the <a href="http://help.github.com/linux-set-up-git/">help guide on github.com</a>.</p>
+
+
+<p><h2><a name="WorkstationSetupforDebianandUbuntu-CreateaChefRepositoryonyourWorkstation"></a>Create a Chef Repository on your Workstation</h2>
+<p><font color="#f7681a">The following directions will create a Chef repository--a folder on your local workstation from which you can manage your infrastructure.</font>  (Advanced users may find is productive to deviate from the basic setup outlined in these directions.)</p>
+
+<h3><a name="WorkstationSetupforDebianandUbuntu-CopytheskeletonChefRepositoryavailableonGithub"></a>Copy the skeleton Chef Repository available on Github</h3>
+
+<h4><a name="WorkstationSetupforDebianandUbuntu-UsingGit"></a>Using Git</h4>
+<p>Using git, we can create a chef repository by cloning a skeleton repository provided by Opscode:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[cd ~
+git clone git://github.com/opscode/chef-repo.git]]></script>
+</div></div>
+
+<p>This command will create a folder called <tt>chef-repo</tt> in your home directory.  You can clone the repository to a different directory using a command such as:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[git clone git://github.com/opscode/chef-repo.git /path/to/alternate/directory]]></script>
+</div></div>
+
+<h4><a name="WorkstationSetupforDebianandUbuntu-WithoutGit"></a>Without Git</h4>
+<p>If you do not have git, you can copy the skeleton repository using standard unix tools:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[cd ~
+curl https://nodeload.github.com/opscode/chef-repo/tarball/master &gt; chef-repo.tgz
+tar xvf chef-repo.tgz 
+mv -i opscode-chef-repo-a3bec38/ chef-repo]]></script>
+</div></div>
+
+<h3><a name="WorkstationSetupforDebianandUbuntu-CreateaConfigurationFolder"></a>Create a Configuration Folder</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[mkdir -p ~/chef-repo/.chef]]></script>
+</div></div>
+
+<p>Now, we need to copy the necessary keys and knife configuration into this directory.  </p>
+
+<p><font color="#f7681a"><b>For Hosted and Private Chef customers</b></font>, USERNAME.pem can be generated from your <a href="http://community.opscode.com/">Opscode Community profile</a>; ORGANIZATION-validator.pem and knife.rb can be generated from the organizations picker in <a href="http://manage.opscode.com/">Management Console</a>. Generate and download these files and then install them as follows:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[cp USERNAME.pem ~/chef-repo/.chef
+cp ORGANIZATION-validator.pem ~/chef-repo/.chef
+cp knife.rb ~/chef-repo/.chef]]></script>
+</div></div>
+
+<p>where ORGANIZATION should be replaced with your organizations short name and USERNAME should be replaced by your Hosted Chef username. Note, that the paths to <tt>USERNAME.pem</tt>, <tt>ORGANIZATION-validator.pem</tt>, and <tt>knife.rb</tt> should be change to the path to which they were downloaded.  </p>
+
+<p><font color="#f7681a"><b>For those using the Open Source Chef Server</b></font>, you first need to create an admin client for use with knife.<br/>
+Directions for creating an admin client can be found in <a href="http://wiki.opscode.com/display/chef/Installing+Chef+Server+Manually#InstallingChefServerManually-ConfiguretheCommandLineClient">the post-install section of the server configuration</a>.  The validator client key used in that step can be copied to the workstation system from /etc/chef or after it is copied to ~/.chef on the Chef Server system.  Once you have an admin client, copy the user's private key and the validator's private key into your chef repository:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[cp USERNAME.pem ~/chef-repo/.chef
+cp validation.pem ~/chef-repo/.chef]]></script>
+</div></div>
+
+<p>Now, you can then create a knife configuration file using the following command:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife configure]]></script>
+</div></div>
+
+<p><tt>knife configure</tt> will prompt you for information regarding your admin client as well as your chef server.</p>
+
+<h3><a name="WorkstationSetupforDebianandUbuntu-Confirmyourconfigurationisworking"></a>Confirm your configuration is working</h3>
+<p>To confirm that your configuration is working, attempt to run a simple knife command</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife client list]]></script>
+</div></div><br/>
+<h2><a name="WorkstationSetupforDebianandUbuntu-Installotherknifeplugins%28optional%29"></a>Install other knife plugins (optional)</h2>
+
+<p>Additional <a href="Knife.html" title="Knife">Knife</a> commands are shipped as additional gems, and would be installed separately if desired. These include Opscode <a href="Knife Plugins.html" title="Knife Plugins">Knife Plugins</a> to <a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a> on popular cloud services such as ec2 and rackspace. There are also <a href="Community Plugins.html" title="Community Plugins">Community Plugins</a> for knife, chef and ohai - developed and made available by the <a href="Developers.html" title="Developers">open source community</a> to perform a number of different functions.</p>
+
+<p>These plugins can be install using Rubygems:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[sudo gem install PLUGIN_NAME]]></script>
+</div></div></p>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/11666229/21463072.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installation.html" title="Installation">Installation</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/11666229/21463071.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installing Chef Server.html" title="Installing Chef Server">Installing Chef Server</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666229/19005516.gif">logo_ubuntu_linux_for_transparent.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666229/19005517.png">debian.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666229/19005518.png">transparent_ubuntu_logo.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666229/19005519.png">Debian_logo.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666229/21463071.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666229/21463072.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Knife Windows Bootstrap</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Knife Windows Bootstrap
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /> <span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 200x177" href='http://wiki.opscode.com/download../attachments/8257638/windows-logo.png'><img src="../attachments/thumbnails/8257638/21463141" hspace="20" vspace="10" style="border: 0px solid black"/></a></span></p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>New in 10.0</b><br />This feature is new for Chef 0.10.</td></tr></table></div>
+
+<h1><a name="KnifeWindowsBootstrap-Description"></a>Description</h1>
+
+
+<h5><a name="KnifeWindowsBootstrap-"></a><font color="#f7681a">This</font> <font color="#f7681a"><a href="Knife Plugins.html" title="Knife Plugins">Knife Plugin</a></font> <font color="#f7681a">adds additional functionality to the</font> <font color="#f7681a"><a href="Knife.html" title="Knife">Chef Knife CLI tool</a></font> <font color="#f7681a">for configuring/interacting with nodes running Microsoft Windows.</font></h5>
+
+<p>The subcommands should function on any system running Ruby 1.9.1&#43; but nodes being configured via these subcommands require Windows Remote Management (WinRM) 1.0+. WinRM allows you to call native objects in Windows, which includes, but is not limited to:</p>
+<ul>
+	<li>running batch scripts,</li>
+	<li>powershell scripts and</li>
+	<li>fetching WMI variables.</li>
+</ul>
+
+
+<p><em>For more information on WinRM, please visit</em> <em><a href="http://msdn.microsoft.com/en-us/library/aa384426(v=vs.85).aspx">Microsoft's WinRM site</a></em><em>.</em></p>
+
+<p><font color="#f7681a">You will want to familiarize yourself with (certain key aspects) of WinRM because you will be writing scripts/running commands with this tool to get you from (specific point A) to (specific point B).</font> WinRM is built into Windows 7 and Windows Server 2008+. It can also be easily installed in older version of Windows, including:</p>
+
+<ul>
+	<li>Windows Server 2003</li>
+	<li>Windows Vista</li>
+</ul>
+
+
+<p>More information can be found on <a href="http://support.microsoft.com/kb/968930">Microsoft Support article 968930</a>.</p></td>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="28%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#KnifeWindowsBootstrap-Description'>Description</a></li>
+    <li><a href='#KnifeWindowsBootstrap-Requirements%2FVersion'>Requirements/Version</a></li>
+    <li><a href='#KnifeWindowsBootstrap-Installation'>Installation</a></li>
+    <li><a href='#KnifeWindowsBootstrap-Subcommands'>Subcommands</a></li>
+<ul>
+    <li><a href='#KnifeWindowsBootstrap-knifewinrm'>knife winrm</a></li>
+    <li><a href='#KnifeWindowsBootstrap-knifebootstrapwindowswinrm'>knife bootstrap windows winrm</a></li>
+    <li><a href='#KnifeWindowsBootstrap-knifebootstrapwindowsssh'>knife bootstrap windows ssh</a></li>
+</ul>
+    <li><a href='#KnifeWindowsBootstrap-BootstrapTemplates'>Bootstrap Templates</a></li>
+<ul>
+    <li><a href='#KnifeWindowsBootstrap-windowschefclientmsi'>windows-chef-client-msi</a></li>
+    <li><a href='#KnifeWindowsBootstrap-windowsshell'>windows-shell</a></li>
+</ul>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Opscode Windows Cookbooks</b><br /><br class="atl-forced-newline" />
+Providing the setup, automation and maintenance of Windows-based servers and applications
+<ul>
+	<li><b><a href="http://community.opscode.com/cookbooks/powershell">Powershell</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/iis">IIS</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/sql_server">SQL-Server</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/7-zip">7-zip</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/windows">Windows Primitives</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/webpi">Web Platform Installer (WebPI)</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/wix">Windows Installer XML (WiX)</a></b></li>
+</ul>
+</td></tr></table></div>
+<p><br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h1><a name="KnifeWindowsBootstrap-Requirements%2FVersion"></a>Requirements/Version</h1>
+
+<ul>
+	<li>Chef is supported on Windows Server 2008 R2, 2003 R2 and Windows 7. Additionally, it is known to run on Windows Vista.</li>
+</ul>
+
+
+<ul>
+	<li><a href="Knife Plugins.html" title="Knife Plugins">Knife Plugins</a> require Chef 0.10 or greater.</li>
+</ul>
+
+
+<ul>
+	<li>knife-windows requires Ruby 1.9.1 or greater.</li>
+</ul>
+
+
+<ul>
+	<li>The following modifications should be made to hosts that you would like to communicate with using WinRM:
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>The following should be run within cmd.exe, not Powershell, in order to avoid issues with escaping the command line.</td></tr></table></div>
+	<ul>
+		<li><font color="#f7681a">A server running WinRM must be configured properly to allow outside connections and the entire network path from the knife workstation to the server.</font> The easiest way to accomplish this is to use <a href="http://msdn.microsoft.com/en-us/library/aa384372(v=vs.85).aspx#quick_default_configuration">WinRM's quick configuration option</a>:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\Users\Administrator&gt; winrm quickconfig -q</pre>
+		</div>
+</div></div></li>
+		<li>The Chef and Ohai gem installations (that occur during bootstrap) take more memory than the default 150MB WinRM allocates per shell. Bump it up to 300MB with the following setting:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\Users\Administrator&gt; winrm set winrm/config/winrs @{MaxMemoryPerShellMB="300"}</pre>
+		</div>
+</div></div></li>
+		<li>Bootstrap commands can take longer than the WinRM default 60 seconds to complete, bump to 30 minutes:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\Users\Administrator&gt; winrm set winrm/config @{MaxTimeoutms="1800000"}</pre>
+		</div>
+</div></div>
+<p>WinRM supports both the HTTP and HTTPS transports and the following authentication schemes: Kerberos, Digest, Certificate and Basic. The details of these authentication transports are outside of the scope of this README but details can be found on the <a href="http://msdn.microsoft.com/en-us/library/aa384372(v=vs.85).aspx">WinRM configuration guide</a>. Currently, this plugin support Kerberos and Basic authentication schemes.//</p></li>
+		<li>For development and testing purposes, unencrypted traffic with Basic authentication can make things easier:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\Users\Administrator&gt; winrm set winrm/config/service @{AllowUnencrypted="true"}
+C:\Users\Administrator&gt; winrm set winrm/config/service/auth @{Basic="true"}</pre>
+		</div>
+</div></div></li>
+	</ul>
+	</li>
+</ul>
+
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>WinRM installation must be configured correctly</b><br />Before any WinRM related knife subcommands will function correctly a node’s WinRM installation must be configured correctly. The above settings should be added to your base server image (AMI) or passed in using some sort of user-data mechanism provided by your cloud provider.</td></tr></table></div>
+
+<p>On 2008R1 and earlier, windows defaults to using port 80 for winrm HTTP and 443 for winrm HTTPS. To change winrm to used HTTP on port</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">winrm delete winrm/config/listener?Address=*+Transport=HTTP
+Winrm create winrm/config/listener?Address=*+Transport=HTTP @{Port="5985"}
+
+netsh advfirewall firewall set rule group="remote administration" new enable=yes
+netsh firewall add portopening TCP 5985 "Port 5985"
+
+net stop winrm
+sc config winrm start= auto
+net start winrm</pre>
+		</div>
+</div></div>
+
+<h1><a name="KnifeWindowsBootstrap-Installation"></a>Installation</h1>
+
+<p><font color="#f7681a">Knife Plugins ship as Ruby gems so knife-windows is easily installable.</font></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">gem install knife-windows</pre>
+		</div>
+</div></div>
+
+<p>Since knife-windows is written in pure Ruby (just like Chef) you should be able to install it on any platform that Chef supports. This means you can manage your Windows nodes from the comfort of bash on your favorite Linux distro or better yet zsh on OS X if you'd like&#33;</p>
+
+<h1><a name="KnifeWindowsBootstrap-Subcommands"></a>Subcommands</h1>
+
+<p>This plugin provides the following <a href="Knife.html" title="Knife">Knife</a> subcommands. <b>Specific command options can be found by invoking the subcommand with a ---help flag.</b></p>
+
+<h3><a name="KnifeWindowsBootstrap-knifewinrm"></a>knife winrm</h3>
+
+<p><font color="#f7681a">The winrm subcommand allows you to invoke commands in parallel on a <em>subset of the nodes</em> in your infrastructure.</font> The winrm subcommand uses the same syntax as the <a href="Search.html" title="Search">search subcommand</a>; you could could find the uptime of all your web servers using the command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife winrm "role:web" "net stats srv" -x Administrator -P 'super_secret_password'</pre>
+		</div>
+</div></div>
+
+<p>You could also invoke everyone's favorite Windows command ipconfig against a <em>single server</em> (vs a search query in the prior example) using the following command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife winrm 'ec2-50-xx-xx-124.compute-1.amazonaws.com' 'ipconfig' -m -x Administrator -P 'secret_password'</pre>
+		</div>
+</div></div>
+
+<p>Or force a chef run:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife winrm 'ec2-50-xx-xx-124.compute-1.amazonaws.com' 'chef-client -c c:/chef/client.rb' -m -x Administrator -P 'super_secret_password'
+    ec2-50-xx-xx-124.compute-1.amazonaws.com [Fri, 04 Mar 2011 22:00:49 +0000] INFO: Starting Chef Run (Version 0.9.12)
+    ec2-50-xx-xx-124.compute-1.amazonaws.com [Fri, 04 Mar 2011 22:00:50 +0000] WARN: Node ip-0A502FFB has an empty run list.
+    ec2-50-xx-xx-124.compute-1.amazonaws.com [Fri, 04 Mar 2011 22:00:53 +0000] INFO: Chef Run complete in 4.383966 seconds
+    ec2-50-xx-xx-124.compute-1.amazonaws.com [Fri, 04 Mar 2011 22:00:53 +0000] INFO: cleaning the checksum cache
+    ec2-50-xx-xx-124.compute-1.amazonaws.com [Fri, 04 Mar 2011 22:00:53 +0000] INFO: Running report handlers
+    ec2-50-xx-xx-124.compute-1.amazonaws.com [Fri, 04 Mar 2011 22:00:53 +0000] INFO: Report handlers complete</pre>
+		</div>
+</div></div>
+<p>This subcommand operates in a very similar manner as <a href="Knife.html#Knife-SSHSubcommand">knife ssh</a> leveraging the WinRM protocol for communication. It also include’s knife ssh’s "<a href="Knife.html#Knife-InteractiveMode">interactive session mode</a>"</p>
+
+<h3><a name="KnifeWindowsBootstrap-knifebootstrapwindowswinrm"></a>knife bootstrap windows winrm</h3>
+
+<p><font color="#f7681a">Performs a Chef Bootstrap (via the WinRM protocol) on the target node.</font> The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists. It is primarily intended for Chef Client systems that talk to a Chef server.</p>
+
+<p>In the future this subcommand will be used internally by some cloud computing server create commands like the current <b>knife bootstrap</b> subcommand is. This subcommand operates in a very similar manner as <a href="Knife Bootstrap.html" title="Knife Bootstrap">knife bootstrap</a> leveraging the WinRM protocol for communication. An initial run_list for the node can also be passed to the subcommand. Example usage:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap windows winrm ec2-50-xx-xx-124.compute-1.amazonaws.com -r 'role[webserver]','role[production]' -x Administrator -P 'super_secret_password'</pre>
+		</div>
+</div></div>
+
+<h3><a name="KnifeWindowsBootstrap-knifebootstrapwindowsssh"></a>knife bootstrap windows ssh</h3>
+
+<p><font color="#f7681a">Performs a Chef Bootstrap (via the SSH protocol) on the target node.</font> The goal of the bootstrap is to get Chef installed on the target system so it can run Chef Client with a Chef Server. The main assumption is a baseline OS installation exists. It is primarily intended for Chef Client systems that talk to a Chef server.</p>
+
+<p>This subcommand assumes the SSH session will use Windows native cmd.exe command shell vs a bash shell through an emulated cygwin layer. Most popular Windows based SSHd daemons like <a href="http://www.freesshd.com/">freeSSHd</a> and <a href="http://www.bitvise.com/winsshd">WinSSHD</a> behave this way.</p>
+
+<p>An initial run_list for the node can also be passed to the subcommand. Example usage:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap windows ssh ec2-50-xx-xx-124.compute-1.amazonaws.com -r 'role[webserver],role[production]' -x Administrator -i ~/.ssh/id_rsa</pre>
+		</div>
+</div></div>
+
+<h1><a name="KnifeWindowsBootstrap-BootstrapTemplates"></a>Bootstrap Templates</h1>
+
+<p>This gem provides the following bootstrap templates:</p>
+
+<h3><a name="KnifeWindowsBootstrap-windowschefclientmsi"></a>windows-chef-client-msi</h3>
+
+<p>This bootstrap template does the following:</p>
+
+<ol>
+	<li>Installs the latest version of Chef (and all dependencies) using the `chef-client` msi.</li>
+	<li>Writes the validation.pem per the local knife configuration.</li>
+	<li>Writes a default config file for Chef (C:\chef\client.rb) using values from the <ins>knife.rb</ins>.</li>
+	<li>Creates a JSON attributes file containing the specified run list and run Chef.</li>
+</ol>
+
+
+<p>This is the default bootstrap template used by both the <ins>windows</ins> <ins>bootstrap</ins> subcommands.</p>
+
+<h3><a name="KnifeWindowsBootstrap-windowsshell"></a>windows-shell</h3>
+
+<p>This bootstrap template does the following:</p>
+
+<ol>
+	<li>Installs Ruby 1.8.7 via the <a href="http://rubyinstaller.org/">Ruby Installer for Windows</a> which also includes the latest version of RubyGems</li>
+	<li>Installs the RubyInstaller Development Kit (DevKit). The RubyInstaller Development Kit (DevKit) is a MSYS/MinGW based toolkit than enables you to build many of the native C/C+&#43; extensions available for Ruby.</li>
+	<li>Installs required Windows-related gems from RubyGems.org</li>
+	<li>Installs latest Chef version from RubyGems.org including <a href="https://rubygems.org/gems/ohai">Ohai</a> and <a href="https://rubygems.org/gems/chef">Chef</a>.</li>
+	<li>Writes the validation.pem per the local knife configuration.</li>
+	<li>Writes a default config file for Chef (C:\chef\client.rb) using values from the <ins>knife.rb</ins>.</li>
+	<li>Creates a JSON attributes file containing the specified run list and run Chef.</li>
+</ol>
+
+
+<p>This should be considered a legacy bootstrap template and will most likely be removed in a future version.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Custom Knife Bootstrap Script.html" title="Custom Knife Bootstrap Script"><span class="image-wrap" style="float: left"><img src="../attachments/8257638/21463143.png" hspace="4" style="border: 0px solid black"/></span> Custom Knife Bootstrap Script </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Knife Exec.html" title="Knife Exec"><span class="image-wrap" style="float: right"><img src="../attachments/8257638/21463142.png" hspace="4" style="border: 0px solid black"/></span> Knife Exec </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257638/13238277.jpg">windows-logo.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257638/21463141.png">windows-logo.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257638/21463142.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257638/21463143.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

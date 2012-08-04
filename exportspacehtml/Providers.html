@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Providers</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Providers
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><br class="atl-forced-newline" /></p>
+<div class="" align="center"><h3><a name="Providers-"></a><font color="#f7681a">Providers take a <a href="Resources.html" title="Resources">resource</a>, compare that <a href="Resources.html" title="Resources">resource</a> to the current state of the part of the system it is managing, and then takes the Action specified in the <a href="Resources.html" title="Resources">resource</a>.</font></h3></div>
+
+<div class="" align="center"><h5><a name="Providers-ProvidersallowCheftosupportmultipleplatformswithasingleResource."></a>Providers allow Chef to support multiple platforms with a single Resource.</h5></div>
+
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+<p><span class="image-wrap" style="float: left"><img src="../attachments/1179780/20840704.png" hspace="20" style="border: 0px solid black"/></span></p>
+<h2><a name="Providers-Whatprovidersareavailable%3F"></a>What providers are available?</h2>
+
+<p><font color="#f7681a">The real question you should be asking is <em>"What providers are available for a given <a href="Resources.html" title="Resources">Resource</a>?"</em></font>  You can find that answer by looking at the <a href="Resources.html" title="Resources">Resources</a> page, in the Providers section for any individual resource type.</p>
+
+<h2><a name="Providers-HowdoesChefknowwhichProvidertouse%3F"></a>How does Chef know which Provider to use?</h2>
+
+<p>Chef maps Providers to Platforms (and Platform Versions) via <tt>Chef::Platform</tt>.  In this class you will find a class instance variable <tt>@platforms</tt>, which consists of a Hash of various Platforms and Versions.  <font color="#f7681a">We look up the resource type in this hash according to your <a href="Nodes.html" title="Nodes">Nodes</a> platform and platform_version <a href="Attributes.html" title="Attributes">Attributes</a> (which are provided by <a href="Ohai.html" title="Ohai">Ohai</a>).</font></p>
+
+<h2><a name="Providers-HowdoProviders...Provide%3F"></a>How do Providers... Provide?</h2>
+
+<p>We did our best to keep adding new Providers to Chef as simple as possible.</p>
+
+<p>For each resource:</p>
+<ol>
+	<li>We look up the proper provider</li>
+	<li>We build a new instance of that provider</li>
+	<li>We call <tt>load_current_resource</tt>, which uses the <tt>@new_resource</tt> as a "guide" to look up the current state of the resource under management.</li>
+	<li>We then call the <tt>action_</tt> method for the action provided.</li>
+	<li>Ensure we mark the resource as <tt>updated</tt> if any changes happened.</li>
+</ol>
+
+
+<p>For example, given a resource such as:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>"Sample Resource"</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">directory "/tmp/monkey" do
+  owner "root"
+  group "root"
+  mode 0755
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<p>We would:</p>
+
+<ol>
+	<li>Look up the provider for a <a href="Resources.html#Resources-Directory">directory</a> resource, which happens to be Chef::Provider::Directory</li>
+	<li>Call <tt>load_current_resource</tt>, which creates a new <tt>directory["/tmp/monkey"]</tt> resource, based on the directories current state (which goes in <tt>@current_resource</tt>).</li>
+	<li>Call <tt>action_create</tt>, which is responsible making sure the directory exists, and that it's attributes are correct.</li>
+	<li>If we changed the directory in any way, we mark the resource as updated.</li>
+</ol>
+
+
+<p>That's it!</p>
+
+<h2><a name="Providers-HowdoIwritenewProviders%3F"></a>How do I write new Providers?</h2>
+
+<p><font color="#f7681a">If you want to write your own providers for resources that don't exist in Chef, you can use <a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers &#40;LWRP&#41;</a> in your cookbook(s).</font></p>
+
+<p>If you want to write a new provider for Chef itself and contribute to the project, that's awesome! We will help you out as much as we can.  Go read the <a href="How to Contribute.html" title="How to Contribute">instructions for how to contribute</a> to an Opscode project, hop on <a href="IRC.html" title="IRC">the Chef IRC channel</a>, and get started.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Resources.html" title="Resources"><span class="image-wrap" style="float: left"><img src="../attachments/1179780/20840702.png" hspace="4" style="border: 0px solid black"/></span> Resources </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)"><span class="image-wrap" style="float: right"><img src="../attachments/1179780/20840701.png" hspace="4" style="border: 0px solid black"/></span> Lightweight Resources and Providers (LWRP) </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179780/20840701.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179780/20840702.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179780/20840704.png">7697215-a-green-two-way-street-sign-with-arrows-and-the-words-you-decide.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

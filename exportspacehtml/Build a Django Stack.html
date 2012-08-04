@@ -1,0 +1,453 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Build a Django Stack</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Build a Django Stack
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 02, 2011 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <p><br class="atl-forced-newline" /></p>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="48%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-color: #f7681a;border-width: 3px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: right"><img src="../attachments/19071285/19005496.jpg" hspace="12" vspace="4" style="border: 0px solid black"/></span></p>
+
+<h4><a name="BuildaDjangoStack-"></a><font color="#f7681a">Build a Django application stack using Chef cookbooks available from the <a href="http://cookbooks.opscode.com">Cookbooks Community Site</a> and Hosted Chef.</font> </h4>
+<p>The Walkthrough Guide assumes you followed the <a href="Fast Start Guide.html" title="Fast Start Guide">Fast Start Guide</a> and have Chef installed and working with the Hosted Chef platform.</p>
+
+<p><b>At the end of this guide, you'll have four total Ubuntu 10.04 systems running in Amazon EC2.</b></p>
+<ul class="alternate" type="square">
+	<li>1 haproxy load balancer.</li>
+	<li>2 Django (Gunicorn) application servers.</li>
+	<li>1 MySQL database server.</li>
+</ul>
+
+
+<p>If you don't already have an account with Amazon AWS, go to <a href="http://aws.amazon.com/">Amazon Web Sevices</a> and click "Sign up". You'll need the access and secret access key credentials from the sign-up later.</p>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+The Django application used in this guide leverages the <a href="http://djangocms.org/">Django CMS</a> application. The source code for our Django application can be <a href="https://github.com/opscode/django-quick-start-cms">downloaded on the Opscode GitHub account</a>. This application follows the <a href="https://www.django-cms.org/en/documentation/">out of the box setup instructions</a> found on the Django CMS project site.  We have also created a <a href="http://pip.openplans.org/requirement-format.html">pip requirements file</a> for tracking project dependancies.</p>
+
+<p>We're going to reuse a number of cookbooks from the <a href="http://cookbooks.opscode.com">Cookbooks Community Site</a> to build the environment. For example, the source code lives in <b>git</b>, so that cookbook will ensure Git is available. The load balancer is <b>haproxy</b> because it is very simple to deploy and configure, and we use a recipe that automatically discovers the Django application systems. The heavy lifting is handled by recipes in the <b>application</b> and <b>database</b> cookbooks.</p>
+
+<p>The <b>application</b> cookbook will perform the following steps:</p>
+
+<ul>
+	<li>create an application specific virtualenv</li>
+	<li>install required packages and pips into the project specific virtualenv</li>
+	<li>set up the deployment scaffolding</li>
+	<li>creates settings_local.py file with the database connection information if required</li>
+	<li>performs a revision-based deploy</li>
+	<li>install Gunicorn</li>
+	<li>create an application specific Gunicorn configuration file</li>
+	<li>create a Runit service for managing Gunicorn</li>
+</ul>
+</td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="33%">
+<p><br class="atl-forced-newline" /></p>
+<hr />
+<h5><a name="BuildaDjangoStack-GuideBasedUponUbuntu10.04onAmazonAWSEC2withChef0.10.0."></a>Guide Based Upon Ubuntu 10.04 on Amazon AWS EC2 with Chef 0.10.0.</h5>
+<hr />
+<p><em><b>Note:</b> At this time, the steps described above have only been tested on the identified platform(s).  Opscode has not researched and does not support alternative steps that may lead to successful completion on other platforms.  Platform(s) supported by this guide may change over time, so please do check back for updates.  If you'd like to undertake this guide on an alternate platform, you may desire to turn to open source community resources for support assistance.</em></p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> <object id="myFlashContent" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+        width="600" height="480">
+    <param name="movie" value="http://blip.tv/play/AYK81h8C&quot;,&quot;thirdpartyid&quot;:null,&quot;playlists&quot;:null,&quot;thumbnailFilename&quot;:&quot;Opscode-BuildADjangoWebApplicationStackWithChef614.png&quot;,&quot;embedLookup&quot;:&quot;AYK81h8C&quot;,&quot;adsEnabled&quot;:null,&quot;nextHiddenDate&quot;:null,&quot;languageCode&quot;:&quot;en&quot;,&quot;numMidrolls&quot;:null,&quot;adminTitle&quot;:&quot;Build a Django Web Application Stack with Chef&quot;,&quot;postsId&quot;:5188283,&quot;thumbnailUrl&quot;:&quot;http://a.images.blip.tv/Opscode-BuildADjangoWebApplicationStackWithChef614.png&quot;,&quot;midrollStart&quot;:null,&quot;userId&quot;:&quot;371369&quot;,&quot;adOptOut&quot;:&quot;1&quot;,&quot;midrollDuration&quot;:null,&quot;display_name&quot;:&quot;Opscode&quot;,&quot;tags&quot;:[{&quot;name&quot;:&quot;opscode&quot;},{&quot;name&quot;:&quot;chef&quot;},{&quot;name&quot;:&quot;opschef&quot;},{&quot;name&quot;:&quot;automation&quot;},{&quot;name&quot;:&quot;configuration&quot;},{&quot;name&quot;:&quot;management&quot;},{&quot;name&quot;:&quot;python&quot;},{&quot;name&quot;:&quot;django&quot;},{&quot;name&quot;:&quot;django cms&quot;},{&quot;name&quot;:&quot;web application&quot;}],&quot;categoryName&quot;:&quot;Technology&quot;,&quot;itemType&quot;:&quot;file&quot;,&quot;hidden&quot;:&quot;0&quot;,&quot;youtube_description&quot;:null},&quot;User&quot;:&quot;opscode&quot;}">
+    <param name="allowFullScreen" value="true">
+    <param name="allowscriptaccess" value="always">
+        <!--[if !IE]>-->
+    <object type="application/x-shockwave-flash" data="http://blip.tv/play/AYK81h8C&quot;,&quot;thirdpartyid&quot;:null,&quot;playlists&quot;:null,&quot;thumbnailFilename&quot;:&quot;Opscode-BuildADjangoWebApplicationStackWithChef614.png&quot;,&quot;embedLookup&quot;:&quot;AYK81h8C&quot;,&quot;adsEnabled&quot;:null,&quot;nextHiddenDate&quot;:null,&quot;languageCode&quot;:&quot;en&quot;,&quot;numMidrolls&quot;:null,&quot;adminTitle&quot;:&quot;Build a Django Web Application Stack with Chef&quot;,&quot;postsId&quot;:5188283,&quot;thumbnailUrl&quot;:&quot;http://a.images.blip.tv/Opscode-BuildADjangoWebApplicationStackWithChef614.png&quot;,&quot;midrollStart&quot;:null,&quot;userId&quot;:&quot;371369&quot;,&quot;adOptOut&quot;:&quot;1&quot;,&quot;midrollDuration&quot;:null,&quot;display_name&quot;:&quot;Opscode&quot;,&quot;tags&quot;:[{&quot;name&quot;:&quot;opscode&quot;},{&quot;name&quot;:&quot;chef&quot;},{&quot;name&quot;:&quot;opschef&quot;},{&quot;name&quot;:&quot;automation&quot;},{&quot;name&quot;:&quot;configuration&quot;},{&quot;name&quot;:&quot;management&quot;},{&quot;name&quot;:&quot;python&quot;},{&quot;name&quot;:&quot;django&quot;},{&quot;name&quot;:&quot;django cms&quot;},{&quot;name&quot;:&quot;web application&quot;}],&quot;categoryName&quot;:&quot;Technology&quot;,&quot;itemType&quot;:&quot;file&quot;,&quot;hidden&quot;:&quot;0&quot;,&quot;youtube_description&quot;:null},&quot;User&quot;:&quot;opscode&quot;}" width="600" height="480">
+        <param name="movie" value="http://blip.tv/play/AYK81h8C&quot;,&quot;thirdpartyid&quot;:null,&quot;playlists&quot;:null,&quot;thumbnailFilename&quot;:&quot;Opscode-BuildADjangoWebApplicationStackWithChef614.png&quot;,&quot;embedLookup&quot;:&quot;AYK81h8C&quot;,&quot;adsEnabled&quot;:null,&quot;nextHiddenDate&quot;:null,&quot;languageCode&quot;:&quot;en&quot;,&quot;numMidrolls&quot;:null,&quot;adminTitle&quot;:&quot;Build a Django Web Application Stack with Chef&quot;,&quot;postsId&quot;:5188283,&quot;thumbnailUrl&quot;:&quot;http://a.images.blip.tv/Opscode-BuildADjangoWebApplicationStackWithChef614.png&quot;,&quot;midrollStart&quot;:null,&quot;userId&quot;:&quot;371369&quot;,&quot;adOptOut&quot;:&quot;1&quot;,&quot;midrollDuration&quot;:null,&quot;display_name&quot;:&quot;Opscode&quot;,&quot;tags&quot;:[{&quot;name&quot;:&quot;opscode&quot;},{&quot;name&quot;:&quot;chef&quot;},{&quot;name&quot;:&quot;opschef&quot;},{&quot;name&quot;:&quot;automation&quot;},{&quot;name&quot;:&quot;configuration&quot;},{&quot;name&quot;:&quot;management&quot;},{&quot;name&quot;:&quot;python&quot;},{&quot;name&quot;:&quot;django&quot;},{&quot;name&quot;:&quot;django cms&quot;},{&quot;name&quot;:&quot;web application&quot;}],&quot;categoryName&quot;:&quot;Technology&quot;,&quot;itemType&quot;:&quot;file&quot;,&quot;hidden&quot;:&quot;0&quot;,&quot;youtube_description&quot;:null},&quot;User&quot;:&quot;opscode&quot;}">
+        <param name="allowFullScreen" value="true">
+        <param name="allowscriptaccess" value="always">
+            <!--<![endif]-->
+        <a href="http://get.adobe.com/flashplayer/">
+           <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />
+        </a>
+    <!--[if !IE]>-->
+    </object>
+    <!--<![endif]-->
+</object> </th>
+</tr>
+<tr>
+<td class='confluenceTd'> If there are issues with the screencast above, it is also available at <a href="http://blip.tv/opscode/build-a-django-web-application-stack-with-chef-5188283">blip.tv</a>. </td>
+</tr>
+</tbody></table>
+</div>
+
+</td>
+<td class="confluenceTd" valign="top" width="3%"></td></tr></tbody></table>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><span class="image-wrap" style="float: right"><img src="../attachments/19071285/19005497.png" hspace="20" vspace="8" style="border: 0px solid black"/></span><br/>
+Integrating together with environment roles and the application cookbook, the <b>database</b> cookbook looks through the shared <b>apps</b> data bag and prepares a mysql database master with an empty database and basic account information for the Django CMS application, leaving it ready for application-specific database bootstrapping steps.</p>
+
+<p>The <b>django_cms</b> cookbook does this work and creates an initial superuser for the CMS.  This follows the recommended pattern of creating a cookbook named after the application that is being deployed for application-specific setup and configurations.</p>
+
+<h2><a name="BuildaDjangoStack-EnvironmentSetup"></a>Environment Setup</h2>
+<p>First, let's configure the local workstation.</p>
+
+<h5><a name="BuildaDjangoStack-ShellEnvironment"></a>Shell Environment</h5>
+
+<p>Obtain the repository used for this guide. It contains all the components required. Use git:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">git clone git://github.com/opscode/django-quick-start.git</pre>
+		</div>
+</div></div>
+
+<h5><a name="BuildaDjangoStack-ChefandKnife"></a>Chef and Knife</h5>
+
+<p><b>Ubuntu/Debian users</b>: Install XML2 and XLST development headers on your system:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get install libxml2-dev libxslt-dev</pre>
+		</div>
+</div></div>
+<p><b>All Users</b>: You'll need some additional gems for Knife to launch instances in Amazon EC2:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo gem install knife-ec2</pre>
+		</div>
+</div></div>
+<p>As part of the <a href="Fast Start Guide.html" title="Fast Start Guide">Fast Start Guide</a>, you cloned a chef-repo and copied the Knife configuration file (knife.rb), validation certificate (ORGNAME-validator.pem) and user certificate (USERNAME.pem) to <tt>~/chef-repo/.chef/</tt>. Copy these files to the new django-quick-start repository. You can also re-download the Knife configuration file for your organization with the <a href="http://wiki.opscode.com/display/chef/Managing+Organizations+with+the+Hosted+Chef+Management+Console#ManagingOrganizationswiththeHostedChefManagementConsole-RegeneratingthePrivateKeyandtheKnifeConfig">Hosted Chef Management Console</a>.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mkdir ~/django-quick-start/.chef
+    cp ~/chef-repo/.chef/knife.rb ~/django-quick-start/.chef
+    cp ~/chef-repo/.chef/USERNAME.pem ~/django-quick-start/.chef
+    cp ~/chef-repo/.chef/ORGNAME-validator.pem ~/django-quick-start/.chef</pre>
+		</div>
+</div></div>
+<p>Add the Amazon AWS credentials to the Knife configuration file.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">vi ~/django-quick-start/.chef/knife.rb</pre>
+		</div>
+</div></div>
+<p>Add the following two lines to the end:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife[:aws_access_key_id] = "replace with the Amazon Access Key ID"
+    knife[:aws_secret_access_key] =  "replace with the Amazon Secret Access Key ID"</pre>
+		</div>
+</div></div>
+<p>Once the django-quick-start and knife configuration is in place, we'll work from this directory.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cd django-quick-start</pre>
+		</div>
+</div></div>
+
+<h5><a name="BuildaDjangoStack-AmazonAWSEC2"></a>Amazon AWS EC2</h5>
+
+<p>In addition to the credentials, two additional things need to be configured in the AWS account.</p>
+
+<p>Configure the default <a href="http://docs.amazonwebservices.com/AWSEC2/latest/DeveloperGuide/index.html?using-network-security.html">security group</a> to allow incoming connections for the following ports.</p>
+
+<ul>
+	<li>22 - ssh</li>
+	<li>80 - haproxy load balancer</li>
+	<li>22002 - haproxy administrative interface</li>
+	<li>8080 - Gunicorn Django application</li>
+</ul>
+
+
+<p>Add these to the default security group for the account using the AWS Console.</p>
+
+<p>1. Sign into the <a href="https://console.aws.amazon.com/s3/home">Amazon AWS Console</a>.<br/>
+2. Click on the "Amazon EC2" tab at the top.<br/>
+3. Click on "Security Groups" in the left sidebar of the AWS Console.<br/>
+4. Select the "Default" group in the main pane.<br/>
+5. Enter the values shown for each of the ports required. Use "Custom" in the drop-down for 22002 and 8080.<br/>
+<span class="image-wrap" style=""><img src="../attachments/19071285/19005498.jpg" style="border: 0px solid black"/></span></p>
+
+
+<p>Create an <a href="http://docs.amazonwebservices.com/AWSEC2/latest/DeveloperGuide/index.html?using-credentials.html#using-credentials-keypair">SSH Key Pair</a> and save the private key in <tt>~/.ssh</tt>.</p>
+
+<p>1. In the AWS Console, click on "Key Pairs" in the left sidebar.<br/>
+2. Click on "Create Keypair" at the top of the main pane.<br/>
+3. Give the keypair a name like "django-quick-start".<br/>
+4. The keypair will be downloaded automatically by the browser and saved to the default Downloads location.<br/>
+5. Move the django-quick-start.pem file from the default Downloads location to <tt>~/.ssh</tt> and change permissions so that only you can read the file.  For example,</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mv ~/Downloads/django-quick-start.pem ~/.ssh  
+    chmod 600 ~/.ssh/django-quick-start.pem</pre>
+		</div>
+</div></div>
+
+<h2><a name="BuildaDjangoStack-AcquireCookbooks"></a>Acquire Cookbooks</h2>
+
+<p>The django-quick-start has all the cookbooks we need for this guide. They were downloaded along with their dependencies from the cookbooks site using Knife. These are in the <tt>cookbooks/</tt> directory.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">apt
+    git
+    application
+    database
+    haproxy</pre>
+		</div>
+</div></div>
+<p>A single new non-community cookbook was also created for this quick-start. This django_cms cookbook contains a recipe that is used to bootstrap our database and create the initial superuser. This follows the recommended pattern of creating a cookbook named after the application which contains application specific setup and configurations.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">django_cms</pre>
+		</div>
+</div></div>
+<p>Upload all the cookbooks to Hosted Chef.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload -a</pre>
+		</div>
+</div></div>
+
+<h2><a name="BuildaDjangoStack-ServerRoles"></a>Server Roles</h2>
+
+<p>All the required roles have been created in the django-quick-start repository. They are in the <tt>roles/</tt> directory.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">base.rb
+    django_cms_database_master.rb
+    django_cms.rb
+    django_cms_load_balancer.rb</pre>
+		</div>
+</div></div>
+<p>Upload all the roles to Hosted Chef.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rake roles</pre>
+		</div>
+</div></div>
+
+<h2><a name="BuildaDjangoStack-DataBagItem"></a>Data Bag Item</h2>
+
+<p>The django-quick-start repository contains a data bag item that has all the information required to deploy and configure the Django CMS application from source using the recipes in the <b>application</b> and <b>database</b> cookbooks.</p>
+
+<p>The data bag name is <b>apps</b> and the item name is <b>django_cms</b>. Upload this to Hosted Chef.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag create apps
+    knife data bag from file apps django_cms.json</pre>
+		</div>
+</div></div>
+
+<h2><a name="BuildaDjangoStack-DecisionTime"></a>Decision Time</h2>
+
+<p>It is time for you to decide whether you want a single instance running Django CMS, or a few instances as a small infrastructure.</p>
+
+<p>In either case, we're going to use m1.small instances with the 32 bit Ubuntu 10.04 image provided <a href="http://uec-images.ubuntu.com/releases/10.04/release-20101228/">by Canonical</a>. The identifier is <b>ami-7000f019</b> for the AMI in us-east-1 with instance storage that we will use in this guide.  We'll show you the <tt>knife ec2 server create</tt> sub-command to launch instances.</p>
+
+<p>This command will:</p>
+
+<ul>
+	<li>Launch a server on EC2.</li>
+	<li>Connect it to Hosted Chef.</li>
+	<li>Configure the system with Chef.</li>
+</ul>
+
+
+<p>See the appropriate section below for instruction on launching a single instance, or launching the multi-system infrastructure.</p>
+
+<h2><a name="BuildaDjangoStack-LaunchSingleInstance"></a>Launch Single Instance</h2>
+
+<p>Launch the entire stack on a single instance.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -G default -I ami-7000f019 -f m1.small \
+      -S django-quick-start -i ~/.ssh/django-quick-start.pem -x ubuntu \
+      -r 'role[base],role[django_cms_database_master],role[django_cms],recipe[django_cms::db_bootstrap],role[django_cms_load_balancer]'</pre>
+		</div>
+</div></div>      
+
+<p>Once complete, the instance will be running MySQL and Django CMS under Gunicorn. With only one system, a load balancer is unnecessary.</p>
+
+<h2><a name="BuildaDjangoStack-LaunchMultiinstanceInfrastructure"></a>Launch Multi-instance Infrastructure</h2>
+
+<p>We will launch one database server, two application servers and one load balancer. One of the application server instances will include the role for setting up the database as discussed before.</p>
+
+<p>First, launch the database instance.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -G default -I ami-7000f019 -f m1.small \
+      -S django-quick-start -i ~/.ssh/django-quick-start.pem -x ubuntu \
+      -r 'role[base],role[django_cms_database_master]'</pre>
+		</div>
+</div></div>     
+
+<p>Once the database master is up, launch one node that will set up the database with default data.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -G default -I ami-7000f019 -f m1.small \
+      -S django-quick-start -i ~/.ssh/django-quick-start.pem -x ubuntu \
+      -r 'role[base],role[django_cms],recipe[django_cms::db_bootstrap]'</pre>
+		</div>
+</div></div>      
+
+<p>Launch the second application instance w/o the django_cms::db_bootstrap recipe.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -G default -I ami-7000f019 -f m1.small \
+      -S django-quick-start -i ~/.ssh/django-quick-start.pem -x ubuntu \
+      -r 'role[base],role[django_cms]'</pre>
+		</div>
+</div></div>
+
+<p>Once the second application instance is up, launch the load balancer.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -G default -I ami-7000f019 -f m1.small \
+      -S django-quick-start -i ~/.ssh/django-quick-start.pem -x ubuntu \
+      -r 'role[base],role[django_cms_load_balancer]'</pre>
+		</div>
+</div></div>
+<p>Once complete, we'll have four instances running in EC2 with MySQL, Django CMS and haproxy up and available to serve traffic.</p>
+
+<h2><a name="BuildaDjangoStack-Verification"></a>Verification</h2>
+
+<p>Knife will output the fully qualified domain name of the instance when the commands complete. Navigate to the public fully qualified domain name on port 80.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">http://ec2-xx-xxx-xx-xxx.compute-1.amazonaws.com/</pre>
+		</div>
+</div></div>
+<p>The login is admin and the password is djangocms.</p>
+
+<p>You can access the haproxy admin interface at:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">http://ec2-xx-xxx-xx-xxx.compute-1.amazonaws.com:22002/</pre>
+		</div>
+</div></div>
+
+<h2><a name="BuildaDjangoStack-Appendix"></a>Appendix</h2>
+
+<h5><a name="BuildaDjangoStack-DatabasePasswords"></a>Database Passwords</h5>
+
+<p>The data bag item for dbapp contains default passwords that should certainly be changed to something stronger.</p>
+
+<p>The passwords in the dbapp Data Bag Item are set to the values show below:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">"mysql_root_password": {
+      "_default": "mysql_root"
+    },
+    "mysql_debian_password": {
+      "_default": "mysql_debian"
+    },
+    "mysql_repl_password": {
+      "_default": "mysql_repl"
+    },</pre>
+		</div>
+</div></div>    
+<p>To change the password to something stronger, modify <b>mysql_root</b>, <b>mysql_debian</b>, <b>mysql_repl</b> values. Something like the following secure passwords:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">vi data_bags/apps/dbapp.json
+    "mysql_root_password": {
+      "_default": "super_s3cur3_r00t_pw"
+    },
+    "mysql_debian_password": {
+      "_default": "super_s3cur3_d3b1@n_pw"
+    },
+    "mysql_repl_password": {
+      "_default": "super_s3cur3_r3pl_pw"
+    },</pre>
+		</div>
+</div></div>
+<p>Once the entries are modified, simply load the data bag item from the json file:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag from file apps dbapp.json</pre>
+		</div>
+</div></div>
+
+<h5><a name="BuildaDjangoStack-NonEC2Systems"></a>Non-EC2 Systems</h5>
+
+<p>For people not using Amazon EC2, other Cloud computing providers can be used. Supported by knife and fog as of this revision:</p>
+
+<ul>
+	<li>Rackspace Cloud</li>
+</ul>
+
+
+<p>See the <a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a> for more information about using Knife to launch these instance types.</p>
+
+<p>For people not using cloud at all, but have their own infrastructure and hardware, use the <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> knife command. Note that the run-list specification is slightly different. For the first example of the single instance:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap IPADDRESS 
+     -r 'role[base],role[dbapp_database_master],role[dbapp],recipe[dbapp::db_bootstrap],role[dbapp_load_balancer]'</pre>
+		</div>
+</div></div>
+<p>See the contextual help for knife bootstrap on the additional options to set for SSH.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap --help</pre>
+		</div>
+</div></div>
+
+<h5><a name="BuildaDjangoStack-ANoteaboutEC2Instances"></a>A Note about EC2 Instances</h5>
+
+<p>We used m1.small instances. This is a low performance instance size in EC2 and just fine for testing. Visit the Amazon AWS documentation to <a href="http://aws.amazon.com/ec2/instance-types/">learn more about instance sizes</a>.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071285/19005496.jpg">django-logo-t2.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071285/19005497.png">django_stack_normal.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071285/19005498.jpg">20101104-qyy612rgcrr9k24ca29qarehc9.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

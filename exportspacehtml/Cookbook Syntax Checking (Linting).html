@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Cookbook Syntax Checking (Linting)</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Cookbook Syntax Checking (Linting)
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 08, 2011 by <font color="#0050B2">temujin9</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<h3><a name="CookbookSyntaxChecking%28Linting%29-SessionTitle%3A"></a>Session Title:</h3>
+
+
+<p><b>Convener:</b></p>
+
+<p>Tim Dysinger</p>
+
+<p><b>Participants:</b></p>
+
+<p>Sean Escriva<br/>
+Jesse Nelson<br/>
+<a href="http://wiki.opscode.com/display/~temujin9">Nathaniel Eliot</a></p>
+
+<h4><a name="CookbookSyntaxChecking%28Linting%29-Summaryofdiscussions%3A"></a>Summary of discussions:</h4>
+
+<ul>
+	<li>Round trip to chef server to test cookbooks is expensive</li>
+	<li>It is possible to push broken code to the server</li>
+	<li>Would be nice to check things for correctness before upload
+	<ul>
+		<li>Is our Ruby code valid?</li>
+		<li>Do our resource blocks &amp; attributes validate against their specs?</li>
+		<li>Basic Json syntax checking</li>
+		<li>Do we have at least default attributes for everything?</li>
+	</ul>
+	</li>
+	<li>Would be nice to be able to run a partial chef run (one cookbook or even one resource)</li>
+	<li>Lint checking should be on by default with a flag to turn off</li>
+	<li>Don't throw away all edits to a node when the json isn't quit right</li>
+</ul>
+
+
+<h4><a name="CookbookSyntaxChecking%28Linting%29-Whatwillwedonow%3FWhatneedstohappennext%3F"></a>What will we do now? What needs to happen next? </h4>
+
+<p>Let's create a basic lint check &amp; continually improve it</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-21398171"></a>
+                                    <font class="smallfont"><p>Couldn't make the summit, but I've made a start on something similar recently here:
+<a href="https://github.com/acrmp/foodcritic">https://github.com/acrmp/foodcritic</a></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by andrew.crump@ieee.org at Nov 30, 2011 09:45
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-23003188"></a>
+                                    <font class="smallfont"><p>In my absence at InfoChimps, Flip channeled his frustration at this problem into a couple of tools. The first is the  <a href="https://github.com/infochimps/cluster_chef/blob/version_3/lib/cluster_chef/cookbook_munger.rb">cookbook munger</a>, which sounds like a solid basis for a linter:</p>
+<blockquote><p>This script reads the actual content of a cookbook &#8211; actually interpreting the metadata.rb and attribute files, along with recipes/resources/etc files' headers &#8211; and re-generates the metadata.rb and README files.</p></blockquote>
+
+<p>The second is a Vagrant-based setup for development. It uses a local chef-server VM, a target VM, a shared drive, and a watchr script to push every change into the target VM as quickly as possible after its made. It's a heavier-weight solution, but can help with deeper iterative debug loops that a linter won't. Contact me (temujin9@infochimps.org) if you have an interest, and I'll work on pushing releasing it up the priority queue.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by temujin9 at Dec 08, 2011 16:58
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

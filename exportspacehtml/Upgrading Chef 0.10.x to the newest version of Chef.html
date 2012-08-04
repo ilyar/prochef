@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Upgrading Chef 0.10.x to the newest version of Chef</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Upgrading Chef 0.10.x to the newest version of Chef
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <p><b>This page explains how to upgrade Chef from version 0.10.x to the newest released version of Chef, version 10.12.0.</b></p>
+
+
+<h1><a name="UpgradingChef0.10.xtothenewestversionofChef-Windows"></a>Windows</h1>
+
+<p>If you are using Windows, you will first want to go to the Control Panel &gt; Programs and Features and remove any older versions of Chef. Then you can install version 10.12.0 by using this link: <a href="http://opscode.com/chef/install.msi">http://opscode.com/chef/install.msi</a> This is the only supported install method for Windows.</p>
+
+<h1><a name="UpgradingChef0.10.xtothenewestversionofChef-LinuxandMac"></a>Linux and Mac</h1>
+
+<p>For Linux and Mac, there are a few methods you can use to upgrade. You can either use the Omnibus method, or the older gems and apt-get/yum install methods. If you're unsure what type of install you currently have you can check it with this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">ls -l $(which chef-client)</pre>
+		</div>
+</div></div>
+<p>If you have a <b>gem, apt-get or yum install</b> you should see something similar to this returned:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">-rwxr-xr-x 1 root root 368 Aug 1 17:20 /usr/bin/chef-client</pre>
+		</div>
+</div></div>
+<p>If you have an <b>omnibus install</b> you should see a symlink to the /opt/chef or /opt/opscode folder instead:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">lrwxrwxrwx 1 root root 19 Aug 1 17:19 /usr/bin/chef-client -&gt; /opt/chef/bin/chef-client</pre>
+		</div>
+</div></div>
+<p>Follow the directions below for type of install you currently have.</p>
+
+<h2><a name="UpgradingChef0.10.xtothenewestversionofChef-Gem%2CAptgetorYumInstall"></a>Gem, Apt-get or Yum Install</h2>
+
+<p>If you currently use gem to install Chef, you can upgrade Chef and Knife to version 10.12.0 by using the gem install command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo gem install chef --no-ri --no-rdoc</pre>
+		</div>
+</div></div>
+<p>You can also follow the directions below to install Omnibus, which is the preferred method of install. It includes an embedded version of ruby, gems and other dependencies. If you decide to switch you'll want to make sure you're properly using the chef_gem and gem_package resources in your cookbooks, and any Omnibus workstations will need to use a special command to install knife plugins. More information on Omnibus can be found below.</p>
+
+<h2><a name="UpgradingChef0.10.xtothenewestversionofChef-OmnibusInstall"></a>Omnibus Install</h2>
+
+<p>If you use the omnibus install method, you can update to version 10.12.0 by re-running the omnibus command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo true &amp;&amp; curl -L http://opscode.com/chef/install.sh | sudo bash</pre>
+		</div>
+</div></div>
+<p>If you install the Chef gem after installing Omnibus, it will change you back to the gem version of Chef and start using the system Ruby on most platforms. More information on what makes Omnibus different from the Chef gem can be found below.<br/>
+<p><br class="atl-forced-newline" /></p>
+<h1><a name="UpgradingChef0.10.xtothenewestversionofChef-OmnibusInformation"></a>Omnibus Information</h1>
+
+<p>There are a few ways that the Omnibus install is different from installing through rubygems or your OS's packaging system such as 'yum' or 'apt'.</p>
+
+<h3><a name="UpgradingChef0.10.xtothenewestversionofChef-TestedOperatingSystems"></a>Tested Operating Systems</h3>
+<p>Omnibus will work to install Chef on many Linux operating systems and OS X. <b><font color="#f7681a">It has been tested with Debian, Ubuntu, CentOS, RHEL, Fedora, Oracle Linux, Scientific Linux, and OS X.</font></b> You can find information on installing the Windows version of Omnibus on the <a href="Installing Chef Client on Windows.html" title="Installing Chef Client on Windows">Installing Chef Client on Windows</a> page.</p>
+
+<h3><a name="UpgradingChef0.10.xtothenewestversionofChef-OmnibusPackaging"></a>Omnibus Packaging</h3>
+<p>The Omnibus installers are built using the same Ruby based Open Source project we use for packaging Private Chef. A couple of the installers are built with older build systems, and we plan to migrate them in the coming months. We also expect to add more platforms in the future.</p>
+
+<p>Omnibus wraps itself in a package specific to your distribution where possible, such as a deb or rpm, so you can easily manage it using the tools you’re familiar with. If you prefer regular packages or installing from Rubygems for policy or personal reasons, you can find links to those directions on the <a href="Installing Chef Client and Chef Solo.html" title="Installing Chef Client and Chef Solo">Installing Chef Client and Chef Solo</a> page.</p>
+
+<h3><a name="UpgradingChef0.10.xtothenewestversionofChef-EmbeddedRubyandOtherDependencies"></a>Embedded Ruby and Other Dependencies</h3>
+<p>The Omnibus installer includes the Chef client, a stable version of Ruby, and everything else needed for Chef to run, in a single package. The dependencies are all carefully embedded so they won’t conflict with other versions of the same software on your system. Because you are also using an embedded version of rubygems <b><font color="#f7681a">you'll want to use a command like "sudo /opt/chef/embedded/bin/gem install knife-PLUGIN" to install any knife plugins on an Omnibus workstation.</font></b></p>
+
+<h3><a name="UpgradingChef0.10.xtothenewestversionofChef-ChefgemandGempackageresources"></a>Chef_gem and Gem_package resources</h3>
+<p>Because Omnibus includes its own version of Rubygems, <b>it is important that you correctly use the gem_package and chef_gem resources.</b> The gem_package resource is for installing a gem package to your system, whereas the chef_gem resource is for install a gem for use inside a chef recipe. Additional information is available on the <a href="http://wiki.opscode.com/display/chef/Resources">Resources</a> wiki page.</p></p>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

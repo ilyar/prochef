@@ -1,0 +1,255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Unix Environment Variables and Chef Recipes</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Unix Environment Variables and Chef Recipes
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jul 09, 2012 by <font color="#0050B2">gyre007</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/17465395/20840600.jpg" hspace="12" vspace="8" style="border: 0px solid black"/></span></p>
+
+<h3><a name="UnixEnvironmentVariablesandChefRecipes-"></a><font color="#f7681a">In Unix, a process' environment is a set of key-value pairs made available to the process.</font> </h3>
+<h5><a name="UnixEnvironmentVariablesandChefRecipes-Often%2Cprogramsexpecttheirenvironmenttocontaininformationrequiredfortheprogramtorun.ThedetailsofhowthesekeyvaluepairsareaccesseddependsontheAPIofthelanguagebeingused."></a>Often, programs expect their environment to contain information required for the program to run.  The details of how these key-value pairs are accessed depends on the API of the language being used. </h5>
+<p>This article explains how environments of child processes interact with their parent process and how you can use Chef to ensure that services and applications are started with the proper environment. </p>
+
+<h1><a name="UnixEnvironmentVariablesandChefRecipes-ChildProcessesandInheritance"></a>Child Processes and Inheritance</h1>
+<p><font color="#f7681a">Child processes inherit a copy of their parent's environment.</font>  In Bash (and other shells) the environment is accessible via shell variables. Shell variables can be added to the environment that is inherited by children processes using the <tt>export</tt> keyword.</p>
+
+<p>Consider the  following example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">% WOO="woo" #Set a shell variable
+% echo $WOO
+woo
+% bash #Start a new process, a child of our first shell
+% echo $WOO # Shell variable is empty because we didn't export it
+
+% exit # Return to original shell
+exit
+% export WOO # Export variable 
+% bash
+% echo $WOO #Shell variable now available in children.
+woo
+% exit</pre>
+		</div>
+</div></div>
+
+<p>As mentioned, the child process gets a <em>copy</em> of its parent's environment.  This means that any changes made to that environment do not affect the parent process.  For example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">% WOO="woo" #Set a shell variable
+% echo $WOO
+woo
+% bash #Start a new process, a child of our first shell
+% export WOO="hello" # Change and export the shell variable
+% exit # Return to original shell
+exit
+% echo $WOO #The parent's value remains unchanged.
+woo
+% exit</pre>
+		</div>
+</div></div>
+
+<p><b>The principles mentioned above (a child process receives a copy of its parent's environment and cannot affect their parent's environment) apply in Ruby and Chef just as they do in Bash.</b></p>
+
+<p><font color="#f7681a">In Ruby (and thus Chef), the current environment can be altered via the <tt>ENV</tt> variable.</font>  Any changes made to the environment will also be available to child process started by Chef.  For example, consider the following recipe:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">ENV['FOO'] = "bar"
+bash "env_test0" do
+    code&lt;&lt;-EOF
+ echo $FOO
+EOF
+end</pre>
+		</div>
+</div></div>
+
+<p>When run, the bash resource will correctly echo "bar" to its standard output.</p>
+
+<p>However, just as in Bash, changes made in child processes have no affect on the parent, and thus no affect on subsequent child processes:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">bash "env_test1" do
+    code&lt;&lt;-EOF
+    export BAZ="bar"
+EOF
+end
+
+bash "env_test2" do
+    code&lt;&lt;-EOF
+ echo $BAZ
+EOF
+end</pre>
+		</div>
+</div></div>
+
+<p>When run, the second bash resource will not cause anything to be echoed to standard out as BAZ is not part of its environment.</p>
+
+<h1><a name="UnixEnvironmentVariablesandChefRecipes-ManagingEnvironmentswhenUsingChef"></a>Managing Environments when Using Chef</h1>
+<p><font color="#f7681a">Services and other processes often look to environment variables for important information needed at run time.</font>  There are a number of ways to ensure that processes have access to the environment variables they need to run properly.  </p>
+
+<h3><a name="UnixEnvironmentVariablesandChefRecipes-UsingtheService%27sInitScript"></a>Using the Service's Init Script</h3>
+<p><em>Ideally, a service's init script would contain everything needed to properly start that service, including the necessary environment.</em>  Ensuring that the init script itself contains the necessary environment changes ensures that the service will start properly whenever it is being started using its init script, whether that be from Chef's <tt>service</tt> resource or directly from the shell.  In classic System V init scripts, the environment can be altered just as it can be altered in any other shell script, by using a shell variable marked with the <tt>export</tt> keyword:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">export IMPORTANT_VAR="value"</pre>
+		</div>
+</div></div>
+
+<h5><a name="UnixEnvironmentVariablesandChefRecipes-UpstartServices"></a>Upstart Services</h5>
+<p>For services started using <a href="http://upstart.ubuntu.com/getting-started.html">Upstart</a> (the System V-compatible init system used by recent versions of Ubuntu and other distributions), their environment can be altered using <tt>env</tt>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">env IMPORTANT_VAR="value"</pre>
+		</div>
+</div></div>
+
+<p>See <a href="http://manpages.ubuntu.com/manpages/maverick/man5/init.5.html">init(5)</a> (provided with the upstart package) for more information.</p>
+
+<h5><a name="UnixEnvironmentVariablesandChefRecipes-SystemdServices"></a>Systemd Services</h5>
+<p>For services started using <a href="http://www.freedesktop.org/wiki/Software/systemd">systemd</a> (the System V-compatible init system by the recent versions of Fedora and other distributions), their environment can be altered using the <tt>Environment</tt> or <tt>EnvironmentFile</tt> options:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">Environment="IMPORTANT_VAR='value'"</pre>
+		</div>
+</div></div>
+
+<p>See <a href="http://0pointer.de/public/systemd-man/systemd.exec.html">systemd.exec(5)</a> for more details.</p>
+
+<p><em>If the init script provided by the package does not include the necessary environment variables, you can manage your altered init script using Chef's <a href="http://wiki.opscode.com/display/chef/Resources#Resources-Template">template resource</a>.</em></p>
+
+<h3><a name="UnixEnvironmentVariablesandChefRecipes-UsingENV"></a>Using ENV</h3>
+<p>Another method is to use Ruby's predefined ENV variable to set the environment variable.  <em>This ensures that any child processes (including the service that a resource may be starting) have this value in their environment.</em>  While not technically a Hash, ENV can be manipulated as if it were a Hash.  For example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">ENV['IMPORTANT_VAR'] = "value"
+
+# Some service that requires IMPORTANT VAR
+service "example_service" do
+  action :start
+end</pre>
+		</div>
+</div></div>
+
+<p><em>Note, however, that changes made to ENV only effect the environment of the chef-client process and its children processes.</em>  Altering the environment in this way will often ensure that Chef can start the service properly, but will not ensure that the service will start properly when started using other methods. </p>
+
+<h3><a name="UnixEnvironmentVariablesandChefRecipes-UsingResourceAttributes"></a>Using Resource Attributes</h3>
+<p>If you are starting a processes by using an <tt>execute</tt> or <tt>script</tt> resource, you can use the <tt>environment</tt> attribute to alter the environment that will be passed to the process.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">bash "env_test" do
+    code&lt;&lt;-EOF
+ echo $FOO
+EOF
+    environment { 'FOO' =&gt; "bar" }
+end</pre>
+		</div>
+</div></div>
+
+<p><em>Note that the only environment being altered is the environment being passed to the child process being started by the <tt>bash</tt> resource.</em>  This will not affect the environment of chef-client or subsequently started child processes.</p>
+
+<h1><a name="UnixEnvironmentVariablesandChefRecipes-OtherIssues"></a>Other Issues</h1>
+
+<h5><a name="UnixEnvironmentVariablesandChefRecipes-"></a><font color="navy"><em>My init script works fine when I'm logged in but not over ssh or when launched from chef-client running as daemon!</em></font></h5>
+<p>Shells commonly alter their environment at startup by loading various initialization scripts.  The files used for initialization vary based on whether the shell is started as an interactive or non-interactive shell and whether it is is started as a login or non-login shell.  When you log in, you are likely starting an interactive, login shell.  When you run a command via ssh, it is possible that you are starting a non-interactive shell.  This can mean that the process in question is receiving different environments.  Ensure that your service or process is being started in a way that ensures its environment has the necessary key-value pairs.</p>
+
+<h5><a name="UnixEnvironmentVariablesandChefRecipes-"></a><font color="navy"><em>I want to change the environment for every process!</em></font></h5>
+<p>To change the environment for new processes, you will need to alter the initialization scripts for your system's shell.  You can manage these scripts using a Chef template resource; however, there are a few caveats you should be aware of:</p>
+
+<ul class="alternate" type="square">
+	<li>The environments of existing processes will be unaffected.</li>
+	<li>Shells look to different startup files when started with different options.  See your shell's documentation for the definitive list of files that need to be altered and whether it is possible to alter the environment for every possible invocation of the shell.</li>
+	<li>When you first change a shell's initialization file, it will have no affect on your current shell or process since its environment has already been initialized.</li>
+	<li>From a shell, you can use the <tt>source</tt> command to reload the given initialization file; however, since child processes do not affect their parent's environment, using a <tt>script</tt> or <tt>execute</tt> resource to run <tt>source</tt> from inside a Chef recipe will have no effect on chef-client's environment.</li>
+</ul>
+
+
+<h1><a name="UnixEnvironmentVariablesandChefRecipes-AdditionalReading"></a>Additional Reading</h1>
+<p>On most well configured unix-like systems, the following manual pages should be helpful:</p>
+
+<ul class="alternate" type="square">
+	<li>environ(7)</li>
+	<li>env(1)</li>
+	<li>The INVOCATION, COMMAND EXECUTION ENVIRONMENT, and ENVIRONMENT sections of bash(1) or the equivalent sections in the manual page for your preferred shell.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/17465395/20840599.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Guide to Creating A Cookbook and Writing A Recipe.html" title="Guide to Creating A Cookbook and Writing A Recipe">Guide to Creating A Cookbook and Writing A Recipe</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/17465395/20840598.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Templates.html" title="Templates">Templates</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/17465395/20840598.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/17465395/20840599.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/17465395/20840600.jpg">9481534-hand-written-scribble-illustration--mathematical-equations-polynomials-with-variables-indeterminates.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Environments With Knife</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Environments With Knife
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/21397980/21463226.jpg" hspace="24" vspace="10" style="border: 0px solid black"/></span></p>
+
+<h2><a name="ManagingEnvironmentsWithKnife-Overview"></a>Overview</h2>
+
+<h3><a name="ManagingEnvironmentsWithKnife-"></a><font color="#f7681a">Knife is a command-line tool that comes with Chef.</font> </h3>
+<h3><a name="ManagingEnvironmentsWithKnife-"></a><font color="#f7681a">It is used by administrators to interact with the Chef <a href="Server API.html" title="Server API">Server API</a>, the local Chef repository and can be used to manage environments within one Chef setup (or one organization on Hosted Chef).</font> </h3>
+
+<h4><a name="ManagingEnvironmentsWithKnife-Knife%27s%7B%7Benvironment%7D%7Dsubcommandprovidesthiscapability."></a>Knife's <tt>environment</tt> sub-command provides this capability.  </h4>
+
+<ul>
+	<li>For more information about Knife, refer to the <b><a href="Knife.html" title="Knife">Knife</a></b> documentation.</li>
+	<li>See <b><a href="Environments.html" title="Environments">Environments</a></b> for more information on Environments.</li>
+</ul>
+
+
+<div class='navmenu' style='float:right; width:420px; background:#f4f2e6; margin:10px; padding:4px'><div class="panel" style="border-width: 1px;"><div class="panelContent">
+<div class="" align="center"><font color="navy"><b>Knife commands all have the same form</b></font></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife sub-command [ARGUMENTS] (options)</pre>
+		</div>
+</div></div>
+</div></div></div>
+<h2><a name="ManagingEnvironmentsWithKnife-create"></a>create</h2>
+<p>Creates a new environment object on the Chef Server.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife environment create ENVIRONMENT (options)</pre>
+		</div>
+</div></div>
+
+<p>Knife will open $EDITOR and allow you to edit the ENVIRONMENT description.  Once you are done editing, knife will save the environment to the Chef Server. </p>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;d</tt>, <tt>&#45;&#45;description DESCRIPTION</tt>:<br/>
+    The value of the description field.</li>
+</ul>
+
+
+
+<h2><a name="ManagingEnvironmentsWithKnife-delete"></a>delete</h2>
+<p>Deletes an environment on the Chef Server.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife environment delete ENVIRONMENT (options)</pre>
+		</div>
+</div></div>
+
+<h2><a name="ManagingEnvironmentsWithKnife-edit"></a>edit</h2>
+<p>Edit an existing environment using $EDITOR.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife environment edit ENVIRONMENT (options)</pre>
+		</div>
+</div></div>
+
+<h2><a name="ManagingEnvironmentsWithKnife-fromfile"></a>from file</h2>
+<p>Create or update an environment from a JSON or Ruby DSL description of the environment. See <a href="Environments.html" title="Environments">Environments</a> for more details.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife environment from file FILE (options)</pre>
+		</div>
+</div></div>
+
+<h2><a name="ManagingEnvironmentsWithKnife-list"></a>list</h2>
+<p>List all the of the environments saved on the Chef Server.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife environment list (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;w</tt>, <tt>&#45;&#45;with-uri</tt>:<br/>
+    Show the resource URI for each environment</li>
+</ul>
+
+
+<p><b>Example</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife environment list
+_default
+dev</pre>
+		</div>
+</div></div>
+
+<p>To list nodes within an environment, use search.  Within the context of search, the chef_environment of a node is treated like an attribute.  The following will result in a list of nodes within a the <tt>dev</tt> environment:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife search node "chef_environment:dev"</pre>
+		</div>
+</div></div>
+
+<p>see <a href="Environments.html#Environments-SearchingwithinEnvironments">Searching within Environments</a> below for an additional example.</p>
+
+
+<h2><a name="ManagingEnvironmentsWithKnife-show"></a>show</h2>
+<p>Show the information for a given environment.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife environment show ENVIRONMENT_NAME (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Examples</b>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife environment show dev
+chef_type:            environment
+cookbook_versions:
+default_attributes:
+description:
+json_class:           Chef::Environment
+name:                 dev
+override_attributes:
+
+\\
+\\
+\\
+\\</pre>
+		</div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Managing Data Bags With Knife.html" title="Managing Data Bags With Knife"><span class="image-wrap" style="float: left"><img src="../attachments/21397980/21463228.png" hspace="4" style="border: 0px solid black"/></span> Managing Data Bags With Knife </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Managing Nodes With Knife.html" title="Managing Nodes With Knife"><span class="image-wrap" style="float: right"><img src="../attachments/21397980/21463227.png" hspace="4" style="border: 0px solid black"/></span> Managing Nodes with Knife </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397980/21463226.jpg">9401037-angry-male-cook-in-white-uniform-and-hat-with-two-knifes-black-bckground.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397980/21463227.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397980/21463228.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

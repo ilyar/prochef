@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Improved Windows File Security</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Improved Windows File Security
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on May 11, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/23429208/23658511.png" hspace="14" style="border: 0px solid black"/></span></p>
+<h1><a name="ImprovedWindowsFileSecurity-KnowYourRights%3AWindowsFileSecurityInChef"></a>Know Your Rights: Windows File Security In Chef</h1>
+
+<p>With 0.10.10, we’re overhauling the Windows security settings for file and directory resources to work the way Windows works. <font color="#f7681a">Specifically, we’re adding inheritance and full ACL support, and tweaking the owner, group and mode attributes to do the right thing on Windows.</font> We’ve made these changes directly to the template, file, remote_file, cookbook_file, directory, and remote_directory resources, so you can start getting the benefit right away by modifying your existing recipes.</p>
+
+<p>Unix security configuration will not change.</p></td>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ImprovedWindowsFileSecurity-KnowYourRights%3AWindowsFileSecurityInChef'>Know Your Rights: Windows File Security In Chef</a></li>
+<ul>
+    <li><a href='#ImprovedWindowsFileSecurity-ACLs%3Athe%7B%7Brights%7D%7Dattribute'>ACLs: the <tt>rights</tt> attribute</a></li>
+    <li><a href='#ImprovedWindowsFileSecurity-Inheritance%3Athe%7B%7Binherits%7D%7Dattribute'>Inheritance: the <tt>inherits</tt> attribute</a></li>
+    <li><a href='#ImprovedWindowsFileSecurity-%7B%7Bowner%7D%7D%2C%7B%7Bgroup%7D%7Dand%7B%7Bmode%7D%7D'> <tt>owner</tt>, <tt>group</tt> and <tt>mode</tt></a></li>
+</ul>
+</ul></div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h2><a name="ImprovedWindowsFileSecurity-ACLs%3Athe%7B%7Brights%7D%7Dattribute"></a>ACLs: the <tt>rights</tt> attribute</h2>
+
+<p>First off, ACLs. <font color="#f7681a">Windows lets you give permissions to multiple users and groups, and the new “rights” attribute gives you control over this powerful feature.</font> It looks like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file "x.txt" do
+  rights :read, "Everyone"
+  rights :write, "UBERDOMAIN\Sales"
+  rights :full_control, "Frodo Baggins"
+end</pre>
+		</div>
+</div></div>
+
+<p>You can add as many (or as few) rights attributes as you like, and Chef will apply them to the file or directory.  Here’s the syntax:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rights &lt;permissions&gt;, &lt;principal&gt;, &lt;options&gt;</pre>
+		</div>
+</div></div>
+
+<p><b>The <tt>&lt;permissions&gt;</tt> parameter</b> specifies the what rights will be granted to the principal. The possible values are <tt>:read</tt>, <tt>:write</tt>, <tt>:full_control</tt> and <tt>:deny</tt>. <em>These permissions are cumulative</em>: if you specify <tt>:write</tt>, it includes <tt>:read</tt>, and <tt>:full_control</tt> includes both <tt>:write</tt> and <tt>:read</tt>. If you specify <tt>:deny</tt>, the user or group in question will have no rights at all to the object in question.</p>
+
+<p><em>Editor: insert some nice pretty Windows screenshots showing what these mean with the security dialog box.</em></p>
+
+<p>For those who know the Windows API. <tt>:read</tt> corresponds to <tt>GENERIC_READ</tt> and <tt>GENERIC_EXECUTE</tt>; <tt>:write</tt> corresponds to <tt>GENERIC_WRITE</tt>, <tt>GENERIC_READ</tt> and <tt>GENERIC_EXECUTE</tt>, and :full_control corresponds to <tt>GENERIC_ALL</tt>, allowing a user to change the owner and other metadata about a file.</p>
+
+<p><b>The <tt>&lt;principal&gt;</tt> parameter</b> is a string specifying a group name or user name. This can be anything you can type in the logon box for Windows: either "<tt>username</tt>", "<tt>domain\username</tt>", or "<tt>username@fully_qualified_domain</tt>". You don’t need to tell Chef whether it’s a user or group; we’ll figure it out when we look it up. <em>Editor: support for SIDs might be nice. The ability to specify well-known SIDs like Everyone in a language-independent way would be good, too.</em></p>
+
+<p><b>The <tt>&lt;options&gt;</tt> parameter</b> is a hash with several possible advanced rights options. For example, you can add a right to a directory that only applies to its children like this: "<tt>rights :write, "UBERDOMAIN\Sales", :applies_to_self =&gt; false</tt>". This table shows all the options:</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Key </th>
+<th class='confluenceTh'>Possible Values </th>
+<th class='confluenceTh'>Meaning </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <tt>:applies_to_children</tt> </td>
+<td class='confluenceTd'> <b><tt>true</tt></b> </td>
+<td class='confluenceTd'> This right will be inherited by both child directories and files (default) </td>
+</tr>
+<tr>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> <tt>false</tt> </td>
+<td class='confluenceTd'> This right will <em>not</em> be inherited by any child directories or files. </td>
+</tr>
+<tr>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> <tt>:containers_only</tt> </td>
+<td class='confluenceTd'> Child directories (but not files) will inherit this right. </td>
+</tr>
+<tr>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> <tt>:objects_only</tt> </td>
+<td class='confluenceTd'> Child files (but not directories) will inherit this right. (This is recursive.) </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <tt>:applies_to_self</tt> </td>
+<td class='confluenceTd'> <b><tt>true</tt></b> </td>
+<td class='confluenceTd'> This right will apply to the directory or file resource (default) </td>
+</tr>
+<tr>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> <tt>false</tt> </td>
+<td class='confluenceTd'> This right will <em>not</em> apply to the directory or file resource, but may apply to any children. </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <tt>:one_level_deep</tt> </td>
+<td class='confluenceTd'> <tt>true</tt> </td>
+<td class='confluenceTd'> Only the first level of children will inherit this right. </td>
+</tr>
+<tr>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> <b><tt>false</tt></b> </td>
+<td class='confluenceTd'> All children (recursively) will inherit this right. </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><font color="#f7681a">Other important things to know about rights:</font></p>
+
+<ul>
+	<li><b>Rights are order-independent:</b> it doesn't matter whether you say <tt>rights :deny, "Sally"</tt> before or after <tt>rights :read, "Sally"</tt>, Sally will be unable to read the document.</li>
+</ul>
+
+
+<ul>
+	<li><b>When you specify rights, they are considered a complete description of all explicit rights on a file</b>: all existing explicit rights will be removed and the new ones added.  (Inherited rights will remain on the file).</li>
+</ul>
+
+
+<ul>
+	<li><b>If you do not specify any rights (or mode) on a file, security will remain untouched:</b> More specifically, we will not clear out the rights on the file if you fail to specify rights and mode.  We figure if you wanted us to mess with it, you would have told us something. <em>Editor’s Note: we need give the user a way to specify that all rights should be cleared.</em></li>
+</ul>
+
+
+<ul>
+	<li><b>Changing inheritable rights on a directory with many files can be expensive:</b>  Chef will make sure not to modify rights when nothing has changed, but when it does a large directory can take a while.  This is due to inheritance (Windows will propagate the new rights to all children recursively).  This is a normal part of running on Windows, but if you need to do this often, careful control over inheritance options can help you get rid of some of the cost.</li>
+</ul>
+
+
+<h2><a name="ImprovedWindowsFileSecurity-Inheritance%3Athe%7B%7Binherits%7D%7Dattribute"></a>Inheritance: the <tt>inherits</tt> attribute</h2>
+<p><font color="#f7681a">By default, any file or directory you create inherits rights from its parent directory.</font> Normally this is exactly what you want; but sometimes you want to carve a little space off from the rest of the world where you control every right. You can tell Chef that your file or directory should <em>not</em> inherit rights from its parent by specifying "<tt>inherits false</tt>":</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">directory 'C:\mordor' do
+  rights :read, 'MORDOR\Minions'
+  rights :full_control, 'MORDOR\Sauron'
+end
+
+directory 'C:\mordor\mount_doom' do
+  rights :full_control, 'MORDOR\Sauron'
+  inherits false # Sauron is the only person who should have any sort of access
+end</pre>
+		</div>
+</div></div>
+
+<p>You could have used <tt>:deny</tt> to accomplish the same ends, but unless you deny everyone, something could slip through.  It all depends on whether you want that or not.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">directory 'C:\mordor' do
+  rights :read, 'MORDOR\Minions'
+  rights :full_control, 'MORDOR\Sauron'
+  rights :write, 'SHIRE\Frodo' # Who put that there I didn't put that there
+end
+
+directory 'C:\mordor\mount_doom' do
+  rights :deny, 'MORDOR\Minions' # Oops, not specific enough
+end</pre>
+		</div>
+</div></div>
+
+<p>If you do not specify the <tt>inherits</tt> attribute, Chef will default it to true for new files, but will leave it unchanged for existing files (so if you go modify the file yourself, it will not get flipped back on the next Chef run).</p>
+
+<h2><a name="ImprovedWindowsFileSecurity-%7B%7Bowner%7D%7D%2C%7B%7Bgroup%7D%7Dand%7B%7Bmode%7D%7D"></a><tt>owner</tt>, <tt>group</tt> and <tt>mode</tt></h2>
+
+<p><font color="#f7681a">You are advised to use <tt>owner</tt> and <tt>right</tt> and avoid <tt>group</tt> and <tt>mode</tt>, which are not really Windows concepts.</font>  Nonetheless, they are provided for backwards compatibility and mean roughly the same thing as they did before, with the following modifications:</p>
+<ul>
+	<li><b><tt>owner</tt>:</b> "<tt>owner</tt>" now supports any username (including fully qualified "<tt>domain\user</tt>" and "<tt>user@domain</tt>"). If you do not specify this, new files will pick up the current user as the owner and existing files will leave their owner unchanged.</li>
+	<li><b><tt>group</tt>:</b> This now supports any groupname (including fully qualified "<tt>domain\group</tt>" and "<tt>group@domain</tt>"). If you do not specify this, new files will get your default POSIX group (which you likely don’t have), and existing files will have their group unchanged.</li>
+	<li><b><tt>mode</tt>:</b> This is provided for backwards compatibility.  This mask is now translated into rights.  Values up to 0777 are allowed (no sticky bits), and mean the same thing as the Unix counterpart, with 4 = <tt>GENERIC_READ</tt>, 2 = <tt>GENERIC_WRITE</tt> and 1 = <tt>GENERIC_EXECUTE</tt>. You cannot give <tt>:full_control</tt> with mode (but the owner has full control anyway). mode has no effect when it is not specified. When both mode and rights are specified, the effects are cumulative.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/23429208/23658511.png">windows-logo.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

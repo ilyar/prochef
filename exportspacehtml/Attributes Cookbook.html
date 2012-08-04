@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Attributes Cookbook</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Attributes Cookbook
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jul 12, 2012 by <font color="#0050B2">michael.john.kirk@gmail.com</font>.
+				    </div>
+
+				    <h2><a name="AttributesCookbook-CookbookAttributes"></a>Cookbook Attributes</h2>
+
+<p><font color="#f7681a">Cookbook attribute files are found in the</font> <font color="#f7681a"><tt>attributes</tt></font> <font color="#f7681a">subdirectory of the cookbook.</font> They are evaluated in the context of the Node object and <a href="Nodes.html" title="Nodes">Node</a> methods are used to set attribute values.</p>
+
+<p>e.g. from Opscode's Apache cookbook:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbooks/apache2/attributes/default.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">default["apache"]["dir"]          = "/etc/apache2"
+default["apache"]["listen_ports"] = [ "80","443" ]</pre>
+		</div>
+</div></div>
+
+<p>The use of the node object is implicit here. The following is equivalent:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbooks/apache2/attributes/default.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">node.default["apache"]["dir"]          = "/etc/apache2"
+node.default["apache"]["listen_ports"] = [ "80","443" ]</pre>
+		</div>
+</div></div>
+
+<p>Attributes can be set in a recipe as well, but <tt>node</tt> must be used.</p>
+
+<h3><a name="AttributesCookbook-CookbookAttributeMethods"></a>Cookbook Attribute Methods</h3>
+
+<p>Use the following methods within a cookbook's attributes file or in a recipe. They correspond to the attribute type of the same name (set is an alias for normal).</p>
+
+<ul>
+	<li><tt>override</tt></li>
+	<li><tt>default</tt></li>
+	<li><tt>normal</tt> (or <tt>set</tt>)</li>
+</ul>
+
+
+<p>See <a href="Attributes.html" title="Attributes">Attributes</a> for details on how precedence is determined.</p>
+
+<h3><a name="AttributesCookbook-CookbookAttributeFileOrdering"></a>Cookbook Attribute File Ordering</h3>
+
+<p>When Chef loads cookbook attribute files, it does so in alphabetical order for all the cookbooks. If you need to ensure that one attribute file is loaded before another (for example, if your Apache cookbook attributes requires that the Rails cookbook attributes are available first) you can use the <tt>include_attribute</tt> method, like so:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>include_attribute</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">include_attribute "rails"
+node.set['apache2']['proxy_to_unicorn'] = node['rails']['use_unicorn']</pre>
+		</div>
+</div></div>
+
+<p>This loads <tt>rails/attributes/default.rb</tt> before continuing the processing of the current attribute file.</p>
+
+<p>The syntax for this follows the same "double colon" pattern as <tt>include_recipe</tt>, so a statement like:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>include_attribute</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">include_attribute "rails::tunables"</pre>
+		</div>
+</div></div>
+
+<p>This loads the <tt>attributes/tunables.rb</tt> file in a rails cookbook.</p>
+
+<h4><a name="AttributesCookbook-ReloadingAttributeFilesFromRecipes"></a>Reloading Attribute Files From Recipes</h4>
+
+<p>Attributes sometimes depend on actions taken from within recipes, so it may be necessary to reload a given attribute from within a recipe. For example: if you have an attribute that reads firewall rules, and a recipe that installs a firewall package, the firewall attributes will not be set the first time you execute the cookbook. Since <tt>include_attribute</tt> is not available from inside recipes, you will need to manually reload your firewall::default attribute:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>reloading attributes from recipes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">package 'iptables' do
+  notifies :create, 'ruby_block[try_firewall_again]', :immediately
+end
+
+ruby_block 'try_firewall_again' do
+  block do
+    node.load_attribute_by_short_filename('default', 'firewall')
+  end
+  action :nothing
+end</pre>
+		</div>
+</div></div>
+
+
+<h3><a name="AttributesCookbook-AttributeAccessorMethods"></a>Attribute Accessor Methods</h3>
+
+<p>Attribute accessor methods are automatically created and the method invocation can be used interchangeably with the keys. The following is equivalent to the usage above:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbooks/apache2/attributes/default.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">default.apache.dir          = "/etc/apache2"
+default.apache.listen_ports = [ "80","443" ]</pre>
+		</div>
+</div></div>
+
+<p>This is a matter of style, and may be seen when "retrieving" the value of an attribute.</p>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

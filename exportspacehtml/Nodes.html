@@ -1,0 +1,284 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Nodes</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Nodes
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/1179770/21463278.png" hspace="10" vspace="2" style="border: 0px solid black"/></span></p>
+
+<p><br class="atl-forced-newline" /></p>
+<h3><a name="Nodes-"></a><font color="#f7681a">A node is a host that runs the Chef client. The primary features of a node, from Chef's point of view, are its <a href="Attributes.html" title="Attributes">Attributes</a> and its run list. Nodes are the thing that <a href="Recipes.html" title="Recipes">Recipes</a> and <a href="Roles.html" title="Roles">Roles</a> are applied to. <br/>
+<br/>
+In practice, there is usually a one-to-one mapping between a node and a physical device (a computer, a switch, a router, etc.),  but in special cases a system may execute the recipes for multiple nodes.</font></h3>
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+
+<h2><a name="Nodes-ComponentsofaNode"></a>Components of a Node</h2>
+
+<p><font color="#f7681a">A node is made up of two prime components: a Run List and <a href="Attributes.html" title="Attributes">Attributes</a>.</font> <br/>
+The Run List is an ordered list of <a href="Recipes.html" title="Recipes">Recipes</a> or <a href="Roles.html" title="Roles">Roles</a> to run. <a href="Recipes.html" title="Recipes">Recipes</a> are the fundamental building block of Chef - they define the resources you want managed, in the order you want them managed. <a href="Roles.html" title="Roles">Roles</a> are ordered lists of other <a href="Roles.html" title="Roles">Roles</a> and <a href="Recipes.html" title="Recipes">Recipes</a>, expanded at run time. Attributes are data about your node - things like the network interfaces, file systems, or how many clients your Apache server can accept.</p>
+</td> 
+<td class="confluenceTd" valign="top" width="25%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#Nodes-ComponentsofaNode'>Components of a Node</a></li>
+    <li><a href='#Nodes-LifecycleofaNode'>Lifecycle of a Node</a></li>
+    <li><a href='#Nodes-Authentication'>Authentication</a></li>
+    <li><a href='#Nodes-ManagingNodes'>Managing Nodes</a></li>
+<ul>
+    <li><a href='#Nodes-ManagingNodesviaKnife'>Managing Nodes via Knife</a></li>
+    <li><a href='#Nodes-ManagingNodesviatheManagementConsole'>Managing Nodes via the Management Console</a></li>
+    <li><a href='#Nodes-ManagingNodesthroughJSONatthecommandline'>Managing Nodes through JSON at the command line</a></li>
+    <li><a href='#Nodes-ManagingNodesviaaCookbooksAttributeorRecipefile'>Managing Nodes via a Cookbooks Attribute or Recipe file</a></li>
+</ul>
+    <li><a href='#Nodes-UseCaseQuestions'>Use Case Questions</a></li>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h2><a name="Nodes-LifecycleofaNode"></a>Lifecycle of a Node</h2>
+
+<p><font color="#f7681a">When you start <a href="Chef Client.html" title="Chef Client">Chef Client</a> or <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a>, the first thing we do is create a Node object.</font>  We then:</p>
+<ol>
+	<li>load up <a href="Ohai.html" title="Ohai">Ohai</a>, which detects information about the operating system ("Ohai speaks for the operating system").  This also gives us access to this hosts fully qualified domain name and hostname, which we use to</li>
+	<li>grab the last known state of the Node from the <a href="Chef Server.html" title="Chef Server">Chef Server</a> (assuming we are using <a href="Chef Client.html" title="Chef Client">Chef Client</a>). Once there,</li>
+	<li>we update all the Ohai attributes to their latest value, and add any extra attributes specified via JSON on the command line.</li>
+	<li>Finally, we will run all of the Attribute files in all of the cookbooks in your Chef repository.</li>
+</ol>
+
+
+<p><font color="#f7681a">At runtime, the Node is available within <a href="Recipes.html" title="Recipes">Recipes</a>, <a href="Definitions.html" title="Definitions">Definitions</a>, and <a href="Resources.html" title="Resources">Resources</a> as they are being evaluated.</font></p>
+
+<h2><a name="Nodes-Authentication"></a>Authentication</h2>
+
+<p>Chef uses Signed Header Authentication for each request. <font color="#f7681a">Node data is separate from the identity used to authenticate requests to the Chef Server, which is managed by an API client.</font> Each API client has a public/private key pair. The public half of the key is stored in the database on the server, and the private half is kept locally by the client. On a node running the Chef Client, the private key is generally stored in /etc/chef/client.pem. Each request to the Chef server includes a request signature in the HTTP headers. <font color="#f7681a">The request signature is computed from the hash of the request content and encrypted with the client's private key to verify the identity of the user or machine making the request and prevent attempts to tamper with the content.</font></p>
+
+<p>When a node runs chef-client for the first time, it generally does not yet have an API client identity, and so cannot make authenticated requests to the server. This is where the validation client—named "chef-validator" by default comes in. When the chef-client runs, it checks if it has a client key. If the client key does not exist, it then attempts to "borrow" the validation client's identity to register itself with the server. In order to do that, the validation client's private key needs to be copied to the host and placed in /etc/chef/validation.pem. Once the client machine has registered itself with the chef server, it no longer uses the validation client for anything. It is recommended that you delete the validation client's private key from the host after the host has registered.</p>
+
+<p><b><a href="Authentication and Authorization.html" title="Authentication and Authorization">Authentication and Authorization</a></b> provides additional detail on the Chef model for these actions.</p>
+
+<h2><a name="Nodes-ManagingNodes"></a>Managing Nodes</h2>
+
+<p>The recipes list and attributes of nodes may be managed through multiple means.</p>
+
+<h3><a name="Nodes-ManagingNodesviaKnife"></a>Managing Nodes via <a href="Knife.html" title="Knife">Knife</a></h3>
+
+<p><font color="#f7681a">Knife is Chef's command line tool, and can be used to create, edit, view, list, tag and delete nodes.</font> Refer to the <a href="Knife.html" title="Knife">Knife</a> documentation for additional details on knife.</p>
+
+<ul>
+	<li><b><a href="Managing Nodes With Knife.html" title="Managing Nodes With Knife">Managing Nodes With Knife</a></b> provides information on how this powerful command line tool can be used to manage the chef-client nodes in your infrastructure.</li>
+</ul>
+
+
+<h3><a name="Nodes-ManagingNodesviatheManagementConsole"></a>Managing Nodes via the <a href="Management Console.html" title="Management Console">Management Console</a></h3>
+
+<p><font color="#f7681a">The Management Console is Chef's web interface. Nodes can be managed in the Management Console.</font> </p>
+
+<ul>
+	<li><b><a href="Managing Nodes through the Management Console.html" title="Managing Nodes through the Management Console">Managing Nodes through the Management Console</a></b> provides documentation on Open Source Chef users.</li>
+	<li>Hosted and Private Chef customers should refer to <b><a href="Managing Nodes with the Hosted Chef Management Console.html" title="Managing Nodes with the Hosted Chef Management Console">Managing Nodes with the Hosted Chef Management Console</a></b>.</li>
+</ul>
+
+
+<h3><a name="Nodes-ManagingNodesthroughJSONatthecommandline"></a>Managing Nodes through JSON at the command line</h3>
+
+<p><font color="#f7681a">Both <a href="Chef Client.html" title="Chef Client">Chef Client</a> and <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a> allow you to write JSON to a file and read it in through the command line.</font>  The file should contain a hash, the elements of which will be added as attributes on your Node. </p>
+
+<p>We have two special entries that can be used to set which cookbooks/recipes will be applied during run-time.</p>
+
+<ul>
+	<li><tt><a href="Setting the run_list in JSON during run time.html" title="Setting the run_list in JSON during run time">run_list</a></tt> - specify roles and/or recipes to add to the node.</li>
+	<li><tt>recipes</tt> - add only recipes to the node. This should not be used, please always use run_list in this purpose.</li>
+</ul>
+
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>For all you AWS users</b><br />This is an awesome way to use per-instance metadata.  You can just stick some JSON in, and have it written to a file on disk, which you read with the <a href="Chef Client.html" title="Chef Client">Chef Client</a> or <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a> to configure your nodes.!</td></tr></table></div>
+
+<h3><a name="Nodes-ManagingNodesviaaCookbooksAttributeorRecipefile"></a>Managing Nodes via a Cookbooks Attribute or Recipe file</h3>
+
+<p><font color="#f7681a">You can also ensure that an attribute or is set via an <a href="Attributes.html" title="Attributes">Attribute</a> or <a href="Recipes.html" title="Recipes">Recipe</a> file.</font></p>
+
+<h2><a name="Nodes-UseCaseQuestions"></a>Use Case Questions</h2>
+
+<h5><a name="Nodes-"></a><font color="navy"><em>How do I run more than one node on a system or change a node name?</em></font></h5>
+
+<p>You can use the <tt>&#45;N</tt> option to <tt>chef-client</tt> or <tt>chef-solo</tt> to set the node name manually. </p>
+
+<h5><a name="Nodes-"></a><font color="navy"><em>Can you name a node anything you choose?</em></font></h5>
+
+<p>The only restriction Chef places on node names is that they match this regular expression: <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">/^[\-[:alnum:]_:.]+$/</pre>
+		</div>
+</div></div>
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)"><span class="image-wrap" style="float: left"><img src="../attachments/1179770/20840642.png" hspace="4" style="border: 0px solid black"/></span> Lightweight Resources and Providers (LWRP) </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Setting the run_list in JSON during run time.html" title="Setting the run_list in JSON during run time"><span class="image-wrap" style="float: right"><img src="../attachments/1179770/20840643.png" hspace="4" style="border: 0px solid black"/></span> Setting the run_list in JSON during run time </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/1310728.png">chef-server-node-edit.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/1310729.png">chef-server-node-latte.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/1310730.png">chef-server-node.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/1310731.png">chef-server-openid-registration.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/2064391.png">node-list.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/2064392.png">no-recipes.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/2064393.png">add-recipe.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/2064397.png">chef-server-node-validate.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/2719746.png">chef-server-node-list.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/2719747.png">chef-server-drag-recipe.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/2719748.png">chef-server-registration.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/14876698.jpg">5603073-explaination-of-social-network-concept.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/20840642.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/20840643.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/21463277.png">6546033-abstract-cubes-as-network-nodes-connected-to-a-floating-shiny-blue-sphere.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/21463276.png">6546033-abstract-cubes-as-network-nodes-connected-to-a-floating-shiny-blue-sphere.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/21463279.png">26546033-abstract-cubes-as-network-nodes-connected-to-a-floating-shiny-blue-sphere.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179770/21463278.png">26546033-abstract-cubes-as-network-nodes-connected-to-a-floating-shiny-blue-sphere.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-2457866"></a>
+                                    <font class="smallfont"><p>It's probably worth noting that the chef client has the following default in /etc/chef/client.rb:<br/>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">openid_url         "https://chef.yourdomainhere.com:444"</pre>
+		</div>
+</div></div>If for some crazy reason, you have any firewall or iptables rules setup between your chef server and clients, you're probably going to want to open port 444 for your clients to successfully connect for validating registration.&nbsp; I've got some restrictive default iptables rules on my servers, and this caught me.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by mmarano at Aug 11, 2009 05:27
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-5407162"></a>
+                                    <font class="smallfont"><p>You can get the authoritative name of a node (the name that can be used as a handle for editing or deleting the node) with</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">node.name</pre>
+		</div>
+</div></div>
+<p>It may or may not be the same as</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">node['fqdn']</pre>
+		</div>
+</div></div>
+<p>or sometimes</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">node[:ec2][:instance_id]</pre>
+		</div>
+</div></div></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Mar 03, 2010 01:29
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

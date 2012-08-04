@@ -1,0 +1,561 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Fast Start Guide for Windows</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Fast Start Guide for Windows
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jul 09, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/19071092/21463244.png" hspace="18" vspace="2" style="border: 0px solid black"/></span></p>
+
+<hr />
+<h5><a name="FastStartGuideforWindows-"></a><font color="#f7681a">This page is an install guide that describes how to get up and running with Hosted Chef as quickly as possible and ends with a fast demonstration on how to work with cookbooks.</font></h5>
+<hr />
+
+<h5><a name="FastStartGuideforWindows-ThisInstallationGuideusesthenewWindowsFullInstaller."></a>This Installation Guide uses the <em>new</em> Windows Full Installer.</h5>
+
+<p>Hosted and Private Chef customers should contact <a href="mailto:support@opscode.com">support@opscode.com</a> with any issues. Open Source users may interact in <a href="Support.html" title="Support">open source support channels</a>, open a <a href="http://tickets.opscode.com/secure/Dashboard.jspa">Bug Report</a> with project "CHEF", component "Packages", label "omnibus", if necessary.</p>
+
+<p>If you want to install Chef manually instead, see the <a href="Installation.html" title="Installation">Installation</a> page.</p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="FastStartGuideforWindows-Assumptions"></a>Assumptions</h1>
+</div></div>
+<p><font color="#f7681a">In order to make this as quick as possible, we make a few assumptions.</font> <em>If your system does not meet these assumptions, you will need to use the</em> <em><a href="Installation.html" title="Installation">Installation</a></em> <em>instructions that apply for the "flavor" of Chef you are installing.</em></p>
+
+<h3><a name="FastStartGuideforWindows-HostedChef"></a>Hosted Chef</h3>
+
+<p>We're using <a href="http://www.opscode.com/hosted-chef/">Hosted Chef</a> so we can get started right away without setting up a Chef Server. <em>If you want to set up your own server instead, head over to the <a href="Installation.html" title="Installation">Installation</a> page.</em></p></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#FastStartGuideforWindows-Assumptions'>Assumptions</a></li>
+<ul>
+<ul>
+    <li><a href='#FastStartGuideforWindows-HostedChef'>Hosted Chef</a></li>
+    <li><a href='#FastStartGuideforWindows-OperatingSystem'>Operating System</a></li>
+    <li><a href='#FastStartGuideforWindows-ManagementWorkstationasaClient'>Management Workstation as a Client</a></li>
+</ul>
+</ul>
+    <li><a href='#FastStartGuideforWindows-Steps'>Steps</a></li>
+<ul>
+    <li><a href='#FastStartGuideforWindows-Step1%3ACreateaHostedChefaccount'>Step 1: Create a Hosted Chef account</a></li>
+    <li><a href='#FastStartGuideforWindows-Step2%3AInstallChefandDependencies'>Step 2: Install Chef and Dependencies</a></li>
+    <li><a href='#FastStartGuideforWindows-Step3%3AConfigureChefandcreatetheneededdirectories'>Step 3: Configure Chef and create the needed directories</a></li>
+    <li><a href='#FastStartGuideforWindows-Step4%3AConnecttoHostedChef'>Step 4: Connect to Hosted Chef</a></li>
+    <li><a href='#FastStartGuideforWindows-Step5%3AConfiguretheworkstationasaclient'>Step 5: Configure the workstation as a client</a></li>
+    <li><a href='#FastStartGuideforWindows-Step6%3ADownloadaCookbookfromtheCommunitySite'>Step 6: Download a Cookbook from the Community Site</a></li>
+    <li><a href='#FastStartGuideforWindows-Step7%3AUploadaCookbooktoHostedChef'>Step 7: Upload a Cookbook to Hosted Chef</a></li>
+    <li><a href='#FastStartGuideforWindows-Step8%3AAddaCookbooktotherunlist'>Step 8: Add a Cookbook to the run_list</a></li>
+    <li><a href='#FastStartGuideforWindows-Step9%3ARunchefclient'>Step 9: Run chef-client</a></li>
+</ul>
+    <li><a href='#FastStartGuideforWindows-Ifsomethinggoeswrong'>If something goes wrong</a></li>
+    <li><a href='#FastStartGuideforWindows-SomeResources%2FProvidersAreKnownToNotWork'>Some Resources/Providers Are Known To Not Work</a></li>
+    <li><a href='#FastStartGuideforWindows-WhatshouldIlookatnext%3F'>What should I look at next?</a></li>
+</ul></div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h3><a name="FastStartGuideforWindows-OperatingSystem"></a>Operating System</h3>
+
+<p>Chef runs on many popular Unix and Linux platforms as well as Mac OSX and Windows. <em>We will describe how to set up using <b>Windows 2008 R2</b> as a workstation and a client, but these are general directions that will also apply to Windows 7.</em> <font color="#f7681a">These directions are known to not work for Windows Server 2003 or on systems that have spaces in the %HOMEPATH%.</font> For instructions on these, see the <a href="Workstation Setup for Windows.html" title="Workstation Setup for Windows">workstation installation page</a> or the <a href="Installing Chef Client on Windows.html" title="Installing Chef Client on Windows">client installation page</a> for Windows.</p>
+
+<p><font color="#f7681a"><b>There is also a <a href="Fast Start Guide.html" title="Fast Start Guide">Fast Start Guide</a> which goes over these same instructions for Linux and OS X.</b></font> For other OS-specific instructions, go to the section of <a href="Installation.html" title="Installation">Installation</a> that applies to the "flavor" of Chef you are installing, and proceed from there. (<em>See</em> <em><a href="Fast Start Guide.html#FastStartGuide-SystemRequirements">system requirements</a></em> <em>for details on what platforms Chef is known to run upon.</em>)</p>
+
+<h3><a name="FastStartGuideforWindows-ManagementWorkstationasaClient"></a>Management Workstation as a Client</h3>
+
+<p>In this guide we will be setting up a management workstation as a client. This means that the one node we set up here can be used to both manage your cookbooks and configuration in Hosted Chef, as well as use chef-client to run recipes on it. <em>(If you already have a workstation configured and just want to add a Linux or Mac client node, see the <a href="Client Bootstrap Fast Start Guide.html" title="Client Bootstrap Fast Start Guide">Client Bootstrap Fast Start Guide</a>. Installation for Windows clients is described in the <a href="Installing Chef Client on Windows.html" title="Installing Chef Client on Windows">Installing Chef Client on Windows</a> guide)</em></p>
+
+<div class="panel" style="border-width: 1px;"><div class="panelContent">
+<p><ins><b>The Difference Between a Management Workstation and a Client</b></ins></p>
+<ul>
+	<li><em>Management Workstations</em> have git (or other version control system) installed so you can download and upload cookbooks with knife, and</li>
+	<li><em>Clients</em> have chef-client configured so Chef may be run on them.</li>
+</ul>
+
+
+<p>If you'd like more information on these terms, the wiki page on <a href="Architecture Introduction.html" title="Architecture Introduction">Architecture Introduction</a> has a very detailed explanation.</p>
+</div></div>
+
+<p><font color="#f7681a">We will be setting up the client node as both in this guide.</font></p>
+<ul>
+	<li>Once you add more nodes you will not need to set them all up as workstations.</li>
+	<li>You do however, need at least one management workstation to manage your client nodes.</li>
+</ul>
+
+
+<p><font color="#f7681a">You do not have to set up your management workstation to be a chef-client.</font> If you prefer not to:</p>
+<ul>
+	<li>Follow this guide through Step 4, and then</li>
+	<li>use the <a href="Client Bootstrap Fast Start Guide.html" title="Client Bootstrap Fast Start Guide">Client Bootstrap Fast Start Guide</a> to configure a Linux or Mac client node separately, or use the <a href="Installing Chef Client on Windows.html" title="Installing Chef Client on Windows">Installing Chef Client on Windows</a> guide to configure a Windows node separately.</li>
+</ul>
+
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="FastStartGuideforWindows-Steps"></a>Steps</h1>
+</div></div>
+<p><b><font color="#f7681a">This guide is going to direct you through the following steps:</font></b></p>
+
+<p>1. <a href="#FastStartGuideforWindows-Step1%253ACreateaHostedChefaccount">Create a Hosted Chef account</a><br/>
+2. <a href="#FastStartGuideforWindows-Step2%253AInstallChefandDependencies">Install Chef and Dependencies</a><br/>
+3. <a href="#FastStartGuideforWindows-Step3%253AConfigureChefandcreatetheneededdirectories">Configure Chef and create the needed directories</a><br/>
+4. <a href="#FastStartGuideforWindows-Step4%253AConnecttoHostedChef">Connect to Hosted Chef</a><br/>
+5. <a href="#FastStartGuideforWindows-Step5%253AConfiguretheworkstationasaclient">Configure the workstation as a client</a><br/>
+6. <a href="#FastStartGuideforWindows-Step6%253ADownloadaCookbookfromtheCommunitySite">Download a Cookbook from the Community Site</a><br/>
+7. <a href="#FastStartGuideforWindows-Step7%253AUploadaCookbooktoHostedChef">Upload the cookbook to Hosted Chef</a><br/>
+8. <a href="#FastStartGuideforWindows-Step8%253AAddaCookbooktotherunlist">Add the Cookbook to the run_list</a><br/>
+9. <a href="#FastStartGuideforWindows-Step9%253ARunchefclient">Run chef-client with the new Cookbook</a></p>
+
+<p>At the end of this guide you will have a workstation setup with chef-client installed, a recipe downloaded and added to the node's run_list. These steps end with the recipe being run on the node by Chef.</p>
+
+<h2><a name="FastStartGuideforWindows-Step1%3ACreateaHostedChefaccount"></a>Step 1: Create a Hosted Chef account</h2>
+
+<p><font color="#f7681a">Working with Chef is primarily done from a local workstation. Changes are made locally and uploaded to the Chef Server.</font> Since we're using Hosted Chef as the Chef Server, you'll need to sign up for an account if you haven't already. (Don't worry&#33;  We won't charge you to use Hosted Chef for this guide - you can set up up to 5 nodes for free.)</p>
+
+<div class="panel" style="border-width: 1px;"><div class="panelContent">
+<p><b>Would you like to have screenshots walk you through the actions in this step instead?</b>  If so, head over to <em><a href="Setup Opscode User and Organization.html" title="Setup Opscode User and Organization">Setup Opscode User and Organization</a></em> which will guide you through creating a new organization, and then return here to the next step once complete.</p>
+
+<p>If you have already created your Organization, there are directions on how to recreate the organization key and download the knife config on the <em><a href="http://wiki.opscode.com/display/chef/Managing+Organizations+with+the+Hosted+Chef+Management+Console#ManagingOrganizationswiththeHostedChefManagementConsole-RegeneratingthePrivateKeyandtheKnifeConfig">Managing Organizations with the Hosted Chef Management Console</a></em> page and recreating existing user keys is explained on the <em><a href="http://wiki.opscode.com/display/chef/Managing+Users+and+your+Private+Key+with+the+Hosted+Chef+Management+Console#ManagingUsersandyourPrivateKeywiththeHostedChefManagementConsole-DownloadingandUsingyourPrivateKey">Managing Users with the Hosted Chef Management Console</a></em> page.</p>
+</div></div>
+
+<p>Head over to the <a href="https://cookbooks.opscode.com/users/new">Hosted Chef Sign Up page</a> to create your account. You will get an email validation shortly after you sign up. After you complete the sign-up, create an organization in the Console page, and then download the following files:</p>
+
+<ul>
+	<li>Your Organization validation key. This is used to automatically register new Chef Clients (like servers you manage).</li>
+	<li>The <a href="Knife.html" title="Knife">Knife</a> configuration file.</li>
+	<li>Your User key. This is used to authenticate your user with Hosted Chef.</li>
+</ul>
+
+
+<p>The private keys are not stored by Hosted Chef. Download them to your local system, we'll use them in Step #5.</p>
+
+<h2><a name="FastStartGuideforWindows-Step2%3AInstallChefandDependencies"></a>Step 2: Install Chef and Dependencies</h2>
+
+<p>This Installation Guide uses the <em>new</em> Windows Full Installer.</p>
+
+<p>It has been tested, but as it is newly released, Hosted and Private Chef customers should contact <a href="mailto:support@opscode.com">support@opscode.com</a> with any issues. Open Source users may interact in <a href="Support.html" title="Support">open source support channels</a>, opening a <a href="http://tickets.opscode.com/secure/Dashboard.jspa">Bug Report</a> with project "CHEF", component "Packages", label "omnibus", if necessary.</p>
+
+<h4><a name="FastStartGuideforWindows-InstallChef"></a>Install Chef</h4>
+
+<p><a href="http://opscode.com/chef/install.msi">Download the Chef Full Installer</a> for Windows and open it. Choose defaults for any options.</p>
+
+<p>Once it is installed there will be no icon for it. If needed, you can confirm it was installed correctly with these commands in a new command prompt window:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; tar --version
+bsdtar 2.8.3 - libarchive 2.8.3
+
+C:\&gt; chef-client --version</pre>
+		</div>
+</div></div>
+<p>You should see "Chef: 10.12.0" returned as the version number.</p>
+
+<h4><a name="FastStartGuideforWindows-InstallGit"></a>Install Git</h4>
+
+<p><font color="#f7681a">Git isn't needed to set up a node as a client, but it will be needed to set up a node as a workstation and follow the steps on this page.</font> <em>Workstations</em> are able to download recipes from the Community Site, edit them, and them upload them to Hosted Chef. Once they are uploaded to the server any node that has been set up as a client or workstation will be able to use them. <em>Clients</em> do not need git installed but are unable to directly edit the recipes or upload changes to Hosted Chef without it. You will want at least one workstation set up to manage your organization. These directions walk you through setting up a workstation, for specific instructions on setting up a client instead, or using a workstation without git and tar on Windows, see the <a href="Installation.html" title="Installation">Installation</a> page.</p>
+
+<p><a href="http://msysgit.googlecode.com/files/Git-1.7.11-preview20120620.exe">Download the Git Full installer</a> for Windows and install it.</p>
+
+<p>To make Git easily accessible from normal Windows Command Prompts, be sure to choose the 'Run Git from the Windows Command Prompt' option.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19071092/19005466.png" style="border: 0px solid black"/></span></p>
+
+<p>For the line ending conversions option be sure to choose: 'Checkout as-is, commit Unix-style line endings'.  Your fellow developers on *nix platforms will thank you!</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19071092/19005467.png" style="border: 0px solid black"/></span></p>
+
+<p>If you'd like, you can confirm Git is now installed properly with this command in a new command prompt window:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; git --version
+git version 1.7.11.msysgit.0</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a"><b>Make sure that you close any command prompt windows after installing Git and Chef and re-open them, or some commands will not be available.</b></font></p>
+
+<h2><a name="FastStartGuideforWindows-Step3%3AConfigureChefandcreatetheneededdirectories"></a>Step 3: Configure Chef and create the needed directories</h2>
+
+<p>Now that Chef and all the dependancies are installed, we will need to get the chef repository and set up the authentication files. You will see the variable %HOMEPATH% mentioned in these directions. You do not need to change this variable to an path and you can keep this as %HOMEPATH% in commands, Windows will know this is an alias for the path to your home directory.</p>
+
+<p>Building infrastructure with Chef is like managing source code, so one of the first things we need to do is build the <a href="Chef Repository.html" title="Chef Repository">repository</a> you'll use. You will need git installed to follow this step.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd %HOMEPATH%
+C:\Users\username&gt; git clone git://github.com/opscode/chef-repo.git</pre>
+		</div>
+</div></div>
+
+<p><a href="Knife.html" title="Knife">Knife</a> reads configuration from the .chef directory, so we'll need to make that directory. <b>You must use the mkdir command below to do this, as creating the file any other way will not allow you to name it '.chef':</b> </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; mkdir %HOMEPATH%\chef-repo\.chef</pre>
+		</div>
+</div></div>
+
+<p>Copy the keys and knife configuration you downloaded earlier into this directory. For example if they are in the 'C:\Users\&lt;username&gt;\Downloads' directory you could use these commands:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">C:\&gt; move %HOMEPATH%\Downloads\knife.rb %HOMEPATH%\chef-repo\.chef
+            1 file(s) moved.
+C:\&gt; move %HOMEPATH%\Downloads\USERNAME.pem %HOMEPATH%\chef-repo\.chef
+            1 file(s) moved.
+C:\&gt; move %HOMEPATH%\Downloads\ORGANIZATION-validator.pem %HOMEPATH%\chef-repo\.chef
+            1 file(s) moved.</pre>
+		</div>
+</div></div>
+
+<p>Replace USERNAME above with your Hosted Chef Username, and ORGANIZATION with the short-name you provided when you signed up.</p>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Did the WebUI download a file named _regenerate_key instead of your Org's PEM key?</b><br />Currently there is a bug with Hosted Chef where the ORGANIZATION-validator.pem is being renamed _regenerate_key. You can move it and rename it with this one command, substituting in the name of your organization:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; move %HOMEPATH%\Downloads\_regenerate_key %HOMEPATH%\chef-repo\.chef\ORGANIZATION-validator.pem</pre>
+		</div>
+</div></div></td></tr></table></div>
+
+<h4><a name="FastStartGuideforWindows-Editingtheknife.rbwiththecookbookpath"></a>Editing the knife.rb with the cookbook path</h4>
+
+<p>You will also need to edit the knife.rb to provide the full path to the cookbooks. You can do this by going to your home directory, entering the chef-repo directory, and then the .chef directory, and editing the knife.rb file. You will want to open it in Wordpad, and look for this line:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbook_path            ["#{current_dir}/../cookbooks"]</pre>
+		</div>
+</div></div>
+<p>If you see this, you'll want to change it to the directory below or some knife commands will fail:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbook_path            ["#{ENV['HOME']}/chef-repo/cookbooks"]</pre>
+		</div>
+</div></div>
+
+<h2><a name="FastStartGuideforWindows-Step4%3AConnecttoHostedChef"></a>Step 4: Connect to Hosted Chef</h2>
+
+<p>Run the following command to confirm knife is working with the Hosted Chef API.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd %HOMEPATH%\chef-repo
+C:\Users\username\chef-repo&gt; knife client list
+    ORGANIZATION-validator</pre>
+		</div>
+</div></div>
+
+<p>You should start out already in the home directory when you first launch command prompt, so normally you can just enter <tt>cd chef-repo</tt> to get to the correct directory. The <tt>cd</tt> command above will work no matter which directory you are in.</p>
+
+<p><b>NOTE:</b> knife commands will only work in the chef-repo directory unless you add <tt>-c %HOMEPATH%\chef-repo\.chef\knife.rb</tt> to the end of the command to specify where the knife config is located.</p>
+
+<p>This command would work from any directory:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; knife client list -c %HOMEPATH%\chef-repo\.chef\knife.rb
+    ORGANIZATION-validator</pre>
+		</div>
+</div></div>
+
+<h4><a name="FastStartGuideforWindows-TheWorkstationpartoftheinstallisnowcomplete"></a>The Workstation part of the install is now complete</h4>
+
+<p><font color="#f7681a">You should now have a fully functional Management Workstation from which to interact with Chef and automate your infrastructure.</font> The workstation is now able to download and upload recipes, and manage nodes with knife.</p>
+
+<p><b>At this point you have two options.</b> You can either continue this guide and configure this workstation as a client so it can run recipes as well, or you can set up chef-client on a separate node and use the workstation you just created to manage it remotely.</p>
+
+<p>If you'd like to set up a separate Ubuntu client so you can manage it remotely, please follow the <a href="Client Bootstrap Fast Start Guide.html" title="Client Bootstrap Fast Start Guide">Client Bootstrap Fast Start Guide</a>. If you'd like to set up a separate Windows node as a client, you could do this with the <a href="Knife Windows Bootstrap.html" title="Knife Windows Bootstrap">Knife Windows Bootstrap</a> plugin or with the <a href="Installation.html" title="Installation">Installation</a> guide for Windows clients. <font color="#f7681a">The rest of this guide assumes that you want to configure this workstation as a client.</font></p>
+
+<h2><a name="FastStartGuideforWindows-Step5%3AConfiguretheworkstationasaclient"></a>Step 5: Configure the workstation as a client</h2>
+
+<p>You can configure chef-client with these commands:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd %HOMEPATH%\chef-repo
+C:\Users\username\chef-repo&gt; knife configure client C:\chef
+Creating client configuration
+Writing client.rb
+Writing validation.pem</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+You will now need to run chef-client for the first time, so your node is added to the client list:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:/&gt; chef-client
+[2012-06-20T16:23:14-07:00] INFO: *** Chef 10.X.X ***
+[2012-06-20T16:23:24-07:00] INFO: Client key C:\chef\client.pem is not present - registering
+[2012-06-20T16:23:29-07:00] INFO: Run List is []
+... output truncated ...
+[2012-06-20T16:23:31-07:00] INFO: Report handlers complete</pre>
+		</div>
+</div></div>
+
+<p>Keep in mind that chef-client may need elevated privileges to run successfully, depending on what you are adding to your cookbooks. You can read more about how to set this up in <a href="Running Chef Client with Elevated Privileges.html" title="Running Chef Client with Elevated Privileges">Running Chef Client with Elevated Privileges</a>.</p>
+
+<p>Once this is done, you can confirm this node was added with knife:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd %HOMEPATH%\chef-repo
+C:\Users\username\chef-repo&gt; knife client list
+    ORGANIZATION-validator
+    NODENAME</pre>
+		</div>
+</div></div>
+
+<p>Instead of NODENAME you should see the name of your node here.</p>
+
+<h4><a name="FastStartGuideforWindows-TheClientinstallisnowcomplete"></a>The Client install is now complete</h4>
+
+<p><font color="#f7681a">At this point, your node is now configured as a management workstation and a client.</font> The next steps explain how to add a recipe and run it on this node. If you are already familiar with Chef, you can skip the rest of the guide and it will have no impact on your install.</p>
+
+<h2><a name="FastStartGuideforWindows-Step6%3ADownloadaCookbookfromtheCommunitySite"></a>Step 6: Download a Cookbook from the Community Site</h2>
+
+<p>Now that Chef is installed, we can add a recipe to the run list and run it on this node. We're going to use the <tt>getting-started</tt> cookbook as an example. First you'll need to configure git, replacing USER@EMAIL.com with your email address:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; git config --global user.email "USER@EMAIL.com"</pre>
+		</div>
+</div></div>
+
+<p>Once this is configured you can install the cookbook. In this example we are going to download the <a href="http://community.opscode.com/cookbooks/getting-started">getting-started cookbook</a> from the <a href="http://community.opscode.com">community site</a>. You will need to move back to the chef-repo directory as knife commands will not work without <tt>-c</tt> in other directories.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd %HOMEPATH%\chef-repo
+C:\Users\username\chef-repo&gt; knife cookbook site install getting-started
+Installing getting-started to C:/Users/username/chef-repo/cookbooks
+Checking out the master branch.
+Pristine copy branch (chef-vendor-getting-started) exists, switching to it.
+... output truncated ...
+Cookbook getting-started version 0.4.0 successfully installed</pre>
+		</div>
+</div></div>
+
+<h2><a name="FastStartGuideforWindows-Step7%3AUploadaCookbooktoHostedChef"></a>Step 7: Upload a Cookbook to Hosted Chef</h2>
+
+<p>Next, upload the cookbook to your Hosted Chef account so it is available for systems that run the chef-client. </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\Users\username\chef-repo&gt; knife cookbook upload getting-started
+Uploading getting-started          [0.4.0]
+upload complete</pre>
+		</div>
+</div></div>
+
+<h2><a name="FastStartGuideforWindows-Step8%3AAddaCookbooktotherunlist"></a>Step 8: Add a Cookbook to the run_list</h2>
+
+<p>Now you will want to add this cookbook to the run_list for this node. The run_list is a list of the recipes and roles that chef-client will run on the node.</p>
+
+<p>You can add it with this command, substitute the name of your node for NODENAME:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\Users\username\chef-repo&gt; knife node run_list add NODENAME 'recipe[getting-started]'
+run_list: recipe[getting-started]</pre>
+		</div>
+</div></div>
+
+<h2><a name="FastStartGuideforWindows-Step9%3ARunchefclient"></a>Step 9: Run chef-client</h2>
+
+<p>You can now run the chef-client on this node and it will run the recipe you've added:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:/&gt; chef-client
+C:\Users\Opscode\chef-repo&gt;chef-client
+[2012-06-20T17:27:00-07:00] INFO: *** Chef 10.X.X ***
+[2012-06-20T17:27:17-07:00] INFO: Run List is [recipe[getting-started]]
+... output truncated ...
+[2012-06-20T17:27:21-07:00] INFO: Report handlers complete</pre>
+		</div>
+</div></div>
+
+<p>The first thing Chef did was download the getting-started cookbook. Then it ran the default recipe, which then wrote out our template which is located in the home directory as chef-getting-started.txt. Lets look at what it wrote:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">Welcome to Chef!
+
+This is Chef version 10.X.X.
+Running on windows.
+Version 6.1.7600.</pre>
+		</div>
+</div></div>
+<p>Your output will of course be dependent on the data we have stored about your node.</p>
+
+<p>You can also see what code the recipe contained by opening it with a text editor. It will be located in your home directory, in chef-repo\cookbooks\getting-started\recipes\default.rb. You can open it in Wordpad if you do not have an editor installed.</p>
+
+<p>For more information on editing and creating recipes, see the <a href="Cookbook Fast Start Guide.html" title="Cookbook Fast Start Guide">Cookbook Fast Start Guide</a>.</p>
+
+<p>When you are ready to start configuring this node, you can remove this test recipe from the run_list with this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\Users\username\chef-repo&gt; knife node run_list remove NODENAME 'recipe[getting-started]'
+run_list:</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="FastStartGuideforWindows-Ifsomethinggoeswrong"></a>If something goes wrong</h1>
+</div></div>
+
+
+<p><p>When you run chef-client, does it appear to run successfully, but when you go to review the changes - none have been made?</p>
+
+<p><font color="#f7681a">One possible reason is that the chef-client had insufficient privileges.</font> See <b><a href="Running Chef Client with Elevated Privileges.html" title="Running Chef Client with Elevated Privileges">Running Chef Client with Elevated Privileges</a></b> for how to address this.</p>
+
+<br class="atl-forced-newline" />
+<font color="#f7681a">Aside from that, it only takes a small change to a dependency or environment to cause these instructions to not be exact.</font> If something goes wrong, first check the <a href="Installation.html" title="Installation">Installation</a> page and refer to documents specific to your OS. If this doesn't help, head over to the <b><a href="Support.html" title="Support">Support</a></b> page for information on where and how to find help from Opscode and the rest of the Chef community.</p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="FastStartGuideforWindows-SomeResources%2FProvidersAreKnownToNotWork"></a>Some Resources/Providers Are Known To Not Work</h1>
+</div></div>
+<p>Not all <a href="Resources.html" title="Resources">Resources</a> work on Windows yet. <font color="#f7681a">The following Resources do not work on Windows yet:</font></p>
+
+<ul>
+	<li>Cron</li>
+	<li>Deploy</li>
+	<li>Erlang call</li>
+	<li>Http request</li>
+	<li>Ifconfig</li>
+	<li>Link</li>
+	<li>Mdadm</li>
+	<li>Package (but gem_package - for ruby gems, does work)</li>
+	<li>Route</li>
+	<li>Script</li>
+	<li>Subversion</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="FastStartGuideforWindows-WhatshouldIlookatnext%3F"></a>What should I look at next?</h1>
+</div></div>
+
+<p><p><br class="atl-forced-newline" />
+<font color="#f7681a"><b>Another fast start...</b></font></p>
+<h4><a name="FastStartGuideforWindows-CookbookFastStartGuide"></a><a href="Cookbook Fast Start Guide.html" title="Cookbook Fast Start Guide">Cookbook Fast Start Guide</a></h4>
+<p><a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> are how things are distributed and shared in Chef. Continue on the fast start path and visit this page for a quick guide to writing and using Chef Cookbooks.</p>
+
+<p><font color="#f7681a"><b>Perhaps detail on Chef and its use...</b></font></p>
+<h4><a name="FastStartGuideforWindows-ChefBasics"></a><a href="Chef Basics.html" title="Chef Basics">Chef Basics</a></h4>
+<p>Learn some of the central concepts of configuration management benefits for your infrastructure.  </p>
+<ol>
+	<li>We begin with an <a href="Architecture Introduction.html" title="Architecture Introduction">Architecture Introduction</a>, covering the basic functions of the Chef Server, Nodes, and Chef Workstations and how these components communicate.</li>
+	<li>Then an overview of the <a href="Core Components.html" title="Core Components">Core Components</a>, which introduces all of the aspects and components of modeling your infrastructure, Configuring Nodes and Managing Chef.</li>
+	<li>Onward to Cooking School and begin an <a href="Introduction to Cookbooks and More.html" title="Introduction to Cookbooks and More">Introduction to Cookbooks and More</a>. Cookbooks are Chef's fundamental units of distribution, the way Chef users package up, distribute and share configuration information. Recipes, Resources, Attributes, Roles and more are also introduced.</li>
+	<li>The final basic section is an <a href="Introduction to Search and Data Bags.html" title="Introduction to Search and Data Bags">Introduction to Search and Data Bags</a>, two of Chef's most powerful features allowing you to dynamically change the configuration of your infrastructure based on data.</li>
+</ol>
+
+
+<h4><a name="FastStartGuideforWindows-ChefArchitectureArchitecture"></a><a href="Architecture.html" title="Architecture">Chef Architecture</a></h4>
+<p>With all that under your belt, it's time to tackle the dirty secrets of what's happening behind the scenes with <a href="Architecture.html" title="Architecture">Chef Architecture</a>.  We'll give you the scoop on Chef's <a href="Authentication and Authorization.html" title="Authentication and Authorization">Authentication and Authorization</a> system and go over the <a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">Anatomy of a Chef Run</a>, where we go in-depth with the process by which your systems get configured. From there we'll review all the executable parts of Chef - <a href="Chef Client.html" title="Chef Client">Chef Client</a>, <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a>, <a href="Chef Server.html" title="Chef Server">Chef Server</a>, <a href="Chef Indexer.html" title="Chef Indexer">Chef Indexer</a>, and <a href="Server API.html" title="Server API">Server API</a> and <a href="Cookbook Site API.html" title="Cookbook Site API">Cookbook Site API</a> interaction.</p>
+
+<p><font color="#f7681a"><b>Or view video tutorials and training...</b></font></p>
+<h4><a name="FastStartGuideforWindows-Guides"></a><a href="Guides.html" title="Guides">Guides</a></h4>
+<p>We have a number of Walkthrough Guides available on the building of common stacks - including: <a href="Build A Rails Stack.html" title="Build A Rails Stack">Rails</a>, <a href="Build A Java Web Stack.html" title="Build A Java Web Stack">Java</a>, <a href="Build a LAMP Stack.html" title="Build a LAMP Stack">LAMP</a>, and more. There are also How To Guides such as <a href="Deploying OpenStack with Chef.html" title="Deploying OpenStack with Chef">Deploying OpenStack with Chef</a> and <a href="Guide to Creating A Cookbook and Writing A Recipe.html" title="Guide to Creating A Cookbook and Writing A Recipe">Guide to Creating A Cookbook and Writing A Recipe</a>. These should be good resources for you as you move forward in the automation of your infrastructure.</p></p>
+
+<h4><a name="FastStartGuideforWindows-KnifeWindowsBootstrap"></a><a href="Knife Windows Bootstrap.html" title="Knife Windows Bootstrap">Knife Windows Bootstrap</a></h4>
+
+<p>The knife windows plugin may be used to bootstrap new Windows nodes as clients. The plugin may also be used from Mac or Linux workstations. You can install it from Rubygems by using this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">gem install knife-windows</pre>
+		</div>
+</div></div>
+<p>There are also plugins for managing EC2 or Rackspace nodes. For a more complete list see <a href="Community Plugins.html" title="Community Plugins">Community Plugins</a>.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/19071092/21463053.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installation.html" title="Installation">Installation</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/19071092/21463052.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Cookbook Fast Start Guide.html" title="Cookbook Fast Start Guide">Cookbook Fast Start Guide</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071092/19005466.png">windows-git-install-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071092/19005467.png">windows-git-install-2.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071092/19005469.png">ruby-install-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071092/19005478.png">ruby-install-1.8.7.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071092/19005512.jpg">windows-logo.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071092/21463052.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071092/21463053.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071092/21463244.png">windows-logo.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

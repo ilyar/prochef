@@ -1,0 +1,473 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Whyrun Testing</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Whyrun Testing
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 01, 2012 by <font color="#0050B2">marc</font>.
+				    </div>
+
+				    <h1><a name="WhyrunTesting-Whyrun"></a>Whyrun</h1>
+
+<p>A beta release of whyrun was first released on 2012-07-03 in Chef 10.14.0.beta.1. That <a href="http://lists.opscode.com/sympa/arc/chef/2012-07/msg00025.html">beta announcement</a> contains some useful backstory about whyrun and explanation of its usage.</p>
+
+<p>In short, whyrun tells you why Chef would make changes to your system, without executing the changes. It is comparable to a noop or dryrun mode. However, modifying system state has side-effects. For instance, installing a package might also start a service. Thus when we examine what each resource would do individually we fail to acknowledge that there are relationships between resources. Because side-effects are difficult are model, whyrun makes certain assumptions about them to help predict you predict what would happen, and why. Which is exactly what you're asking of it.</p>
+
+<h1><a name="WhyrunTesting-Testing"></a>Testing</h1>
+
+<p>Whyrun is built into the core providers which was a significant engineering undertaking. Because each environment is different (e.g. platform, cookbooks) it is important for many users to test whyrun to confirm that there is full coverage for their use case.</p>
+
+<p>To help, start by installing Chef with through gems so you can install a pre-release gem.</p>
+
+<p><a href="Installing Omnibus Chef Client on Linux and Mac.html" title="Installing Omnibus Chef Client on Linux and Mac">Installing Omnibus Chef Client on Linux and Mac</a> # Then run: sudo /opt/chef/embedded/bin/gem install chef --pre --no-rdoc --no-ri<br/>
+<a href="Installing Chef Client on Other Operating Systems.html" title="Installing Chef Client on Other Operating Systems">Installing Chef Client on Other Operating Systems</a> # Then run: sudo gem install chef --pre --no-rdoc --no-ri<br/>
+<a href="Installing Chef Client on Windows.html" title="Installing Chef Client on Windows">Installing Chef Client on Windows</a> # Then run: gem install chef --pre --no-rdoc --no-ri</p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Rubygems arguments</b><br />--pre installs a prerelease version of a gem<br/>
+--no-ri prevents generation of the RI docs (faster install, less space)<br/>
+--no-doc prevents generation of the RDoc docs (faster install, less space)</td></tr></table></div>
+
+<p>Run Chef with --why-run and a typical run list for you or find some cookbooks from the <a href="http://community.opscode.com">community site</a> to try out. Report back here or send an email to the <a href="http://lists.opscode.com/sympa/arc/chef">chef mailing list</a> if you have questions. If you want to try Chef on some other systems and you have an EC2 account check out the <a href="AMI List for Developers.html" title="AMI List for Developers">AMI List for Developers</a>.</p>
+
+<p>If your run list has many resources that are going to change the system, you'll see quite a bit of output and Chef is likely to not be able to model the possible side-effects. Do a regular run (using the nice new output formatters like '-Fdoc -lfatal'!), change something and try whyrun again.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -I ami-b89842d1 -x ubuntu
+ssh ubuntu@ec2-x-x-x-x.compute-1.amazonaws.com
+sudo /opt/chef/embedded/bin/gem install chef --pre --no-ri --no-rdoc
+sudo chef-client -o recipe['wordpress'] --why-run
+sudo chef-client -Fdoc -lfatal</pre>
+		</div>
+</div></div>
+
+<h1><a name="WhyrunTesting-TestResults"></a>Test Results</h1>
+
+<p>An initial list of platforms has been from an old table, but feel free to add others. If someone else has already tested the same platform but you test it under different circumstances, like a different run list, please add a duplicate line right below it.</p>
+
+<p>If you find a place where why-run breaks down, please <a href="http://tickets.opscode.com/secure/CreateIssue.jspa?pid=10000&amp;issuetype=1&amp;Create=Create">file a bug</a>. Set the 'Affects Version' field to 10.14.0 (it is under 'Unreleased Versions in the drop down) Most importantly, make sure to <b>set a label of 'whyrun'</b> so we can find the related bugs. See <a href="http://tickets.opscode.com/browse/CHEF-3319">CHEF-3319</a> for an example. Whyrun will never be able to survive every complex run, but we'll triage the bugs for ones that we think we can fix.</p>
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>System Image</b><br />Note an EC2 AMI or other image type of this system is reproducible by others.</td></tr></table></div>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Operating System </th>
+<th class='confluenceTh'> Tested Date </th>
+<th class='confluenceTh'> Tested By </th>
+<th class='confluenceTh'> Chef Version </th>
+<th class='confluenceTh'> Run List </th>
+<th class='confluenceTh'> System Image* </th>
+<th class='confluenceTh'> Result </th>
+<th class='confluenceTh'> Notes </th>
+</tr>
+<tr>
+<td class='confluenceTd'> Ubuntu 10.04 </td>
+<td class='confluenceTd'> 2012-07-30 </td>
+<td class='confluenceTd'> <a href="http://wiki.opscode.com/display/~btm">Bryan McLellan</a>  </td>
+<td class='confluenceTd'> 10.14.0.beta.3</td>
+<td class='confluenceTd'> recipe[tmux], recipe[bind] </td>
+<td class='confluenceTd'> ami-6936fb00 </td>
+<td class='confluenceTd'> Passed </td>
+<td class='confluenceTd'> bind cookbook didn't support this platform </td>
+</tr>
+<tr>
+<td class='confluenceTd'> Ubuntu 10.10 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Ubuntu 11.04 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Ubuntu 11.10 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Ubuntu 12.04 </td>
+<td class='confluenceTd'> 2012-07-26 </td>
+<td class='confluenceTd'> <a href="http://wiki.opscode.com/display/~btm">Bryan McLellan</a> </td>
+<td class='confluenceTd'> 10.14.0.beta.3 </td>
+<td class='confluenceTd'> recipe['wordpress'] </td>
+<td class='confluenceTd'> ami-b89842d1 </td>
+<td class='confluenceTd'> failed on ruby require </td>
+<td class='confluenceTd'> <a href="http://tickets.opscode.com/browse/CHEF-3319">CHEF-3319</a> </td>
+</tr>
+<tr>
+<th class='confluenceTh'>&nbsp;</th>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Debian 5 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Debian 6 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'>&nbsp;</th>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> CentOS 5.6 x86_64 </td>
+<td class='confluenceTd'> 2012-07-27 </td>
+<td class='confluenceTd'> <a href="http://wiki.opscode.com/display/~jwitrick">Justin witrick</a> </td>
+<td class='confluenceTd'> 10.14.0.beta.3 </td>
+<td class='confluenceTd'> recipe['apache2'] </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Passed </td>
+<td class='confluenceTd'> Ran on a Rackspace Cloud server. </td>
+</tr>
+<tr>
+<td class='confluenceTd'> CentOS 6.0 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'>&nbsp;</th>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> RHEL 5.6 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> RHEL 5.7 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> RHEL 6.0 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> RHEL 6.1 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'>&nbsp;</th>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> SL 5.7 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> SL 6.0 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'>&nbsp;</th>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> OEL 5.7 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> OEL 6.1 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'>&nbsp;</th>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Fedora 15 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Fedora 16 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Fedora 17 </td>
+<td class='confluenceTd'> 2012-07-31 </td>
+<td class='confluenceTd'> <a href="http://wiki.opscode.com/display/~btm">Bryan McLellan</a> </td>
+<td class='confluenceTd'> 10.14.0.beta.3 </td>
+<td class='confluenceTd'> recipe[screen], recipe[postfix] </td>
+<td class='confluenceTd'> ami-08d97e61 </td>
+<td class='confluenceTd'> Passed </td>
+<td class='confluenceTd'> no selinux support, breaks contexts on postfix config files  </td>
+</tr>
+<tr>
+<th class='confluenceTh'>&nbsp;</th>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Windows 2008 R2 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Windows 2003 R2 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Windows 7 Pro </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'>&nbsp;</th>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> Oracle Solaris 11 </td>
+<td class='confluenceTd'> 2012-07-31 </td>
+<td class='confluenceTd'> <a href="http://wiki.opscode.com/display/~btm">Bryan McLellan</a> </td>
+<td class='confluenceTd'> 10.14.0.beta.3 </td>
+<td class='confluenceTd'> created a user </td>
+<td class='confluenceTd'> <a href="http://www.oracle.com/technetwork/server-storage/solaris11/downloads/index.html">iso</a> </td>
+<td class='confluenceTd'> Needs IPS <a href="http://tickets.opscode.com/browse/CHEF-2496">CHEF-2496</a> </td>
+<td class='confluenceTd'> test: service, package, <del>cron</del>, <del>group</del> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> OpenSolaris (2008.11) </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'>&nbsp;</th>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> 10.7 Mountain Lion </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> 10.7 Lion </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> 10.6 Snow Leopard </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> 10.5 Leopard </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'>&nbsp;</th>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

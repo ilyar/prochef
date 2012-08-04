@@ -1,0 +1,391 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Authentication and Authorization</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Authentication and Authorization
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<div class='navmenu' style='float:right; width:320px; background:#d7d4c3; margin:18px; padding:4px'><div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#AuthenticationandAuthorization-Overview'>Overview</a></li>
+    <li><a href='#AuthenticationandAuthorization-Authentication'>Authentication</a></li>
+<ul>
+    <li><a href='#AuthenticationandAuthorization-InitialChefclientrun'>Initial Chef-client run</a></li>
+    <li><a href='#AuthenticationandAuthorization-DebuggingAuthenticationProblems'>Debugging Authentication Problems</a></li>
+    <li><a href='#AuthenticationandAuthorization-WebUI'>WebUI</a></li>
+</ul>
+    <li><a href='#AuthenticationandAuthorization-Authorization'>Authorization</a></li>
+    <li><a href='#AuthenticationandAuthorization-Summary'>Summary</a></li>
+</ul></div>
+</div></div></div>
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 200x132" href='http://wiki.opscode.com/download../attachments/19071693/authentication.png'><img src="../attachments/thumbnails/19071693/23199755" hspace="20" vspace="26" style="border: 0px solid black"/></a></span></p>
+<h1><a name="AuthenticationandAuthorization-Overview"></a>Overview</h1>
+
+<h4><a name="AuthenticationandAuthorization-"></a><font color="#f7681a">Chef-client and knife both communicate with the Chef Server using a <a href="Server API.html" title="Server API">REST API</a>.</font></h4>
+
+<h5><a name="AuthenticationandAuthorization-ChefclientsChefClientmakeAPIrequeststoretrievetheirrunlist%2Cdownloadtheircookbooks%2Candsavetheirstateafterasuccessfulrun."></a><a href="Chef Client.html" title="Chef Client">Chef-clients</a> make API requests to retrieve their run list, download their cookbooks, and save their state after a successful run.  </h5>
+
+<h5><a name="AuthenticationandAuthorization-Whendevelopingcookbooksandmanagingyourinfrastructure%2CyouwillregularlyuseKnifecommandswhichmakeAPIrequesttotheChefServer."></a>When developing cookbooks and managing your infrastructure, you will regularly use <a href="Knife.html" title="Knife">Knife</a> commands which make API request to the <a href="Chef Server.html" title="Chef Server">Chef Server</a>.</h5>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<div class="" align="center"><h3><a name="AuthenticationandAuthorization-"></a><font color="navy">Before being processed by the server, each request goes through two processes</font></h3></div>
+
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<td class='confluenceTd'><h5><a name="AuthenticationandAuthorization-VerifiestheidentityoftheAPIclientcommunicatingwiththeChefServer."></a><font color="#f7681a">Authentication:</font> Verifies the identity of the API client communicating with the Chef Server. </h5></td>
+<td class='confluenceTd'><h5><a name="AuthenticationandAuthorization-Verifiesthattheidentifiedclienthasthepermissiontoperformtherequestedactions."></a><font color="#f7681a">Authorization:</font>  Verifies that the identified client has the permission to perform the requested actions. </h5></td>
+</tr>
+</tbody></table>
+</div>
+
+<div class="" align="center"><span class="image-wrap" style="display: block; text-align: center"><img src="../attachments/19071693/19693569.png" style="border: 0px solid black"/></span></div>
+
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+
+<p>After your initial configuration of nodes and your workstations, these processes are largely transparent.  However, understanding both of these processes is often important when debugging potential problems.  </p>
+
+<p><font color="#f7681a">Since <b><a href="Chef Solo.html" title="Chef Solo">Chef-Solo</a></b> does not communicate with a Chef Server, authentication and authorization do not play a role in the normal use of chef-solo.</font> This article covers how a given API client's requests are authenticated and authorized. For information about specific errors see <a href="Common Errors.html" title="Common Errors">Common Errors</a>.</p>
+
+<h1><a name="AuthenticationandAuthorization-Authentication"></a>Authentication</h1>
+<div class='navmenu' style='float:left; width:180px; background:#eeeeee; border:4px solid #d7d4c3; margin:10px; padding:4px'><div class="" align="center"><p><font color="navy"><b>Authentication ensures that requests received by the Chef Server are from known API clients</b></font></p></div>
+ </div>
+<p><font color="#f7681a">The authentication process in Chef uses public key encryption, and is the same for users of the Open Source Chef Server as well as Hosted Chef and Private Chef.</font></p>
+
+<p>When an API client is created, private and public encryption keys are created.  The public key is stored on the Chef Server, while the private key is returned to the user for safe keeping.  The private key is the ".pem" file that you put in your local <tt>.chef</tt> directory or in <tt>/etc/chef</tt>. Chef executables such as <tt>chef-client</tt> and <tt>knife</tt> authenticate requests to the Chef Server by encrypting a specially crafted set of HTTP Headers with the private key. The Chef Server then uses the public key to de-crypt the headers and verifies their content.</p>
+
+<p>This process helps ensure that requests are only accepted from known API clients.</p>
+
+<p>For technical details on how API requests are authentication see <a href="Making Authenticated API Requests.html" title="Making Authenticated API Requests">Making Authenticated API Requests</a>.  To debug common problems that can result in Authorization errors, see <a href="Common Errors.html" title="Common Errors">Common Errors</a>.</p>
+
+<h2><a name="AuthenticationandAuthorization-InitialChefclientrun"></a>Initial Chef-client run</h2>
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/19071693/20086875.png" style="border: 0px solid black"/></span><br/>
+<font color="#f7681a">Since every request from chef-client to the Chef Server must be authenticated, every node must have an API client.</font>  To avoid requiring administrators to create new API clients for each node they would like to add to their infrastructure, Chef uses a special <b>validator client</b> on the first run of chef-client.  </p>
+
+<p>The validator client's key pair is created when you first install an Chef Server or create a Hosted Chef organization and is moved onto clients by the <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> process or manually during the chef-client install process. <em>This validator client creates a new API client that the node can then use for all future request.</em>  </p>
+
+<p>A check is done to see if a client key exists on the node (typically, <tt>/etc/chef/client.pem</tt>)</p>
+<ul>
+	<li>If so, we use it to start signing requests.</li>
+</ul>
+
+
+<ul>
+	<li>If not, we check if a validation key exists on the node (typically, <tt>/etc/chef/validation.pem</tt>).
+	<ul>
+		<li>If so, we request a new API Client Key, signing our request with the validation key.</li>
+		<li>If not, we fail.</li>
+	</ul>
+	</li>
+</ul>
+
+
+<p>If we were issued a new API Client Key, we start using it to sign subsequent requests.</p>
+
+<h2><a name="AuthenticationandAuthorization-DebuggingAuthenticationProblems"></a>Debugging Authentication Problems</h2>
+
+<p><font color="#f7681a">Authentication problems are situations in which chef-client receives HTTP Status 401 in response to its request.</font>  If you are receiving HTTP Status 403, the problem is with <b>Authorization</b>.  </p>
+
+<p>An authentication error error may look like the following:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[Wed, 05 Oct 2011 15:43:34 -0700] INFO: HTTP Request Returned 401 Unauthorized: Failed to authenticate as NODENAME. Ensure that your node_name and client key are correct.</pre>
+		</div>
+</div></div>
+<p>To debug authentication problems, the first piece of information to determine is the API client that chef-client is attempting to authenticate as.  You can usually see this in the log messages emitted by chef-client.  For instance if you turn on debug logging (<tt>chef-client -l debug</tt>) you will see a line such as:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[Wed, 05 Oct 2011 22:05:35 +0000] DEBUG: Signing the request as SOMENODENAMEHERE</pre>
+		</div>
+</div></div>
+
+<p><b>If the authentication is happening with your validator client, the problem is most likely with your validation key.</b>  </p>
+
+<p><b>If the authentication is happening with the nodes API client, there are a number of common causes.</b></p>
+
+<ul>
+	<li>Your client.pem file is incorrect.<br/>
+    This can be fixed by deleting client.pem and re-running chef-client. When chef-client runs, it will register the API client and generate the correct key.</li>
+</ul>
+
+
+<ul>
+	<li>You are trying to authenticate with a node_name that is different from the one you used on your first chef-client run.<br/>
+    This can happen for a number of reasons. For example, if your client.rb file does not specify your node name and you have recently changed the systems hostname. You can fix this by explicitly setting the node name in the client.rb file or with chef-client's -N option to match the name originally used to register. Alternatively, you can re-register using the method described above.</li>
+</ul>
+
+
+<ul>
+	<li>Your system clock has drifted from the actual time by more than 15 minutes. This can be fixed by syncing your clock with an NTP server.</li>
+</ul>
+
+
+
+<h2><a name="AuthenticationandAuthorization-WebUI"></a>WebUI</h2>
+
+<p><font color="#f7681a">The WebUI also uses Chef Server's REST API to perform most operations.</font>  As such requests from the API are also authenticated.  The WebUI authenticates using a keypair that is generated during the installation.  Hosted Chef users need not worry about the management of the WebUIs authentication keys, as Opscode handles that for you. Private Chef users WebUI authentication keys are managed by the internal administrator(s) responsible for the Private Chef server.</p>
+
+<h1><a name="AuthenticationandAuthorization-Authorization"></a>Authorization</h1>
+<div class='navmenu' style='float:left; width:180px; background:#eeeeee; border:4px solid #d7d4c3; margin:10px; padding:6px'><div class="" align="center"><p><font color="navy"><b>Authorization ensures the API client making a given request has the permission to perform the requested action</b></font></p></div>
+ </div>
+<p>Open Source Chef has a single tenant access control model, which is very different from the role-based access control (RBAC) model of Hosted Chef and Private Chef.  </p>
+
+<p><em>See <b><a href="Hosted Chef Authorization.html" title="Hosted Chef Authorization">Hosted Chef Authorization</a></b> for the Hosted Chef and Private Chef authorization model.</em></p>
+
+<p><font color="#f7681a">Authorization in the Open Source Chef Server is governed by the designation of API clients as non-admin, admin, or validator clients.</font>  <br/>
+Certain functions are available to all clients, others are available to either admin clients or the validator clients, and some are only available to admin clients.  Further, API clients are permitted to perform certain actions on themselves or their related node but not on other clients.</p>
+
+<p>Admin clients are created by setting the client's <tt>admin</tt> attribute to true.  <br/>
+This attribute can be set upon client create when using <tt>knife client create</tt> or by using <tt>knife client edit</tt>.</p>
+
+<p>Validator clients are created during the Chef Server installation.</p>
+
+<p><font color="#f7681a"><b>Admin Clients Only</b></font><br/>
+The following API requests can only be made by admin clients.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Request Description</th>
+<th class='confluenceTh'>Knife Equivalent</th>
+</tr>
+<tr>
+<th class='confluenceTh'>Client Index</th>
+<td class='confluenceTd'><tt>knife client list</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Client Update</th>
+<td class='confluenceTd'><tt>knife client edit NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Client Destroy</th>
+<td class='confluenceTd'><tt>knife client delete NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Cookbook Update</th>
+<td class='confluenceTd'><tt>knife cookbook upload COOKBOOK</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Cookbook Destroy </th>
+<td class='confluenceTd'> <tt>knife cookbook delete COOKBOOK</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Data Bag Create</th>
+<td class='confluenceTd'> <tt>knife data bag create BAG_NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Data Bag Destroy</th>
+<td class='confluenceTd'><tt>knife data bag delete BAG_NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Data Bag Item Create</th>
+<td class='confluenceTd'><tt>knife data bag create BAG_NAME ITEM_NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Data Bag Item Update</th>
+<td class='confluenceTd'><tt>knife data bag edit BAG_NAME ITEM_NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Data Bag Item Destroy</th>
+<td class='confluenceTd'><tt>knife data bag delete BAG_NAME ITEM_NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Environment Create</th>
+<td class='confluenceTd'><tt>knife environment create ENV_NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Environment Update</th>
+<td class='confluenceTd'><tt>knife environment edit ENV_NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Environment Destroy</th>
+<td class='confluenceTd'><tt>knife environment delete ENV_NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Role Create</th>
+<td class='confluenceTd'><tt>knife role create ROLE_NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Role Update</th>
+<td class='confluenceTd'><tt>knife role edit ROLE_NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Role Destroy</th>
+<td class='confluenceTd'><tt>knife role delete ROLE_NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Search Reindex</th>
+<td class='confluenceTd'><b>NA</b></td>
+</tr>
+<tr>
+<th class='confluenceTh'>User Create</th>
+<td class='confluenceTd'><b>NA</b></td>
+</tr>
+<tr>
+<th class='confluenceTh'>User Update</th>
+<td class='confluenceTd'><b>NA</b></td>
+</tr>
+<tr>
+<th class='confluenceTh'>User Destroy</th>
+<td class='confluenceTd'><b>NA</b></td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><font color="#f7681a"><b>Admin Clients or Validator Client</b></font><br/>
+The following API requests can only be made by admin clients OR the validator client.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Request Description</th>
+<th class='confluenceTh'>Knife Equivalent</th>
+</tr>
+<tr>
+<th class='confluenceTh'>Client Create</th>
+<td class='confluenceTd'><tt>knife client create</tt></td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><em>Note that only admin clients can create other admin clients.</em></p>
+
+<p><font color="#f7681a"><b>Admin Clients or Clients Acting on Themselves</b></font><br/>
+The following API requests can only be made by admin clients OR clients that are requesting that the action be taken on themselves or their related node.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Request Description</th>
+<th class='confluenceTh'>Knife Equivalent</th>
+</tr>
+<tr>
+<th class='confluenceTh'>Client Show</th>
+<td class='confluenceTd'><tt>knife client show NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Node Update</th>
+<td class='confluenceTd'><tt>knife node edit NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Node Destroy</th>
+<td class='confluenceTd'><tt>knife node delete NAME</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'>Node Cookbooks</th>
+<td class='confluenceTd'><b>NA</b></td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><b>Any functions not listed in the above tables can be performed by any API client that has made a properly authenticated request.</b></p>
+
+<h1><a name="AuthenticationandAuthorization-Summary"></a>Summary</h1>
+<p><b><font color="#f7681a">Open Source Chef Server has a single tenant access control model.</font></b></p>
+<ol>
+	<li>All stored objects (roles, nodes, cookbooks, data bags, search indexes) are in the same virtual space and accessible to all API clients.</li>
+	<li>All API clients are authorized as either "admin" or "normal."
+	<ul>
+		<li>"Admin" API clients perform privileged tasks such as create/read/update/delete operations on all nodes.</li>
+		<li>"Normal" API clients act upon the node they create.</li>
+	</ul>
+	</li>
+</ol>
+
+
+<p><b><font color="#f7681a">The role-based access control (RBAC) model of Hosted and Private Chef is detailed at <b><a href="Hosted Chef Authorization.html" title="Hosted Chef Authorization">Hosted Chef Authorization</a></b>.</font></b>
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Architecture.html" title="Architecture"><span class="image-wrap" style="float: left"><img src="../attachments/19071693/20840478.png" hspace="4" style="border: 0px solid black"/></span> Architecture </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Hosted Chef Authorization.html" title="Hosted Chef Authorization"><span class="image-wrap" style="float: right"><img src="../attachments/19071693/20840477.png" hspace="4" style="border: 0px solid black"/></span> Hosted Chef Authorization </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071693/20086871.png">authz-and-authn-overview.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071693/20086874.png">authz-and-authn-overview.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071693/19693569.png">authz-and-authn-overview.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071693/20086875.png">authn-flow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071693/20611116.jpg">authentication.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071693/20840477.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071693/20840478.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071693/23199755.png">authentication.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

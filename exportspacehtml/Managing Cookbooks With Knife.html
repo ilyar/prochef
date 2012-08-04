@@ -1,0 +1,765 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Cookbooks With Knife</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Cookbooks With Knife
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><a name="ManagingCookbooksWithKnife-top"></a>
+<br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/21397642/21463133.jpg" hspace="24" vspace="40" style="border: 0px solid black"/></span></p>
+
+<h2><a name="ManagingCookbooksWithKnife-Overview"></a>Overview</h2>
+
+<h5><a name="ManagingCookbooksWithKnife-"></a><font color="#f7681a">Knife is a command-line tool that comes with Chef.</font> </h5>
+<h5><a name="ManagingCookbooksWithKnife-"></a><font color="#f7681a">It is used by administrators to interact with the Chef <a href="Server API.html" title="Server API">Server API</a>, the local Chef repository and and can be used to interact with cookbooks on the Chef Server and on the Cookbook Site.</font> </h5>
+<p><br class="atl-forced-newline" /></p>
+<h4><a name="ManagingCookbooksWithKnife-Knife%27s%7B%7Bcookbook%7D%7Dand%7B%7Bcookbooksite%7D%7Dsubcommandsprovidethiscapability."></a>Knife's <tt>cookbook</tt> and <tt>cookbook site</tt> sub-commands provide this capability.  </h4>
+
+<ul>
+	<li>For more information about Knife, refer to the <b><a href="Knife.html" title="Knife">Knife</a></b> documentation.</li>
+	<li>See <b><a href="Cookbooks.html" title="Cookbooks">Cookbooks</a></b> for more information on Cookbooks.</li>
+	<li>See <b><a href="Cookbook Site Help.html" title="Cookbook Site Help">Cookbook Site Help</a></b> for assistance in interaction with the <a href="http://community.opscode.com/">Opscode Community Cookbook Site</a>.</li>
+	<li>See <b><a href="Cookbook Support.html" title="Cookbook Support">Cookbook Support</a></b> for support of cookbooks.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<table><tr><td width="400px"><div class="panel" style="border-width: 1px;"><div class="panelContent">
+<div class="" align="center"><font color="navy"><b>Knife commands all have the same form</b></font></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife sub-command [ARGUMENTS] (options)</pre>
+		</div>
+</div></div>
+</div></div></td></tr></table></td> 
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ManagingCookbooksWithKnife-Overview'>Overview</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-Cookbook'>Cookbook</a></li>
+<ul>
+    <li><a href='#ManagingCookbooksWithKnife-bulkdelete'>bulk delete</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-create'>create</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-delete'>delete</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-download'>download</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-list'>list</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-metadatafromfile'>metadata from file</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-show'>show</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-test'>test</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-upload'>upload</a></li>
+</ul>
+    <li><a href='#ManagingCookbooksWithKnife-CookbookSite'>Cookbook Site</a></li>
+<ul>
+    <li><a href='#ManagingCookbooksWithKnife-download'>download</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-install'>install</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-list'>list</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-Search'>Search</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-share'>share</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-show'>show</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-unshare'>unshare</a></li>
+</ul>
+    <li><a href='#ManagingCookbooksWithKnife-AddingaCookbooktotheCommunitySite'>Adding a Cookbook to the Community Site</a></li>
+<ul>
+    <li><a href='#ManagingCookbooksWithKnife-UploadingacookbookusingKnife'>Uploading a cookbook using Knife</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-Uploadingacookbookusingthewebsite'>Uploading a cookbook using the web site</a></li>
+    <li><a href='#ManagingCookbooksWithKnife-LicensingQuestions'>Licensing Questions</a></li>
+</ul>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="ManagingCookbooksWithKnife-Cookbook"></a>Cookbook</h2>
+<p><font color="#f7681a">The cookbook sub-commands are for interacting with cookbook on the Chef server.</font> For commands related to interacting with cookbooks on the community site, see the documentation for <b><a href="#ManagingCookbooksWithKnife-CookbookSite">Cookbook Site</a></b>.</p>
+</div></div>
+
+<p>The following cookbook arguments are available:</p>
+
+<h3><a name="ManagingCookbooksWithKnife-bulkdelete"></a>bulk delete</h3>
+<p>Delete cookbooks on the chef server based on a regular expression. The regular expression (regex) should be in quotes, not in //'s.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook bulk delete REGEX (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;p</tt>, <tt>&#45;&#45;purge</tt>:<br/>
+    Purge files from backing store. This will disable any cookbook that contains any of the same files as the cookbook being purged.</li>
+</ul>
+
+
+<h3><a name="ManagingCookbooksWithKnife-create"></a>create</h3>
+<p>This is a helper command that creates a new cookbook directory in the <tt>cookbook_path</tt> configuration option.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook create COOKBOOK_NAME (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b></p>
+<ul>
+	<li><tt>&#45;o</tt>, <tt>&#45;&#45;cookbook&#45;path path</tt>:<br/>
+    the directory where the cookbook will be created</li>
+	<li><tt>&#45;r</tt>, <tt>&#45;&#45;readme&#45;format format</tt>:<br/>
+    format of the readme file md, mkd, txt, rdoc</li>
+	<li><tt>&#45;c</tt>, <tt>&#45;&#45;copyright copyright</tt>:<br/>
+    name of copyright holder</li>
+	<li><tt>&#45;i</tt>, <tt>&#45;&#45;license license</tt>:<br/>
+    license for cookbook, apachev2 or none</li>
+	<li><tt>&#45;e</tt>, <tt>&#45;&#45;email email</tt>:<br/>
+    email address of cookbook maintainer</li>
+</ul>
+
+
+<p><b>Details</b><br/>
+The following directories and files are created for the named cookbook.</p>
+
+<ul>
+	<li>cookbook/attributes</li>
+	<li>cookbook/definitions</li>
+	<li>cookbook/files/default</li>
+	<li>cookbook/libraries</li>
+	<li>cookbook/metadata.rb</li>
+	<li>cookbook/providers</li>
+	<li>cookbook/readme.md</li>
+	<li>cookbook/recipes/default.rb</li>
+	<li>cookbook/resources</li>
+	<li>cookbook/templates/default</li>
+</ul>
+
+
+<p>Supported readme formats are 'md' (default), 'mkd', 'txt', 'rdoc'. the readme file will be written with the specified extension and a set of helpful starting headers.</p>
+
+<p>Specifying <tt>&#45;c</tt> or <tt>&#45;&#45;copyright</tt> with the name of the copyright holder as your name or your company/organization name in a quoted string will place the appropriate copyright notice in the pre-created files. If this value is not specified an all-caps string `your_company_name` is used, which can be easily changed with find/replace.</p>
+
+<p>Specifying <tt>&#45;i</tt> or <tt>&#45;&#45;license</tt> with the license that the cookbook is distributed under for sharing with other people or posting to the opscode cookbooks site will place the appropriate license notice in the pre-created files. Be aware of the licenses of files you put inside the cookbook and follow any restrictions they describe.</p>
+
+<p>The cookbook copyright, license, email and readme_format settings can be filled in the <tt>knife.rb</tt>, for example with default values:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbook_copyright "your_company_name"
+    cookbook_license "none"
+    cookbook_email "your_email"
+    readme_format "md"</pre>
+		</div>
+</div></div>
+
+<h3><a name="ManagingCookbooksWithKnife-delete"></a>delete</h3>
+<p>Deletes the specified <b>version</b> of the named <b>cookbook</b>. If no version is specified, and only one version exists on the server, that version will be deleted. If multiple versions are available on the server, you will be prompted for a version to delete.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook delete cookbook [VERSION] (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;a</tt>, <tt>&#45;&#45;all</tt>:<br/>
+    delete all versions</li>
+</ul>
+
+
+<ul>
+	<li><tt>&#45;p</tt>, <tt>&#45;&#45;purge</tt>:<br/>
+    purge files from backing store. this will disable any cookbook that contains any of the same files as the cookbook being purged.</li>
+</ul>
+
+
+<h3><a name="ManagingCookbooksWithKnife-download"></a>download</h3>
+<p>Downloads a cookbook from the chef server. If no version is specified and only one version exists on the server, that version will be downloaded. If no version is specified and multiple versions are available on the server, you will be prompted for a version to download.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook download cookbook [version]__ _(options)_</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;d</tt>, <tt>&#45;&#45;dir download_directory</tt>:<br/>
+    the directory to download the cookbook into</li>
+	<li><tt>&#45;f</tt>, <tt>&#45;&#45;force</tt>:<br/>
+    overwrite an existing directory with the download</li>
+	<li><tt>&#45;n</tt>, <tt>&#45;&#45;latest</tt>:<br/>
+    download the latest version of the cookbook</li>
+</ul>
+
+
+<h3><a name="ManagingCookbooksWithKnife-list"></a>list</h3>
+<p>Lists the cookbooks available on the Chef server.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook list (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;a</tt>, <tt>&#45;&#45;all</tt>:<br/>
+    show all versions of a cookbook instead of just the most recent</li>
+	<li><tt>&#45;w</tt>, <tt>&#45;&#45;with-uri</tt>:<br/>
+    show corresponding uris</li>
+</ul>
+
+
+<h3><a name="ManagingCookbooksWithKnife-metadatafromfile"></a>metadata from file</h3>
+<p>Loads the cookbook metadata from a specified file.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook metadata from file FILE (options)</pre>
+		</div>
+</div></div>
+
+<h3><a name="ManagingCookbooksWithKnife-show"></a>show</h3>
+<p>Shows information about a particular cookbook, particular part of a cookbook, or a particular file in a cookbook.</p>
+
+<p><b>Usage</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook show COOKBOOK [VERSION] [PART] [FILENAME] (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b></p>
+<ul>
+	<li><tt>&#45;f</tt>, <tt>&#45;&#45;fqdn fqdn</tt>:<br/>
+    the fqdn of the host to see the file for</li>
+	<li><tt>&#45;p</tt>, <tt>&#45;&#45;platform platform</tt>:<br/>
+    the platform to see the file for</li>
+	<li><tt>&#45;V version</tt>, <tt>&#45;&#45;platform-version version</tt>:<br/>
+    the platform version to see the file for</li>
+	<li><tt>&#45;w</tt>, <tt>&#45;&#45;with-uri</tt>:<br/>
+    Show corresponding URIs</li>
+</ul>
+
+
+<p>The following parts can be viewed using <tt>knife cookbook show COOKBOOK VERSION PART</tt></p>
+
+<ul>
+	<li>attributes</li>
+	<li>definitions</li>
+	<li>files</li>
+	<li>libraries</li>
+	<li>providers</li>
+	<li>recipes</li>
+	<li>resources</li>
+	<li>templates</li>
+</ul>
+
+
+<p><b>Example Output</b></p>
+
+<p>Calling <tt>show</tt> against a cookbook without other arguments returns a list of the available versions:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife cookbook show getting-started
+getting-started   0.3.0  0.2.0</pre>
+		</div>
+</div></div>
+
+<p>Giving both the cookbook name and version will list a large amount of data about the cookbook:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife cookbook show getting-started 0.3.0
+attributes:
+    checksum:     fa0fc4abf3f6787aeb5c3c5c35de667c
+    name:         default.rb
+    path:         attributes/default.rb
+    specificity:  default
+    url:          https://somelongurlhere.com
+chef_type:      cookbook_version
+cookbook_name:  getting-started
+definitions:    []
+files:          []
+frozen?:        false
+json_class:     Chef::CookbookVersion
+libraries:      []</pre>
+		</div>
+</div></div>
+
+<p>Further specifying the part will show information regarding that part of the cookbook:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook show getting-started 0.3.0 templates
+  checksum:     a29d6f254577b830091f140c3a78b1fe
+  name:         chef-getting-started.txt.erb
+  path:         templates/default/chef-getting-started.txt.erb
+  specificity:  default
+  url:          https://someurlhere.com</pre>
+		</div>
+</div></div>
+
+<h3><a name="ManagingCookbooksWithKnife-test"></a>test</h3>
+<p>Test the specified cookbooks for syntax errors. This uses the built-in ruby syntax checking option for files in the cookbook ending in <tt>.rb</tt>, and the erb syntax check for files ending in <tt>.erb</tt> (templates).</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook test [COOKBOOKS...] (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;a</tt>, <tt>&#45;&#45;all</tt>:<br/>
+    test all cookbooks, rather than just a single cookbook</li>
+	<li><tt>&#45;o</tt>, <tt>&#45;&#45;cookbook&#45;path PATH:PATH</tt>:<br/>
+    a colon-separated path to look for cookbooks in</li>
+</ul>
+
+
+<h3><a name="ManagingCookbooksWithKnife-upload"></a>upload</h3>
+<p>Uploads one or more cookbooks from your local cookbook repository to the Chef Server. Only files that don't yet exist on the server will be uploaded.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload [COOKBOOKS...] (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;a</tt>, <tt>&#45;&#45;all</tt>:<br/>
+    upload all cookbooks, rather than just a single cookbook</li>
+	<li><tt>&#45;o</tt>, <tt>&#45;&#45;cookbook-path path:path</tt>:<br/>
+    a colon-separated path to look for cookbooks in</li>
+	<li><tt>&#45;d</tt>, <tt>&#45;&#45;include-dependencies</tt>:<br/>
+    Indicates that when a cookbook has a dependency on one or more other cookbooks, those cookbooks will also be uploaded.</li>
+	<li><tt>&#45;E</tt>, <tt>&#45;&#45;environment ENVIRONMENT</tt>:<br/>
+    An <b>ENVIRONMENT</b> to apply the uploaded cookbooks to. Specifying this<br/>
+    option will cause knife to edit the <b>ENVIRONMENT</b> to place a strict<br/>
+    version constraint on the cookbook version(s) uploaded.</li>
+	<li><tt>&#45;&#45;freeze</tt>:<br/>
+    Sets the frozen flag on the uploaded cookbook(s) Any future attempt<br/>
+    to modify the cookbook without changing the version number will<br/>
+    return an error unless <tt>&#45;&#45;force</tt> is specified.</li>
+	<li><tt>&#45;&#45;force</tt>:<br/>
+    Overrides the frozen flag on a cookbook, allowing you to overwrite a<br/>
+    cookbook version that has previously been uploaded with the <tt>&#45;&#45;freeze</tt><br/>
+    option.</li>
+</ul>
+
+
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>chefignore, with version 0.10</b><br />With chef version 0.10, you can use a single <tt>chefignore</tt> file placed in the root of your cookbook repository (your cookbook path, usually "cookbooks/" under your chef repository), to determine which files to ignore when uploading cookbooks.  See the <a href="http://www.opscode.com/blog/2011/04/29/chef-0-10-preview-chefignore/">Opscode Blog Post</a> on this enhanced functionality for details.</td></tr></table></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="ManagingCookbooksWithKnife-CookbookSite"></a>Cookbook Site</h2>
+<p><font color="#f7681a">The <em>cookbook site</em> sub-commands are meant for interacting with the community cookbook site: community.opscode.com.</font>  </p>
+</div></div>
+<p><em><a href="#ManagingCookbooksWithKnife-top">return to top of page</a></em></p>
+
+<p>For commands that simply read from the cookbook site (such as download, search, install, and list) you do not need an account on community.opscode.com.  For commands that write to the site you need an account on the community site.</p>
+
+<h3><a name="ManagingCookbooksWithKnife-download"></a>download</h3>
+
+<p>Downloads a specific cookbook from the community site, optionally specifying a certain version.  The cookbook will be downloaded as a <tt>tar.gz</tt> archive and placed in your current working directory.</p>
+
+<p><b>Usage</b>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site download COOKBOOK_NAME [VERSION] (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;f</tt>, <tt>&#45;&#45;file FILE</tt>:<br/>
+    The filename to write to</li>
+	<li><tt>&#45;&#45;force</tt>:<br/>
+    Force download deprecated cookbook</li>
+</ul>
+
+
+
+<p><b>Example</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife cookbook site download getting-started
+Downloading getting-started from the cookbooks site at version 0.3.0 to /Users/sdanna/opscodesupport/getting-started-0.3.0.tar.gz
+Cookbook saved: /Users/sdanna/opscodesupport/getting-started-0.3.0.tar.gz</pre>
+		</div>
+</div></div>
+
+<h3><a name="ManagingCookbooksWithKnife-install"></a>install</h3>
+<p>Installs a cookbook from the community site to your local repository using the git version control system.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbook site install COOKBOOK [VERSION] (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;D</tt>, {{&#45;&#45;no&#45;dependencies }}:<br/>
+    Do not install dependencies automatically</li>
+	<li><tt>&#45;o</tt>, <tt>&#45;&#45;cookbook&#45;path PATH</tt>:<br/>
+    Install cookbooks to PATH</li>
+	<li><tt>&#45;B</tt>, <tt>&#45;&#45;branch BRANCH</tt>:<br/>
+    Default branch to work with [ defaults to master ]</li>
+</ul>
+
+
+<p><b>Details</b>:</p>
+
+<p><tt>knife cookbook site install</tt> uses the git version control system in conjunction with the cookbook site to install community contributed cookbooks to your local cookbook<br/>
+repository. Running `knife cookbook site install` does the following:</p>
+
+<ol>
+	<li>A new "pristine copy" branch is created in git for tracking the<br/>
+   upstream;</li>
+	<li>All existing cookbooks are removed from the branch;</li>
+	<li>The cookbook is downloaded from the cookbook site in tarball form;</li>
+	<li>The downloaded cookbook is untarred, and its contents commited via git;</li>
+	<li>The pristine copy branch is merged into the master branch.</li>
+</ol>
+
+
+<p>By installing cookbook with this process, you can locally modify the upstream cookbook in your master branch and let git maintain your changes as a separate patch.  When an updated upstream version becomes available, you will be able to merge the upstream changes while maintaining your local modifications.</p>
+
+<p><b>Example</b>:<br/>
+The following example is how one would install the <b>getting-started</b> cookbook from the community site.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife cookbook site install getting-started
+Installing getting-started to /Users/sdanna/opscodesupport/.chef/../cookbooks
+Checking out the master branch.
+Creating pristine copy branch chef-vendor-getting-started
+Downloading getting-started from the cookbooks site at version 0.3.0 to /Users/sdanna/opscodesupport/.chef/../cookbooks/getting-started.tar.gz
+Cookbook saved: /Users/sdanna/opscodesupport/.chef/../cookbooks/getting-started.tar.gz
+Removing pre-existing version.
+Uncompressing getting-started version /Users/sdanna/opscodesupport/.chef/../cookbooks.
+removing downloaded tarball
+1 files updated, committing changes
+Creating tag cookbook-site-imported-getting-started-0.3.0
+Checking out the master branch.
+Updating 4d44b5b..b4c32f2
+Fast-forward
+ cookbooks/getting-started/README.rdoc              |    4 +++
+ cookbooks/getting-started/attributes/default.rb    |    1 +
+ cookbooks/getting-started/metadata.json            |   29 ++++++++++++++++++++
+ cookbooks/getting-started/metadata.rb              |    6 ++++
+ cookbooks/getting-started/recipes/default.rb       |   23 +++++++++++++++
+ .../templates/default/chef-getting-started.txt.erb |    5 +++
+ 6 files changed, 68 insertions(+), 0 deletions(-)
+ create mode 100644 cookbooks/getting-started/README.rdoc
+ create mode 100644 cookbooks/getting-started/attributes/default.rb
+ create mode 100644 cookbooks/getting-started/metadata.json
+ create mode 100644 cookbooks/getting-started/metadata.rb
+ create mode 100644 cookbooks/getting-started/recipes/default.rb
+ create mode 100644 cookbooks/getting-started/templates/default/chef-getting-started.txt.erb
+Cookbook getting-started version 0.3.0 successfully installed</pre>
+		</div>
+</div></div>
+
+<h3><a name="ManagingCookbooksWithKnife-list"></a>list</h3>
+<p>Show all cookbooks currently on the community site.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site list (options)</pre>
+		</div>
+</div></div>
+
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;w</tt>, <tt>&#45;&#45;with-uri</tt>:<br/>
+    Show corresponding URIs</li>
+</ul>
+
+
+<p><b>Example</b>:</p>
+
+<p>Output from the following example has been truncated:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">&gt; knife cookbook site list
+1password             homesick              rabbitmq
+7-zip                 hostname              rabbitmq-management
+AmazonEC2Tag          hosts                 rabbitmq_chef
+R                     hosts-awareness       rackspaceknife
+accounts              htop                  radiant
+ack-grep              hudson                rails
+activemq              icinga                rails_enterprise
+ad                    id3lib                redis-package
+ad-likewise           iftop                 redis2
+ant                   iis                   redmine
+[...snip..]</pre>
+		</div>
+</div></div>
+
+<h3><a name="ManagingCookbooksWithKnife-Search"></a>Search</h3>
+<p>Search for a given cookbook on the community cookbook site.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site search QUERY (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Example</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">&gt; knife cookbook site search apache*
+apache2:
+  cookbook:              http://cookbooks.opscode.com/api/v1/cookbooks/apache2
+  cookbook_description:  Installs and configures all aspects of apache2 using Debian style symlinks with helper definitions
+  cookbook_maintainer:   opscode
+  cookbook_name:         apache2
+instiki:
+  cookbook:              http://cookbooks.opscode.com/api/v1/cookbooks/instiki
+  cookbook_description:  Installs instiki, a Ruby on Rails wiki server under passenger+Apache2.
+  cookbook_maintainer:   jtimberman
+  cookbook_name:         instiki
+kickstart:
+  cookbook:              http://cookbooks.opscode.com/api/v1/cookbooks/kickstart
+  cookbook_description:  Creates apache2 vhost and serves a kickstart file.
+  cookbook_maintainer:   opscode
+  cookbook_name:         kickstart
+[...snip...]</pre>
+		</div>
+</div></div>
+
+<h3><a name="ManagingCookbooksWithKnife-share"></a>share</h3>
+<p>See section below on Adding a Cookbook to the Community Site.</p>
+
+<h3><a name="ManagingCookbooksWithKnife-show"></a>show</h3>
+<p>Show information about the given cookbook cookbook from the community site.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site show COOKBOOK_NAME</pre>
+		</div>
+</div></div>
+
+<p><b>Example</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">% knife cookbook site show haproxy
+average_rating:
+category:        Networking
+created_at:      2009-10-25T23:51:07Z
+description:     Installs and configures haproxy
+external_url:
+latest_version:  http://cookbooks.opscode.com/api/v1/cookbooks/haproxy/versions/1_0_3
+maintainer:      opscode
+name:            haproxy
+updated_at:      2011-06-30T21:53:25Z
+versions:
+    http://cookbooks.opscode.com/api/v1/cookbooks/haproxy/versions/1_0_3
+    http://cookbooks.opscode.com/api/v1/cookbooks/haproxy/versions/1_0_2
+    http://cookbooks.opscode.com/api/v1/cookbooks/haproxy/versions/1_0_1
+    http://cookbooks.opscode.com/api/v1/cookbooks/haproxy/versions/1_0_0
+    http://cookbooks.opscode.com/api/v1/cookbooks/haproxy/versions/0_8_1
+    http://cookbooks.opscode.com/api/v1/cookbooks/haproxy/versions/0_8_0
+    http://cookbooks.opscode.com/api/v1/cookbooks/haproxy/versions/0_7_0</pre>
+		</div>
+</div></div>
+
+<h3><a name="ManagingCookbooksWithKnife-unshare"></a>unshare</h3>
+<p>See section below on Adding a Cookbook to the Community Site.</p>
+
+<p><h2><a name="ManagingCookbooksWithKnife-AddingaCookbooktotheCommunitySite"></a>Adding a Cookbook to the Community Site</h2>
+<p><font color="#f7681a">There are two ways to add a cookbook to the community site, you can either use knife or upload the tarball through the website.</font></p>
+
+<h3><a name="ManagingCookbooksWithKnife-UploadingacookbookusingKnife"></a>Uploading a cookbook using Knife</h3>
+
+<h4><a name="ManagingCookbooksWithKnife-share"></a>share</h4>
+<p>Use of Knife's <tt>share</tt> subcommand uploads the specified cookbook using the given category to the Opscode cookbooks site. This requires a login user and certificate for the <a href="http://community.opscode.com/">Opscode Community site</a>.  </p>
+
+<p>By default, knife will use the username and API key you've configured in your configuration file; otherwise you must explicitly set these values on the command line or use an alternate configuration file. You need to be the owner or maintainer of the cookbook if it already exists on the web site.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife cookbook site share COOKBOOK_NAME CATEGORY (options)
+  -s, --server-url URL          Chef Server URL
+  -k, --key KEY                     API Client Key
+  -c, --config CONFIG          The configuration file to use
+  -o, --cookbook-path PATH:PATH    A colon-separated path to look for cookbooks in
+      --defaults                       Accept default values for all questions
+  -e, --editor EDITOR           Set the editor to use for interactive commands
+  -F, --format FORMAT        Which format to use for output
+  -l, --log_level LEVEL          Set the log level (debug, info, warn, error, fatal)
+  -L, --logfile LOGLOCATION     Set the log file location, defaults to STDOUT
+  -n, --no-editor                    Do not open EDITOR, just accept the data as is
+  -u, --user USER                 API Client Username
+  -p, --print-after                  Show the data after a destructive operation
+  -v, --version                      Show chef version
+  -y, --yes                            Say yes to all prompts for confirmation
+  -h, --help                           Show this message]]></script>
+</div></div>
+
+<p>For example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife cookbook site share "apache2" "Web Servers"]]></script>
+</div></div>
+
+<h4><a name="ManagingCookbooksWithKnife-unshare"></a>unshare</h4>
+<p>Use of the <tt>unshare</tt> subcommand stops sharing the given cookbook on the Opscode cookbooks site.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife cookbook site unshare COOKBOOK]]></script>
+</div></div>
+
+<h3><a name="ManagingCookbooksWithKnife-Uploadingacookbookusingthewebsite"></a>Uploading a cookbook using the web site</h3>
+<p>An alternate to using <a href="Knife.html" title="Knife">Knife</a> is to upload the cookbook directly through the site.</p>
+
+<h4><a name="ManagingCookbooksWithKnife-PreparetheCookbook"></a>Prepare the Cookbook</h4>
+<p>First, you should ensure that your cookbook's metadata.rb file is correct. You must include the following metadata:</p>
+<ul>
+	<li>Name</li>
+	<li>Version</li>
+	<li>License</li>
+</ul>
+
+
+<p>We also strongly recommend that you fill out:</p>
+<ul>
+	<li>Description</li>
+	<li>Supported Platforms</li>
+</ul>
+
+
+<p>Once you have done that, you need to bundle the cookbook into a tarball. New versions of the Chef Repository have a task called 'bundle_cookbook' which will do this for you. From the top of your Chef Repository:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[$ rake bundle_cookbook[apache2]
+... generates metadata ...
+... shows output of tar...]]></script>
+</div></div>
+<p>The task will produce a tarball in the pkgs directory of your chef repository:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[$ ls -lah ./pkgs/apache*
+-rw-r--r--  1 adam  adam    22K Oct 29 10:40 ./pkgs/apache2.tar.gz]]></script>
+</div></div>
+
+<h4><a name="ManagingCookbooksWithKnife-AddthecookbooktotheCookbookSite"></a>Add the cookbook to the Cookbook Site</h4>
+<p>To add a new cookbook to the Cookbook Site:</p>
+<ol>
+	<li>Visit <a href="http://cookbooks.opscode.com">http://cookbooks.opscode.com</a> and log in.</li>
+	<li>Click on the 'Cookbooks' tab at the top.</li>
+	<li>Click the orange <em>Add a new cookbook</em> button.</li>
+	<li>On the "New cookbook" page, browse for your cookbook tarball, select a category, enter tags (separated by commas), and click <em>Create</em>.</li>
+</ol>
+
+
+<h3><a name="ManagingCookbooksWithKnife-LicensingQuestions"></a>Licensing Questions</h3>
+<h6><a name="ManagingCookbooksWithKnife-"></a><font color="navy"><em>Do I need to license my cookbooks with Apache 2.0, like Opscode uses for Chef?</em></font></h6>
+
+<p>A: No. You can use any license you wish for your cookbooks as long as you have the rights to share and publish them. You specify which license the cookbook is published under in the metadata of the cookbook itself.</p>
+
+<h6><a name="ManagingCookbooksWithKnife-"></a><font color="navy"><em>Do I need to sign an Opscode Contributor License Agreement to post cookbooks?</em></font></h6>
+<p>A: No. The Opscode CLA is only required if you want to make contributions to Opscode's published cookbooks.</p></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Managing API Clients With Knife.html" title="Managing API Clients With Knife"><span class="image-wrap" style="float: left"><img src="../attachments/21397642/21463132.png" hspace="4" style="border: 0px solid black"/></span> Managing API Clients With Knife </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Managing Environments With Knife.html" title="Managing Environments With Knife"><span class="image-wrap" style="float: right"><img src="../attachments/21397642/21463131.png" hspace="4" style="border: 0px solid black"/></span> Managing Environments with Knife </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397642/21463131.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397642/21463132.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397642/21463133.jpg">9401037-angry-male-cook-in-white-uniform-and-hat-with-two-knifes-black-bckground.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397642/21463134.gif">952.gif</a> (image/gif)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

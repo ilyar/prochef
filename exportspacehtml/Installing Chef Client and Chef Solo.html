@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Installing Chef Client and Chef Solo</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Installing Chef Client and Chef Solo
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jul 09, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<hr />
+
+<h4><a name="InstallingChefClientandChefSolo-"></a><font color="#f7681a">These directions explain installing chef-client or chef-solo on hosts that you would like to manage using Chef.</font></h4>
+<p><span class="image-wrap" style="float: left"><img src="../attachments/18645043/19005527.png" hspace="30" vspace="8" style="border: 0px solid black"/></span></p>
+
+<p><br class="atl-forced-newline" />
+<b>Chef Client is a Chef agent that runs on your nodes.</b> <br/>
+Chef-client connects to a Chef Server to be told what to do on the node. </p>
+
+<p><b>Chef Solo is a standalone version of Chef that runs locally on your node, detached from a Chef server.</b> <br/>
+This means that all the information and Cookbooks required to configure the node have to be present on the local disk.  </p>
+
+<p><br class="atl-forced-newline" />
+Both are shipped together and can be installed using the Operating System-specific directions listed below.</p>
+
+<hr />
+
+<h1><a name="InstallingChefClientandChefSolo-OmnibusDirections"></a>Omnibus Directions</h1>
+
+<p>Omnibus is a quick way to install Chef with an embedded version of Ruby, Rubygems, and other dependencies Chef needs. More information on it can be found on these pages:</p>
+
+<ul>
+	<li><a href="Installing Omnibus Chef Client on Linux and Mac.html" title="Installing Omnibus Chef Client on Linux and Mac">Linux or Mac</a></li>
+	<li><a href="Installing Chef Client on Windows.html" title="Installing Chef Client on Windows">Windows</a></li>
+</ul>
+
+
+<h1><a name="InstallingChefClientandChefSolo-PerOperatingSystemDirections"></a>Per Operating System Directions</h1>
+
+<p>The following are Operating System-specifc guides to installing Chef Client (or chef-solo) on a host.  If your operating system is not listed, use the <a href="Installing Chef Client on Other Operating Systems.html" title="Installing Chef Client on Other Operating Systems">Other Operating Systems</a> guide, which provides general instructions for install Chef using Rubygems as well as specific notes for various operating systems.</p>
+
+<ul>
+	<li><a href="Installing Chef Client on Ubuntu or Debian.html" title="Installing Chef Client on Ubuntu or Debian">Ubuntu or Debian</a></li>
+	<li><a href="Installing Chef Client on CentOS.html" title="Installing Chef Client on CentOS">CentOS, Scientific Linux, Fedora, or RHEL</a></li>
+	<li><a href="Installing Chef Client on OS X.html" title="Installing Chef Client on OS X">OS X</a></li>
+	<li><a href="Installing Chef Client on Windows.html" title="Installing Chef Client on Windows">Windows Server 2008</a></li>
+	<li><a href="Installing Chef Client on Other Operating Systems.html" title="Installing Chef Client on Other Operating Systems">Other Operating Systems</a></li>
+</ul>
+
+
+<h1><a name="InstallingChefClientandChefSolo-Dependencies"></a>Dependencies</h1>
+<p>The following are the packages and gems required to install and run chef-client.  The directions above handle the installation of all require dependencies.  They are listed here for those wishing to install Chef via alternate means.</p>
+
+<ul>
+	<li>Ruby 1.8.7+ (with SSL bindings and development tools)</li>
+	<li>Rubygems 1.7.2+</li>
+	<li>ri</li>
+	<li>rdoc</li>
+	<li>gcc</li>
+	<li>gcc-c++</li>
+	<li>automake</li>
+	<li>autoconf</li>
+	<li>make</li>
+</ul>
+
+
+<p>Gems written and provided by Opscode:</p>
+
+<ul>
+	<li>mixlib-authentication</li>
+	<li>mixlib-cli</li>
+	<li>mixlib-config</li>
+	<li>mixlib-log</li>
+	<li>ohai</li>
+</ul>
+
+
+<p>External gems:</p>
+
+<ul>
+	<li>bunny</li>
+	<li>erubis</li>
+	<li>extlib</li>
+	<li>highline</li>
+	<li>json</li>
+	<li>moneta</li>
+	<li>rest-client</li>
+	<li>uuidtools</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="28%">
+<p><br class="atl-forced-newline" />
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><a name="InstallingChefClientandChefSolo-SystemRequirements"></a></p>
+<h3><a name="InstallingChefClientandChefSolo-"></a><font color="#f7681a">System Requirements</font></h3>
+<hr />
+<p><font color="navy"><b>Chef-client is supported on the following platforms</b></font></p>
+
+<ul>
+	<li>Ubuntu (10.04+)</li>
+	<li>Debian (5.0, 6.0)</li>
+	<li>RHEL &amp; CentOS (5.x, 6.x)</li>
+	<li>Fedora 10&#43;</li>
+	<li>Solaris 9,10,11 Sparc</li>
+	<li>Solaris 10,11 (x86 and x64)</li>
+	<li>Mac OS X (10.4, 10.5, 10.6, 10.7)</li>
+	<li>Windows 7</li>
+	<li>Windows Server 2003 R2, 2008 R2</li>
+</ul>
+
+
+<p>Additionally, chef-client is known to run on the following platforms</p>
+
+<ul>
+	<li>Ubuntu (6.06, 8.04-9.10)</li>
+	<li>RHEL &amp; CentOS (5.x)</li>
+	<li>Gentoo (11.1,11.2)</li>
+	<li>FreeBSD (7.1)</li>
+	<li>OpenBSD (4.4)</li>
+	<li>OpenSolaris (2008.11)</li>
+	<li>Solaris 5.10 (u6)</li>
+	<li>SuSE (11.x)</li>
+	<li>Windows Vista</li>
+</ul>
+
+
+<p><em>We will be installing (or updating) the following in this Installation Guide.</em></p>
+
+<p><font color="navy"><b>Ruby</b></font><br/>
+Ruby 1.8.7, 1.9.1 or 1.9.2 with SSL bindings is required.</p>
+
+<p><font color="navy"><b>RubyGems</b></font><br/>
+Version 1.3.7 or greater. On Ubuntu and Debian Rubygems should be installed from source.</p>
+
+<p><font color="navy"><b>Chef Client Version</b></font><br/>
+Hosted Chef is compatible with chef-client v0.9.0 and greater. Older clients need to <a href="Upgrade Instructions.html" title="Upgrade Instructions">be upgraded</a> before connecting.</p>
+</div></div></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/18645043/21463093.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installing Chef Server.html" title="Installing Chef Server">Installing Chef Server</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/18645043/21463092.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Upgrade Instructions.html" title="Upgrade Instructions">Upgrade Instructions</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645043/19005527.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645043/21463092.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645043/21463093.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

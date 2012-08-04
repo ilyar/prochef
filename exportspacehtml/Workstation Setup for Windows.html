@@ -1,0 +1,403 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Workstation Setup for Windows</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Workstation Setup for Windows
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jun 22, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<h4><a name="WorkstationSetupforWindows-"></a><font color="#f7681a">This article explains how to setup a Chef Workstation on Windows.</font></h4>
+
+<h5><a name="WorkstationSetupforWindows-AChefworkstationiswhereyoudevelopcookbooks%2Candinteractwithyourchefserverandnodes."></a>A Chef workstation is where you develop cookbooks, and interact with your chef-server and nodes. </h5>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+</div></div>
+<p><b>Such a workstation typically includes:</b></p>
+
+<ul class="alternate" type="square">
+	<li>A local repository of your cookbooks and possibly other data.</li>
+	<li>A well-configured knife client</li>
+</ul>
+
+
+<p><b>To create such a workstation, this article explains how to:</b></p>
+
+<ol>
+	<li>Install Chef and Git</li>
+	<li>Create a bare-bones chef repository</li>
+	<li>Configure Knife</li>
+</ol>
+
+
+<p><em><b>Note:</b></em> If you are using Hosted Chef with Windows 2008 R2 you can use the <a href="Fast Start Guide for Windows.html" title="Fast Start Guide for Windows">Fast Start Guide for Windows</a> for directions on setting up your node as a workstation and a client. This guide also contains a quick walkthrough on using recipes on the client.</p>
+</td>
+<td class="confluenceTd" valign="top" width="24%">
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><tr><td><span class="image-wrap" style="display: block; text-align: center"><img src="../attachments/11666233/21463109.png" style="border: 0px solid black"/></span><br/>
+This workstation setup has been tested and verified on the following versions of Windows:
+
+<ul>
+	<li>Windows 7</li>
+	<li>Windows 2003</li>
+	<li>Windows 2008 R2</li>
+</ul>
+</td></tr></table></div>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="80%">
+<h1><a name="WorkstationSetupforWindows-InstallChef"></a>Install Chef</h1>
+
+<p><a href="http://opscode.com/chef/install.msi">Download the Chef Full Installer</a> for Windows and open it. Choose defaults for any options.</p>
+
+<p>Once it is installed there will be no icon for it. If needed, you can confirm it was installed correctly with these commands in a new command prompt window:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; tar --version
+bsdtar 2.8.3 - libarchive 2.8.3
+
+C:\&gt; chef-client --version</pre>
+		</div>
+</div></div>
+<p>You should see "Chef: 10.12.0" returned as the version number.</p>
+
+<h3><a name="WorkstationSetupforWindows-InstallGit%28optional%29"></a>Install Git (optional)</h3>
+
+<p>Git is used to download cookbooks, and the Chef Repository easily. You can skip this step and you will still be able to bootstrap nodes, and add recipes and roles to run_lists. If you skip this step and want to work on your cookbooks, you will need to manually download the cookbook you need from the <a href="http://cookbooks.opscode.com">Community site</a> instead of using knife. </p>
+
+<p><a href="http://msysgit.googlecode.com/files/Git-1.7.11-preview20120620.exe">Download the Git Full installer</a> for Windows and install it.</p>
+
+<p>To make Git easily accessible from normal Windows Command Prompts, be sure to choose the 'Run Git from the Windows Command Prompt' option.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/11666233/19005463.png" style="border: 0px solid black"/></span></p>
+
+<p>For the line ending conversions option be sure to choose: 'Checkout as-is, commit Unix-style line endings'.  Your fellow developers on *nix platforms will thank you!</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/11666233/19005464.png" style="border: 0px solid black"/></span></p>
+
+<p><b>Once Git has installed, close any command line windows and re-open them so the git command can be used.</b></p>
+
+<p><b>Note</b> Don’t worry if you don’t see an icon when it’s done. It’s not that kind of application.</p>
+
+<p>For more in depth Git information please refer to the <a href="http://help.github.com/win-set-up-git/">help guide on github.com</a>.</p>
+
+<h1><a name="WorkstationSetupforWindows-CreateaChefRepositoryonyourworkstation"></a>Create a Chef Repository on your workstation</h1>
+
+<p>The following directions will create a Chef repository--a folder on your local workstation from which you can manage your infrastructure. Advanced users may find is productive to deviate from the basic setup outlined in these directions.</p>
+
+<h3><a name="WorkstationSetupforWindows-CopytheskeletonChefRepositoryavailableonGithub"></a>Copy the skeleton Chef Repository available on Github</h3>
+
+<h3><a name="WorkstationSetupforWindows-UsingGit"></a>Using Git</h3>
+
+<p>Using git, we can create a chef repository by cloning a skeleton repository provided by Opscode:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\Users&gt; cd "%HOMEPATH%"
+C:\Users\USERNAME&gt; git clone git://github.com/opscode/chef-repo.git</pre>
+		</div>
+</div></div>
+<p>This command will create a folder named chef-repo in your home directory. You can clone the repository to a different directory using a command such as:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; git clone git://github.com/opscode/chef-repo.git C:\path\to\alternate\directory</pre>
+		</div>
+</div></div>
+<p>If you choose to use an alternate directory, you'll need to change this in the commands below.</p>
+
+<h3><a name="WorkstationSetupforWindows-WithoutGit"></a>Without Git</h3>
+
+<p>If you skipped installing Git, you can copy the skeleton repository by going onto github.com.</p>
+
+<p>1. Browse to <a href="https://github.com/opscode/chef-repo">https://github.com/opscode/chef-repo</a><br/>
+2. Click on 'Downloads' in the upper right corner</p>
+<ul>
+	<li>If you <b>do not want to use tar</b>, you can select the .zip version and then extract the contents to the %HOMEPATH%/chef-repo directory.</li>
+	<li>If you <b>want to use tar</b> through the command line to extract the file, you can select the tar.gz version, download it to your user's directory, and then extract it with these commands:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd "%HOMEPATH%"
+C:\Users\USERNAME&gt; tar zxvf chef-repo.tar.gz</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<p>After this has been completed, you should be able to browse to the %HOMEPATH%\chef-repo\cookbooks directory.</p>
+
+<h1><a name="WorkstationSetupforWindows-CreateaConfigurationFolder"></a>Create a Configuration Folder</h1>
+
+<p>First we will need to create the .chef file where the pem keys and knife.rb are stored. <b>You must use the mkdir command below to do this, as creating the file any other way will not allow you to name it '.chef':</b></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; mkdir "%HOMEPATH%\chef-repo\.chef"</pre>
+		</div>
+</div></div>
+<p>Now, we need to copy the necessary keys and knife configuration into this directory. </p>
+
+<p><b>The rest of this step will be a bit different depending on the platform you are using:</b></p>
+
+<ul>
+	<li><b>Hosted Chef</b><br/>
+For Hosted Chef users, these files can be downloaded from the Management Console, they need to be moved to the new %HOMEPATH%\chef-repo\.chef directory. If you downloaded them to "C:\Users\USERNAME\Downloads" you could use these commands to move them for example:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd "%HOMEPATH%\Downloads"
+C:\Users\USERNAME\Downloads&gt; copy USERNAME.pem "%HOMEPATH%\chef-repo\.chef"
+C:\Users\USERNAME\Downloads&gt; copy ORGANIZATION-validator.pem "%HOMEPATH%\chef-repo\.chef"
+C:\Users\USERNAME\Downloads&gt; copy knife.rb "%HOMEPATH%\chef-repo\.chef"</pre>
+		</div>
+</div></div>
+<p>Where ORGANIZATION should be replaced with your organizations short name and USERNAME should be replaced by your Hosted Chef username. Note, that the paths to USERNAME.pem, ORGANIZATION-validator.pem, and knife.rb should be change to the path to which they were downloaded.
+<br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Did the WebUI download a file named _regenerate_key instead of your Org's PEM key?</b><br />Currently there is a bug with Hosted Chef where the ORGANIZATION-validator.pem is being renamed _regenerate_key. You can move it and rename it with this one command, substituting in the name of your organization:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; copy "%HOMEPATH%\Downloads\_regenerate_key" "%HOMEPATH%\chef-repo\.chef\ORGANIZATION-validator.pem"</pre>
+		</div>
+</div></div></td></tr></table></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<font color="#f7681a"><b>You will also need to edit the knife.rb to provide the path to the cookbooks.</b></font> You can do this by opening %HOMEPATH%\chef-repo\.chef\knife.rb in Wordpad, and looking for this line:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbook_path            ["#{current_dir}/../cookbooks"]</pre>
+		</div>
+</div></div>
+<p>If you see this, you'll want to change it to the directory below or some knife commands may fail:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbook_path            ["#{ENV['HOME']}/chef-repo/cookbooks"]</pre>
+		</div>
+</div></div>
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>If your %HOMEPATH% has any spaces in it, which will be the case if you are using <b>Windows 2003</b> you'll want to use the full path to cookbooks instead:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbook_path            ['C:\Documents and Settings\USERNAME\chef-repo\cookbooks']</pre>
+		</div>
+</div></div></td></tr></table></div></li>
+</ul>
+
+
+<ul>
+	<li><b>Open Source Chef Server</b><br/>
+For users hosting their own chef-server, you first need to create an admin client for use with knife.  Directions for creating an admin client can be found in <a href="Installing Chef Server Manually.html#InstallingChefServerManually-CreateaKnifeClientforYourLaptop%252FDesktop">the post-install section of the server configuration</a>).  Once you have an admin client, copy the user's private key and the validation key into your chef repository:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd "%HOMEPATH%\Downloads"
+C:\Users\USERNAME\Downloads&gt; copy USERNAME.pem "%HOMEPATH%\chef-repo\.chef"
+C:\Users\USERNAME\Downloads&gt; copy validation.pem "%HOMEPATH%\chef-repo\.chef"</pre>
+		</div>
+</div></div>
+<p>Now, you can create a knife configuration file using the <tt>knife configure</tt> command. Here is an example of what you could enter for each question, if you used the directions on this page:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd "%HOMEPATH%\chef-repo"
+C:\Users\USERNAME\chef-repo&gt; knife configure
+WARNING: No knife configuration file found
+Where should I put the config file? [~/.chef/knife.rb] .chef\knife.rb
+Please enter the chef server URL: [http://localhost:4000] http://chef-server.example.com:4000
+Please enter an existing username or clientname for the API: [user] USERNAME
+Please enter the validation clientname: [chef-validator]
+Please enter the location of the validation key: [/etc/chef/validation.pem] C:\Users\USERNAME\chef-repo\.chef\validation.pem
+Please enter the path to a chef repository (or leave blank): C:\Users\USERNAME\chef-repo</pre>
+		</div>
+</div></div>
+<p>Once this is completed, it will create the <tt>knife.rb</tt> file in <tt>%HOMEPATH%\chef-repo\.chef</tt>.</p></li>
+</ul>
+
+
+<h1><a name="WorkstationSetupforWindows-Confirmyourconfigurationisworking"></a>Confirm your configuration is working</h1>
+
+<p>To confirm that your configuration is working, attempt to run a simple knife command</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd "%HOMEPATH%\chef-repo"
+C:\Users\USERNAME\chef-repo&gt; knife client list
+    ORGANIZATION-validator</pre>
+		</div>
+</div></div>
+
+<p><b>NOTE:</b> knife commands will only work in the <tt>%HOMEPATH%\chef-repo</tt> directory unless you add <tt>-c "%HOMEPATH%\chef-repo\.chef\knife.rb"</tt> to the end of the command to specify where the knife config is located.</p>
+
+<p>This command would work from any directory:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; knife client list -c "%HOMEPATH%\chef-repo\.chef\knife.rb"</pre>
+		</div>
+</div></div>
+
+<h2><a name="WorkstationSetupforWindows-InstallaCookbook"></a>Install a Cookbook</h2>
+
+<p>First you'll need to configure git, replacing USER@EMAIL.com with your email address:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; git config --global user.email "USER@EMAIL.com"</pre>
+		</div>
+</div></div>
+
+<p>Once this is configured you can install the cookbook:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd %HOMEPATH%\chef-repo
+C:\Users\username\chef-repo&gt; knife cookbook site install getting-started
+Installing getting-started to C:/Users/username/chef-repo/cookbooks
+Checking out the master branch.
+Pristine copy branch (chef-vendor-getting-started) exists, switching to it.
+... output truncated ...
+Cookbook getting-started version 0.4.0 successfully installed</pre>
+		</div>
+</div></div>
+
+<p>This will create the file chef-repo\cookbooks\getting-started in your user's home directory, you can see the default recipe contained in this cookbook at chef-repo\cookbooks\getting-started\recipes\default.rb.</p>
+
+<h2><a name="WorkstationSetupforWindows-UploadaCookbook"></a>Upload a Cookbook</h2>
+
+<p>You can then upload the cookbook to the Chef Server/Hosted Chef with this command. This will make the recipe available to be added to a run_list for a node:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd "%HOMEPATH%\chef-repo"
+C:\Users\USERNAME\chef-repo&gt; knife cookbook upload getting-started</pre>
+		</div>
+</div></div>
+
+<p>If you get an error where it cannot find the cookbook in your path, you can specify where they are located with the <tt>-o</tt> switch:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; knife cookbook upload getting-started -o "%HOMEPATH%\chef-repo\cookbooks"</pre>
+		</div>
+</div></div>
+
+<p>If you edit the knife.rb with the cookbook_path instructions above and relaunch a cmd window you should no longer need to use the <tt>-o</tt> switch.</p>
+
+<h2><a name="WorkstationSetupforWindows-Configurethisworkstationasaclient"></a>Configure this workstation as a client</h2>
+
+<p>If you decide that you would also like to run chef-client on this node, you can follow the directions on <a href="Fast Start Guide for Windows.html#FastStartGuideforWindows-Step5%253AConfiguretheworkstationasaclient">Step 5 of the Fast Start Guide for Windows</a> to configure chef-client.</p>
+
+<h2><a name="WorkstationSetupforWindows-Knifeplugins"></a>Knife plugins</h2>
+
+<p>The knife windows plugin can be used to bootstrap new Windows nodes as clients. The plugin can also be used from Mac or Linux workstations. You can install it with Rubygems by using this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; gem install knife-windows</pre>
+		</div>
+</div></div>
+<p>There are also plugins for managing EC2 or Rackspace nodes. For a more complete list see <a href="Community Plugins.html" title="Community Plugins">Community Plugins</a>.</p>
+
+<h2><a name="WorkstationSetupforWindows-SomeResources%2FProvidersAreKnownToNotWork"></a>Some Resources/Providers Are Known To Not Work</h2>
+
+<p>Not all <a href="Resources.html" title="Resources">Resources</a> work on windows yet. <font color="#f7681a">The Following Resources do not work in windows:</font></p>
+
+<ul>
+	<li>Cron</li>
+	<li>Deploy</li>
+	<li>Erlang call</li>
+	<li>Git</li>
+	<li>Http request</li>
+	<li>Ifconfig</li>
+	<li>Link</li>
+	<li>Mdadm</li>
+	<li>Package (but gem_package - for ruby gems, does work)</li>
+	<li>Route</li>
+	<li>SCM</li>
+	<li>Script</li>
+	<li>Subversion</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/11666233/21463078.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installation.html" title="Installation">Installation</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/11666233/21463077.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installing Chef Server.html" title="Installing Chef Server">Installing Chef Server</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666233/19005461.png">ruby-install-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666233/19005462.png">rubydev-install-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666233/19005463.png">windows-git-install-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666233/19005464.png">windows-git-install-2.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666233/19005465.png">windows-tar-setup.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666233/19005476.png">ruby-install-1.8.7.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666233/19005521.jpg">windows-logo.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666233/21463077.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666233/21463078.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666233/21463109.png">windows-logo.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

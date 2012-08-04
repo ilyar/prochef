@@ -1,0 +1,319 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Libraries</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Libraries
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/1179806/21463235.png" hspace="20" vspace="8" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+<h2><a name="Libraries-"></a><font color="#f7681a">Libraries allow you to include arbitrary Ruby code, either to extend Chef's language or to implement your own classes directly.</font> </h2>
+
+<h4><a name="Libraries-Theyarethesecretsaucethatwillallowyoutoplugintoyourexistinginfrastructureandutilizeittoinformhowyoursystemsareconfigured."></a>They are the secret sauce that will allow you to plug in to your existing infrastructure and utilize it to inform how your systems are configured.</h4>
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+
+<p><b>Libraries are defined in your_cookbook/libraries/library_name.rb.</b> </p>
+<ul>
+	<li>Any libraries you include in a <a href="Cookbooks.html" title="Cookbooks">Cookbook</a> will automatically be required, and available within all your <a href="Recipes.html" title="Recipes">Recipes</a>, <a href="Attributes.html" title="Attributes">Attribute Files</a>, <a href="Providers.html" title="Providers">Providers</a> and <a href="Definitions.html" title="Definitions">Definitions</a>.</li>
+	<li>What this means is that the library files will automatically be read - however you may need to do something else to actually use them, depending on their contents.</li>
+</ul>
+
+
+<p>Here's a simple example, showing how you'd use module defined in a Library in your recipe:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>your_cookbook/libraries/your_example_library.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># define a module to mix into Chef::Recipe
+module YourExampleLibrary
+  def your_function()
+    # ... do something useful  
+  end
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>your_cookbook/recipes/default.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># open the Chef::Recipe class and mix in the library module
+class Chef::Recipe
+  include YourExampleLibrary
+end
+
+your_function()</pre>
+		</div>
+</div></div>
+
+<h2><a name="Libraries-BasicLibraries"></a>Basic Libraries</h2>
+
+<p>Lets say you have a customer record you are storing in an attribute file, that looks like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>A customer attribute file</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mycompany_customers({
+  :bob =&gt; {
+    :homedir =&gt; "/home/bob",
+    :webdir =&gt; "/home/bob/web"
+  }
+}
+)</pre>
+		</div>
+</div></div>
+
+<p>In a recipe, you could say:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Simple recipe</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">directory node[:mycompany_customers][:bob][:webdir] do
+  owner "bob"
+  group "bob"
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<p>But that feels verbose, and you are going to do it all the time.  You would rather say:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Advanced recipe</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">directory customer(:bob)[:webdir] do
+  owner "bob"
+  group "bob"
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<p>You could achieve that with a simple library, like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Library to extend Chef::Recipe</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">class Chef
+  class Recipe	  
+    # A shortcut to a customer
+    def customer(name)
+      @node[:mycompany_customers][name]
+    end
+  end
+end</pre>
+		</div>
+</div></div>
+
+<p>Lets say you wanted some code to easily loop over every customer, like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Loop over customers</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">all_customers do |name, info|
+  directory info[:webdir] do
+    owner name
+    group name
+    action :create
+  end
+end</pre>
+		</div>
+</div></div>
+
+<p>You could have a library like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Loop over customers</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">class Chef
+  class Recipe
+    def all_customers(&amp;block)
+      @node[:mycompany_customers].each do |name, info|
+        block.call(name, info)
+      end
+    end
+  end
+end</pre>
+		</div>
+</div></div>
+
+<h2><a name="Libraries-AdvancedLibraryUsage"></a>Advanced Library Usage</h2>
+
+<p><font color="#f7681a">You can also use Libraries to connect up to databases, talk to LDAP, or do anything else you can do with Ruby.. which is basically anything.</font><br/>
+If you are going to go too crazy, consider putting your libraries in a new namespace, and calling them directly from your Chef <a href="Recipes.html" title="Recipes">Recipes</a> - that way, there won't be too much pollution of the Chef::Recipe namespace.</p>
+
+<p>Here is an example of connecting to a database and returning a list of customer Virtual Hosts.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Virtual Hosts from a Database</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">require 'sequel'
+
+class Chef::Recipe::ISP
+  # We can call this with ISP.vhosts
+  def self.vhosts
+    v = []
+    @db = Sequel.mysql(
+      'web', 
+      :user =&gt; 'example', 
+      :password =&gt; 'example_pw', 
+      :host =&gt; 'dbserver.example.com'
+    )
+    @db[
+      "SELECT virtualhost.domainname, 
+              usertable.userid, 
+              usertable.uid, 
+              usertable.gid, 
+              usertable.homedir
+         FROM usertable, virtualhost
+        WHERE usertable.userid = virtualhost.user_name"
+      ].all do |query|
+      vhost_data = {
+        :servername   =&gt; query[:domainname],
+        :documentroot =&gt; query[:homedir],
+        :uid          =&gt; query[:uid],
+        :gid          =&gt; query[:gid],
+      }
+      v.push(vhost_data)
+    end
+    Chef::Log.debug("About to provision #{v.length} vhosts")
+    v
+  end
+end</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>This rocking example..</b><br />Was provided by Arjuna (fujin).  He's awesome.</td></tr></table></div>
+
+
+<p><br class="atl-forced-newline" />
+You could then use this in a recipe like so:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Using ISP.vhosts in a Recipe</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">ISP.vhosts.each do |vhost|
+  directory vhost[:documentroot] do
+    owner vhost[:uid]
+    group vhost[:gid]
+    mode 0755
+    action :create
+  end
+
+  directory "#{vhost[:documentroot]}/#{vhost[:domainname]}" do
+    owner vhost[:uid]
+    group vhost[:gid]
+    mode 0755
+    action :create
+  end
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="File Distribution.html" title="File Distribution"><span class="image-wrap" style="float: left"><img src="../attachments/1179806/20840588.png" hspace="4" style="border: 0px solid black"/></span> File Distribution </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Metadata.html" title="Metadata"><span class="image-wrap" style="float: right"><img src="../attachments/1179806/20840587.png" hspace="4" style="border: 0px solid black"/></span> Metadata </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179806/20840587.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179806/20840588.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179806/20840589.jpg">4044870-3d-concept-of-closed-book-on-light-background-and-netbook.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179806/21463235.png">4044870-3d-concept-of-closed-book-on-light-background-and-netbook.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-7897230"></a>
+                                    <font class="smallfont"><p>NB Subdirectories in the libraries folder are <b>not synced with clients</b> <a href="http://tickets.opscode.com/browse/CHEF-672">http://tickets.opscode.com/browse/CHEF-672</a></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by davenolan at Sep 16, 2010 09:33
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24773302"></a>
+                                    <font class="smallfont"><p>It would be nice if cookbook libraries could be included in other cookbook libraries.</p>
+
+<p>It seems to sporadically work if you have a cookbook depend on another cookbook; however, since there does not seem to be any ordering done during the loading of the libraries it will sometimes succeed and sometimes fail depending on how the libraries got loaded. It would be nice if the loading of libraries was determined by the cookbook dependencies.</p>
+
+<p>I would love to have something like this:</p>
+
+<p>cookbook-1 (no dependencies)<br/>
+cookbook-2 (depends on cookbook-1)<br/>
+cookbook-3 (depends on cookbook-2)</p>
+
+<p>load cookbook-1 libraries (load any time since it has no dependencies)<br/>
+load cookbook-2 libraries (since they depend on cookbook-1 libraries)<br/>
+load cookbook-3 libraries (since they depend on cookbook-2 libraries)</p>
+
+<p>Or am I completely missing something and there is already a way to do this that isn't documented here?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by kostbot at Jul 18, 2012 05:00
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

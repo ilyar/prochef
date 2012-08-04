@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Opscode Apt Repository Excerpt</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Opscode Apt Repository Excerpt
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 12, 2011 by <font color="#0050B2">steve</font>.
+				    </div>
+
+				    <p>This page serves as an excerpt to be included on other pages so we have <a href="http://en.wikipedia.org/wiki/Drydock">"DRY" docs</a>.</p>
+
+<p>To add it to a page, use:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{excerpt-include:Opscode Apt Repository Excerpt|nopanel=true}</pre>
+		</div>
+</div></div>
+
+
+<h2><a name="OpscodeAptRepositoryExcerpt-AddtheOpscodeAPTRepository"></a>Add the Opscode APT Repository</h2>
+
+<p><font color="#f7681a">Create <tt>/etc/apt/sources.list.d/opscode.list</tt>.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/apt/sources.list.d/opscode.list</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">deb http://apt.opscode.com/ &lt;codename&gt; main</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>For Chef 0.9.x, replace codename with the supported distribution codename, such as "lucid".</li>
+	<li>For Chef 0.10.x, replace codename with the codename, suffixed with "-0.10", for example, "lucid-0.10".</li>
+</ul>
+
+
+<p>If you would like to be able to download source packages, add an additional identical line, but change <tt>deb</tt> to <tt>deb-src</tt> line.</p>
+
+<p>You can copy and paste these examples to create the necessary sources.list entry:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Ubuntu for Chef 0.9.x</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">echo "deb http://apt.opscode.com/ `lsb_release -cs` main" | sudo tee /etc/apt/sources.list.d/opscode.list</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Ubuntu for Chef 0.10.x</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | sudo tee /etc/apt/sources.list.d/opscode.list</pre>
+		</div>
+</div></div>
+<p>Debian users will likely need to run 'apt-get install sudo wget lsb-release' as root before pasting the examples.</p>
+
+<h2><a name="OpscodeAptRepositoryExcerpt-AddtheGPGKeyandUpdateIndex"></a>Add the GPG Key and Update Index</h2>
+
+<p><font color="#f7681a">Before you install the packages, make sure you add the Opscode GPG key to apt.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo mkdir -p /etc/apt/trusted.gpg.d
+gpg --keyserver keys.gnupg.net --recv-keys 83EF826A
+gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg &gt; /dev/null</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Issues downloading from gnupg.net?</b><br />If you get an error when trying to download the key that states that the "keyserver timed out", try downloading the key directly from our apt repository instead:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">gpg --fetch-key http://apt.opscode.com/packages@opscode.com.gpg.key</pre>
+		</div>
+</div></div>
+<p>Afterwards you'll also want to run this command again:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg &gt; /dev/null</pre>
+		</div>
+</div></div></td></tr></table></div>
+
+<p>Now, we update apt-get with the newly added Opscode repository:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get update</pre>
+		</div>
+</div></div>
+
+<p>Installing the opscode-keyring package will keep the key up-to-date:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get install opscode-keyring # permanent upgradeable keyring</pre>
+		</div>
+</div></div>
+
+<h2><a name="OpscodeAptRepositoryExcerpt-UpgradeExistingPackages"></a>Upgrade Existing Packages</h2>
+
+<p>To ensure you are using the latest versions of libraries that chef depends on, you may wish to update your existing packages:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get upgrade</pre>
+		</div>
+</div></div>
+
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

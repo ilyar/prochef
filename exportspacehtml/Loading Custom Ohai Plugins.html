@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Loading Custom Ohai Plugins</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Loading Custom Ohai Plugins
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jan 17, 2012 by <font color="#0050B2">btm</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/2883913/20840694.jpg" hspace="30" vspace="30" style="border: 0px solid black"/></span></p>
+<div class='navmenu' style='float:right; width:500px; background:#f4f2e6; margin:3px; padding:3px'><p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Handy Hint</b><br />As an example, you can find a custom plugin that extends virtualization attribute adding a guest_lists sub-attribute here:
+
+<p><a href="http://github.com/rubiojr/ohai-plugins/blob/master/virtualization_extensions.rb">http://github.com/rubiojr/ohai-plugins/blob/master/virtualization_extensions.rb</a></p></td></tr></table></div> </div>
+<h3><a name="LoadingCustomOhaiPlugins-Ifyouwanttoaddcustom%2FunofficialOhaipluginstoaChefclient%3A"></a>If you want to add custom/unofficial Ohai plugins to a Chef client:</h3>
+
+<ol>
+	<li>Edit /etc/chef/client.rb</li>
+	<li>Add the following line to the end of the file: <b>You can choose any path you want.</b>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">Ohai::Config[:plugin_path] &lt;&lt; '/etc/ohai/plugins'</pre>
+		</div>
+</div></div></li>
+	<li>Add your custom plugins there (e.g. /etc/ohai/plugins)</li>
+	<li>Test your plugins with ohai
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">ohai -d /etc/ohai/plugins</pre>
+		</div>
+</div></div>
+<div class='navmenu' style='float:right; width:500px; background:#f4f2e6; margin:3px; padding:3px'><div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Because of <a href="http://tickets.opscode.com/browse/OHAI-126">OHAI-126</a> you must NOT use a trailing slash with 'ohai -d /etc/ohai/plugins'</td></tr></table></div></div></li>
+	<li>Reload the client:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">/etc/init.d/chef-client restart</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></li>
+</ol>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/2883913/20840696.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Writing Ohai Plugins.html" title="Writing Ohai Plugins">Writing Ohai Plugins</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/2883913/20840695.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Distributing Ohai Plugins.html" title="Distributing Ohai Plugins">Distributing Ohai Plugins</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883913/20840694.jpg">3301830-green-radar-screen-on-a-black-background.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883913/20840695.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883913/20840696.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

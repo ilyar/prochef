@@ -1,0 +1,1710 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Server API</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Server API
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><a name="ServerAPI-top"></a>
+<br class="atl-forced-newline" /></p>
+
+<h1><a name="ServerAPI-Overview"></a>Overview</h1>
+
+<h5><a name="ServerAPI-"></a><font color="#f7681a">This page serves as an overview of the Chef Server REST API, and on managing <a href="API Clients.html" title="API Clients">API clients</a> through this Server API.</font>  </h5>
+<p>API Clients can also be managed via <a href="Knife.html" title="Knife">Knife</a> or the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>, see <a href="API Clients.html" title="API Clients">API Clients</a> for documentation on those approaches, and <a href="http://wiki.opscode.com/display/LEG/Authentication" title="Authentication">Authentication</a> for the process of authentication and validation of the clients access to the server.</p>
+
+<p><b>There are requirements in order to interact with the Chef Server REST API.</b>  In order to make any of these API calls, you will need to satisfy these pre-requisites:</p>
+
+<ul>
+	<li>Have Chef 0.9.x or above</li>
+	<li>Set your Accept header to "application/json"</li>
+	<li>Set your X-Chef-Version header to the version of the API you are using</li>
+	<li>Sign your request with Mixlib::Authentication</li>
+</ul>
+
+
+<p>The easiest way to ensure a well formatted request is to use the Chef::REST library bundled with Chef.  See the <a href="http://wiki.opscode.com/display/LEG/Authentication" title="Authentication">Authentication</a> page for more information about Chef's authentication mechanism.    </p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="ServerAPI-Clients"></a>Clients</h1>
+<p><font color="#f7681a">API Clients communicate with the Chef Server via REST, authenticates via Signed Header Authentication, and compiles and executes Cookbooks.</font></p>
+</div></div>
+
+<h2><a name="ServerAPI-%2Fclients"></a>/clients</h2>
+<p><font color="#f7681a">Manipulate or create API Clients.</font></p>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>Returns a list of all the API clients.  This includes the API Client registration for each Chef node, any other API users you may create, and the validation and webui clients.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to a GET on /clients</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "chef-webui": "http://localhost:4000/clients/chef-webui",
+  "chef-validator": "http://localhost:4000/clients/chef-validator",
+  "adam": "http://localhost:4000/clients/adam"
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "200 OK".</li>
+</ul>
+</td> 
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="25%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ServerAPI-Overview'>Overview</a></li>
+    <li><a href='#ServerAPI-Clients'>Clients</a></li>
+<ul>
+    <li><a href='#ServerAPI-%2Fclients'>/clients</a></li>
+    <li><a href='#ServerAPI-%2Fclients%2FCLIENTNAME'>/clients/CLIENT_NAME</a></li>
+</ul>
+    <li><a href='#ServerAPI-Cookbooks'>Cookbooks</a></li>
+<ul>
+    <li><a href='#ServerAPI-%2Fcookbooks'>/cookbooks</a></li>
+    <li><a href='#ServerAPI-%2Fcookbooks%2FCOOKBOOKNAME'>/cookbooks/COOKBOOK_NAME</a></li>
+    <li><a href='#ServerAPI-%2Fcookbooks%2FCOOKBOOKNAME%2FCOOKBOOKVERSION'>/cookbooks/COOKBOOK_NAME/COOKBOOK_VERSION</a></li>
+</ul>
+    <li><a href='#ServerAPI-DataBags'>Data Bags</a></li>
+<ul>
+    <li><a href='#ServerAPI-%2Fdata'>/data</a></li>
+    <li><a href='#ServerAPI-%2Fdata%2FDATABAGNAME'>/data/DATA_BAG_NAME</a></li>
+    <li><a href='#ServerAPI-%2Fdata%2FDATABAGNAME%2FDATABAGITEMID'>/data/DATA_BAG_NAME/DATA_BAG_ITEM_ID</a></li>
+</ul>
+    <li><a href='#ServerAPI-Nodes'>Nodes</a></li>
+<ul>
+    <li><a href='#ServerAPI-%2Fnodes'>/nodes</a></li>
+    <li><a href='#ServerAPI-%2Fnodes%2FNODENAME'>/nodes/NODE_NAME</a></li>
+    <li><a href='#ServerAPI-%2Fnodes%2FNODENAME%2Fcookbooks'>/nodes/NODE_NAME/cookbooks</a></li>
+</ul>
+    <li><a href='#ServerAPI-Roles'>Roles</a></li>
+<ul>
+    <li><a href='#ServerAPI-%2Froles'>/roles</a></li>
+    <li><a href='#ServerAPI-%2Froles%2FROLENAME'>/roles/ROLE_NAME</a></li>
+</ul>
+    <li><a href='#ServerAPI-Environments'>Environments</a></li>
+<ul>
+    <li><a href='#ServerAPI-%2Fenvironments'>/environments</a></li>
+    <li><a href='#ServerAPI-%2Fenvironments%2FENVIRONMENTNAME'>/environments/ENVIRONMENT_NAME</a></li>
+    <li><a href='#ServerAPI-%2Fenvironments%2F%3Aenvironmentid%2Fcookbooks'>/environments/:environment_id/cookbooks</a></li>
+    <li><a href='#ServerAPI-%2Fenvironments%2F%3Aenvironmentid%2Fcookbookversions'>/environments/:environment_id/cookbook_versions</a></li>
+    <li><a href='#ServerAPI-%2Fenvironments%2F%3Aenvironmentid%2Fcookbooks%2FCOOKBOO...'>/environments/:environment_id/cookbooks/COOKBOOK_NAME</a></li>
+</ul>
+    <li><a href='#ServerAPI-Search'>Search</a></li>
+<ul>
+    <li><a href='#ServerAPI-%2Fsearch'>/search</a></li>
+    <li><a href='#ServerAPI-%2Fsearch%2FINDEX'>/search/INDEX</a></li>
+</ul>
+    <li><a href='#ServerAPI-Sandboxes'>Sandboxes</a></li>
+<ul>
+    <li><a href='#ServerAPI-%2Fsandboxes'>/sandboxes</a></li>
+    <li><a href='#ServerAPI-%2Fsandboxes%2FSANDBOXID'>/sandboxes/SANDBOX_ID</a></li>
+    <li><a href='#ServerAPI-%2Fsandboxes%2FSANDBOXID%2FCHECKSUM'>/sandboxes/SANDBOX_ID/CHECKSUM</a></li>
+</ul>
+    <li><a href='#ServerAPI-ClientLibraries'>Client Libraries</a></li>
+<ul>
+    <li><a href='#ServerAPI-pychef'>pychef</a></li>
+</ul>
+</ul></div>
+</div></div> 
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Hosted and Private Chef</b><br />The Hosted and Private Chef APIs are compatible with the Chef Server API described in this article.</td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h4><a name="ServerAPI-POST"></a>POST</h4>
+
+<p>Creates a new client.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>The body for a POST to /clients</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "monkeypants",
+  "admin": false
+}</pre>
+		</div>
+</div></div>
+
+<p>The name field should be the name of the client you want created.  The admin field controls whether or not this is an "admin" client (meaning it can manipulate most objects in the system.)</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>The response to a POST to /clients</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "uri": "http://localhost:4000/clients/monkeypants", 
+  "private_key": "RSA PRIVATE KEY"
+}</pre>
+		</div>
+</div></div>
+
+<p>You will want to make sure you store the contents of the private_key attribute after creation.  You can then use this client name and private key to access the REST API.</p>
+
+<ul>
+	<li>Returns "201 Created".</li>
+	<li>Returns "401 Unauthorized" if you are not a recognized user.</li>
+	<li>Returns "403 Forbidden" if the user is not authorized to create a client.</li>
+	<li>Returns "409 Conflict" if you try and create a client that already exists.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fclients%2FCLIENTNAME"></a>/clients/CLIENT_NAME</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>Returns the client.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>The response to a GET of /clients/CLIENT_NAME</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "monkeypants",
+  "chef_type": "client",
+  "json_class": "Chef::ApiClient",
+  "public_key": "RSA PUBLIC KEY",
+  "_rev": "1-68532bf2122a54464db6ad65a24e2225",
+  "admin": true
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "200 OK".</li>
+	<li>Returns "401 Unauthorized" if you are not a recognized user.</li>
+	<li>Returns "403 Forbidden" if the client is not allowed to view the client.</li>
+	<li>Returns "404 Not Found" if the client does not exist.</li>
+</ul>
+
+
+<h4><a name="ServerAPI-PUT"></a>PUT</h4>
+
+<p>Updates the client.</p>
+
+<p>The request body should be:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>The response to a PUT to /clients/CLIENT_NAME</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "monkeypants",
+  "private_key": true,
+  "admin": false
+}</pre>
+		</div>
+</div></div>
+
+<p>If private_key is set to true, a new key-pair for this client will be generated, and the new private key will be returned in the response body.  </p>
+
+<p>If admin is set, this client will be promoted to an administrator.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>The response to a PUT to /clients/CLIENT_NAME</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "monkeypants",
+  "private_key": "RSA PRIVATE KEY",
+  "admin": true
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "200 OK".</li>
+	<li>Returns "401 Unauthorized" if you are not a recognized user.</li>
+	<li>Returns "403 Forbidden" if the user is not authorized to update the client.</li>
+	<li>Returns "404 Not Found" if the client does not exist.</li>
+</ul>
+
+
+<h4><a name="ServerAPI-DELETE"></a>DELETE</h4>
+
+<p>Removes the client.  Request has no body.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<ul>
+	<li>Returns "200 OK".</li>
+	<li>Returns "401 Unauthorized" if you are not a recognized user.</li>
+	<li>Returns "403 Forbidden" if the client is not authorized to delete the client.</li>
+	<li>Returns "404 Not Found" if the client does not exist.</li>
+</ul>
+
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="ServerAPI-Cookbooks"></a>Cookbooks</h1>
+<p><font color="#f7681a">In Chef, cookbooks have one or more versions, which are manifests containing the version's metadata and information about its component files.</font></p>
+</div></div>
+<p><em><a href="#ServerAPI-top">return to top of page</a></em></p>
+
+<p>In order to minimize storage and the amount of time required to iterate in the modify-upload-test cycle, cookbooks only require that files with checksums the system has not yet seen be uploaded. To accomplish this, a cookbook version's component files (each with its own particular checksum) are uploaded using the sandbox API. These checksums are then used in the version's manifest in records that include the component file's description (name, specificity, etc.), as well as its checksum and a URL from which to retrieve the file's contents. This is why you will see only the files that you have updated get uploaded when doing a "knife cookbook upload COOKBOOK_NAME".</p>
+
+<h2><a name="ServerAPI-%2Fcookbooks"></a>/cookbooks</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<h5><a name="ServerAPI-Chef0.9.x%3A"></a>Chef 0.9.x:</h5>
+<p>Returns a list of all the cookbooks on this chef server.  The request has no body, and returns a hash as follows:</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /cookbooks</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "unicorn": "http://localhost:4000/cookbooks/unicorn",
+  "apache2": "http://localhost:4000/cookbooks/apache2"
+}</pre>
+		</div>
+</div></div>
+
+<h5><a name="ServerAPI-Chef0.10.0orabove%3A"></a>Chef 0.10.0 or above:</h5>
+
+<p>Returns a hash of all the cookbooks and their versions. Query parameter num_versions can be used to set the number of versions being returned. For example, GET to /cookbooks?num_versions=3 returns 3 latest versions, in descending order (high to low); /cookbooks?num_versions=all returns all available versions, in descending order (high to low). If num_versions is not specified, it defaults to 1. Note that 0 is a valid input that returns an empty array for the versions of each cookbooks. </p>
+
+<p>The request has no body, and returns a hash as follows: </p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Example response to GET /cookbooks?num_versions=all</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "apache2" =&gt; {
+                 "url" =&gt; "http://localhost:4000/cookbooks/apache2",
+                 "versions" =&gt; [
+                    {"url" =&gt; "http://localhost:4000/cookbooks/apache2/5.1.0",
+                     "version" =&gt; "5.1.0"},
+                    {"url" =&gt; "http://localhost:4000/cookbooks/apache2/4.2.0",
+                     "version" =&gt; "4.2.0"}
+                  ]
+  },
+  "nginx" =&gt; {
+                 "url" =&gt; "http://localhost:4000/cookbooks/nginx",
+                 "versions" =&gt; [
+                    {"url" =&gt; "http://localhost:4000/cookbooks/nginx/1.0.0",
+                     "version" =&gt; "1.0.0"},
+                    {"url" =&gt; "http://localhost:4000/cookbooks/nginx/0.3.0",
+                     "version" =&gt; "0.3.0"}
+                  ]
+  }
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "200 OK" normally.</li>
+	<li>Returns "401 Unauthorized" if you are not a recognized client.</li>
+	<li>Returns "403 Forbidden" if you do not have permission to see the cookbook list.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fcookbooks%2FCOOKBOOKNAME"></a>/cookbooks/COOKBOOK_NAME</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<h5><a name="ServerAPI-Chef0.9.x"></a>Chef 0.9.x</h5>
+
+<p>Returns a listing of the versions of the cookbook.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /cookbooks/unicorn</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "unicorn": [
+    "0.1.2"
+  ]
+}</pre>
+		</div>
+</div></div>
+
+<h5><a name="ServerAPI-Chef0.10.0andabove"></a>Chef 0.10.0 and above</h5>
+
+<p>Returns a hash in the same format as the <b>/cookbooks</b> API endpoint. The hash contains one key-value pair corresponding to the cookbook requested. The same query parameters as the <b>/cookbooks</b> endpoint apply. The <b>num_versions</b> query parameter defaults to "all".</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /cookbooks</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "apache2" =&gt; {
+                 "url" =&gt; "http://localhost:4000/cookbooks/apache2",
+                 "versions" =&gt; [
+                    {"url" =&gt; "http://localhost:4000/cookbooks/apache2/5.1.0",
+                     "version" =&gt; "5.1.0"},
+                    {"url" =&gt; "http://localhost:4000/cookbooks/apache2/4.2.0",
+                     "version" =&gt; "4.2.0"}
+                  ]
+                }
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "200 OK" normally.</li>
+	<li>Returns "401 Unauthorized" if you are not a recognized client.</li>
+	<li>Returns "403 Forbidden" if you do not have permission to see the cookbook.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fcookbooks%2FCOOKBOOKNAME%2FCOOKBOOKVERSION"></a>/cookbooks/COOKBOOK_NAME/COOKBOOK_VERSION</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>Returns a description of the cookbook, including its metadata and links to all of its component files. COOKBOOK_VERSION can be "_latest" in order to float to head. It requires no request body.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /cookbooks/unicorn/0.1.0</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+    "definitions": [
+      {
+        "name": "unicorn_config.rb",
+        "url": "https://s3.amazonaws.com/opscode-platform-production-data/organization-(...)",
+        "checksum": "c92b659171552e896074caa58dada0c2",
+        "path": "definitions/unicorn_config.rb",
+        "specificity": "default"
+      }
+    ],
+    "name": "unicorn-0.1.2",
+    "attributes": [
+
+    ],
+    "files": [
+
+    ],
+    "json_class": "Chef::CookbookVersion",
+    "providers": [
+
+    ],
+    "metadata": {
+      "dependencies": {
+        "ruby": [
+
+        ],
+        "rubygems": [
+
+        ]
+      },
+      "name": "unicorn",
+      "maintainer_email": "ops@opscode.com",
+      "attributes": {
+      },
+      "license": "Apache 2.0",
+      "suggestions": {
+      },
+      "platforms": {
+      },
+      "maintainer": "Opscode, Inc",
+      "long_description": "= LICENSE AND AUTHOR:\n\nAuthor:: Adam Jacob &lt;adam@opscode.com&gt;\n\nCopyright 2009-2010, Opscode, Inc.\n\nLicensed under the Apache License, Version 2.0 (...)",
+      "recommendations": {
+      },
+      "version": "0.1.2",
+      "conflicting": {
+      },
+      "recipes": {
+        "unicorn": "Installs unicorn rubygem"
+      },
+      "groupings": {
+      },
+      "replacing": {
+      },
+      "description": "Installs/Configures unicorn",
+      "providing": {
+      }
+    },
+    "libraries": [
+
+    ],
+    "templates": [
+      {
+        "name": "unicorn.rb.erb",
+        "url": "https://s3.amazonaws.com/opscode-platform-production-data/organization-(...)",
+        "checksum": "36a1cc1b225708db96d48026c3f624b2",
+        "path": "templates/default/unicorn.rb.erb",
+        "specificity": "default"
+      }
+    ],
+    "resources": [
+
+    ],
+    "cookbook_name": "unicorn",
+    "version": "0.1.2",
+    "recipes": [
+      {
+        "name": "default.rb",
+        "url": "https://s3.amazonaws.com/opscode-platform-production-data/organization-(...)",
+        "checksum": "ba0dadcbca26710a521e0e3160cc5e20",
+        "path": "recipes/default.rb",
+        "specificity": "default"
+      }
+    ],
+    "root_files": [
+      {
+        "name": "README.rdoc",
+        "url": "https://s3.amazonaws.com/opscode-platform-production-data/organization-(...)",
+        "checksum": "d18c630c8a68ffa4852d13214d0525a6",
+        "path": "README.rdoc",
+        "specificity": "default"
+      },
+      {
+        "name": "metadata.rb",
+        "url": "https://s3.amazonaws.com/opscode-platform-production-data/organization-(...)",
+        "checksum": "967087a09f48f234028d3aa27a094882",
+        "path": "metadata.rb",
+        "specificity": "default"
+      },
+      {
+        "name": "metadata.json",
+        "url": "https://s3.amazonaws.com/opscode-platform-production-data/organization-(...)",
+        "checksum": "45b27c78955f6a738d2d42d88056c57c",
+        "path": "metadata.json",
+        "specificity": "default"
+      }
+    ],
+    "chef_type": "cookbook_version"
+  }</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>"200 OK".</li>
+	<li>"401 Unauthorized".</li>
+	<li>"403 Forbidden".</li>
+	<li>"404 Not Found" if the cookbook or version does not exist.</li>
+</ul>
+
+
+<h4><a name="ServerAPI-PUT"></a>PUT</h4>
+
+<p>Creates or updates the cookbook version. The payload is the cookbook version's manifest, which is identical to the response of a cookbook version GET except without the URL fields for each component. Note that all checksums must have been uploaded by the user at some point via the sandbox mechanism; however, once a file with a particular checksum has been uploaded by the user, redundant uploads are not necessary.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<ul>
+	<li>Returns "200 OK" normally.</li>
+	<li>Returns "401 Unauthorized" if you are not a recognized client.</li>
+	<li>Returns "403 Forbidden".</li>
+</ul>
+
+
+<h4><a name="ServerAPI-DELETE"></a>DELETE</h4>
+
+<p>Deletes a cookbook version.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<ul>
+	<li>Returns "200 OK" normally.</li>
+	<li>Returns "401 Unauthorized" if you are not a recognized client.</li>
+	<li>Returns "403 Forbidden".</li>
+	<li>Returns "404 Not Found" if the cookbook or version does not exist.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="ServerAPI-DataBags"></a>Data Bags</h1>
+<p><font color="#f7681a"><a href="Data Bags.html" title="Data Bags">Data Bags</a> allow you to store arbitrary data about your infrastructure.</font></p>
+</div></div>
+
+<p><em><a href="#ServerAPI-top">return to top of page</a></em></p>
+
+<h2><a name="ServerAPI-%2Fdata"></a>/data</h2>
+
+<p>Data Bags can be used for all sorts of things, for example, application configuration and user data, etc.</p>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>Returns a list of all the data bags.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /data</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "users": "http://localhost:4000/data/users",
+  "applications": "http://localhost:4000/data/applications"
+}</pre>
+		</div>
+</div></div>
+
+<p>The key is the name of the data bag, and the value is the URI for that data bag.</p>
+
+<ul>
+	<li>Returns "200 OK".</li>
+</ul>
+
+
+<h4><a name="ServerAPI-POST"></a>POST</h4>
+
+<p>Creates a new data bag. </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a POST to /data</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "users"
+}</pre>
+		</div>
+</div></div>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to a POST on /data</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "uri" =&gt; "http://localhost:4000/data/users"
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "201 Created".</li>
+	<li>Returns "409 Conflict" if the bag already exists.</li>
+	<li>Returns "401 Unauthorized" if the user is not authorized to create a new bag.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fdata%2FDATABAGNAME"></a>/data/DATA_BAG_NAME</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>Returns a hash of all the entries in the given bag.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to a GET on /data/DATA_BAG_NAME</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "adam": "http://localhost:4000/data/users/adam"
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "200 OK".</li>
+	<li>Returns "401 Unauthorized" if the user is not allowed to view the bag.</li>
+	<li>Returns "404 Not Found" if the bag does not exist.</li>
+</ul>
+
+
+<h4><a name="ServerAPI-POST"></a>POST</h4>
+
+<p>Creates a new data bag item.  The request must contain an "id" field:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a POST to /data/DATA_BAG_NAME</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "id": "adam",
+  "real_name": "Adam Jacob"
+}</pre>
+		</div>
+</div></div>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<ul>
+	<li>Returns "200 OK".</li>
+	<li>Returns "401 Unauthorized"</li>
+	<li>Returns "404 Not Found"</li>
+	<li>Returns "409 Conflict" if the user already exists.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fdata%2FDATABAGNAME%2FDATABAGITEMID"></a>/data/DATA_BAG_NAME/DATA_BAG_ITEM_ID </h2>
+
+<p>This endpoint allows you to show/manipulate data bag items within a bag. The data bag item itself can be any arbitrary JSON you construct.</p>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>Returns the data bag item in the bag.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to a GET on /data/DATA_BAG_NAME/DATA_BAG_ITEM_ID</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "real_name": "Adam Jacob",
+  "id": "adam"
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "200 OK"</li>
+	<li>Returns "401 Unauthorized"</li>
+	<li>Returns "404 Not Found"</li>
+</ul>
+
+
+<h4><a name="ServerAPI-PUT"></a>PUT</h4>
+
+<p>Updates the data bag item in the bag.  The request body <b>must</b> contain an "id" field, besides that, you can use any JSON you wish.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a PUT to /data/DATA_BAG_NAME/DATA_BAG_ITEM_ID</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "real_name": "Adam Brent Jacob",
+  "id": "adam"
+}</pre>
+		</div>
+</div></div>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<p>The response body will be the current value of the item - which should be identical to your request.</p>
+
+<ul>
+	<li>Returns "200 OK".</li>
+	<li>Returns "401 Unauthorized" if the user is not authorized to update the entry.</li>
+	<li>Returns "404 Not Found".</li>
+</ul>
+
+
+<h4><a name="ServerAPI-DELETE"></a>DELETE</h4>
+
+<p>Removes a data bag item from the bag.  Takes no request body, and returns the last state of the item in the response.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to a DELETE on /data/DATA_BAG_NAME/DATA_BAG_ITEM_ID</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "id": "adam",
+  "real_name": "Adam Brent Jacob"
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "200 OK"</li>
+	<li>Returns "401 Unauthorized"</li>
+	<li>Returns "404 Not Found"</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="ServerAPI-Nodes"></a>Nodes</h1>
+<p><font color="#f7681a"></font><a href="Nodes.html" title="Nodes">Nodes</a> are systems that run the chef client.</p>
+</div></div>
+
+<p><em><a href="#ServerAPI-top">return to top of page</a></em></p>
+
+<h2><a name="ServerAPI-%2Fnodes"></a>/nodes</h2>
+
+<h4><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h4>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>Returns a hash of uri's for the nodes.  </p>
+
+<h5><a name="ServerAPI-ResponseCodes"></a>Response Codes</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /nodes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "latte": "http://localhost:4000/nodes/latte"
+}</pre>
+		</div>
+</div></div>
+
+<p>The key is the name of the node, and the value is the URI where it can be retrieved.</p>
+
+<ul>
+	<li>Responds with a "200 OK".</li>
+</ul>
+
+
+<h4><a name="ServerAPI-POST"></a>POST</h4>
+
+<p>A POST request to /nodes will create a new node.  A sample request body:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a POST to /nodes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "latte",
+  "chef_type": "node",
+  "json_class": "Chef::Node",
+  "attributes": {
+    "hardware_type": "laptop"
+  },
+  "overrides": {
+  },
+  "defaults": {
+  },
+  "run_list": [ "recipe[unicorn]" ]
+}</pre>
+		</div>
+</div></div>
+
+<p>The name should be the name of the node you want created.  The attributes hash should contain any attributes you want set for this node - overrides and defaults correspond to override and default attributes.  The run_list should be an array containing recipes and roles. Note that order matters in the run_list array.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<p>In response you should receive:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to a POST on /nodes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{ "uri": "http://localhost:4000/nodes/latte" }</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Responds with a "201 Created"</li>
+	<li>Returns "401 Unauthorized"</li>
+	<li>Responds with a "409 Conflict" if the node already exists.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fnodes%2FNODENAME"></a>/nodes/NODE_NAME</h2>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>A GET request to /nodes/NODE will return the node. </p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to a GET /nodes/NODE</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "overrides": {
+
+  },
+  "name": "latte",
+  "chef_type": "node",
+  "json_class": "Chef::Node",
+  "attributes": {
+    "hardware_type": "laptop"
+  },
+  "run_list": [
+    "recipe[unicorn]"
+  ],
+  "defaults": {
+
+  }
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Responds with a "200 OK"</li>
+	<li>Responds with a "401 Unauthorized"</li>
+	<li>Responds with a "404 Not Found"</li>
+</ul>
+
+
+<h4><a name="ServerAPI-PUT"></a>PUT</h4>
+
+<p>A PUT request to /nodes/NODE will update the node.  The request body should be the Node:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a PUT to /nodes/NODE</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "overrides": {
+
+  },
+  "name": "latte",
+  "chef_type": "node",
+  "json_class": "Chef::Node",
+  "attributes": {
+    "hardware_type": "laptop"
+  },
+  "run_list": [
+    "recipe[apache2]"
+  ],
+  "defaults": {
+
+  }
+}</pre>
+		</div>
+</div></div>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<p>The response will be the updated node.</p>
+
+<ul>
+	<li>Responds with a "200 OK" if the node is updated.</li>
+	<li>Responds with a "404 Not Found" if the node does not already exist.</li>
+</ul>
+
+
+<h4><a name="ServerAPI-DELETE"></a>DELETE</h4>
+
+<p>A DELETE request to /nodes/NODE will delete the node.  It requires no request body, and returns the last known state of the node.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a DELETE to /nodes/NODE</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "overrides": {
+
+  },
+  "name": "latte",
+  "chef_type": "node",
+  "json_class": "Chef::Node",
+  "attributes": {
+    "hardware_type": "laptop"
+  },
+  "run_list": [
+    "recipe[apache2]"
+  ],
+  "defaults": {
+
+  }
+}</pre>
+		</div>
+</div></div>
+
+<h5><a name="ServerAPI-ResponseCodes"></a>Response Codes</h5>
+
+<ul>
+	<li>Responds with a "200 OK" if the node is deleted.</li>
+	<li>Responds with a "404 Not Found" if the node does not exist.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fnodes%2FNODENAME%2Fcookbooks"></a>/nodes/NODE_NAME/cookbooks</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>Returns the complete list of cookbook attributes, definitions, libraries and recipes that are required for this node.  The request body should be blank, and the response will look like:</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to a /nodes/NODE/cookbooks request</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "unicorn": {
+    "definitions": [
+      {
+        "name": "unicorn_config.rb",
+        "uri": "http://localhost:4000/cookbooks/unicorn/definitions?id=unicorn_config.rb",
+        "checksum": "72074229598611d7a6cdcc8176ffb76748adb4127be3a9651c89bb0afab6498f"
+      }
+    ],
+    "files": [
+
+    ],
+    "providers": [
+
+    ],
+    "templates": [
+      {
+        "name": "unicorn.rb.erb",
+        "uri": "http://localhost:4000/cookbooks/unicorn/templates?id=unicorn.rb.erb",
+        "checksum": "c1df9c8ec2bda7b14ecadc1c5a56802442cd8d7503f2524d4fa3f73dba1a1250",
+        "specificity": "default"
+      }
+    ],
+    "libraries": [
+
+    ],
+    "resources": [
+
+    ],
+    "attributes": [
+
+    ],
+    "recipes": [
+      {
+        "name": "default.rb",
+        "uri": "http://localhost:4000/cookbooks/unicorn/recipes?id=default.rb",
+        "checksum": "87a3f720bf5bbd9227228ba22946436db6598a59f8aedff37515ebd4e1157644"
+      }
+    ]
+  }
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Responds with a "200 OK"</li>
+	<li>Responds with a "401 Unauthorized"</li>
+	<li>Responds with a "404 Not Found"</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="ServerAPI-Roles"></a>Roles</h1>
+<p><font color="#f7681a">A role provides a means of grouping similar features of similar nodes, providing a mechanism for easily composing sets of functionality.</font></p>
+</div></div>
+<p><em><a href="#ServerAPI-top">return to top of page</a></em></p>
+
+<h2><a name="ServerAPI-%2Froles"></a>/roles </h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods </h3>
+
+<h4><a name="ServerAPI-GET"></a>GET </h4>
+
+<p>A GET call to /roles returns a data structure that contains links to each available role.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /roles</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "webserver": "http://localhost:4000/roles/webserver"
+}</pre>
+		</div>
+</div></div> 
+
+<ul>
+	<li>Responds with a "200 OK".</li>
+</ul>
+
+
+<h4><a name="ServerAPI-POST"></a>POST</h4>
+
+<p>A POST call to /roles creates a new role.  The request body should contain the JSON representation of the role.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a POST to /roles</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "webserver",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "description": "A webserver",
+  "run_list": [
+    "recipe[unicorn]",
+    "recipe[apache2]"
+  ],
+  "override_attributes": {
+
+  }
+}</pre>
+		</div>
+</div></div> 
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<p>In response, you will receive:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to a POST on /roles</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{ "uri": "http://localhost:4000/roles/webserver" }</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Responds with a "201 Created" if the Role is created.</li>
+	<li>Responds with a "409 Conflict" if the Role already exists.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Froles%2FROLENAME"></a>/roles/ROLE_NAME</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>A GET to /roles/ROLE returns the JSON representation of the role.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /roles/ROLE</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "webserver",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "description": "A webserver",
+  "run_list": [
+    "recipe[unicorn]",
+    "recipe[apache2]"
+  ],
+  "override_attributes": {
+
+  }
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Responds with a "200 OK" if the role exists.</li>
+	<li>Responds with a "404 Not Found" if the role does not exist.</li>
+</ul>
+
+
+<h4><a name="ServerAPI-PUT"></a>PUT</h4>
+
+<p>A PUT to /roles/ROLE updates the Role.  </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a PUT to /roles/ROLE</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "webserver",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "description": "A webserver",
+  "run_list": [
+    "recipe[apache2]"
+  ],
+  "override_attributes": {
+
+  }
+}</pre>
+		</div>
+</div></div>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<p>The response will be the updated role.</p>
+
+<ul>
+	<li>Responds with a "200 OK" if the role is updated.</li>
+	<li>Responds with a "404 Not Found" if the role does not exist.</li>
+</ul>
+
+
+<h4><a name="ServerAPI-DELETE"></a>DELETE</h4>
+
+<p>A DELETE to /roles/ROLE_NAME deletes the role.  This request has no body.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<p>The response to a DELETE request is the role's state just before it was removed.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to DELETE /roles/ROLE_NAME</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "webserver",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "description": "A webserver",
+  "run_list": [
+    "recipe[apache2]"
+  ],
+  "override_attributes": {
+
+  }
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Responds with a "200 OK"</li>
+	<li>Responds with a "404 Not Found" if the role does not exist.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="ServerAPI-Environments"></a>Environments</h1>
+<p><font color="#f7681a">Environments in Chef provide a mechanism for managing different environments such as production, staging, development, and testing, etc with one Chef setup (or one organization on Hosted Chef).</font></p>
+</div></div>
+<p><em><a href="#ServerAPI-top">return to top of page</a></em></p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef 0.10 Feature</b><br />The Environments APIs are only available in Chef 0.10.0 or above.</td></tr></table></div>
+
+<h2><a name="ServerAPI-%2Fenvironments"></a>/environments</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>A GET call to /environments returns a data structure that contains links to each available environment.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /environments</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "webserver": "http://localhost:4000/environments/webserver"
+}</pre>
+		</div>
+</div></div> 
+
+<ul>
+	<li>Responds with a "200 OK".</li>
+</ul>
+
+
+<h4><a name="ServerAPI-POST"></a>POST</h4>
+
+<p>A POST call to /environments creates a new environment.  The request body should contain the JSON representation of the environment.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a POST to /environments</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "dev",
+  "attributes": {
+  },
+  "json_class": "Chef::Environment",
+  "description": "",
+  "cookbook_versions": {
+  },
+  "chef_type": "environment"
+}</pre>
+		</div>
+</div></div> 
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<p>In response, you will receive:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to a POST on /environments</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{ "uri": "http://localhost:4000/environments/dev" }</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Responds with a "201 Created" if the Environment is created.</li>
+	<li>Responds with a "409 Conflict" if the Environment already exists.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fenvironments%2FENVIRONMENTNAME"></a>/environments/ENVIRONMENT_NAME</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>A GET to /environments/ENVIRONMENT returns the JSON representation of the environment.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /environments/ENVIRONMENT</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "dev",
+  "attributes": {
+  },
+  "json_class": "Chef::Environment",
+  "description": "",
+  "cookbook_versions": {
+  },
+  "chef_type": "environment"
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Responds with a "200 OK" if the environment exists.</li>
+	<li>Responds with a "404 Not Found" if the environment does not exist.</li>
+</ul>
+
+
+<h4><a name="ServerAPI-PUT"></a>PUT</h4>
+
+<p>A PUT to /environments/ENVIRONMENT updates the Environment.  </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a PUT to /environments/ENVIRONMENT</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "dev",
+  "attributes": {
+  },
+  "json_class": "Chef::Environment",
+  "description": "The Dev Environment",
+  "cookbook_versions": {
+  },
+  "chef_type": "environment"
+}</pre>
+		</div>
+</div></div>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<p>The response will be the updated environment.</p>
+
+<ul>
+	<li>Responds with a "200 OK" if the environment is updated.</li>
+	<li>Responds with a "404 Not Found" if the environment does not exist.</li>
+</ul>
+
+
+<h4><a name="ServerAPI-DELETE"></a>DELETE</h4>
+
+<p>A DELETE to /environments/ENVIRONMENT_NAME deletes the environment.  This request has no body.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<p>The response to a DELETE request is the environment's state just before it was removed.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to DELETE /environments/ENVIRONMENT_NAME</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "dev",
+  "attributes": {
+  },
+  "json_class": "Chef::Environment",
+  "description": "",
+  "cookbook_versions": {
+  },
+  "chef_type": "environment"
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Responds with a "200 OK"</li>
+	<li>Responds with a "404 Not Found" if the environment does not exist.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fenvironments%2F%3Aenvironmentid%2Fcookbooks"></a>/environments/:environment_id/cookbooks</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>Returns a list of all the cookbooks and their versions that are available to the specified Environment. Query parameter num_versions can be used to set the number of versions being returned. For example, GET to /environment/production/cookbooks?num_versions=3 returns 3 latest versions, in descending order (high to low); /environments/production/cookbooks?num_versions=all returns all available versions in this environment, in descending order (high to low). If num_versions is not specified, it defaults to 1. Note that 0 is a valid input that returns an empty array for the versions of each cookbooks. </p>
+
+<p>The request has no body, and returns a hash as follows: </p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /cookbooks</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "apache2" =&gt; {
+                 "url" =&gt; "http://localhost:4000/cookbooks/apache2",
+                 "versions" =&gt; [
+                    {"url" =&gt; "http://localhost:4000/cookbooks/apache2/5.1.0",
+                     "version" =&gt; "5.1.0"},
+                    {"url" =&gt; "http://localhost:4000/cookbooks/apache2/4.2.0",
+                     "version" =&gt; "4.2.0"}
+                  ]
+  },
+  "nginx" =&gt; {
+                 "url" =&gt; "http://localhost:4000/cookbooks/nginx",
+                 "versions" =&gt; [
+                    {"url" =&gt; "http://localhost:4000/cookbooks/nginx/1.0.0",
+                     "version" =&gt; "1.0.0"},
+                    {"url" =&gt; "http://localhost:4000/cookbooks/nginx/0.3.0",
+                     "version" =&gt; "0.3.0"}
+                  ]
+  }
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "200 OK" normally.</li>
+	<li>Returns "401 Unauthorized" if you are not a recognized client.</li>
+	<li>Returns "403 Forbidden" if you do not have permission to see the cookbook list.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fenvironments%2F%3Aenvironmentid%2Fcookbookversions"></a>/environments/:environment_id/cookbook_versions</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-POST"></a>POST </h4>
+
+<p>Returns a hash of the required versions of cookbooks and their dependencies for the given run_list array. Version constraints may be specified by using the '@' symbol after the cookbook name as a delimiter.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef &gt; rest = Chef::REST.new(Chef::Config[:chef_server_url])
+chef &gt; rest.post_rest("environments/_default/cookbook_versions", {:run_list =&gt; [ "zed@0.0.1", "bar", "mysql", "gem", "nginx@0.99.2", "cron", "foo"] }).keys
+ =&gt; ["mysql", "runit", "zed", "cron", "openssl", "gem", "nginx", "foo", "bar", "build-essential"]</pre>
+		</div>
+</div></div> 
+
+<h2><a name="ServerAPI-%2Fenvironments%2F%3Aenvironmentid%2Fcookbooks%2FCOOKBOO..."></a>/environments/:environment_id/cookbooks/COOKBOOK_NAME</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-GET"></a>GET</h4>
+
+<p>Returns a hash in the same format as the <b>/environments/:env_id/cookbooks</b> API endpoint. The hash contains one key-value pair corresponding to the cookbook requested. The versions displayed are filtered based on the environment specified. The same query parameters as the <b>/environments/:env_id/cookbooks</b> endpoint apply. The <b>num_versions</b> query parameter defaults to "all".</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /cookbooks</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "apache2" =&gt; {
+                 "url" =&gt; "http://localhost:4000/cookbooks/apache2",
+                 "versions" =&gt; [
+                    {"url" =&gt; "http://localhost:4000/cookbooks/apache2/5.1.0",
+                     "version" =&gt; "5.1.0"},
+                    {"url" =&gt; "http://localhost:4000/cookbooks/apache2/4.2.0",
+                     "version" =&gt; "4.2.0"}
+                  ]
+                }
+}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "200 OK" normally.</li>
+	<li>Returns "401 Unauthorized" if you are not a recognized client.</li>
+	<li>Returns "403 Forbidden" if you do not have permission to see the cookbook.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="ServerAPI-Search"></a>Search</h1>
+<p><font color="#f7681a">Searches are built by the Chef Server, and allow you to query arbitrary data about your infrastructure.</font></p>
+</div></div>
+<p><em><a href="#ServerAPI-top">return to top of page</a></em></p>
+
+<h2><a name="ServerAPI-%2Fsearch"></a>/search</h2>
+
+<p><font color="#f7681a">This endpoint allows you to search your entire organizations nodes, roles, and data bags.</font></p>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods </h3>
+
+<h4><a name="ServerAPI-GET"></a>GET </h4>
+
+<p>A GET call to /search returns a data structure that contains links to each available search index.</p>
+
+<p>By default, the "role", "node" and "client" indexes will always be available.</p>
+
+<p>Note that the search indexes may lag behind the most current data by at least 10 seconds at any given time. If you need to write data and immediately query it, you likely need to produce an artificial delay (or simply retry until the data is available.)</p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /search</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "node": "http://localhost:4000/search/node",
+  "role": "http://localhost:4000/search/role",
+  "client": "http://localhost:4000/search/client",
+  "users": "http://localhost:4000/search/users"
+}</pre>
+		</div>
+</div></div> 
+
+<ul>
+	<li>Responds with a "200 OK".</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fsearch%2FINDEX"></a>/search/INDEX</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods </h3>
+
+<h4><a name="ServerAPI-GET"></a>GET </h4>
+
+<p>A GET call to /search/INDEX without any request parameters will return all of the data within the index.</p>
+
+<h5><a name="ServerAPI-Response"></a>Response </h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to GET /search/node</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "total": 1,
+  "start": 0,
+  "rows": [
+    {
+      "overrides": {
+        "hardware_type": "laptop"
+      },
+      "name": "latte",
+      "chef_type": "node",
+      "json_class": "Chef::Node",
+      "attributes": {
+        "hardware_type": "laptop"
+      },
+      "run_list": [
+        "recipe[unicorn]"
+      ],
+      "defaults": {
+
+      }
+    }
+  ]
+}</pre>
+		</div>
+</div></div> 
+
+<p>The response contains the total number of rows that matched your request, the position this result set returns (useful for paging) and the rows themselves.  </p>
+
+<p>You can modify the search results with the following request parameters:</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Param</th>
+<th class='confluenceTh'>Description</th>
+</tr>
+<tr>
+<td class='confluenceTd'> q </td>
+<td class='confluenceTd'> A valid search string. </td>
+</tr>
+<tr>
+<td class='confluenceTd'> sort </td>
+<td class='confluenceTd'> A sort string, such as 'name DESC' </td>
+</tr>
+<tr>
+<td class='confluenceTd'> rows </td>
+<td class='confluenceTd'> How many rows to return </td>
+</tr>
+<tr>
+<td class='confluenceTd'> start </td>
+<td class='confluenceTd'> The result number to start from </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>See the <a href="http://wiki.opscode.com/display/chef/Search#Search-QuerySyntax">Search Query Syntax</a> for help on composing search strings.</p>
+
+<ul>
+	<li>Responds with "200 OK".</li>
+	<li>Responds with  "404 Not Found" if the index does not exist.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="ServerAPI-Sandboxes"></a>Sandboxes</h1>
+<p><font color="#f7681a">Sandboxes are used to commit files so that they only have to be uploaded once, as opposed to each time a cookbook is uploaded, even if only one file has changed.</font></p>
+</div></div>
+<p><em><a href="#ServerAPI-top">return to top of page</a></em></p>
+
+<h2><a name="ServerAPI-%2Fsandboxes"></a>/sandboxes</h2>
+
+<p>Create or list sandboxes.</p>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-POST"></a>POST</h4>
+
+<p>Creates a new sandbox. It accepts a list of checksums as input and returns the URLs against which to PUT files that need to be uploaded.</p>
+
+<h5><a name="ServerAPI-Request"></a>Request</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a POST to /sandboxes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{"checksums": {
+  "385ea5490c86570c7de71070bce9384a":null,
+  "f6f73175e979bd90af6184ec277f760c":null,
+  "2e03dd7e5b2e6c8eab1cf41ac61396d5":null
+  }
+}</pre>
+		</div>
+</div></div>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response to a POST to /sandboxes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{"uri":
+  "https://api.opscode.com/organizations/testorg/sandboxes/eff7b6f8b3ef44c6867216662d5eeb5f",
+ "checksums":
+  {"385ea5490c86570c7de71070bce9384a":
+    {"url":
+      "https://s3.amazonaws.com/opscode-platform-production-data/organization-(...)",
+     "needs_upload":true},
+   "f6f73175e979bd90af6184ec277f760c"=&gt;
+    {"url":
+      "https://s3.amazonaws.com/opscode-platform-production-data/organization-(...)",
+     "needs_upload":true},
+   "2e03dd7e5b2e6c8eab1cf41ac61396d5":
+    {"url":
+      "https://s3.amazonaws.com/opscode-platform-production-data/organization-(...)",
+     "needs_upload":true}},
+ "sandbox_id"=&gt;"eff7b6f8b3ef44c6867216662d5eeb5f"}</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Returns "200 OK" with a hash mapping each checksum to a hash that contains a boolean "needs_upload" field and a URL if "needs_upload" is true.</li>
+	<li>Returns "400 Bad Request" if the payload does not contain a well-formed "checksums" parameter that is a hash containing a key for each checksum.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fsandboxes%2FSANDBOXID"></a>/sandboxes/SANDBOX_ID</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-PUT"></a>PUT</h4>
+
+<p>Commits the files the sandbox to their final location so that proceeding cookbook changes will not require re-uploading the same data.</p>
+
+<h5><a name="ServerAPI-Request"></a>Request</h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request body for a PUT to /sandboxes/SANDBOX_ID</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{"is_completed":true}</pre>
+		</div>
+</div></div>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<ul>
+	<li>Returns "200 OK" if all checksums have been uploaded and the contents have the proper checksums.</li>
+	<li>Returns "400 Bad Request" if the sandbox has already been committed or one or more of the checksums were not properly uploaded.</li>
+	<li>Returns "404 Not Found" if the sandbox does not exist.</li>
+</ul>
+
+
+<h2><a name="ServerAPI-%2Fsandboxes%2FSANDBOXID%2FCHECKSUM"></a>/sandboxes/SANDBOX_ID/CHECKSUM</h2>
+
+<h3><a name="ServerAPI-HTTPMethods"></a>HTTP Methods</h3>
+
+<h4><a name="ServerAPI-PUT"></a>PUT</h4>
+
+<h5><a name="ServerAPI-Request"></a>Request</h5>
+
+<p>The contents of the file whose checksum is CHECKSUM.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+
+<h5><a name="ServerAPI-Response"></a>Response</h5>
+
+<ul>
+	<li>Returns "200 OK".</li>
+	<li>Returns "400" if the file's contents do not have the correct checksum.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="ServerAPI-ClientLibraries"></a>Client Libraries</h1>
+</div></div>
+<p><em><a href="#ServerAPI-top">return to top of page</a></em></p>
+
+<h2><a name="ServerAPI-pychef"></a>pychef</h2>
+
+<p>Opscode Team Member Noah Kantrowitz (<a href="https://github.com/coderanger">coderanger</a>) has written <a href="https://github.com/coderanger/pychef">PyChef</a>, a Python API allowing interaction with the Chef REST interface. While only a subset of Chef is currently wrapped as objects, any of the API calls below can be made via the <tt>api_request</tt> mechanism:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: python; gutter: false">&gt;&gt;&gt; import chef.api
+&gt;&gt;&gt; chef_api = chef.api.autoconfigure()
+&gt;&gt;&gt; chef_api.api_request('GET', '/data')
+{u'sites': u'http://chef.example.com:4000/data/sites'}</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Migrating to Hosted Chef from an Open Source Chef Server implementation.html" title="Migrating to Hosted Chef from an Open Source Chef Server implementation"><span class="image-wrap" style="float: left"><img src="../attachments/5407060/20840501.png" hspace="4" style="border: 0px solid black"/></span> Migrating to Hosted Chef from an Open Source Chef Server Implementation </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Cookbook Site API.html" title="Cookbook Site API"><span class="image-wrap" style="float: right"><img src="../attachments/5407060/20840500.png" hspace="4" style="border: 0px solid black"/></span> Cookbook Site API </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/5407060/20840500.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/5407060/20840501.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-7274598"></a>
+                                    <font class="smallfont"><p>Doesn't seem like setting "attributes" on a put does anything in the current version of Chef - setting<br/>
+"normal" seems to set the node attributes though, e.g.:</p>
+
+<p>{<br/>
+"name": "latte",<br/>
+"chef_type": "node",<br/>
+"json_class": "Chef::Node",<br/>
+"normal": {         <br/>
+   "hardware_type": "laptop"       <br/>
+},<br/>
+"overrides": {<br/>
+},<br/>
+"defaults": {<br/>
+},<br/>
+"run_list": [ "recipe[unicorn]" ]<br/>
+}</p>
+
+<p>Actually results in the hardware_type getting permanently added to the node's attributes.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by cykod at Jul 21, 2010 22:38
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,623 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Shef</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Shef
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<p><h1><a name="Shef-Shef%3ATheChefREPL"></a>Shef: The Chef REPL</h1>
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 48x48" href='http://wiki.opscode.com/download../attachments/21397553/irb_ruby.png'><img src="../attachments/thumbnails/21397553/21463060" hspace="14" style="border: 0px solid black"/></a></span></p>
+<h5><a name="Shef-"></a><font color="#f7681a">Shef is a way to run chef in an Interactive Ruby (IRb) session. Shef currently supports recipe and attribute file syntax, as well as interactive debugging features.</font></h5>
+
+<h2><a name="Shef-RunModes"></a>Run Modes</h2>
+<p>Shef has three run modes:</p>
+<ul>
+	<li><font color="#f7681a"><b>Standalone</b></font><br/>
+No cookbooks are loaded, and the run list is empty. This mode is the default.</li>
+	<li><font color="#f7681a"><b>Solo</b></font><br/>
+Shef acts as a chef-solo client. It attempts to load chef-solo's configuration file and JSON attributes. If the JSON attributes set a run list, it will be honored. Cookbooks will be loaded in the same way that chef-solo loads them. Solo mode is activated with the <tt>&#45;s</tt> or <tt>&#45;&#45;solo</tt> command line option, and JSON attributes are specified in the same way as for chef-solo, with <tt>&#45;j /path/to/chef-solo.json</tt>.</li>
+	<li><font color="#f7681a"><b>Client</b></font><br/>
+Shef acts as a chef-client. During startup, it reads the chef client configuration file and contacts the server to get attributes and cookbooks. The run list will be set in the same way as normal chef client runs. Client mode is activated with the <tt>&#45;z</tt> or <tt>&#45;&#45;client</tt> options. You can also specify the configuration file with <tt>&#45;c CONFIG</tt> and the server URL with <tt>&#45;S SERVER_URL</tt>.</li>
+</ul>
+</p>
+<h1><a name="Shef-%22HelloWorld%22inShef%3AASimpleExample"></a>"Hello World" in Shef: A Simple Example</h1>
+<p><em>For this example, we'll use the standalone mode.</em> (For solo or client modes, you would need to run shef using the <tt>&#45;s</tt> or <tt>&#45;z</tt> command line options as specified above, and take into consideration the configuration settings detailed below.)</p>
+
+<p>If chef is installed from gems or your platform's package manager, shef should be in your path already. (If you are running chef from a git clone, shef is in <tt>chef/bin/shef</tt>.) To start just run <tt>shef</tt> with no options. You'll see the loading message, then the banner, and then the shef prompt:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ bin/shef 
+./bin/../lib/chef.rb:30: warning: already initialized constant VERSION
+loading configuration: none (standalone shef session)
+Loading.......done.
+
+This is shef, the Chef shell.
+ Chef Version: 0.10.4
+ http://www.opscode.com/chef
+ http://wiki.opscode.com/display/chef/Home
+
+run `help' for help, `exit' or ^D to quit.
+
+Ohai2u danielsdeleo@eigenstate.local!
+chef &gt;</pre>
+		</div>
+</div></div></td> 
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="24%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#Shef-Shef%3ATheChefREPL'>Shef: The Chef REPL</a></li>
+<ul>
+    <li><a href='#Shef-RunModes'>Run Modes</a></li>
+</ul>
+    <li><a href='#Shef-%22HelloWorld%22inShef%3AASimpleExample'>"Hello World" in Shef: A Simple Example</a></li>
+    <li><a href='#Shef-ClientandSoloModes'>Client and Solo Modes</a></li>
+    <li><a href='#Shef-ConfiguringShef'>Configuring Shef</a></li>
+<ul>
+    <li><a href='#Shef-Theshefconfigurationfile'>The shef configuration file</a></li>
+    <li><a href='#Shef-RunningShefasaClientUsingYourKnifeCredentials'>Running Shef as a Client Using Your Knife Credentials</a></li>
+</ul>
+    <li><a href='#Shef-ManagingChefServerwithShef'>Managing Chef Server with Shef</a></li>
+    <li><a href='#Shef-DebuggingRecipeswithShef'>Debugging Recipes with Shef</a></li>
+<ul>
+    <li><a href='#Shef-TheBreakpointResource'>The Breakpoint Resource</a></li>
+    <li><a href='#Shef-SteppingThroughtheRunList'>Stepping Through the Run List</a></li>
+    <li><a href='#Shef-Debuggingexistingrecipes'>Debugging existing recipes</a></li>
+    <li><a href='#Shef-TurnDebuggingupto11'>Turn Debugging up to 11</a></li>
+    <li><a href='#Shef-ShefHelp'>Shef Help</a></li>
+</ul>
+    <li><a href='#Shef-UseCaseScenario'>Use Case Scenario</a></li>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<div class="" align="center"><h4><a name="Shef-"></a><font color="#f7681a">Tutorials from the Community</font></h4></div>
+
+<hr />
+
+<ul>
+	<li><b><font color="navy">Shef Tips and Tricks</font></b></li>
+</ul>
+
+
+<p>Opscode team member <a href="http://community.opscode.com/users/sdanna">Steven Danna</a> has put together a blog post with a number of <b><a href="http://stevendanna.github.com/blog/2012/01/28/shef-debugging-tips-1/">tricks and tools for productively debugging problems using Shef</a></b>. </p>
+
+<p>Debug Chef-client runs by stepping through a node’s run list, breaking before or after specific resources in order to inspect the state of the system.</p>
+
+<ul>
+	<li><b><font color="navy">Chef Development With Shef</font></b></li>
+</ul>
+
+
+<p>How to use Shef, the interactive chef console, for <b><a href="http://blog.mycrot.ch/2012/02/07/chef-development-with-shef/">iterative cookbook development</a></b> for those times when you just want to experiment without uploading anything to the server. This is a useful <a href="http://blog.mycrot.ch/2012/02/07/chef-development-with-shef/">workflow oriented blog post</a> by Community Member <a href="http://community.opscode.com/users/jonlives">Jon Cowie</a>.</p>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><font color="#f7681a">At any point, you may use the <tt>help</tt> command to print a list of supported commands.</font></p>
+
+<p>Use the <tt>recipe</tt> command to switch to recipe context:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef &gt; recipe
+chef:recipe &gt;</pre>
+		</div>
+</div></div>
+
+<p>Now your typing will be evaluated the same context as recipes. We can create a file resource:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; file "/tmp/ohai2u_shef"
+ =&gt; #&lt;Chef::Resource::File:0x1b691ac @enclosing_provider=nil, @resource_name=:file, @before=nil, @supports={}, @backup=5, @allowed_actions=[:nothing, :create, :delete, :touch, :create_if_missing], 
+@only_if=nil, @noop=nil, @collection=#&lt;Chef::ResourceCollection:0x1b9926c @insert_after_idx=nil, @resources_by_name={"file[/tmp/ohai2u_shef]"=&gt;0}, @resources=[#&lt;Chef::Resource::File:0x1b691ac ...&gt;]&gt;, 
+@updated=false, @provider=nil, @node=&lt;Chef::Node:0xdeeaae @name="eigenstate.local"&gt;, @recipe_name=nil, @not_if=nil, @name="/tmp/ohai2u_shef", @action="create", @path="/tmp/ohai2u_shef",
+ @source_line="/Users/danielsdeleo/ruby/chef/chef/(irb#1) line 1", @params={}, @actions={}, @cookbook_name=nil, @ignore_failure=false&gt;</pre>
+		</div>
+</div></div>
+<p>At this point, shef has created the resource and put it in the run list, but not yet created the file. To initiate the chef run, use the <tt>run_chef</tt> command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; run_chef
+[Fri, 15 Jan 2010 10:42:47 -0800] DEBUG: Processing file[/tmp/ohai2u_shef]
+[Fri, 15 Jan 2010 10:42:47 -0800] DEBUG: file[/tmp/ohai2u_shef] using Chef::Provider::File
+[Fri, 15 Jan 2010 10:42:47 -0800] INFO: Creating file[/tmp/ohai2u_shef] at /tmp/ohai2u_shef
+ =&gt; true</pre>
+		</div>
+</div></div>
+
+<p>Shef also lets you switch to the same context as attribute files. You can set an attribute with the familiar syntax:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; attributes
+chef:attributes &gt; set[:hello] = "ohai2u-again"
+ =&gt; "ohai2u-again" 
+chef:attributes &gt;</pre>
+		</div>
+</div></div>
+<p>Now you can switch back to recipe context and use the attribute you set:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:attributes &gt; recipe
+ =&gt; :attributes 
+chef:recipe &gt; file "/tmp/#{node.hello}"</pre>
+		</div>
+</div></div>
+<p>Now, run chef again:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; run_chef
+[Fri, 15 Jan 2010 10:53:22 -0800] DEBUG: Processing file[/tmp/ohai2u_shef]
+[Fri, 15 Jan 2010 10:53:22 -0800] DEBUG: file[/tmp/ohai2u_shef] using Chef::Provider::File
+[Fri, 15 Jan 2010 10:53:22 -0800] DEBUG: Processing file[/tmp/ohai2u-again]
+[Fri, 15 Jan 2010 10:53:22 -0800] DEBUG: file[/tmp/ohai2u-again] using Chef::Provider::File
+[Fri, 15 Jan 2010 10:53:22 -0800] INFO: Creating file[/tmp/ohai2u-again] at /tmp/ohai2u-again
+ =&gt; true 
+chef:recipe &gt;</pre>
+		</div>
+</div></div>
+<p>Note that the first resource we created, (<tt>file[/tmp/ohai2u_shef]</tt>) is still in the run list, and gets executed again. Of course, since that file already exists, chef doesn't attempt to create it.</p>
+
+<p>Finally, we can see that the files were created using shef's ls method:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; ls("/tmp").grep(/ohai/)
+ =&gt; ["ohai2u-again", "ohai2u_shef"]</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Shef Tutorial</b><br />You may want to review <b><a href="Getting Started with Shef.html" title="Getting Started with Shef">Getting Started with Shef</a></b> for some additional high level examples on its use.</td></tr></table></div>
+
+<h1><a name="Shef-ClientandSoloModes"></a>Client and Solo Modes</h1>
+<p><font color="#f7681a">Shef provides client and solo modes which allow it to emulate running chef-client or chef-solo with additional debugging features.</font> When running in client mode, shef will parse any provided JSON attributes file, then connect to the chef server and synchronize cookbooks. The node will have the same attributes and run list as it would during a chef client run. Solo mode is similar, except that attributes are loaded from a JSON file instead of a Chef server. Solo mode is activated with the <tt>&#45;s</tt> or <tt>&#45;&#45;solo</tt> command line option. Client mode is activated with the <tt>&#45;z</tt> or <tt>&#45;&#45;client</tt> options. Shef will load based upon its configuration settings.</p>
+
+<h1><a name="Shef-ConfiguringShef"></a>Configuring Shef</h1>
+<p><font color="#f7681a">Shef's configuration file support is new in Chef 0.9.8.</font> (With older versions of chef, use the <tt>-c</tt> option to specify a configuration file.)  Shef chooses the configuration file to load according to the following logic:</p>
+
+<ol>
+	<li>If a config file is specified with the <tt>-c</tt> option, it is used.</li>
+	<li>When shef is started with a named configuration as an argument, shef will search for a <tt>shef.rb</tt> file in that directory under <tt>&#126;/.chef</tt>. For example, if shef is started as <tt>shef production</tt>, chef will load a configuration file from <tt>&#126;/.chef/production/shef.rb</tt></li>
+	<li>If no named configuration is given, shef attempts to load shef.rb from your .chef directory, i.e., <tt>&#126;/.chef/shef.rb</tt></li>
+	<li>If no shef.rb is found, shef will try to load <tt>/etc/chef/client.rb</tt> when started in client mode (i.e., <tt>-z</tt>)</li>
+	<li>If no shef.rb is found, shef will try to load <tt>/etc/chef/solo.rb</tt> when started in solo mode.</li>
+</ol>
+
+
+<h2><a name="Shef-Theshefconfigurationfile"></a>The shef configuration file</h2>
+<p>In your shef.rb you can configure shef just as you would configure the chef-client. To configure shef to properly authenticate with your Chef server, you might copy the <tt>node_name</tt>, <tt>client_key</tt>, and <tt>chef_server_url</tt> settings from your knife configuration:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Sample shef.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">node_name                'your-knife-clientname'
+client_key               File.expand_path('~/.chef/my-client.pem')
+chef_server_url          'https://api.opscode.com/organizations/myorg'</pre>
+		</div>
+</div></div>
+
+<p>You can also <a href="Disabling Ohai Plugins.html" title="Disabling Ohai Plugins">disable ohai plugins</a> to speed up shef's boot process or include any arbitrary ruby code in your shef configuration file.</p>
+
+<h2><a name="Shef-RunningShefasaClientUsingYourKnifeCredentials"></a>Running Shef as a Client Using Your Knife Credentials</h2>
+<p>By default, shef loads in standalone mode that doesn't connect to a server. <font color="#f7681a">On your laptop/desktop, you might want to run shef in client mode in order to test a feature that's only available when using Chef in the client-server configuration (i.e., <a href="Search.html" title="Search">Search</a> or <a href="Data Bags.html" title="Data Bags">Data Bags</a>).</font> </p>
+
+<p>If you've already configured <a href="Knife.html" title="Knife">Knife</a> on your box, you can borrow knife's credentials to connect to the server. In order for this to work, you need to create a node with the same name that your knife client uses to authenticate. This is the <tt>node_name</tt> configuration parameter in your knife.rb file (typically located at <tt>~/.chef/knife.rb</tt> &#8211; you can find this with <tt>grep node_name ~/.chef/knife.rb</tt>. Then, run <tt>knife node create $YOUR_KNIFE_NODE_NAME</tt> to create a node with this name (the node attributes aren't important unless you need them for some other pupose).</p>
+
+<p>Once you've done this, you can run shef in client mode, where it will connect to the server via the config value with 'chef_server_url'.  By passing it your knife.rb, it will connect to the server via the config value. </p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">shef -z -c ~/.chef/knife.rb</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>No Longer Needed for Chef REST api interaction</b><br />As of chef 0.9.8, you no longer need to take this approach if you just want to be able to access the Chef REST api from within shef. Just configure your shef.rb similar to the example in the previous section.</td></tr></table></div>
+
+<h1><a name="Shef-ManagingChefServerwithShef"></a>Managing Chef Server with Shef</h1>
+<p><font color="#f7681a">When properly configured to access your Chef Server, shef can list, show, search for, and edit cookbooks, clients, nodes, roles, and databags.</font></p>
+
+<p>These commands all have a syntax of the form <em>items</em><b>.</b><em>command</em> so to list nodes, you use <tt>nodes.list</tt>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef (preprod) &gt; nodes.list
+ =&gt; [node[i-f09a939b], node[i-049a936f], node[i-eaaaa581], node[i-9154b1fb], node[i-6a213101], node[i-c2687aa9], node[i-7abeaa11], node[i-4eb8ac25], node[i-9a2030f1], 
+node[i-a06875cb], node[i-145f457f], node[i-e032398b], node[i-dc8c98b7], node[i-6afdf401], node[i-f49b119c], node[i-5abfab31], node[i-78b8ac13], node[i-d99678b3], 
+node[i-02322269], node[i-feb4a695], node[i-9e2232f5], node[i-6e213105], node[i-cdde3ba7], node[i-e8bfb083], node[i-743c2c1f], node[i-2eaca345], node[i-aa7f74c1], 
+node[i-72fdf419], node[i-140e1e7f], node[i-f9d43193], node[i-bd2dc8d7], node[i-8e7f70e5], node[i-78f2e213], node[i-962232fd], node[i-4c322227], node[i-922232f9], 
+node[i-c02728ab], node[i-f06c7b9b]]</pre>
+		</div>
+</div></div>
+<p>The <em>list</em> command can take a code block, which is applied (but not saved) to each object returned from the server. You can list all of your nodes and their run lists:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef (preprod) &gt; nodes.list {|n| puts "#{n.name}: #{n.run_list}" }
+i-f09a939b: role[lb], role[preprod], recipe[aws]
+i-049a936f: role[lb], role[preprod], recipe[aws]
+i-9154b1fb: recipe[erlang], role[base], role[couchdb], role[preprod],
+i-6a213101: role[chef], role[preprod]
+# more...</pre>
+		</div>
+</div></div>
+<p>To find a specific node, use <tt>nodes.show</tt>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef (preprod) &gt; load_balancer = nodes.show('i-f09a939b')
+ =&gt; node[i-f09a939b] 
+chef (preprod) &gt; load_balancer.ec2.public_hostname
+ =&gt; "ec2-111-22-333-44.compute-1.amazonaws.com"</pre>
+		</div>
+</div></div>
+
+<p>You can also use search from within shef. To search for nodes, use <tt>nodes.find</tt>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef (preprod) &gt; pp nodes.find(:ec2_public_hostname =&gt; 'ec2*')</pre>
+		</div>
+</div></div>
+<p>Again, you can give a code block to "format" the results:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef (preprod) &gt; pp nodes.find(:ec2_public_hostname =&gt; 'ec2*') {|n| n.ec2.ami_id } and nil
+["ami-f8927a91",
+ "ami-f8927a91",
+ "ami-a89870c1",
+ "ami-a89870c1",
+ "ami-a89870c1",
+ "ami-a89870c1",
+ "ami-a89870c1"
+# and more...
+chef (preprod) &gt; amis = nodes.find(:ec2_public_hostname =&gt; 'ec2*') {|n| n.ec2.ami_id }
+chef (preprod) &gt; puts amis.uniq.sort
+ami-4b4ba522
+ami-a89870c1
+ami-eef61587
+ami-f8927a91</pre>
+		</div>
+</div></div>
+
+<h1><a name="Shef-DebuggingRecipeswithShef"></a>Debugging Recipes with Shef</h1>
+<p><font color="#f7681a">Shef gives you the ability to manipulate your current position in the run list during a chef run.</font> To use this feature, you'll need at least one breakpoint in one recipe in the client's run list.</p>
+
+<h2><a name="Shef-TheBreakpointResource"></a>The Breakpoint Resource</h2>
+<p><font color="#f7681a">Breakpoints are implemented as a chef resource.</font> The breakpoint resource has no custom attributes. Its default action is <em>break</em>. When the <em>break</em> action is called on the breakpoint provider, the provider tests if it is running under shef, or a normal chef-client (or solo) run. If it's running under chef-client or chef-solo, no action is taken; if it's running under shef, the chef run will be paused.</p>
+
+<h2><a name="Shef-SteppingThroughtheRunList"></a>Stepping Through the Run List</h2>
+<p>To explore how breakpointing and manually controlling chef execution works, create a simple recipe in shef:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef &gt; recipe
+chef:recipe &gt; echo off
+chef:recipe &gt; file "/tmp/before-breakpoint"
+chef:recipe &gt; breakpoint "foo"
+chef:recipe &gt; file "/tmp/after-breakpoint"</pre>
+		</div>
+</div></div>
+<p>Now, run chef:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; run_chef
+[Fri, 15 Jan 2010 14:17:49 -0800] DEBUG: Processing file[/tmp/before-breakpoint]
+[Fri, 15 Jan 2010 14:17:49 -0800] DEBUG: file[/tmp/before-breakpoint] using Chef::Provider::File
+[Fri, 15 Jan 2010 14:17:49 -0800] INFO: Creating file[/tmp/before-breakpoint] at /tmp/before-breakpoint
+[Fri, 15 Jan 2010 14:17:49 -0800] DEBUG: Processing [./bin/../lib/chef/mixin/recipe_definition_dsl_core.rb:56:in `new']
+[Fri, 15 Jan 2010 14:17:49 -0800] DEBUG: [./bin/../lib/chef/mixin/recipe_definition_dsl_core.rb:56:in `new'] using Chef::Provider::Breakpoint</pre>
+		</div>
+</div></div>
+<p>We can see that chef ran the first resource before the breakpoint, <tt>file[/tmp/before-breakpoint]</tt>, but it stopped after executing the breakpoint. We also see that chef attempted to name the breakpoint resource after its position in the source file, but we confused it by entering the resource interactively.</p>
+
+<p>From here, we can tell shef to finish the chef run using <tt>chef_run.resume</tt></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; chef_run.resume
+[Fri, 15 Jan 2010 14:27:08 -0800] INFO: Creating file[/tmp/after-breakpoint] at /tmp/after-breakpoint</pre>
+		</div>
+</div></div>
+<p>If we list our <tt>/tmp</tt> directory, we see that both files were created:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; puts ls("/tmp").grep(/break/)
+after-breakpoint
+before-breakpoint</pre>
+		</div>
+</div></div>
+<p>We can also rewind the chef run and step through it:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; Chef::Log.level = :debug # debug logging won't turn on automatically in this case
+ =&gt; :debug 
+chef:recipe &gt; chef_run.rewind
+ =&gt; 0 
+chef:recipe &gt; chef_run.step
+[Fri, 15 Jan 2010 14:40:52 -0800] DEBUG: Processing file[/tmp/before-breakpoint]
+[Fri, 15 Jan 2010 14:40:52 -0800] DEBUG: file[/tmp/before-breakpoint] using Chef::Provider::File
+ =&gt; 1 
+chef:recipe &gt; chef_run.step
+[Fri, 15 Jan 2010 14:40:54 -0800] DEBUG: Processing [./bin/../lib/chef/mixin/recipe_definition_dsl_core.rb:56:in `new']
+[Fri, 15 Jan 2010 14:40:54 -0800] DEBUG: [./bin/../lib/chef/mixin/recipe_definition_dsl_core.rb:56:in `new'] using Chef::Provider::Breakpoint
+ =&gt; 2 
+chef:recipe &gt; chef_run.step
+[Fri, 15 Jan 2010 14:40:56 -0800] DEBUG: Processing file[/tmp/after-breakpoint]
+[Fri, 15 Jan 2010 14:40:56 -0800] DEBUG: file[/tmp/after-breakpoint] using Chef::Provider::File
+ =&gt; 3</pre>
+		</div>
+</div></div>
+<p>From the output, we see that we rewound the run list, but when we executed the resources again, they repeated their checks for the existence of the files and found that they now exist, so chef skipped creating them. If we delete the files:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; ls("/tmp").grep(/breakpoint/).each {|f| rm "/tmp/#{f}" }
+ =&gt; ["after-breakpoint", "before-breakpoint"]</pre>
+		</div>
+</div></div>
+<p>Then we can rewind and resume the chef run and get the expected results:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; chef_run.rewind
+chef:recipe &gt; chef_run.resume
+[Fri, 15 Jan 2010 14:48:56 -0800] DEBUG: Processing file[/tmp/before-breakpoint]
+[Fri, 15 Jan 2010 14:48:56 -0800] DEBUG: file[/tmp/before-breakpoint] using Chef::Provider::File
+[Fri, 15 Jan 2010 14:48:56 -0800] INFO: Creating file[/tmp/before-breakpoint] at /tmp/before-breakpoint
+[Fri, 15 Jan 2010 14:48:56 -0800] DEBUG: Processing [./bin/../lib/chef/mixin/recipe_definition_dsl_core.rb:56:in `new']
+[Fri, 15 Jan 2010 14:48:56 -0800] DEBUG: [./bin/../lib/chef/mixin/recipe_definition_dsl_core.rb:56:in `new'] using Chef::Provider::Breakpoint
+chef:recipe &gt; chef_run.resume
+[Fri, 15 Jan 2010 14:49:20 -0800] DEBUG: Processing file[/tmp/after-breakpoint]
+[Fri, 15 Jan 2010 14:49:20 -0800] DEBUG: file[/tmp/after-breakpoint] using Chef::Provider::File
+[Fri, 15 Jan 2010 14:49:20 -0800] INFO: Creating file[/tmp/after-breakpoint] at /tmp/after-breakpoint</pre>
+		</div>
+</div></div>
+
+<h2><a name="Shef-Debuggingexistingrecipes"></a>Debugging existing recipes</h2>
+
+<p>You may also find it helpful to use Shef to debug existing recipes. First you will need to add the recipe to the run_list for the node so it is cached when starting shef. Once this is done, you can use the recipes for debugging. You can see which recipes it cached when starting, as it will output these when loading shef:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">Loading....[Fri, 18 May 2012 11:30:08 -0700] INFO: Run List is [recipe[getting-started]]
+[Fri, 18 May 2012 11:30:08 -0700] INFO: Run List expands to [getting-started]
+.[Fri, 18 May 2012 11:30:09 -0700] INFO: Loading cookbooks [getting-started]
+done.
+
+This is shef, the Chef shell.
+ Chef Version: 0.10.10
+ http://www.opscode.com/chef
+ http://wiki.opscode.com/display/chef/Home
+
+run `help' for help, `exit' or ^D to quit.
+
+Ohai2u NODENAME!
+chef &gt;</pre>
+		</div>
+</div></div>
+
+<p>If you just want to just load one recipe from the run_list, you can do this by going into recipe mode and using the "include_recipe" command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef &gt; recipe
+chef:recipe &gt; include_recipe "getting-started"
+ =&gt; [#&lt;Chef::Recipe:0x10256f9e8 @cookbook_name="getting-started",
+... output truncated ...</pre>
+		</div>
+</div></div>
+
+<p>If you wanted to load all of the recipes from the run_list, you could do this in recipe mode by using this code:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">node.run_list.expand(node.chef_environment).recipes.each do |r|
+  include_recipe r
+end</pre>
+		</div>
+</div></div>
+
+<p>Once the recipes you want to debug have been loaded, you can use the <tt>run_chef</tt> command to run them.</p>
+
+<h2><a name="Shef-TurnDebuggingupto11"></a>Turn Debugging up to 11</h2>
+<p><font color="#f7681a">In shef, it's possible get get extremely verbose debugging using irb's tracing feature.</font> Shef provides a shortcut to turn tracing on and off, using <tt>tracing on</tt> and <tt>tracing off</tt>.</p>
+
+<p>For example, here's the output from turning tracing on and off:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef &gt; tracing on
+/Users/danielsdeleo/.rvm/ree-1.8.7-2009.10/lib/ruby/1.8/tracer.rb:150: warning: tried to create Proc object without a block
+/Users/danielsdeleo/.rvm/ree-1.8.7-2009.10/lib/ruby/1.8/tracer.rb:146: warning: tried to create Proc object without a block
+tracing is on
+ =&gt; nil 
+chef &gt; tracing off
+#0:(irb):2:Object:-: tracing off
+#0:./bin/../lib/chef/shef/ext.rb:78:Shef::Extensions::Object:&gt;:       def off
+#0:./bin/../lib/chef/shef/ext.rb:79:Shef::Extensions::Object:-:         :off
+#0:./bin/../lib/chef/shef/ext.rb:79:Shef::Extensions::Object:&lt;:         :off
+#0:./bin/../lib/chef/shef/ext.rb:259:Object:&gt;:   def tracing(on_or_off)
+#0:./bin/../lib/chef/shef/ext.rb:260:Object:-:     conf.use_tracer = on_or_off.on_off_to_bool
+#0:./bin/../lib/chef/shef/ext.rb:135:Shef::Extensions::Symbol:&gt;:       def on_off_to_bool
+#0:./bin/../lib/chef/shef/ext.rb:136:Shef::Extensions::Symbol:-:         self.to_s.on_off_to_bool
+#0:./bin/../lib/chef/shef/ext.rb:136:Symbol:&gt;:         self.to_s.on_off_to_bool
+#0:./bin/../lib/chef/shef/ext.rb:136:Symbol:&lt;:         self.to_s.on_off_to_bool
+#0:./bin/../lib/chef/shef/ext.rb:122:Shef::Extensions::String:&gt;:       def on_off_to_bool
+#0:./bin/../lib/chef/shef/ext.rb:123:Shef::Extensions::String:-:         case self
+#0:./bin/../lib/chef/shef/ext.rb:124:Shef::Extensions::String:-:         when "on"
+#0:./bin/../lib/chef/shef/ext.rb:124:Kernel:&gt;:         when "on"
+#0:./bin/../lib/chef/shef/ext.rb:124:String:&gt;:         when "on"
+#0:./bin/../lib/chef/shef/ext.rb:124:String:&lt;:         when "on"
+#0:./bin/../lib/chef/shef/ext.rb:124:Kernel:&lt;:         when "on"
+#0:./bin/../lib/chef/shef/ext.rb:126:Shef::Extensions::String:-:         when "off"
+#0:./bin/../lib/chef/shef/ext.rb:126:Kernel:&gt;:         when "off"
+#0:./bin/../lib/chef/shef/ext.rb:126:String:&gt;:         when "off"
+#0:./bin/../lib/chef/shef/ext.rb:126:String:&lt;:         when "off"
+#0:./bin/../lib/chef/shef/ext.rb:126:Kernel:&lt;:         when "off"
+#0:./bin/../lib/chef/shef/ext.rb:127:Shef::Extensions::String:-:           false
+#0:./bin/../lib/chef/shef/ext.rb:127:Shef::Extensions::String:&lt;:           false
+#0:./bin/../lib/chef/shef/ext.rb:136:Shef::Extensions::Symbol:&lt;:         self.to_s.on_off_to_bool
+tracing is off
+ =&gt; nil 
+chef &gt;</pre>
+		</div>
+</div></div>
+
+<h2><a name="Shef-ShefHelp"></a>Shef Help</h2>
+
+<p>You can see the help in Shef by using the command "help". There is different help information posted if you are in recipe or attributes mode.</p>
+
+<h1><a name="Shef-UseCaseScenario"></a>Use Case Scenario</h1>
+
+<p><font color="navy"><em>To get a list of nodes with recipe postfix I'm using search(:node,"recipe:postfix"), but in this case I actually only want nodes with the postfix sub-recipe "delivery" (postfix::delivery). How do I express that correctly in the search syntax? (just putting in "postfix::delivery" returns an error)</em></font></p>
+
+<p>One approach would be to use shef:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">search(:node, 'recipes:postfix\:\:delivery')</pre>
+		</div>
+</div></div>
+
+<p>Single vs. double quotes is significant here since you want to include a backslash in the string instead of having ruby interpret it as an escape. 
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Management Console.html" title="Management Console"><span class="image-wrap" style="float: left"><img src="../attachments/4620313/21463062.png" hspace="4" style="border: 0px solid black"/></span> Management Console </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Spiceweasel.html" title="Spiceweasel"><span class="image-wrap" style="float: right"><img src="../attachments/4620313/21463061.png" hspace="4" style="border: 0px solid black"/></span> Spiceweasel </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/4620313/16187393.png">irb_ruby.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/4620313/21463061.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/4620313/21463062.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-5079075"></a>
+                                    <font class="smallfont"><p>Could someone throw in some example usages? Just so one can get oriented enough to start exploring shef?<br/>
+For instance how and where do you run this? Can you run it in a dev environment (ie not a target chef client, but where you develop your chef cookbooks) and supply a run_list or other way to create an environment that the shef instance runs in?</p>
+
+<p>Or do you only run this on a node and it takes in the node's environment?</p>
+
+<p>Can you load up some roles and reciepes and then explore them? If so how?</p>
+
+<p>Some basic idea of why and when and what to do once you enter attributes mode or recipe mode?</p>
+
+<p>How do you set a "Current Recipe"?</p>
+
+<p>It looks like this tool would help a lot to interactively answer questions that come up when developing recipes, So any effort to show how to use Shef would be a big lever in helping people use Chef in general. </p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Jan 14, 2010 22:36
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-5079105"></a>
+                                    <font class="smallfont"><p>Thanks Daniel that is a great first step.</p>
+
+<p>Is there a way to load roles, cookbooks, attribute files and/or recipes in standalone mode? </p>
+
+<p>Would you only use client mode on a client node? (I'm trying to understand how you would use shef while developing cookbooks like one would us irb while developing ruby code as apposed to debugging a client node).</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Jan 16, 2010 00:24
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-5406721"></a>
+                                    <font class="smallfont"><p>Hi Robert,</p>
+
+<p>There's currently no easy way to load cookbooks or roles or anything in standalone mode. That's probably a good feature to add, so feel free to create a ticket for that.</p>
+
+<p>For client mode, it needs to run on a client with valid authentication credentials. This could be your laptop, a VM setup for this purpose, or any client node you feel comfortable developing recipes on. There are some irb plugins that launch your $EDITOR and can ferry code back and forth from irb to the editor. These /should/ work with shef, though I have not yet tried them with it.</p>
+
+<p>We're still learning how people want to use shef, so any feedback you have to offer about how you're using it or would like to use it is appreciated.</p>
+
+<p>HTH, let me know if you have any more questions. </p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by dan@kallistec.com at Jan 16, 2010 16:48
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-5406737"></a>
+                                    <font class="smallfont"><p>Any way to use the search interface while in Shef? It would be really nice to be able to try out different search queries while in the context of attributes or recipes.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Jan 25, 2010 22:48
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-5406745"></a>
+                                    <font class="smallfont"><p>Hi Robert,<br/>
+I haven't tried that yet, but it <b>should</b> work in client mode. Have you tried it and it didn't work? Of course, feel free to bug us on IRC about it if you can't get it working.</p>
+
+<p>UPDATE: I've done this now and it works fine (in client mode, of course). Using data bags also works.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by dan@kallistec.com at Feb 01, 2010 15:58
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

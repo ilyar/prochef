@@ -1,0 +1,335 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Introduction to Cookbooks and More</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Introduction to Cookbooks and More
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/19923532/20611105.gif" hspace="20" vspace="2" style="border: 0px solid black"/></span></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h5><a name="IntroductiontoCookbooksandMore-%5C%5C"></a><br class="atl-forced-newline" /><font color="#f7681a"> This article is a brief introduction to cookbooks, recipes, attributes, and roles.  <br/>
+<br/>
+These items are created on a Chef Workstation or via the WebUI, and are stored on the Chef Server.</font></h5>
+<p><br class="atl-forced-newline" /></p>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="25%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#IntroductiontoCookbooksandMore-Cookbooks'>Cookbooks</a></li>
+<ul>
+    <li><a href='#IntroductiontoCookbooksandMore-Recipes'>Recipes</a></li>
+    <li><a href='#IntroductiontoCookbooksandMore-ResourcesandProviders'>Resources and Providers</a></li>
+    <li><a href='#IntroductiontoCookbooksandMore-AttributesandTemplates'>Attributes and Templates</a></li>
+</ul>
+    <li><a href='#IntroductiontoCookbooksandMore-Roles'>Roles</a></li>
+    <li><a href='#IntroductiontoCookbooksandMore-Environments'>Environments</a></li>
+    <li><a href='#IntroductiontoCookbooksandMore-Summary'>Summary</a></li>
+    <li><a href='#IntroductiontoCookbooksandMore-Onward%21'>Onward!</a></li>
+    <li><a href='#IntroductiontoCookbooksandMore-AdvancedReading'>Advanced Reading</a></li>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h1><a name="IntroductiontoCookbooksandMore-Cookbooks"></a>Cookbooks</h1>
+<div class='navmenu' style='float:left; width:180px; background:#eeeeee; border:4px solid #d7d4c3; margin:10px; padding:4px'><div class="" align="center"><p><font color="navy"><b>Cookbooks are Chef's fundamental units of distribution</b></font></p></div>
+ </div>
+<p><font color="#f7681a">Cookbooks are the way Chef and Hosted Chef users package up, distribute, and share configuration information.</font> They encapsulate all the resources needed to automate your infrastructure, and are easily sharable with other Chef users as well.<br/>
+<span class="image-wrap" style="float: right"><img src="../attachments/19923532/20086945.png" hspace="10" vspace="14" style="border: 0px solid black"/></span><br/>
+They contain recipes, attribute files, templates, and other configuration artifacts.</p>
+
+<p>When Chef-Client runs, recipes listed in the node's run list are transfered to the node, along with the other contents of the cookbook containing the recipe.  These recipes are then applied to the node, bringing it into the proper configuration.  </p>
+
+<p>Typically, a single cookbook contains the information necessary to configure a single service or single part of the system.  For instance, one may have a "users" cookbook for configuring the users who should have access to the system and an "apache" cookbook for configuring the apache web server.</p>
+
+<p><font color="#f7681a">Cookbooks can be authored by anyone with basic programming skills, and they can be written without storing any details about a particular deployed environment.</font> This means they can be shared safely and reused across organization and company boundaries. Opscode encourages users to publish their cookbooks on the <a href="http://community.opscode.com/cookbooks">Opscode Community Site</a>, where there are already over 300 cookbooks to choose from. As a result, you can install and configure many commonly used technologies without ever having to write a new cookbook.  </p>
+
+<p>If your Chef repository is using git (see <a href="Creating a Chef Repository.html" title="Creating a Chef Repository">Creating a Chef Repository</a> for details), you can quickly obtain and use cookbooks written by the community using Chef's command line tool, <a href="Knife.html" title="Knife">Knife</a>.  For instance, to download the simple "getting-started" cookbook, run the following from a chef repository:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site install getting-started</pre>
+		</div>
+</div></div>
+
+<p>To upload it to a Chef Server or Hosted Chef:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload getting-started</pre>
+		</div>
+</div></div>
+
+<p>And, to add the "default" recipe inside this cookbook to the run list of a node:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node run_list add my_node 'getting-started::default'</pre>
+		</div>
+</div></div>
+
+<p>Chef also provides tools to make it easier to create new cookbooks.  For instance, to create the basic structure of a new cookbook within your Chef Repository, you can use knife:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook create new_cookbook_name</pre>
+		</div>
+</div></div>
+
+<h2><a name="IntroductiontoCookbooksandMore-Recipes"></a>Recipes</h2>
+<div class='navmenu' style='float:left; width:180px; background:#eeeeee; border:4px solid #d7d4c3; margin:10px; padding:4px'><div class="" align="center"><p><font color="navy"><b>Recipes are Chef's fundamental units of configuration</b></font></p></div>
+ </div>
+<p><font color="#f7681a">Recipes are Ruby files in which you use Chef's Domain Specific Language (DSL) to define how particular parts of a node should be configured.</font> As will be seen in later sections, you can use data, combined with the ability to use ruby code within recipes to dynamically change a node's configuration.  </p>
+
+<p>Cookbooks can contain multiple recipes, with the recipes added to a run list by their full name using the form <tt>COOKBOOK_NAME::RECIPE_NAME</tt>. Only roles and recipes are added to a run list.</p>
+
+<p>Chef however provides a shortcut notation to name recipes and cookbooks in a run list command. (This is useful for the recipe that serves as a base configuration for a set of nodes.)</p>
+
+<p>When you add <tt>COOKBOOK_NAME</tt> to a run list, Chef assumes that you want the recipe named "default" within the named cookbook. To see an example of this, we could modify the knife command used above to add a recipe to a node's run list.  Using this shortcut, we can simplify the command given above:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node run_list add my_node getting-started</pre>
+		</div>
+</div></div>
+
+<p>In this updated example, you've added the "default" recipe within the "getting-started" cookbook to the run_list of "my_node", just as before.</p>
+
+<h2><a name="IntroductiontoCookbooksandMore-ResourcesandProviders"></a>Resources and Providers</h2>
+<div class='navmenu' style='float:left; width:180px; background:#eeeeee; border:4px solid #d7d4c3; margin:10px; padding:4px'><div class="" align="center"><p><font color="navy"><b>Resources are Chef's fundamental units of work</b></font></p></div>
+ </div>
+
+<p><font color="#f7681a">Resources are the building blocks you will use to to create a properly configured node.</font> They are cross platform abstraction of that which you are configuring on the node -  discrete chunks of a system's configuration that are placed in recipes and applied to your nodes. </p>
+
+<p>The key feature of resources is that they allow you to focus on describing the node's configuration rather than the specifics of how a given task is accomplished.  </p>
+
+<p>For example, the following resource adds a user to a node:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">user "sam" do
+     home "/home/sam"
+     shell "/bin/zsh"
+     comment "Sam loves DevOps"
+     action :create
+end</pre>
+		</div>
+</div></div>
+
+<p>This resource describes a user, "sam", that we would like to create on our node. <font color="#f7681a">The actual creation is performed by a <b><a href="Providers.html" title="Providers">Provider</a></b> which executes the necessary commands to create a new user.</font> </p>
+
+<div class='navmenu' style='float:left; width:180px; background:#eeeeee; border:4px solid #d7d4c3; margin:10px; padding:4px'><div class="" align="center"><p><font color="navy"><b>Providers are how Chef supports multiple platforms with a single Resource</b></font></p></div>
+ </div> 
+
+<p>An individual resource can have multiple providers, each of which knows how to perform the necessary task on a different platform.  Chef-client will choose the best provider for the node's platform.  Thus, this single resource description can be used to create the user "sam" on a Linux system and a FreeBSD system, without any modification.</p>
+
+<p><font color="#f7681a">The user resource above is structured like all resource descriptions in the Chef Domain Specific Language (DSL):</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">resource_type "resource_name" do
+  resource_attribute value
+  ...
+end</pre>
+		</div>
+</div></div>
+
+<p>A <b>resource type</b> corresponds to the kind of resource that you need to configure.  Many different resources are defined by the Chef DSL.  A full list of these resources can be found on the <a href="Resources.html" title="Resources">Resources</a> page.  As you advance to more complex uses of Chef, you can even extend the Chef DSL with your own resources.  </p>
+
+<p>The <b>resource name</b> is a string that identifies this specific instance of a resource.  For a given node's configuration you may need to define many user resources, each of which will have their own name and can be referred to by other resources. The resource name is also, by default, used as the value for one of the resource's "resource attributes".  For example, in the user resource defined above, the name "sam" will be used as the username for the user chef-client will create.   </p>
+
+<p><b>Resource attributes</b> and the associated <b>values</b> describe the desired state of the resource.  Each resource has different attributes that are meaningful in the context of the given resource. The "action" attribute is an attribute used by all resources and defines what ought to be done with the resource.  In our example above, we used the "create" action to indicate we want the user to be created.  When sam leaves our organization, we may change this action to ":delete" to remove her user.</p>
+
+<p>The available resource attributes and their default values are described in detail for each resource on the <a href="Resources.html" title="Resources">Resources</a> page.</p>
+
+<p>When chef-client loads the recipes in its run list, </p>
+<ol>
+	<li>It runs each recipe as a piece of ruby code.</li>
+	<li>Each time a resource is used, it is added to a collection of resources for that node.</li>
+	<li>The providers of these resources then decide whether or not action is needed to fulfill the resources' description.</li>
+</ol>
+
+
+<p><em>In this way, a core principle of Chef is achieved: idempotency.</em> <font color="#f7681a"><b>Idempotency</b> ensures that a resource can be applied to a machine multiple times and always yield the same result: a properly configured machine.</font></p>
+
+<h2><a name="IntroductiontoCookbooksandMore-AttributesandTemplates"></a>Attributes and Templates</h2>
+<div class='navmenu' style='float:left; width:200px; background:#eeeeee; border:4px solid #d7d4c3; margin:10px; padding:4px'><div class="" align="center"><p><font color="navy"><b>Attributes are data about a Node and able to be dynamically loaded</b></font></p></div>
+ </div> 
+
+<p><font color="#f7681a">Attributes provide a nested key-value store of data about a node and its configuration.</font>  Some attributes are collected automatically at the start of each chef-client run and include information such as the nodes IP address, hostname, or loaded kernel modules.  Other attributes are added from other sources such as cookbooks. (Roles and Environments can also set attributes, two features of Chef that are talked about in other sections.)  </p>
+
+<p>Attributes allow you to change configuration based on the characteristics of a node and set sane defaults for service configurations while also allowing them to be easily changed.  One way to set attributes is from an attribute files within a cookbook.  </p>
+
+<p>For example the following sets some sane defaults for the location of a particular configuration file:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>An attribute file</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">default["my_application"]["config_location"] = "/etc/myapp.conf"</pre>
+		</div>
+</div></div>
+
+<p>This attribute could then be used directly in a resource controlling the configuration file:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">template node["my_application"]["config_location"] do
+         action :create
+end</pre>
+		</div>
+</div></div>
+
+<div class='navmenu' style='float:left; width:200px; background:#eeeeee; border:4px solid #d7d4c3; margin:4px; padding:10px'><div class="" align="center"><p><font color="navy"><b>A template is a configuration file allowing dynamic generation of file contents based on variables or more complex logic</b></font></p></div>
+ </div> 
+
+<p><font color="#f7681a">This defines a <a href="Templates.html" title="Templates">Template</a>, which is a feature of Chef that allows you to create general files whose contents can be generated dynamically.</font>  If this configuration file was referenced multiple times in a recipe, changing its location is now a matter of changing a single attribute.</p>
+
+<p>Node attributes also contain information about the node that can be used in recipes:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">if node.attribute?("ec2")
+   # Do EC2 specific configuration tasks.
+end</pre>
+		</div>
+</div></div>
+<p>This would allow a recipe to do some set of configuration tasks only if it was running on Amazon's EC2 cloud.  For complete documentation on Attributes see <a href="Attributes.html" title="Attributes">Attributes</a>.</p>
+
+<h1><a name="IntroductiontoCookbooksandMore-Roles"></a>Roles</h1>
+<div class='navmenu' style='float:left; width:200px; background:#eeeeee; border:4px solid #d7d4c3; margin:10px; padding:4px'><div class="" align="center"><p><font color="navy"><b>At web scale, you almost never have just one of something</b></font></p></div>
+ </div> 
+
+<p>Configuring a single node may involve many different cookbooks. <font color="#f7681a">In order to group similar features of similar nodes, Chef provides Roles.</font>  Roles contain a run list (just like a node) and attributes pertaining to a specific function.  For example, you may create a "webserver" role that would contain a run list with all of the services needed on a typical webserver within your infrastructure.  A node's run list can contain these roles.  </p>
+
+<p>When a node's run list contains a role, the run list from the role itself is expanded and added to the node's run list, ensuring that all of the recipes for a given role are applied to the node.</p>
+
+<p>Roles can also set attributes.  Setting attributes in a roles allows you to override the default attribute of a general-purpose cookbook with values more appropriate for a node with a particular role.</p>
+
+<div class="" align="center"><p><span class="image-wrap" style=""><img src="../attachments/19923532/20086944.png" style="border: 0px solid black"/></span></p></div>
+
+
+<h1><a name="IntroductiontoCookbooksandMore-Environments"></a>Environments</h1>
+<div class='navmenu' style='float:left; width:200px; background:#eeeeee; border:4px solid #d7d4c3; margin:6px; padding:4px'><div class="" align="center"><p><font color="navy"><b>Manage multiple spaces with one Chef instance</b></font></p></div>
+ </div>
+
+<p><font color="#f7681a">Environments in Chef provide a mechanism for managing different environments such as production, staging, development, and testing, etc within one Chef Server or Hosted Chef organization.</font> With environments, you can specify per environment run lists in roles, per environment cookbook version constraints, and environment attributes. <a href="#IntroductiontoCookbooksandMore-Roles">Roles</a> differ in that they are groupings of systems that perform a like function and which <em>can span environments</em> - for example: application server, web server, database server. Thus you can have per-environment run lists within roles - for example: in your development environment you want your application server to connect to a different load balancer than you do in your test environment, and this can be managed within a single <a href="#IntroductiontoCookbooksandMore-Recipes">recipe</a>.</p>
+
+<p>You can create and manage environments in multiple ways, thereby tailoring their use to your needs and infrastructure. See <a href="Environments.html" title="Environments">Environments</a> for more details.</p>
+
+<h1><a name="IntroductiontoCookbooksandMore-Summary"></a>Summary</h1>
+
+<ul>
+	<li>Cookbooks contain recipes, attribute files, and other configuration information.</li>
+	<li>Resources are the building blocks of recipes and describe a discrete piece of a Node's configuration.</li>
+	<li>Resources are idempotent.  Applying the same resource to a node twice should have the same result.</li>
+	<li>Providers take the necessary actions required to ensure the Node's state matches the resource description.</li>
+	<li>Attributes provide tunable parameters that can be used within a recipe as well as information about the node.</li>
+	<li>Roles provide a way to describe a particular function or type of node.  Roles have run_lists and attributes.</li>
+	<li>Environments provide the means of managing different infrastructure spaces within one Chef instance.</li>
+</ul>
+
+
+
+<h1><a name="IntroductiontoCookbooksandMore-Onward%21"></a>Onward!</h1>
+
+<p>Now on to two of Chef's most Powerful Features:</p>
+
+<ul>
+	<li>Next Steps: <a href="Introduction to Search and Data Bags.html" title="Introduction to Search and Data Bags">Introduction to Search and Data Bags</a></li>
+</ul>
+
+
+<h1><a name="IntroductiontoCookbooksandMore-AdvancedReading"></a>Advanced Reading</h1>
+
+<ul>
+	<li><a href="Cookbooks.html" title="Cookbooks">Cookbooks</a></li>
+	<li><a href="Resources.html" title="Resources">Resources</a></li>
+	<li><a href="Providers.html" title="Providers">Providers</a></li>
+	<li><a href="Attributes.html" title="Attributes">Attributes</a></li>
+	<li><a href="Roles.html" title="Roles">Roles</a></li>
+	<li><a href="Templates.html" title="Templates">Templates</a></li>
+	<li><a href="Environments.html" title="Environments">Environments</a></li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Core Components.html" title="Core Components"><span class="image-wrap" style="float: left"><img src="../attachments/19923532/20840474.png" hspace="4" style="border: 0px solid black"/></span> Core Components </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Introduction to Search and Data Bags.html" title="Introduction to Search and Data Bags"><span class="image-wrap" style="float: right"><img src="../attachments/19923532/20840473.png" hspace="4" style="border: 0px solid black"/></span> Introduction to Search and Data Bags </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923532/20086944.png">chef-basics-roles.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923532/20086945.png">chef-basics-cookbook.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923532/20611105.gif">952.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923532/20611106.jpg">free_300_secret_recipes.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923532/20840473.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923532/20840474.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

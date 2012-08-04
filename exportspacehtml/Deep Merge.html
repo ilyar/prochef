@@ -1,0 +1,296 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Deep Merge</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Deep Merge
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on May 16, 2012 by <font color="#0050B2">mkent</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="70%">
+
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/16941074/17072133.jpg" hspace="20" vspace="20" style="border: 0px solid black"/></span></p>
+
+<h1><a name="DeepMerge-Overview"></a>Overview</h1>
+
+<h5><a name="DeepMerge-"></a><font color="#f7681a">Chef does deep merging of mutilevel hashes and arrays for</font> <font color="#f7681a"><a href="Roles.html" title="Roles">role</a></font> <font color="#f7681a">and</font> <font color="#f7681a"><a href="Environments.html" title="Environments">environment</a></font> <font color="#f7681a">attributes.</font> <font color="#f7681a">These can assist in code reuse by allowing you to layer your configuration among many roles, while still making use of default attributes set at the cookbook level.</font></h5>
+
+<h6><a name="DeepMerge-SeeAttributesformorebackgroundinformation."></a>See <a href="Attributes.html" title="Attributes">Attributes</a> for more background information.</h6>
+
+<h1><a name="DeepMerge-Examples"></a>Examples</h1>
+
+<h3><a name="DeepMerge-"></a><font color="#f7681a">Simple merge</font></h3>
+
+<p>First our lowest level server role</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>roles/baseline.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">name "baseline"
+description "The most basic role for all configurations"
+run_list "recipe[baseline]"
+
+override_attributes(
+  :apache =&gt; {
+    :listen_ports =&gt; [ 80 ],
+    :prefork =&gt; {
+      :startservers =&gt; 20,
+      :minspareservers =&gt; 20,
+      :maxspareservers =&gt; 40
+    }
+  }
+)</pre>
+		</div>
+</div></div>
+
+<p>next our more customized web server role which uses the baseline role</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>roles/web.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">name "web"
+description "Web server config"
+run_list "role[baseline]"
+
+override_attributes(
+  :apache =&gt; {
+    :prefork =&gt; {
+      :startservers =&gt; 30
+    }
+  }
+)</pre>
+		</div>
+</div></div>
+
+<p>then using a recipe like</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbooks/baseline/recipes/default.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">include_recipe "apache2"
+
+Chef::Log.info(node['apache']['prefork'].to_hash)</pre>
+		</div>
+</div></div>
+
+<p>and a run_list set to</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>run_list/web.json</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+ "run_list": [ "role[web]" ]
+}</pre>
+		</div>
+</div></div>
+
+<p>produces</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[Tue, 16 Aug 2011 14:44:26 -0700] INFO: {"startservers"=&gt;30, "minspareservers"=&gt;20, "maxspareservers"=&gt;40, "serverlimit"=&gt;400,
+"maxclients"=&gt;400, "maxrequestsperchild"=&gt;10000}</pre>
+		</div>
+</div></div>
+
+<p>which mixes the default attributes from cookbooks/apache2/attributes/default.rb, the overrides from baseline.rb and the final overrides from web.rb quite nicely, setting startservers to 30.</p>
+
+<p>With this in mind the examples below will use short hand.</p>
+
+<h3><a name="DeepMerge-"></a><font color="#f7681a">Substitution</font></h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Hash - Substitute an existing string</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">role 1 { :x =&gt; "1", :y =&gt; "2" }
++
+role 2 { :y =&gt; "3" }
+=
+{ :x =&gt; "1", :y =&gt; "3" }</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Hash - Substitute an existing boolean</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">role 1 { :x =&gt; true, :y =&gt; false }
++
+role 2 { :y =&gt; true }
+=
+{ :x =&gt; true, :y =&gt; true }</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Subtraction using &#33;merge is likely to be removed in the future, potentially in Chef 0.11. See the discussion <a href="http://lists.opscode.com/sympa/arc/chef/2011-12/msg00079.html">here for more information</a>.</td></tr></table></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Array - Substitute an existing string</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">role 1 [ "1", "2" ]
++
+role 2 [ "!merge:2", "3" ]
+=
+[ "1", "3" ]</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Substitute an Array with a Hash</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">role 1 [ "1", "2", "3" ]
++
+role 2 { :x =&gt; "1" , :y =&gt; "2" }
+=
+{ :x =&gt; "1", :y =&gt; "3" }</pre>
+		</div>
+</div></div>
+<p>when items can't be merged the original data is overwritten</p>
+
+<h3><a name="DeepMerge-"></a><font color="#f7681a">Addition</font></h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Hash - Add a string</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">role 1 { :x =&gt; "1", :y =&gt; "2" }
++
+role 2 { :z =&gt; "3" }
+=
+{ :x =&gt; "1", :y =&gt; "2", :z =&gt; "3" }</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Array - Add a string</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">role 1 [ "1", "2" ]
++
+role 2 [ "3" ]
+=
+[ "1", "2", "3" ]</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Hash - Multilevel Add</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">role 1 { :x =&gt; { :y =&gt; "2" } }
++
+role 2 { :x =&gt; { :z =&gt; "3" } }
+=
+{ :x =&gt; { :y =&gt; "2", :z =&gt; "3" } }</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Array - Multilevel Add</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">role 1 [ [ 1, 2 ] ]
++
+role 2 [ [ 3 ] ]
+=
+[ [ 1, 2 ], [ 3 ] ]</pre>
+		</div>
+</div></div>
+
+<h3><a name="DeepMerge-"></a><font color="#f7681a">Subtraction</font></h3>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Subtraction using &#33;merge is only valid between roles. It will not work in environment or file attributes.</td></tr></table></div>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Subtraction using &#33;merge is likely to be removed in the future, potentially in Chef 0.11. See the discussion <a href="http://lists.opscode.com/sympa/arc/chef/2011-12/msg00079.html">here for more information</a>.</td></tr></table></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Hash - Remove a string</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">A hash cannot be removed during a merge</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Array - Remove a string</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">role 1 [ "1", "2", "3" ]
++
+role 2 [ "!merge:3" ]
+=
+[ "1", "2" ]</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>&#33;merge (without the colon) can be used in Chef &gt;= 0.10.10</td></tr></table></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Array - Remove all values</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">role 1 [ "1", "2", "3" ]
++
+role 2 [ "!merge:" ]
+=
+[]</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Array - Remove an integer</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">role 1 [ 4, 5, 6 ]
++
+role 2 [ "!merge:", 5, 6 ]
+=
+[ 5, 6 ]</pre>
+		</div>
+</div></div>
+<p>You can't use &#33;merge:&lt;value&gt; with integers, to get rid of 4 you'll have to dump them all.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/16941074/20840575.png" hspace="4" style="border: 0px solid black"/></span><br/>
+<a href="Automatic Attributes.html" title="Automatic Attributes">Automatic Attributes</a></p></td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/16941074/20840574.png" hspace="4" style="border: 0px solid black"/></span><br/>
+<a href="Cookbooks.html" title="Cookbooks">Cookbooks</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16941074/17072133.jpg">8204526-sun-and-sea-bubbles.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16941074/20840574.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16941074/20840575.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

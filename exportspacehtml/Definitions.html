@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Definitions</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Definitions
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<div class="" align="center"><h2><a name="Definitions-"></a><font color="#f7681a"><b>Definitions allow you to create new <a href="Resources.html" title="Resources">Resources</a> by stringing together existing resources.</b></font></h2></div>
+
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 200x200" href='http://wiki.opscode.com/download../attachments/1179788/prod6402_dt.png'><img src="../attachments/thumbnails/1179788/21463233" hspace="28" vspace="18" style="border: 0px solid black"/></a></span></p>
+<h5><a name="Definitions-Definitionsdeclarationsmustbeplacedinadefinitionsfolderattherootofyourcookbook."></a>Definitions declarations must be placed in a definitions folder at the root of your cookbook. <font color="#f7681a">Do not declare them into a cookbook.</font></h5>
+
+<div class='navmenu' style='float:right; width:380px; background:#eeeeee; border:4px solid #d7d4c3; margin:30px; padding:3px'><h4><a name="Definitions-"></a><div class="" align="center"><font color="navy">When to Use Definitions</font></div>
+ </h4>
+<ul>
+	<li>You are repeating a pattern of resources</li>
+	<li>You do not want to send actions directly to this resource - i.e., you never need to notify it</li>
+	<li>You want to pass data from various recipes to one definition, to update your /etc/aliases, /etc/sudoers, or something similar, with entries from multiple recipes in a single chef run.</li>
+</ul>
+</div> 
+
+<p><br class="atl-forced-newline" /></p>
+<h4><a name="Definitions-Definitionsaren%27tresources"></a><em>Definitions aren't resources</em></h4>
+<p><font color="#f7681a">They are replaced by the resources they contain.</font> <b>You cannot notify a definition to take an action - you can only notify the resources it creates</b>. <font color="#f7681a">If you do need to send actions to the resource, you should look in to creating a new <a href="Providers.html" title="Providers">Provider</a>.</font></p>
+
+<p><br class="atl-forced-newline" />
+<ins>There are three components to a definition:</ins><br/>
+1. The resource name<br/>
+2. The Prototype Parameters<br/>
+3. The Params hash</p>
+
+<p><br class="atl-forced-newline" />
+You start with <tt>define</tt>, followed by the name of the new resource (<tt>apache_site</tt>). What follows is the Prototype Arguments for the definition - these are used to set default values for parameters within the definition.  </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Definition and Prototyping</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">define :apache_site, :action =&gt; :enable do
+  ...
+end</pre>
+		</div>
+</div></div>
+
+<p>Those parameters are then accessed within your definition via the <tt>params</tt> hash.
+<br class="atl-forced-newline" />
+The values you specify in the definition are used as defaults in case a given parameter is not provided when invoking the resource. Since this is a hash, you don't have to provide a default value for every parameter; if none is specified, it will be assumed to be <tt>nil</tt>.
+<br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Hey, CGI programmers...</b><br />The params hash should look familiar to you - it's basically the exact same model we've been following ever since the CGI.pm days.</td></tr></table></div>
+
+<p><br class="atl-forced-newline" /></p>
+<h3><a name="Definitions-Example"></a>Example</h3>
+
+<p>This definition file creates a new resource <tt>apache_site</tt>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>apache_site Definition</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">define :apache_site, :enable =&gt; true do
+  include_recipe "apache2"
+
+  if params[:enable]
+    execute "a2ensite #{params[:name]}" do
+      command "/usr/sbin/a2ensite #{params[:name]}"
+      notifies :restart, resources(:service =&gt; "apache2")
+      not_if do
+        ::File.symlink?("#{node[:apache][:dir]}/sites-enabled/#{params[:name]}") or
+          ::File.symlink?("#{node[:apache][:dir]}/sites-enabled/000-#{params[:name]}")
+      end
+      only_if do ::File.exists?("#{node[:apache][:dir]}/sites-available/#{params[:name]}") end
+    end
+  else
+    execute "a2dissite #{params[:name]}" do
+      command "/usr/sbin/a2dissite #{params[:name]}"
+      notifies :restart, resources(:service =&gt; "apache2")
+      only_if do ::File.symlink?("#{node[:apache][:dir]}/sites-enabled/#{params[:name]}") end
+    end
+  end
+end</pre>
+		</div>
+</div></div>
+
+<p>We utilize it by placing the definition in the <a href="Recipes.html" title="Recipes">recipe</a>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>apache_site resource</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Enable my_site.conf
+apache_site "my_site.conf" do
+  enable true
+end
+
+# Disable my_site.conf
+apache_site "my_site.conf" do
+  enable false
+end</pre>
+		</div>
+</div></div>
+
+<p>We take the attributes of our new <tt>apache_site</tt> resource, and make them accessible via the <tt>params</tt> hash.  This will be true of any attribute we set - you do not have to prototype all your parameters.  Within the context of the Chef run, this definition will be replaced by all the resources you specify within the definition - in the "enabled" case, it is expanded to:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>The resources created by this definition</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">execute "a2ensite my_site.conf" do
+  command "/usr/sbin/a2ensite my_site.conf"
+  notifies :restart, resources(:service =&gt; "apache2")
+  not_if do 
+    ::File.symlink?("/etc/apache2/sites-enabled/my_site.conf") or
+      ::File.symlink?("/etc/apache2/sites-enabled/000-my_site.conf")
+  end
+end</pre>
+		</div>
+</div></div>
+
+<p>You can have as many resources in a definition as you want.</p>
+
+<h3><a name="Definitions-"></a><font color="#f7681a">You can also pass data from various recipes to one definition.</font></h3>
+
+<p>Passing data from various recipes to one definition is possible. For example, you'd like to update your /etc/aliases, /etc/sudoers, or something similar, with entries from multiple <a href="Recipes.html" title="Recipes">recipes</a> in a single chef run. Reopening resources is the way do this currently. Here's an example <a href="" title="Definitions">definition</a> for adding email aliases (via Mithrandir on #chef):</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">define :email_alias, :recipients =&gt; [] do
+  execute "newaliases" do
+    action :nothing
+  end
+
+  t = nil
+  begin
+    t = resources(:template =&gt; "/etc/aliases")
+  rescue Chef::Exceptions::ResourceNotFound
+    t = template "/etc/aliases" do
+      source "aliases.erb"
+      cookbook "aliases"
+      variables({:aliases =&gt; {} })
+      notifies :run, "execute[newaliases]"
+    end
+  end
+
+  if not t.variables[:aliases].has_key?(params[:name])
+    t.variables[:aliases][params[:name]] = []
+  end
+  t.variables[:aliases][params[:name]] &lt;&lt; [ params[:recipients] ]
+end</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<h3><a name="Definitions-UseCaseScenario"></a>Use Case Scenario</h3>
+
+<p><font color="navy"><em>I've two applications to deploy/run using chef on a single node under the same domain/subdomain. One is a Rails app and another is a Wordpress blog app. The Rails app will reside as the main app at say `example.com` and the wordpress at `blog.example.com`. And lets assume that I'll be using Apache2 or Nginx as the webserver to handle the VirtualHost. I can create 2 separate run_list adding different roles to it. Later, when I have to add another app on the same domain, e.g. `forum.example.com` on the same node, I can create a separate run_list for this. But how do I update/amend the VirtualHost of the web-server since it's only one per node?</em></font></p>
+
+<p>Definitions are a feature of Chef cookbooks that allow one to create "macros" for resources so they can be reused. The `web_app` definition exists in our apache2 cookbook, and can be used like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">web_app "blog_site" do
+     server_name "blog"
+     server_aliases [ "blog.#{node['domain']}", node['fqdn'] ]
+     docroot "/srv/www/blog_site"
+   end</pre>
+		</div>
+</div></div>
+
+<p>When Chef processes the recipe containing this, it sees web_app and looks to see if it recognizes it as a "resource". It will find it as loaded from the <a href="http://community.opscode.com/cookbooks/apache2">Opscode apache2 cookbook</a>, and then process the template according to how the definition was written.</p>
+
+<p>It is important to note that definitions aren't actually resources, and to Chef they are replaced by the resources they contain. They cannot be signaled directly with a notification, though the contained resources can.</p>
+
+<p>We also have a (relatively old) <a href="http://www.opscode.com/blog/2009/03/31/web-applications-are-a-breeze-with-chef/">blog post</a> about this specific definition.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Setting Attributes (Examples).html" title="Setting Attributes (Examples)"><span class="image-wrap" style="float: left"><img src="../attachments/1179788/20840586.png" hspace="4" style="border: 0px solid black"/></span> Setting Attributes (Examples) </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="File Distribution.html" title="File Distribution"><span class="image-wrap" style="float: right"><img src="../attachments/1179788/20840585.png" hspace="4" style="border: 0px solid black"/></span> File Distribution </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179788/14057492.jpg">prod6402_dt.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179788/14057493.gif">orange_dot.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179788/20840585.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179788/20840586.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179788/21463233.png">prod6402_dt.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-24772830"></a>
+                                    <font class="smallfont"><p>I don't quite get the email_alias definition here to be honest.<br/>
+1.) why do we execute newaliases at the beginning of this definition ?</p>
+
+<p>2.) my confusion is mostly with the code after it.<br/>
+If I got this right when the email_alias definition is used like this in a recipe:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">email_alias "joe" do
+  recipients ["frank", "pete", "adam"]
+end
+
+then it should expand into:
+
+execute "newaliases" do
+    action :nothing
+end
+
+if not t.variables[:aliases].has_key?(joe)
+    t.variables[:aliases][joe] = []
+end
+t.variables[:aliases][joe] &lt;&lt; ["frank", "pete", "adam"]</pre>
+		</div>
+</div></div>
+<p>Given that t resource will come either from read in template or from newly created template. ? I guess what confuses me is the sequence of the actions in the example code - first we open a resource and THEN we populate its variables and once those vars are populated we actually execute the resource ? Do those variables somehow magically get into that resource and the whole definition eventually expands into the following ??:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">execute "newaliases" do
+    action :nothing
+end
+
+template "/etc/aliases" do
+      source "aliases.erb"
+      cookbook "aliases"
+      variables({:aliases =&gt; {"joe" =&gt; ["frank", "pete", "adam"]} })
+      notifies :run, "execute[newaliases]"
+end</pre>
+		</div>
+</div></div>
+
+<p>sorry for my ignorance - Im just a rookie!</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by gyre007 at Jun 13, 2012 18:43
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

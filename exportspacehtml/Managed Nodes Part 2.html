@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managed Nodes Part 2</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managed Nodes Part 2
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 08, 2011 by <font color="#0050B2">temujin9</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<h3><a name="ManagedNodesPart2-SessionTitle%3AManagedNodesPart2"></a>Session Title: Managed Nodes Part 2</h3>
+
+
+<p><b>Convener:</b><br/>
+Matt Ray</p>
+
+<p><b>Participants:</b><br/>
+Rob Hirschfeld<br/>
+Greg Althaus<br/>
+George Moberly<br/>
+Chris Brown<br/>
+Kyle Bader<br/>
+Carl Perry<br/>
+<a href="http://wiki.opscode.com/display/~spkane">Sean P. Kane</a><br/>
+<a href="http://wiki.opscode.com/display/~temujin9">Nathaniel Eliot</a></p>
+
+<h4><a name="ManagedNodesPart2-Summaryofdiscussions%3A"></a>Summary of discussions:</h4>
+
+<p>In order to extend the reach of Chef into managing nodes that cannot run the chef-client, Chef needs to be extended to support the concept of a "Managed Node". Managed Nodes may be network devices (switches, firewalls, load balancers, etc.), network storage, databases and any other device that we may configure via an API or other tools, but we want to treat it as a Node. The Managed Node needs to behave identically to Nodes in many respects, yet have a few additional capabilities exposed. Other Nodes will have to perform these management operations as "Management Providers" without interfering with their own configuration as a Chef Node.</p>
+
+<ul>
+	<li>MANAGED NODES
+	<ul>
+		<li>Extension of the Node object within Chef.</li>
+		<li>Appear in searches for Nodes.</li>
+		<li>Have a Management Provider that provides the configuration services for that Managed Node.</li>
+		<li>Have a list of allowed Management Providers to use for configuring the node.</li>
+		<li>The list of Nodes allowed to manage a particular Managed Node are stored on the Managed Node.</li>
+		<li>Resources executed against the Managed Node will be supported by Providers specific to that device.</li>
+	</ul>
+	</li>
+	<li>MANAGEMENT PROVIDERS
+	<ul>
+		<li>Nodes that configure Managed Nodes are referred to as Management Providers.</li>
+		<li>Management Providers have no knowledge that they are providing this service.</li>
+		<li>Security or network topology concerns are addressed by assigning Management Providers to the Managed Nodes.</li>
+		<li>Providers may install additional packages or tools on the Management Provider, but not alter the Management Provider otherwise.</li>
+		<li>"knife ssh" calls will pass through to the Management Provider for the Managed Node.</li>
+	</ul>
+	</li>
+</ul>
+
+
+<ul>
+	<li>ATTRIBUTES
+	<ul>
+		<li>node.managed?: boolean for whether or not this is a Managed Node</li>
+		<li>node.manager: the Node that is currently acting as the Management Provider for this node</li>
+		<li>node.allowed_managers: list of Nodes that are allowed to act as Management Providers for this node.</li>
+	</ul>
+	</li>
+</ul>
+
+
+<ul>
+	<li>KNIFE
+	<ul>
+		<li>All of the "knife node" operations are available for managing Managed Nodes.</li>
+		<li>"knife search node" will return all Nodes, including Managed Nodes.</li>
+		<li>"knife node managed add NODE PROVIDER" will add a new allowed Management Provider</li>
+		<li>"knife node managed remove NODE PROVIDER" will remove an allowed Management Provider</li>
+		<li>"knife node managed set NODE PROVIDER" will set the Management Provider for the node</li>
+	</ul>
+	</li>
+</ul>
+
+
+<ul>
+	<li>CHEF-CLIENT
+	<ul>
+		<li>chef-client currently only supports a single Node, needs to support multiple Managed Nodes.</li>
+		<li>chef-client needs to support Managed Nodes with schedules independent of the Node itself.</li>
+		<li>chef-client needs to be safe for multiple simultaneous runs</li>
+		<li>ohai is currently run as an on-Node application, need to extend it to work remotely or write a new 'ohaithere' application.</li>
+		<li>ohaithere will need to support plugins for supporting multiple remote retrieval methods, yet still return ohai-compatible data</li>
+	</ul>
+	</li>
+</ul>
+
+
+<ul>
+	<li>DISCUSSION
+	<ul>
+		<li>What is the best way to manage client keys and access credentials for Managed Nodes? Encrypted data bags?</li>
+		<li>How does the Managed Provider find that it has a Managed Node and start managing it? Check during every chef-client run?</li>
+		<li>Do we want Managed Nodes to have an additional search and knife keyword (ie. 'knife managed' and/or 'search(:managed, "<b>:</b>")')?</li>
+		<li>Does the Chef Server assign the node.manager from the node.allowed_managers randomly or is always explicit? If random, when do we reassign?</li>
+		<li>Do we need to extend the chef-client cookbook to support Managed Nodes?</li>
+		<li>knife managedbootstrap managed_node &#45;r 'recipeblah,roleblahblah' &#45;managers "a.foo.com, b.foo.com, c.foo.com"</li>
+	</ul>
+	</li>
+</ul>
+
+
+<h4><a name="ManagedNodesPart2-Rob%27snotesfromthesession"></a>Rob's notes from the session</h4>
+
+<p>Managed Nodes are entities that cannot run chef-client. &nbsp;There are needs to collect information from them (ohai).<br/>
+Management Provider will be a HWRP (heavy weight resource provider) that does the implementation. &nbsp;For example, the firewall cookbook is a reference implementation.<br/>
+Terms are subject to change if you have a better suggestion.<br/>
+Managed nodes are used where the node cannot take actions on their own. &nbsp;A node would make a configration request on the managed node. &nbsp;The managed node would action on that request during its next chef-client request.<br/>
+We need to treat managed nodes as both a service (actuator / request) and a configuration (node / managed entity). &nbsp;The goal is for the later. &nbsp;In the later case, the node is assumed to have all the information it needs to do the configuration via Chef.<br/>
+&nbsp;&nbsp;<br/>
+Some configuration may be out of band for setup; however, the node will have all the data that is needed.<br/>
+This is not just about actions, it is also about search ability.<br/>
+Use case - have a SAN managed nodes. &nbsp;Cookbook could ask the node for a LUN. &nbsp;Node would be able to discover available storage and create a new LUN.<br/>
+&nbsp;&nbsp;<br/>
+Implementation discussion - knife &amp; chef-client are not setup to have mulitple entities on the same system. &nbsp;This can create challenges.<br/>
+Open question - do we need to track relational data between nodes &amp; managed nodes?<br/>
+Timeframe&nbsp;<br/>
+&nbsp; - Opscode says this is a high priority to get into the product<br/>
+&nbsp; - Dell is working in the next quarter on a hack pre-implementation that does this in our context</p>
+<ul>
+	<li>Managed Nodes are entities that cannot run chef-client. &nbsp;There are needs to collect information from them (ohai).</li>
+	<li>Management Provider will be a HWRP (heavy weight resource provider) that does the implementation. &nbsp;For example, the firewall cookbook is a reference implementation.</li>
+	<li>Terms are subject to change if you have a better suggestion.</li>
+	<li>Managed nodes are used where the node cannot take actions on their own. &nbsp;A node would make a configration request on the managed node. &nbsp;The managed node would action on that request during its next chef-client request.</li>
+	<li>We need to treat managed nodes as both a service (actuator / request) and a configuration (node / managed entity). &nbsp;The goal is for the later. &nbsp;In the later case, the node is assumed to have all the information it needs to do the configuration via Chef.</li>
+	<li>Some configuration may be out of band for setup; however, the node will have all the data that is needed.</li>
+	<li>This is not just about actions, it is also about search ability.</li>
+	<li>Use case - have a SAN managed nodes. &nbsp;Cookbook could ask the node for a LUN. &nbsp;Node would be able to discover available storage and create a new LUN.</li>
+	<li>Implementation discussion - knife &amp; chef-client are not setup to have mulitple entities on the same system. &nbsp;This can create challenges.</li>
+	<li>Open question - do we need to track relational data between nodes &amp; managed nodes?</li>
+</ul>
+
+
+<p>Timeframe&nbsp;</p>
+
+<p>&nbsp; - Opscode says this is a high priority to get into the product</p>
+
+<p>&nbsp; - Dell is working in the next quarter on a hack pre-implementation that does this in our context</p>
+
+
+<h4><a name="ManagedNodesPart2-Whatwillwedonow%3FWhatneedstohappennext%3F"></a>What will we do now? What needs to happen next?</h4>
+
+<p>Discussion of design needs to move to mailing lists and Opscode Product Management will prioritize for development. A number of users have expressed the plan to start implementing stop-gap measures in the meantime.</p>
+
+<p>Talk about <a href="External Entity Hack and Design.html" title="External Entity Hack and Design">External Entity Hack and Design</a> to mode intermediate solution forward.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

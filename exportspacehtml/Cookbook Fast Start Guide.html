@@ -1,0 +1,362 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Cookbook Fast Start Guide</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Cookbook Fast Start Guide
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h1><a name="CookbookFastStartGuide-Overview"></a>Overview</h1>
+<p><span class="image-wrap" style="float: right"><img src="../attachments/18645295/19005511.jpg" hspace="18" vspace="4" style="border: 0px solid black"/></span><br/>
+<a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> are how things are distributed and shared in Chef.  Most of your time building infrastructure in Chef will be spent writing <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a>; <font color="#f7681a">this page is a quick guide to writing and using Chef Cookbooks.</font>   It isn't comprehensive, but it will show how some basic components work and we'll explain some terms along the way.  To learn more about Chef's terminology, check out the <a href="Chef Basics.html" title="Chef Basics">Chef Basics</a> section.  If you want more details about how Chef is structured architecturally, check out the <a href="Architecture.html" title="Architecture">Chef Architecture</a> section.</p>
+
+<h4><a name="CookbookFastStartGuide-"></a><font color="#f7681a">At this point, you should have completed the <a href="Installation.html" title="Installation">installation process</a> and have a working Chef server.</font> </h4>
+
+<p>If you are using Hosted Chef, you can run these commands from the management workstation you've setup.</p>
+
+<h3><a name="CookbookFastStartGuide-GetaChefRepository"></a>Get a <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a></h3>
+<p><font color="#f7681a">A Chef repository is just a directory structure where you keep your cookbooks and other files.</font> If you haven't done so already, clone Opscode's Chef repository from github:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Clone the Chef Repository from Opscode</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">shell &gt; cd /tmp/sandbox
+shell &gt; git clone git://github.com/opscode/chef-repo.git</pre>
+		</div>
+</div></div>
+</td> 
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="32%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#CookbookFastStartGuide-Overview'>Overview</a></li>
+<ul>
+    <li><a href='#CookbookFastStartGuide-GetaChefRepository'>Get a Chef Repository</a></li>
+</ul>
+    <li><a href='#CookbookFastStartGuide-UsingCookbooksfromtheCommunitySite'>Using Cookbooks from the Community Site</a></li>
+<ul>
+    <li><a href='#CookbookFastStartGuide-DownloadingtheCookbook%2CUploadingittotheChefServer%2FHostedChef'>Downloading the Cookbook, Uploading it to the Chef Server/Hosted Chef</a></li>
+</ul>
+    <li><a href='#CookbookFastStartGuide-CreatingyourownCookbooks'>Creating your own Cookbooks</a></li>
+<ul>
+    <li><a href='#CookbookFastStartGuide-CreateanewCookbookcalled%22faststart%22'>Create a new Cookbook called "fast_start"</a></li>
+    <li><a href='#CookbookFastStartGuide-AddanattributeAttributesfilecalled%22faststart.rb%22'>Add an attribute file called "fast_start.rb"</a></li>
+    <li><a href='#CookbookFastStartGuide-AddatemplateresourceResources%23Templatetothedefaultrecipe'>Add a template resource to the default recipe</a></li>
+    <li><a href='#CookbookFastStartGuide-Addthetemplatefileitself'>Add the template file itself</a></li>
+    <li><a href='#CookbookFastStartGuide-UploadtheCookbooktotheServer'>Upload the Cookbook to the Server</a></li>
+    <li><a href='#CookbookFastStartGuide-Registeranodewithchefclient'>Register a node with chef-client</a></li>
+    <li><a href='#CookbookFastStartGuide-AddthefaststartrecipetoyournewNode'>Add the fast_start recipe to your new Node</a></li>
+    <li><a href='#CookbookFastStartGuide-RunchefclientagainonyournewNode.'>Run chef-client again on your new Node.</a></li>
+    <li><a href='#CookbookFastStartGuide-Congratulations%21'>Congratulations!</a></li>
+</ul>
+    <li><a href='#CookbookFastStartGuide-NextSteps'>Next Steps</a></li>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Using Git?</b><br />If so, you may want to review our <a href="Guides.html" title="Guides">guide</a> on <b><a href="Working with Git and Cookbooks.html" title="Working with Git and Cookbooks">Working with Git and Cookbooks</a></b> for the development workflow with <a href="http://git-scm.com/">git</a> as your version control system.</td></tr></table></div></td> 
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="CookbookFastStartGuide-UsingCookbooksfromtheCommunitySite"></a>Using Cookbooks from the Community Site</h1>
+</div></div>
+
+<p><font color="#f7681a">When you find a cookbook at the <a href="http://cookbooks.opscode.com">Community Site</a> that you would like to use, you can use these steps to add it to the Chef Server/Hosted chef.</font></p>
+
+<h3><a name="CookbookFastStartGuide-DownloadingtheCookbook%2CUploadingittotheChefServer%2FHostedChef"></a>Downloading the Cookbook, Uploading it to the Chef Server/Hosted Chef</h3>
+
+<p>You can use this command to download a new cookbook, substitute COOKBOOK for the name of the cookbook you want to download:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site install COOKBOOK</pre>
+		</div>
+</div></div>
+<p>Once this command completes, the cookbook will have been downloaded to the chef-repo directory, in the cookbooks folder. You can feel free to edit it if needed, then you can upload it to the Chef Server/Hosted Chef with this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload COOKBOOK</pre>
+		</div>
+</div></div>
+
+<p>Now this cookbook will be available to add to a node's run_list. If you want to make any changes to it, just edit it from you workstation and upload it again to Chef Server/Hosted Chef. If you'd like some quick information on how to add this to a node's run_list you can find this in Step 3 of the <a href="Client Bootstrap Fast Start Guide.html" title="Client Bootstrap Fast Start Guide">Client Bootstrap Fast Start Guide</a> guide.</p>
+
+<p>For more information on using cookbooks that are on the <a href="http://cookbooks.opscode.com">Community Site</a> see the <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> page.</p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="CookbookFastStartGuide-CreatingyourownCookbooks"></a>Creating your own Cookbooks</h1>
+</div></div>
+
+<p>You can also create your own cookbooks, and upload these into the Chef Server/Hosted chef. The steps below go over creating a new cookbook named <tt>fast_start</tt> and running it on a node.</p>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>What is a Recipe? (or a Resource, for that matter!)</b><br /><a href="Recipes.html" title="Recipes">Recipes</a> allow you to specify <a href="Resources.html" title="Resources">Resources</a> to manage, in the order they should be managed. In this case, you are creating a recipe called "fast_start", which has a single <a href="Resources.html#Resources-Template">template resource</a> called <tt>template["/tmp/deep_thought.txt"]</tt>. All of this will be part of the cookbook, although a cookbook can contain multiple related recipes if needed.</td></tr></table></div>
+
+<h3><a name="CookbookFastStartGuide-CreateanewCookbookcalled%22faststart%22"></a>Create a new Cookbook called "fast_start"</h3>
+
+<p>Change your working directory to the <tt>cookbooks/</tt> directory of your Chef repository.  If you cloned the repository into <tt>/tmp/sandbox/</tt> as shown above:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">shell &gt; cd /tmp/sandbox/chef-repo/cookbooks</pre>
+		</div>
+</div></div>
+<p>Now create the cookbook with <tt>knife cookbook create</tt>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create the fast_start cookbook</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">shell &gt; knife cookbook create fast_start -o ./
+** Creating cookbook fast_start
+** Creating README for cookbook: fast_start
+** Creating metadata for cookbook: fast_start</pre>
+		</div>
+</div></div>
+
+<p>This will create the cookbook's directory structure:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">shell &gt; ls -1p fast_start 
+README.rdoc
+attributes/
+definitions/
+files/
+libraries/
+metadata.rb
+providers/
+recipes/
+resources/
+templates/</pre>
+		</div>
+</div></div>
+
+<p>This cookbook is going to have a simple recipe that renders a simple text file using some <a href="Attributes.html" title="Attributes">Attributes</a> we will define.</p>
+
+<h3><a name="CookbookFastStartGuide-AddanattributeAttributesfilecalled%22faststart.rb%22"></a>Add an <a href="Attributes.html" title="Attributes">attribute</a> file called "fast_start.rb"</h3>
+
+<p>With your favorite text editor, create a file in <tt>cookbooks/fast_start/attributes</tt> called <tt>fast_start.rb</tt>, with the following contents.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbooks/fast_start/attributes/fast_start.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">default['deep_thought'] = "If a tree falls in the forest..."</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>What is an Attribute?</b><br /><a href="Attributes.html" title="Attributes">Attributes</a> in a Cookbook allow you create settings on a <a href="Nodes.html" title="Nodes">node</a>, which you can then access from within a <a href="Recipes.html" title="Recipes">recipe</a>.  Attributes are persistent between Chef runs, and edit-able through the <a href="Chef Server.html" title="Chef Server">Chef Server</a> web interface!</td></tr></table></div>
+
+<h3><a name="CookbookFastStartGuide-AddatemplateresourceResources%23Templatetothedefaultrecipe"></a>Add a <a href="Resources.html#Resources-Template">template resource</a> to the default recipe</h3>
+
+<p>Next, edit <tt>cookbooks/fast_start/recipes/default.rb</tt> and add the following:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbooks/fast_start/recipes/default.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/tmp/deep_thought.txt" do
+  source "deep_thought.txt.erb"
+  variables :deep_thought =&gt; node['deep_thought']
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="CookbookFastStartGuide-Addthetemplatefileitself"></a>Add the template file itself</h3>
+
+<p>In the template resource we defined above, we referenced a <tt>source</tt> parameter.  This is the actual template file, and it is placed in <tt>cookbooks/fast_start/templates/default/deep_thought.txt.erb</tt>.  Lets create it now:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbooks/fast_start/templates/default/deep_thought.txt.erb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: text; gutter: false">Today's deep thought: &lt;%= @deep_thought %&gt;</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>What kind of Template is that?</b><br />Chef uses Erubis, a fast version of ERB, to render templates.  Read more about it in the <a href="Templates.html" title="Templates">Templates</a> section.</td></tr></table></div>
+
+<h3><a name="CookbookFastStartGuide-UploadtheCookbooktotheServer"></a>Upload the Cookbook to the Server</h3>
+
+<p><font color="#f7681a">You should be keeping your cookbooks in version control, and you should start getting in the habit now, so commit your work using your favorite version control system.</font></p>
+
+<p>Now that your work is in version control, upload the cookbook to the server.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Update the Cookbooks on the Chef Server</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">shell &gt; cd cookbooks
+shell &gt; knife cookbook upload -a -o ./</pre>
+		</div>
+</div></div>
+<p>The output will look like the following, though your file checksums will be different:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">INFO: ** fast_start **
+INFO: Saving fast_start
+INFO: Validating ruby files
+INFO: Validating templates
+INFO: Syntax OK
+INFO: Generating Metadata
+INFO: Uploading files
+INFO: Uploading /tmp/sandbox/chef-repo/cookbooks/fast_start/recipes/default.rb 
+(checksum hex = d69c4ce851301dbf1b6d2e8c52ef71db) to http://localhost:4000/sandboxes/d1ea800f40914d47b179ffd2b8371925/d69c4ce851301dbf1b6d2e8c52ef71db
+INFO: Uploading /tmp/sandbox/chef-repo/cookbooks/fast_start/metadata.rb 
+(checksum hex = 3ba2dc81f4ff8b3b67c611980184c50a) to http://localhost:4000/sandboxes/d1ea800f40914d47b179ffd2b8371925/3ba2dc81f4ff8b3b67c611980184c50a
+INFO: Upload complete!</pre>
+		</div>
+</div></div>
+<p>Confirm that the server has the cookbook you just uploaded:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">shell&gt; knife cookbook list
+[
+  "fast_start"
+]</pre>
+		</div>
+</div></div>
+
+<h3><a name="CookbookFastStartGuide-Registeranodewithchefclient"></a>Register a node with chef-client</h3>
+
+<p><font color="#f7681a">For this step, you'll need a new host to run chef-client.</font>  <em>We recommend you use a virtual machine with snapshots for the maximum effectiveness when developing cookbooks.</em> There is also a <a href="Client Bootstrap Fast Start Guide.html" title="Client Bootstrap Fast Start Guide">Client Bootstrap Fast Start Guide</a> guide if you would prefer to set this up on a separate node.</p>
+
+<p>If you'd like to set up a VM, simply create it with the base OS of your choice and <a href="Installation.html#Installation-InstallationInstallingChefClientandChefSolo">install chef client on it</a>.  <em>We also recommend you take a snapshot of the VM in this pristine state&mdash;if trouble strikes, you'll be able to roll back and try again.</em></p>
+
+<p>Once you have chef-client installed on the host, you'll need to copy the validation key, <tt>/etc/chef/validation.pem</tt>, from your Chef server box to the same location on the chef-client box. The validation key is used by the chef-client as a temporary identity so it can register itself; after it registers it will have its own key in <tt>/etc/chef/client.pem</tt> (<a href="http://wiki.opscode.com/display/LEG/Authentication" title="Authentication">read more about Chef's authentication system</a>).  (If you don't have an <tt>/etc/chef/validation.pem</tt> or <tt>/etc/chef/client.rb</tt> generate them with <tt>knife configure client...</tt>.) </p>
+
+<p>With the validation key in place, run chef client:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Run chef-client</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">shell &gt; sudo chef-client
+[Mon, 16 Aug 2010 15:30:47 -0700] INFO: Client key /tmp/client.pem is not present - registering
+[Mon, 16 Aug 2010 15:30:48 -0700] INFO: Starting Chef Run (Version 0.9.9)
+[Mon, 16 Aug 2010 15:30:48 -0700] WARN: Node fermi.local has an empty run list.
+[Mon, 16 Aug 2010 15:30:48 -0700] INFO: Chef Run complete in 0.468781 seconds
+[Mon, 16 Aug 2010 15:30:48 -0700] INFO: Running report handlers
+[Mon, 16 Aug 2010 15:30:48 -0700] INFO: Report handlers complete</pre>
+		</div>
+</div></div>
+
+<h3><a name="CookbookFastStartGuide-AddthefaststartrecipetoyournewNode"></a>Add the fast_start recipe to your new Node</h3>
+
+<p>From your management workstation (where you run knife from) run the <tt>knife node run_list add</tt> command. Use the name of the client machine for <tt>HOSTNAME</tt> (If you're not sure what to put here, check the output of <tt>knife node list</tt>).</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">shell &gt; knife node run_list add HOSTNAME 'recipe[fast_start]'
+{
+  "run_list": [
+    "recipe[fast_start]"
+  ]
+}</pre>
+		</div>
+</div></div>
+<p>You can see that your change was made on the server using <tt>knife node show</tt>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">shell &gt; knife node show HOSTNAME -r
+{
+  "run_list": [
+    "recipe[fast_start]"
+  ]
+}</pre>
+		</div>
+</div></div>
+
+<h3><a name="CookbookFastStartGuide-RunchefclientagainonyournewNode."></a>Run chef-client again on your new Node.</h3>
+
+<p>This time, executing <tt>chef-client</tt> will cause <tt>/tmp/deep_thought.txt</tt> to appear!</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Run chef-client</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">sudo chef-client</pre>
+		</div>
+</div></div>
+
+<p>If you run the command again, you'll notice that it does nothing at all, because the <tt>deep_thought.txt</tt> file has not changed, either on disk or on the <a href="Chef Server.html" title="Chef Server">Chef Server</a>.</p>
+
+<h3><a name="CookbookFastStartGuide-Congratulations%21"></a>Congratulations!</h3>
+
+<p><font color="#f7681a">You have just written your first Chef Cookbook!  You'll be managing your entire infrastructure in no time!</font></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="CookbookFastStartGuide-NextSteps"></a>Next Steps</h1>
+</div></div>
+
+<p><h4><a name="CookbookFastStartGuide-ChefBasics"></a><a href="Chef Basics.html" title="Chef Basics">Chef Basics</a></h4>
+
+<p>Learn some of the central concepts of configuration management benefits for your infrastructure.  </p>
+<ol>
+	<li>We begin with an <a href="Architecture Introduction.html" title="Architecture Introduction">Architecture Introduction</a>, covering the basic functions of the Chef Server, Nodes, and Chef Workstations and how these components communicate.</li>
+	<li>Then an overview of the <a href="Core Components.html" title="Core Components">Core Components</a>, which introduces all of the aspects and components of modeling your infrastructure, Configuring Nodes and Managing Chef.</li>
+	<li>Onward to Cooking School and begin an <a href="Introduction to Cookbooks and More.html" title="Introduction to Cookbooks and More">Introduction to Cookbooks and More</a>. Cookbooks are Chef's fundamental units of distribution, the way Chef users package up, distribute and share configuration information. Recipes, Resources, Attributes, Roles and more are also introduced.</li>
+	<li>The final basic section is an <a href="Introduction to Search and Data Bags.html" title="Introduction to Search and Data Bags">Introduction to Search and Data Bags</a>, two of Chef's most powerful features allowing you to dynamically change the configuration of your infrastructure based on data.</li>
+</ol>
+
+
+<h4><a name="CookbookFastStartGuide-ChefArchitectureArchitecture"></a><a href="Architecture.html" title="Architecture">Chef Architecture</a></h4>
+
+<p>With all that under your belt, it's time to tackle the dirty secrets of what's happening behind the scenes with <a href="Architecture.html" title="Architecture">Chef Architecture</a>.  We'll give you the scoop on Chef's <a href="Authentication and Authorization.html" title="Authentication and Authorization">Authentication and Authorization</a> system and go over the <a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">Anatomy of a Chef Run</a>, where we go in-depth with the process by which your systems get configured. From there we'll review all the executable parts of Chef - <a href="Chef Client.html" title="Chef Client">Chef Client</a>, <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a>, <a href="Chef Server.html" title="Chef Server">Chef Server</a>, <a href="Chef Indexer.html" title="Chef Indexer">Chef Indexer</a>, and <a href="Server API.html" title="Server API">Server API</a> and <a href="Cookbook Site API.html" title="Cookbook Site API">Cookbook Site API</a> interaction.</p></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Installation.html" title="Installation"><span class="image-wrap" style="float: left"><img src="../attachments/18645295/21463051.png" hspace="4" style="border: 0px solid black"/></span> Installation </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Managing Chef.html" title="Managing Chef"><span class="image-wrap" style="float: right"><img src="../attachments/18645295/21463050.png" hspace="4" style="border: 0px solid black"/></span> Managing Chef </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645295/19005511.jpg">cookbookclassbadge.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645295/21463050.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645295/21463051.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

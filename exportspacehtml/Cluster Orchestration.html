@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Cluster Orchestration</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Cluster Orchestration
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 08, 2011 by <font color="#0050B2">temujin9</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<h3><a name="ClusterOrchestration-ClusterOrchestration%3A"></a>Cluster Orchestration:</h3>
+
+
+<p><b>Convener: <a href="http://wiki.opscode.com/display/~temujin9">Nathaniel Eliot</a>, Peter Norton, Carl Perry</b></p>
+
+<p><b>Participants:</b></p>
+
+<p>Kyle Bader<br/>
+Kurt Yoder<br/>
+<a href="http://wiki.opscode.com/display/~spkane">Sean P. Kane</a></p>
+
+<h4><a name="ClusterOrchestration-Summaryofdiscussions%3A"></a>Summary of discussions:</h4>
+<ul>
+	<li><a href="http://wiki.opscode.com/display/~temujin9">Nathaniel Eliot</a>: Overview of what cluster_chef provides on top of chef</li>
+	<li>Discussion on tools for orchestrating large clusters
+	<ul>
+		<li><a href="https://github.com/infochimps/cluster_chef">cluster_chef</a> &amp; rundeck</li>
+		<li>dominodes: databag-based locking mechanism (security issue: nodes require write on all databags)</li>
+		<li>chef-solo + push mechanism</li>
+		<li>crowbar: has its own internal orchestration</li>
+		<li>ruote: ruby orchestration library</li>
+		<li>nanite: messaging bus</li>
+		<li>rightscale: has a tool ("remote recipe"?) for invoking single recipes on a target node</li>
+	</ul>
+	</li>
+	<li>Monitoring tools
+	<ul>
+		<li>zabbix - monitoring</li>
+		<li>sensu - monitoring framework from Sonia, using Rabbit MQ</li>
+		<li>nagios - perpetual monitoring standard</li>
+	</ul>
+	</li>
+</ul>
+
+
+<ul>
+	<li>PeterN: use case of launching a cluster, use case for orchestration
+	<ul>
+		<li>Standard web app, discussing options for orchestration.  Rundeck will be used with cluster_chef</li>
+		<li>Standard stack of rabbitmq, web apps, and nginx needing to be completed in order and asap</li>
+		<li>Learned: rightscale provides a platform that offers orchestration.  They are adding chef support (maybe done already? I'm not clear on this)</li>
+		<li>Also there is a non-server-based discovery protocol that can be used for orchestration called dominodes (I'm not sure how this works - in the end I see things like <a href="https://github.com/websterclay/chef-dominodes">https://github.com/websterclay/chef-dominodes</a> which uses a databag as the lock?  I guess dominodes facilitates intra-node communication).</li>
+		<li>Desired use cases:
+		<ul>
+			<li>Spin lock (wait_for_foo "foo_name" so that only one node is ever doing "foo_name" in a cluster)</li>
+			<li>event coordination (wait_until_foo "foo_happened" so that when a resource becomes available, nodes that need it can use it)</li>
+			<li>Remote execution (run_then_activate "foo_nodes" where after a node runs an action, either it directly, or through a chef server, can invoke a resource or a chef run on the nodes that comprise "foo_nodes").</li>
+		</ul>
+		</li>
+		<li>Takeaway: chef needs to provide orchestration syntax. There are at least 3 use cases. The use cases may be orthogonal, but some API decisions need to be made and these need to be approached.  It would be preferred if the chef server could do this instead of just cooperating with an outside infrastructure (in my opinion)</li>
+	</ul>
+	</li>
+</ul>
+
+
+<h4><a name="ClusterOrchestration-Otherstacktoolsmentioned%3A"></a>Other stack tools mentioned:</h4>
+<ul>
+	<li>elastic search</li>
+	<li>hadoop</li>
+	<li>hbase</li>
+	<li>goliath</li>
+	<li>unicorn</li>
+	<li>apistack</li>
+	<li>mongo</li>
+	<li>rails</li>
+	<li>noah - zookeeper - doozer (doozerd?)</li>
+	<li>chef plugin for Run Deck</li>
+	<li>mcollective</li>
+</ul>
+
+
+<h4><a name="ClusterOrchestration-Whatwillwedonow%3FWhatneedstohappennext%3F"></a>What will we do now? What needs to happen next?</h4>
+<ul>
+	<li>Desired feature: ability to run a single recipe (+ dependencies?) on a node, without fouling up run-list or node data</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

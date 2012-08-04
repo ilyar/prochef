@@ -1,0 +1,911 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Metadata</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Metadata
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h1><a name="Metadata-Overview"></a>Overview</h1>
+
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 200x160" href='http://wiki.opscode.com/download../attachments/1835267/PuzzleMetadata_7139892E.png'><img src="../attachments/thumbnails/1835267/21463236" hspace="12" vspace="6" style="border: 0px solid black"/></a></span></p>
+
+<h5><a name="Metadata-"></a><font color="#f7681a">Chef Cookbooks require you to specify a small amount of meta-data.  This information is used to provide hints to the Chef Server as to what cookbooks should be deployed to a given node, and in the future it will be integral to an automated system for discovering and installing cookbooks.</font></h5>
+<p><br class="atl-forced-newline" />
+<b>To get started, you need to create a <tt>metadata.rb</tt> file at the top of your cookbook.</b> This file provides a simple ruby DSL for building the actual metadata file (which is stored as JSON). If you create a new cookbook by using <tt>knife cookbook create</tt> command, a template metadata.rb file will be created for you.</p>
+
+<h1><a name="Metadata-metadata.rb"></a>metadata.rb</h1>
+<p><font color="#f7681a"><b>We never interpret the metadata file directly, we only ever use the compiled JSON file!</b></font>  Currently, the metadata JSON is generated for you when you upload the cookbook or run the <tt>knife cookbook metadata COOKBOOK</tt> command. It's a good practice to always edit metadata.rb but not the JSON file, but if you need to edit metadata.json directly, remember that it will be overwritten by metadata.rb next time when you generate metadata or upload cookbook using <tt>knife</tt>, if metadata.rb exists. </p>
+
+<p><ins>At the moment, we utilize the following fields in the metadata:</ins></p>
+
+<ul>
+	<li>maintainer</li>
+	<li>maintainer_email</li>
+	<li>license</li>
+	<li>description</li>
+	<li>long_description</li>
+	<li>depends</li>
+	<li>version</li>
+	<li>recipe</li>
+</ul>
+
+
+<h1><a name="Metadata-MeaningfulFields"></a>Meaningful Fields</h1>
+<p><font color="#f7681a">The following fields are used by the Chef Server, WebUI, or Opscode Community Site.</font></p>
+
+<h2><a name="Metadata-name"></a>name</h2>
+
+<p>The name of the cookbook.  Normally this is inferred, but you can override it in the cookbook metadata.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>name example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">name 'cats'</pre>
+		</div>
+</div></div>
+</td> 
+<td class="confluenceTd" valign="top" width="24%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#Metadata-Overview'>Overview</a></li>
+    <li><a href='#Metadata-metadata.rb'>metadata.rb</a></li>
+    <li><a href='#Metadata-MeaningfulFields'>Meaningful Fields</a></li>
+<ul>
+    <li><a href='#Metadata-name'>name</a></li>
+    <li><a href='#Metadata-version'>version</a></li>
+    <li><a href='#Metadata-depends'>depends</a></li>
+<ul>
+    <li><a href='#Metadata-VersionSyntax'>Version Syntax</a></li>
+    <li><a href='#Metadata-Examples'>Examples</a></li>
+</ul>
+    <li><a href='#Metadata-description'>description</a></li>
+    <li><a href='#Metadata-longdescription'>long_description</a></li>
+    <li><a href='#Metadata-maintainer'>maintainer</a></li>
+    <li><a href='#Metadata-maintaineremail'>maintainer_email</a></li>
+    <li><a href='#Metadata-license'>license</a></li>
+</ul>
+    <li><a href='#Metadata-OptionalFields'>Optional Fields</a></li>
+<ul>
+    <li><a href='#Metadata-attribute'>attribute</a></li>
+    <li><a href='#Metadata-grouping'>grouping</a></li>
+    <li><a href='#Metadata-conflicts'>conflicts</a></li>
+    <li><a href='#Metadata-provides'>provides</a></li>
+    <li><a href='#Metadata-recipe'>recipe</a></li>
+    <li><a href='#Metadata-recommends'>recommends</a></li>
+    <li><a href='#Metadata-replaces'>replaces</a></li>
+    <li><a href='#Metadata-supports'>supports</a></li>
+    <li><a href='#Metadata-suggests'>suggests</a></li>
+</ul>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Did you get sent here by an error message?</b><br /><br class="atl-forced-newline" />
+If so, here is the deal.  The Chef Server tries to only distribute the cookbooks that are needed to configure each individual <a href="Nodes.html" title="Nodes">Node</a>.  In order to do that, we take the list of <a href="Roles.html" title="Roles">Roles</a> and <a href="Recipes.html" title="Recipes">Recipes</a> that are assigned directly to that system, expand the list of dependencies for them, and then ship that set to the <a href="Nodes.html" title="Nodes">Node</a>.  
+
+<p>If you forget to specify a dependency in a cookbooks metadata, then the Chef Server will not realize that the cookbook is necessary to complete your configuration... resulting in the error message that brought you here.  To fix it, simply add the right 'depends' entry to your metadata.rb file and try again.</p></td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h2><a name="Metadata-version"></a>version</h2>
+
+<p>The current version of this cookbook. Version numbers follow the simple three-number version scheme:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>version example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">version "1.9.0"</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-depends"></a>depends</h2>
+
+<p>Declares that this cookbook has a dependency on another cookbook, with an optional version constraint. <font color="#f7681a">This will require a cookbook with a matching name and version number to exist on the server, and will cause the server to include it in the set of cookbooks sent to the node when the chef-client runs.</font></p>
+
+<p><b>Whenever you need to use a feature in another cookbook, it is a dependency and you need to add the included cookbook's feature to the depends in the current cookbook. For example, including recipes with "<tt>include_recipe</tt>", <tt>resources</tt>/<tt>providers</tt> in LWRPs, <tt>libraries</tt>, or <tt>definitions</tt>.</b></p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Make sure this is accurate!</b><br />This is a critical piece of information - the Chef Server uses these dependency statements to ensure that the right cookbooks are distributed to the edge.  Failure to properly fill out this field will result in Chef not completing, or partially completing, the configuration of your system!
+
+<p>The 'depends' are only used if you apply the recipe in a role, or directly to a node. If a cookbook doesn't depend on any others, that's okay.</p></td></tr></table></div>
+
+<h3><a name="Metadata-VersionSyntax"></a>Version Syntax</h3>
+
+<p>Version syntax and constraints are <a href="Version Constraints.html" title="Version Constraints">fully documented on their own page</a>.  In summary:</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Operator</th>
+<th class='confluenceTh'>Description</th>
+</tr>
+<tr>
+<th class='confluenceTh'> &lt; </th>
+<td class='confluenceTd'> Less than </td>
+</tr>
+<tr>
+<th class='confluenceTh'> &lt;= </th>
+<td class='confluenceTd'> Less than or equal to </td>
+</tr>
+<tr>
+<th class='confluenceTh'> =  </th>
+<td class='confluenceTd'> Equal to </td>
+</tr>
+<tr>
+<th class='confluenceTh'> &gt;= </th>
+<td class='confluenceTd'> Greater than or equal to </td>
+</tr>
+<tr>
+<th class='confluenceTh'> ~&gt; </th>
+<td class='confluenceTd'> Approximately greater than </td>
+</tr>
+<tr>
+<th class='confluenceTh'> &gt; </th>
+<td class='confluenceTd'> Greater than </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Metadata-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>depends examples</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Depends on a cookbook named 'dogs', with any version
+depends "dogs"
+# Depends on a cookbook named 'dogs', with version checking
+depends "dogs", "&gt; 1.0"</pre>
+		</div>
+</div></div>
+
+<p>In the actual recipe, "<tt>depends dogs</tt>" is required for either.  </p>
+
+<p>See <a href="Version Constraints.html" title="Version Constraints">Version Constraints</a> for more information on the version syntax, and how the cookbook metadata can be used to limit the version of the cookbook that should be used.</p>
+
+<h2><a name="Metadata-description"></a>description</h2>
+
+<p>A short description of this cookbooks function.  Ideally a single line.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>license example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">description 'A fancy cookbook that manages a herd of cats!'</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-longdescription"></a>long_description</h2>
+
+<p>A longer description of this cookbook.  Ideally contains full instructions on the proper use of this cookbook, descriptions of definitions it contains, libraries, etc. Often rendered from README.rdoc at the top of the cookbook.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>long_description embedded example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">long_description &lt;&lt;-EOH
+= DESCRIPTION:
+
+Complete Debian/Ubuntu style Apache2 configuration.
+
+= REQUIREMENTS:
+
+Debian or Ubuntu preferred.
+
+Red Hat/CentOS and Fedora can be used but will be converted to a Debian/Ubuntu style Apache as it's far easier to manage with chef. 
+
+= ATTRIBUTES:
+
+The file attributes/apache.rb contains the following attribute types:
+
+* platform specific locations and settings.
+* general settings
+* prefork attributes
+* worker attributes
+
+General settings and prefork/worker attributes are tunable.
+EOH</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>long_description read in a file example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Alternatively, put the above in README.rdoc and do this
+long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))</pre>
+		</div>
+</div></div>
+
+
+<h2><a name="Metadata-maintainer"></a>maintainer</h2>
+
+<p>This is the name of the current maintainer - it should be either an individual or an organization.  </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>maintainer example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">maintainer 'Adam Jacob'</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-maintaineremail"></a>maintainer_email</h2>
+
+<p>This is the email address of the current maintainer. You can only list one address here, but if you need this to forward to multiple people consider placing a mailing list here that is already setup to forward.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>maintainer_email example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">maintainer_email 'adam@example.com'</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-license"></a>license</h2>
+
+<p>This is the license the cookbook is distributed under.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>license example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">license 'Apache v2.0'
+license 'GPL v3'
+license 'MIT'
+license 'Proprietary - All Rights Reserved'</pre>
+		</div>
+</div></div>
+
+
+<h1><a name="Metadata-OptionalFields"></a>Optional Fields</h1>
+<p><font color="#f7681a">The following fields are optional. The information in these fields is not used by the Chef server.</font></p>
+
+<h2><a name="Metadata-attribute"></a>attribute</h2>
+
+<p>Adds an attribute that a user may need to configure for this cookbook. Takes a name (with the / notation for a nested attribute), followed by any of&nbsp; these options:</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Option </th>
+<th class='confluenceTh'> Possible Values </th>
+<th class='confluenceTh'> Descriptions </th>
+</tr>
+<tr>
+<th class='confluenceTh'> display_name </th>
+<td class='confluenceTd'> String </td>
+<td class='confluenceTd'> What a UI should show for this attribute </td>
+</tr>
+<tr>
+<th class='confluenceTh'> description </th>
+<td class='confluenceTd'> String </td>
+<td class='confluenceTd'> A hint as to what this attr is for </td>
+</tr>
+<tr>
+<th class='confluenceTh'> choice </th>
+<td class='confluenceTd'> Array of strings </td>
+<td class='confluenceTd'> Array of choices to present to the user. If type is string, allow user one choice.  If type is array, allow user many choices. <br class="atl-forced-newline" /> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> calculated <br class="atl-forced-newline" /> </th>
+<td class='confluenceTd'> true or false <br class="atl-forced-newline" /> </td>
+<td class='confluenceTd'> If true, the default value is calculated by the recipe and cannot be displayed.&nbsp; If value &#33;= nil, calculated default will be overwritten. <br class="atl-forced-newline" /> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> type </th>
+<td class='confluenceTd'> "string", "array" </td>
+<td class='confluenceTd'> The type of value passed to the recipe - default is "string".&nbsp; <br class="atl-forced-newline" /> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> required </th>
+<td class='confluenceTd'> "required", "recommended", "optional" <br class="atl-forced-newline" /> </td>
+<td class='confluenceTd'> The level of user input this attribute requires - default is "optional" <br class="atl-forced-newline" />
+"required" : User must provide input. The "default" option must not be set. <br class="atl-forced-newline" />
+"recommended" : A default value is set, but the user probably should change it. (i.e. apache[:contact] = "ops@example.com") <br class="atl-forced-newline" />
+"optional": Default values are set and there is no need to change unless the user knows what they are doing. <br class="atl-forced-newline" />
+For backwards compatibility, <br class="atl-forced-newline" />
+&nbsp; "required: true" is interpreted as "required: required" and <br class="atl-forced-newline" />
+&nbsp; "required: false" is interpreted as "required: optional" <br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<b>Note:</b> at present, the required attribute is advisory-only and is not enforced by Chef: if necessary, your recipe should check that the attribute is set and raise an exception if it is not. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> recipes </th>
+<td class='confluenceTd'> Array </td>
+<td class='confluenceTd'> An array of recipes which need this attr set. If not set, the attribute is global to recipes in "this" cookbook </td>
+</tr>
+<tr>
+<th class='confluenceTh'> default </th>
+<td class='confluenceTd'> String , Array </td>
+<td class='confluenceTd'> The default value for this attribute. This value(s) must exist in any non-empty 'choice' array. Do not define if 'calculated' is true. <br class="atl-forced-newline" /> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>attribute description</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">attribute 'pets/cat/name',
+:display_name =&gt; "Cat Name",
+:description =&gt; "The name of your cat",
+:choice =&gt; \[ 'kitty kitty', 'peanut', 'einstein', 'honey' \],
+:type =&gt; "string",
+:required =&gt; "recommended",
+:recipes =&gt; \[ 'cats::eat' \],
+:default =&gt; "kitty kitty"</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-grouping"></a>grouping</h2>
+
+<p>Adds a displayable title and description to a group of attributes within a namespace. Takes a name (with the / notation for a nested grouping), followed by any of these options:</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Option </th>
+<th class='confluenceTh'> Possible Values </th>
+<th class='confluenceTh'> Descriptions </th>
+</tr>
+<tr>
+<th class='confluenceTh'> title </th>
+<td class='confluenceTd'> String </td>
+<td class='confluenceTd'> Title for this group of attributes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> description </th>
+<td class='confluenceTd'> String </td>
+<td class='confluenceTd'> A hint as to what these attributes are for </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>attribute grouping description</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">grouping 'pets/cat',
+:title =&gt; "Cat Options",
+:description =&gt; "Describe your cat using the options below"</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-conflicts"></a>conflicts</h2>
+
+<p>Warns that this cookbook conflicts with another cookbook.  </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>conflicts examples</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Conflicts with a cookbook
+conflicts "dogs"
+# Conflicts with a cookbook named 'dogs', with mixed version checking
+conflicts "dogs", "&gt; 1.0"</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-provides"></a>provides</h2>
+
+<p>Adds a recipe, definition, or resource provided by this cookbook.  We auto-populate the list of provided recipes, so it would be rare to need to specify them directly.  </p>
+
+<p>Recipes are specified as expected:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>provides a recipe</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">provides "cats::sleep"
+provides "cats::eat"</pre>
+		</div>
+</div></div>
+
+<p>Definitions are defined by using the name of the definition, followed by parenthesis, and a symbol-style list that matches the definitions parameters.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>provides a definition</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">provides "here(:kitty, :time_to_eat)"</pre>
+		</div>
+</div></div>
+
+<p>Individual resources are specified with the normal stringified resource syntax:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>provides a resource</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">provides "service[snuggle]"</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-recipe"></a>recipe</h2>
+
+<p>Adds a description for a recipe - used mainly for aesthetics in the UI.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>recipe description</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">recipe "cats::sleep", "For something crazy, like 20 hours a day."
+recipe "cats::eat", "When they are not sleeping."</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-recommends"></a>recommends</h2>
+
+<p>Adds a dependency on another cookbook that is not required (ie: we'll work without it) but is a good idea.  </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>supports examples</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Recommends a cookbook
+recommends "dogs"
+# Recommends on a cookbook named 'dogs', with mixed version checking
+recommends "dogs", "&gt; 1.0"</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-replaces"></a>replaces</h2>
+
+<p>This cookbook replaces another - it can be used entirely in the place of it.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>replaces examples</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Replaces with a cookbook
+replaces "dogs"
+# Replaces with a cookbook named 'dogs', with mixed version checking
+replaces "dogs", "&gt;&gt; 1.0", "&lt;&lt; 4.0"</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-supports"></a>supports</h2>
+
+<p>Adds a supported platform, with version checking logic.  To specify multiple platforms, simply provide this command multiple times, once for each platform.</p>
+
+<p>If no version is provided, any version of the platform will match.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>supports examples</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Supports every version of Ubuntu
+supports 'ubuntu'
+# Supports versions between 8.04 and 9.10 (8.04, 8.10, 9.04, 9.10)
+supports 'ubuntu', "&gt;= 8.04"
+# Supports only 9.10
+supports 'ubuntu', '= 9.10'</pre>
+		</div>
+</div></div>
+
+<p>Currently, the platform matching and version checking logic is not implemented - Chef will happily run any cookbook on any platform, regardless of the data provided here.</p>
+
+<h2><a name="Metadata-suggests"></a>suggests</h2>
+
+<p>Adds a suggestion for another cookbook.  The difference between recommends and suggests is that, should a system be constructed for automatically resolving cookbook dependencies, recommended cookbooks will be included by default, and suggested ones will not.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>supports examples</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Suggests a cookbook
+suggests "dogs"
+# Suggests on a cookbook named 'dogs', with mixed version checking
+suggests "dogs", "&gt;&gt; 1.0", "&lt;&lt; 4.0"</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Libraries.html" title="Libraries"><span class="image-wrap" style="float: left"><img src="../attachments/1835267/20840591.png" hspace="4" style="border: 0px solid black"/></span> Libraries </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Recipes.html" title="Recipes"><span class="image-wrap" style="float: right"><img src="../attachments/1835267/20840590.png" hspace="4" style="border: 0px solid black"/></span> Recipes </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1835267/14876686.jpg">PuzzleMetadata_7139892E.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1835267/20840590.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1835267/20840591.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1835267/21463236.png">PuzzleMetadata_7139892E.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-1835281"></a>
+                                    <font class="smallfont"><p>Looks great so far!!!</p>
+
+<p>Any intention of adding a service to the depends field? For example, I may want my MySQL cookbook to require a 'disk' provider like LVM? </p>
+
+<p>Good work<img class="emoticon" src="images/icons/emoticons/wink.gif" height="20" width="20" align="absmiddle" alt="" border="0"/> </p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by martin@rightscale.com at Jun 02, 2009 16:30
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-1835289"></a>
+                                    <font class="smallfont"><p>Yeah - we should update the documentation to reflect it, but I imagine you would do something like:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>depends on a resource</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">depends "execute[has_lvm]"</pre>
+		</div>
+</div></div>
+
+<p>Similarly, for a definition (ie: you want to just call something to setup your disks:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>depends on a definition</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">depends "disk(:type, :volumes, :mount_point)"</pre>
+		</div>
+</div></div>
+
+<p>The above would verify that a definition exists with those params being valid.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by adam at Jun 03, 2009 00:10
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-1835310"></a>
+                                    <font class="smallfont"><p>Just thinking about how my UI would digest this information and create a display...</p>
+
+<p>Here's my use case:<br/>
+I don't want to show every possible attribute in the recipe - that would be overwhelming to the user. Ideally, I would only show the absolute minimum attributes required for a cookbook to run.  However, the user may still like to drill down into some 'optional' and/or 'advanced' attributes. (maybe there are other classifications? like 'recommended'? e.g. apache[:contact])</p>
+
+<p>The definition for a metadata attribute field, from above, is "Adds an attribute that a user needs to configure for this cookbook".  Can this also be used for specify optional attributes?  I'm a bit confused regarding the purpose of the "required" field if all attributes "need" to be set.  I am also confused why a "default" value would be specified if it is required to be set by the user.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by cary at Jun 04, 2009 00:13
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-1835311"></a>
+                                    <font class="smallfont"><p>We should definitely allow you to specify optional attributes.  In my mind, that was the purpose of the 'required' field, but that only gives you two levels of control: either you must specify it, or you may not.  No extra information like "optional", "advanced" or "recommended".  </p>
+
+<p>I'm updating the wiki to reflect that not all the attributes are required.  Cary, it would be great if you could post an example of how you would like to see the attribute meta-data extended to fit your requirements.</p>
+</font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by adam at Jun 04, 2009 01:56
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-1835314"></a>
+                                    <font class="smallfont"><p>The "required" property specifies whether an attribute must have a value. If a default value is provided, then in effect a value is always provided. The purpose of this property is to avoid launching servers in a situation that is guaranteed to fail because attributes are missing. So an attribute which is not required but for which there's a default value is a bit odd, except that you could go in and specifically erase the default value and it'd be ok. This raises the question of whether a distinction is made between "empty=nil" and "not specified". It also raises the question about where defaults are filled in. Is this something that is supposed to be done on the server end, is it done when chef client starts, or is it supposed to be done in the cookbook code itself? It would be good to avoid creating inconsistencies between the metadata and the cookbook code...</p>
+
+
+<p>The other aspect that is not captured is that we see a real tension with respect to the number of attributes. It's really good for first time users to be able to "just plop down apache" having to focus only on a couple of required attributes they need to set. But there's also the advanced users that come along with a "if only you had this optional attribute then I would have to fork the cookbook to get this little change in". I'm wondering whether we should change the "Required" field from boolean to "required"/"optional"/"ancillary" (or "adanced"). We could have a separate "display_priority" property but required attributes should be top priority, so these are not really orthogonal.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by tve at Jun 04, 2009 16:22
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-2883950"></a>
+                                    <font class="smallfont"><p>After initial release of our UI it has become clear that some changes would make our life easier.  Summary of proposed changes:</p>
+
+<ol>
+	<li>Clarify the meaning of "type" option to simply: "the type of value passed to the recipe".</li>
+	<li>"hash" type seems not a value at all, but a "section" or "grouping" of values.  To avoid the confusion, let's make a new metadata field altogether (below a "grouping" field is suggested).</li>
+	<li>replace the 'multiple_values' option, with the 'choice' option (choices are always of type "string")</li>
+	<li>If type is string, allow user one choice.  If type is array, allow user many choices. "choice" is an array of strings.</li>
+	<li>Change "required" option from boolean to preset levels</li>
+	<li>Add a boolean "calculated" option for those times when a default is impossible to predict because it is calculated somewhere in the recipe. However, exposing this attribute allows the user to override the calculation.</li>
+</ol>
+
+
+<p>Below is the modified wiki sections that contain these proposals....</p>
+
+<hr />
+<p>&lt;snip&gt;</p>
+
+<h2><a name="Metadata-attribute"></a>attribute</h2>
+
+<p>Adds an attribute that a user may need to configure for this cookbook. Takes&nbsp; a name (with the / notation for a nested attribute), followed by any of&nbsp; these options:</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Option </th>
+<th class='confluenceTh'> Possible Values </th>
+<th class='confluenceTh'> Descriptions </th>
+</tr>
+<tr>
+<td class='confluenceTd'> display_name </td>
+<td class='confluenceTd'> String </td>
+<td class='confluenceTd'> What a UI should show for this attribute </td>
+</tr>
+<tr>
+<td class='confluenceTd'> description </td>
+<td class='confluenceTd'> String </td>
+<td class='confluenceTd'> A hint as to what this attr is for </td>
+</tr>
+<tr>
+<td class='confluenceTd'> choice </td>
+<td class='confluenceTd'> Array of strings </td>
+<td class='confluenceTd'> Array of choices to present to the user. If type is string, allow user one choice.  If type is array, allow user many choices. <br class="atl-forced-newline" /> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> calculated <br class="atl-forced-newline" /> </td>
+<td class='confluenceTd'> true or false <br class="atl-forced-newline" /> </td>
+<td class='confluenceTd'> If true, the default value is calculated by the recipe and cannot be displayed.&nbsp; If value &#33;= nil, calculated default will be overwritten. <br class="atl-forced-newline" /> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> type </td>
+<td class='confluenceTd'> "string", "array" </td>
+<td class='confluenceTd'> The type of value passed to the recipe - default is "string".&nbsp; <br class="atl-forced-newline" /> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> required </td>
+<td class='confluenceTd'> "required", "recommended", "optional" <br class="atl-forced-newline" /> </td>
+<td class='confluenceTd'> The level of user input this attribute requires - default is "optional" <br class="atl-forced-newline" />
+"required" : User must provide input. The "default" option must not be set. <br class="atl-forced-newline" />
+"recommended" : A default value is set, but the user probably should change it. (i.e. apache[:contact] = "ops@example.com") <br class="atl-forced-newline" />
+"optional": Default values are set and there is no need to change unless the user knows what they are doing. <br class="atl-forced-newline" />
+For backwards compatibility, <br class="atl-forced-newline" />
+&nbsp; "required: true" is interpreted as "required: required" and <br class="atl-forced-newline" />
+&nbsp; "required: false" is interpreted as "required: optional" </td>
+</tr>
+<tr>
+<td class='confluenceTd'> recipes </td>
+<td class='confluenceTd'> Array </td>
+<td class='confluenceTd'> An array of recipes which need this attr set. If not set, the attribute is global to recipes in "this" cookbook </td>
+</tr>
+<tr>
+<td class='confluenceTd'> default </td>
+<td class='confluenceTd'> String , Array </td>
+<td class='confluenceTd'> The default value for this attribute. This value(s) must exist in any non-empty 'choice' array. Do not define if 'calculated' is true. <br class="atl-forced-newline" /> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>attribute description</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">attribute 'pets/cat/name',
+:display_name =&gt; "Cat Name",
+:description =&gt; "The name of your cat",
+:choice =&gt; \[ 'kitty kitty', 'peanut', 'einstein', 'honey' \],
+:type =&gt; "string",
+:required =&gt; "recommended",
+:recipes =&gt; \[ 'cats::eat' \],
+:default =&gt; "kitty kitty"</pre>
+		</div>
+</div></div>
+
+<h2><a name="Metadata-grouping"></a>grouping</h2>
+
+<p>Adds a displayable title and description to a group of attributes within a namespace. Takes a name (with the / notation for a nested grouping), followed by any of these options:</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Option </th>
+<th class='confluenceTh'> Possible Values </th>
+<th class='confluenceTh'> Descriptions </th>
+</tr>
+<tr>
+<td class='confluenceTd'> title </td>
+<td class='confluenceTd'> String </td>
+<td class='confluenceTd'> Title for this group of attributes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> description </td>
+<td class='confluenceTd'> String </td>
+<td class='confluenceTd'> A hint as to what these attributes are for </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>attribute grouping description</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">grouping 'pets/cat',
+:title =&gt; "Cat Options",
+:description =&gt; "Describe your cat using the options below"</pre>
+		</div>
+</div></div>
+
+<p>&lt;/snip&gt;</p>
+
+<p><font color="#ff0000">Adopted in v0.8.x &#45;&#45; Updated page with the above info. 6/4/2010</font></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by cary at Oct 02, 2009 18:28
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-2884024"></a>
+                                    <font class="smallfont"><p>For backwards compatibility, "required: true" is interpreted as "required: required".</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by tve at Oct 08, 2009 19:48
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-5406728"></a>
+                                    <font class="smallfont"><p>Some kind of i18n at this level would make sense</p>
+
+<p>:display_name =&gt;"Cat Name",</p>
+
+<p>:display_name _de =&gt;"Name der Katze",</p>
+
+<p>or</p>
+
+<p>:display_name =&gt; {"Cat Name", :translations =&gt; { :de =&gt; "Name der Katze"}}</p>
+
+
+<p>yml files could be calculated to something like</p>
+
+<p>pets_cat_display_name = </p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ehaselwanter at Jan 18, 2010 16:14
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728657"></a>
+                                    <font class="smallfont"><p>I'm finding the attribute definitions and groupings to be extremely useful.  I've written a utility script to aid in composing role and node attributes based on the defined metadata attributes and groupings.  It's coming along great.  It parses the metadata.json groupings and attributes into command line user input widgets, e.g. yes/no, true/false, multiple choice, text string, etc.  A few things that I think would be really useful would be a way to order groupings and attributes and to be able to define dependencies on other attributes.  My current use case is mysql.  For example, if auto-tune is true, there is no need to ask about buffer tuning sizes.  another example is if innodb support is false, then don't bother asking about innnodb buffer pool settings and such.</p>
+
+<p>I'm imagining ordering and dependencies could be defined as such...</p>
+
+<div class="code panel" style="border-style: solid;border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;border-bottom-style: solid;"><b>metadata.rb example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">[snip]
+grouping 'instance/tuning',
+:title =&gt; 'mysqld instance tuning paramters',
+:description =&gt; 'Tuning parameters for mysql server',
+# this grouping is #1 in order.  Other groupings should have a higher order number.
+:order =&gt; 1
+
+attribute 'mysql/instance/tuning/auto',
+:display_name =&gt; 'auto tune instance',
+:description =&gt; 'instance can be auto tuned according to node memory size',
+:type =&gt; 'string',
+:required =&gt; 'optional',
+:choice =&gt; [ 'true', 'false' ],
+:recipes =&gt; [ 'mysql::default' ],
+:default =&gt; 'true',
+# this means this attribute is first in this grouping
+:order =&gt; 1
+
+attribute 'mysql/instance/tuning/innodb_buffer_pool_size',
+:display_name =&gt; 'innodb buffer pool size',
+:description =&gt; 'innodb_buffer_pool_size (include K, M, G).',
+:type =&gt; 'string',
+:required =&gt; 'optional',
+:choice =&gt; [ '256M', '512M', '1G', '2G' ],
+:recipes =&gt; [ 'mysql::default' ],
+:default =&gt; '512M',
+# this attribute is ordered so it comes second in this grouping
+:order =&gt; 2,
+# this means that this attribute depends on the value of two previous attributes 
+:depends =&gt; { 'mysql/instance/tuning/auto' =&gt; 'false', 'mysql/instance/innodb' =&gt; 'true' }
+[snip]</pre>
+		</div>
+</div></div>
+
+<p>Of course it'd be up to the programmer to properly display things in order since json is not ordered.  I'm sure someone smarter than me could also come with a better/more flexible way to define dependencies and behavior based on dependencies, but you catch my drift. <img class="emoticon" src="images/icons/emoticons/smile.gif" height="20" width="20" align="absmiddle" alt="" border="0"/></p>
+
+<p>UPDATE...</p>
+
+<p>I noticed that I can stick whatever I want in the definitions and it just works (meaning it appears in the metadata.json).  I'm reworking my code to obey the "order" and "depends" to see how it all works out.</p>
+
+<p>Will this behavior remain?  I mean will I always be able to arbitrarily add my own variables into the grouping and attribute definitions and have them appear in the metadata.json without breaking things?</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">:cool_as_all_getout =&gt; true
+# :)</pre>
+		</div>
+</div></div></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jgrill@digitalriver.com at Jun 30, 2011 16:36
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728865"></a>
+                                    <font class="smallfont"><p>Can the maintainer and maintainer_email contain more than one person? What is the recommended way to convey the fact that I forked the cookbook but I want to have the original person in there as well as myself.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Jul 17, 2011 06:42
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728942"></a>
+                                    <font class="smallfont"><p>Hello Robert,</p>
+
+<p>You can only have one person as the maintainer and maintainer_email. You could however list the maintainer as something like "Runa Administrators" and then put a mailing list as the maintainer_email that is forwarded to multiple people.</p>
+
+<p>There is a bit of information on this in our <a href="http://wiki.opscode.com/display/chef/How+to+Contribute">How to Contribute Wiki Article</a> as well:</p>
+
+<p>"How should I update the header file of my contribution to properly credit earlier contributors and recognize copyrights?</p>
+
+<p>You need to put attribution about the origins of some of the code in the NOTICE file for your app. On an individual header, you can add yourself as an author/copyright holder, placing text in the header file saying that your new work is based on previous work, and referencing the original header below.</p>
+
+<p>If the original file is lacking the license header, please let us know, so we can add one. Even in their absence, they are covered by the Apache 2 license."</p>
+
+<p>You could also place this information in the description, or the readme.md if you'd like it noted in any additional places. Feel free to update this ticket if you have any further questions for us about this.</p>
+
+<p>Thanks,<br/>
+Jessica</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jessica at Jul 20, 2011 18:49
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24772694"></a>
+                                    <font class="smallfont"><p>Is there are way to specify a dependency on a Chef version range?<br/>
+i.e. : chef_depends: [ "&gt;= 0.10.10", "&lt; 1.0.0" ]</p>
+
+<p>This would be useful when there are dependencies that aren't available before/after certain chef versions (like chef_gem).<br/>
+We could then have chef-solo and chef-client display an explicit message: "This feature is only available on Chef versions &gt;= 0.10.10 and &lt; 1.0.0".</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by mg@nuxeo.com at Jun 02, 2012 10:45
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

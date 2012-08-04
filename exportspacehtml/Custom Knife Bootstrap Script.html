@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Custom Knife Bootstrap Script</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Custom Knife Bootstrap Script
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="5%"></td>
+<td class="confluenceTd" valign="top" width="70%">
+
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 150x200" href='http://wiki.opscode.com/download../attachments/16089137/Bootstrapping.png'><img src="../attachments/thumbnails/16089137/16187397" hspace="20" vspace="10" style="border: 0px solid black"/></a></span></p>
+<h2><a name="CustomKnifeBootstrapScript-"></a><font color="#f7681a">The <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> scripts included with Chef by default are meant to be generalized, and implement instructions found for <a href="Installation.html" title="Installation">installing Chef clients</a>.</font> </h2>
+
+<h4><a name="CustomKnifeBootstrapScript-Thismeansthattheymaynotbeperfectforyourspecificneedsintheirdefaultstate."></a>This means that they may not be perfect for your specific needs in their default state. </h4>
+
+<p><em>If that is the case, you can modify them, or create your own custom scripts.</em>  The following are a couple of examples of creating custom scripts or bootstrap templates.</p>
+
+<p><br class="atl-forced-newline" /></p>
+<h2><a name="CustomKnifeBootstrapScript-Modifyingthedefaultscriptforubuntu10.04."></a>Modifying the default script for ubuntu 10.04.</h2>
+
+<p>Copy the bootstrap template from the default location. For example I installed Chef as a RubyGem, so I can get the full path of the file out of the gem contents:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">% gem contents chef | grep ubuntu10.04-gems
+/Users/jtimberman/.rvm/gems/ruby-1.9.2-p180/gems/chef-0.10.2/lib/chef/knife/bootstrap/ubuntu10.04-gems.erb</pre>
+		</div>
+</div></div>
+
+<p>Copy the template to the <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a> in the <tt>.chef/bootstrap</tt> directory.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">% cp /Users/jtimberman/.rvm/gems/ruby-1.9.2-p180/gems/chef-0.10.2/lib/chef/knife/bootstrap/ubuntu10.04-gems.erb ~/chef-repo/.chef/bootstrap/ubuntu10.04-gems-mine.erb</pre>
+		</div>
+</div></div>
+
+<p>Modify the template with your favorite editor, then use it with the <tt>&#45;d</tt> or <tt>&#45;&#45;distro</tt> option in the <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> or <a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">cloud computing plugin</a> commands.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">% knife bootstrap 192.168.1.100 -r 'role[webserver]' -d ubuntu10.04-gems-mine</pre>
+		</div>
+</div></div> 
+
+<p>Alternatively, <font color="#f7681a">an example bootstrap template can be found in the <a href="http://github.com/opscode/chef/blob/master/chef/lib/chef/knife/bootstrap/ubuntu10.04-apt.erb">chef source repository</a>.</font> Copy the template to <tt>~/.chef-repo/.chef/bootstrap/ubuntu10.04-apt.erb</tt> and modify to suit your environment.</p>
+
+<h2><a name="CustomKnifeBootstrapScript-CreateabootstrapforDebiansystemsusingAPTpackages."></a>Create a bootstrap for Debian systems using APT packages.</h2>
+
+<p>Example client config (<tt>/etc/chef/client.rb</tt>) with Hosted Chef as the Chef Server:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">log_level        :info
+log_location     STDOUT
+chef_server_url  'https://api.opscode.com/organizations/ORGNAME'
+validation_client_name 'ORGNAME-validator'</pre>
+		</div>
+</div></div>
+
+<p>As it says on <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a>, The knife bootstrap sub-command looks in three locations for the template to use:</p>
+<ul>
+	<li><tt>bootstrap</tt> directory in the installed Chef Knife library (Location varies depending how you installed Chef).</li>
+	<li><tt>bootstrap</tt> directory in the <tt>$PWD/.chef</tt>, e.g. in <tt>~/chef-repo/.chef</tt>.</li>
+	<li><tt>bootstrap</tt> directory in the users <tt>$HOME/.chef</tt>.</li>
+</ul>
+
+
+<p>So, using the second location from the above, we'd first create <tt>.chef/bootstrap/</tt> in your Chef Repository directory, then create the ERB template file. </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">mkdir ~/.chef/bootstrap
+vi ~/.chef/bootstrap/debian5.0-apt.erb</pre>
+		</div>
+</div></div>
+
+<p>Edit the template to run the commands, set up the validation certificate and the client configuration file, and finally to run chef-client on completion with the given run list (&#45;r option). </p>
+
+<p>The bootstrap template can be called with:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife bootstrap mynode.example.com -r 'role[webserver]','role[production]' --distro debian5.0-apt</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Knife Bootstrap.html" title="Knife Bootstrap"><span class="image-wrap" style="float: left"><img src="../attachments/16089137/21463140.png" hspace="4" style="border: 0px solid black"/></span> Knife Bootstrap </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Knife Windows Bootstrap.html" title="Knife Windows Bootstrap"><span class="image-wrap" style="float: right"><img src="../attachments/16089137/21463139.png" hspace="4" style="border: 0px solid black"/></span> Knife Windows Bootstrap </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089137/16187397.png">Bootstrapping.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089137/21463139.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089137/21463140.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

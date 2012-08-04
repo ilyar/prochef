@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Roles With Knife</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Roles With Knife
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/20775563/20840713.jpg" hspace="24" vspace="30" style="border: 0px solid black"/></span></p>
+
+<h2><a name="ManagingRolesWithKnife-Overview"></a>Overview</h2>
+
+<h5><a name="ManagingRolesWithKnife-"></a><font color="#f7681a">Knife is a command-line tool that comes with Chef.</font> </h5>
+<h5><a name="ManagingRolesWithKnife-"></a><font color="#f7681a">It is used by administrators to interact with the Chef Server API, the local Chef repository and can be used to create, edit, view, list, and delete roles on nodes.</font> </h5>
+<p><br class="atl-forced-newline" /> </p>
+<table><tr><td><h5><a name="ManagingRolesWithKnife-Knife%27s%7B%7Brole%7D%7Dsubcommandprovidesthiscapability."></a>Knife's <tt>role</tt> subcommand provides this capability.</h5>
+
+<p>For more information about Knife, refer to the <b><a href="Knife.html" title="Knife">Knife</a></b> documentation, and <b><a href="Managing Nodes With Knife.html" title="Managing Nodes With Knife">Managing Nodes With Knife</a></b> for detail on the use of Knife to manage <b><a href="Nodes.html" title="Nodes">Nodes</a></b>. <br/>
+See <b><a href="Roles.html" title="Roles">Roles</a></b> for more information on roles.</p></td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><div class="panel" style="border-width: 1px;"><div class="panelContent">
+<div class="" align="center"><font color="navy"><b>Knife commands all have the same form</b></font></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife sub-command [ARGUMENTS] (options)</pre>
+		</div>
+</div></div>
+</div></div></td></tr></table>
+<h1><a name="ManagingRolesWithKnife-AddingaroletoanodewithKnife"></a>Adding a role to a node with Knife</h1>
+<p><font color="#f7681a">Note that you need to put the role in quotes when using the knife node run_list add subcommand.</font></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node run_list add NODE "role[ROLE NAME]"</pre>
+		</div>
+</div></div>
+<p>You can also add multiple roles at once:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node run_list add NODE "role[ROLE NAME 1],role[ROLE NAME 2],role[ROLE NAME 3]"</pre>
+		</div>
+</div></div>
+
+<h3><a name="ManagingRolesWithKnife-ThroughanEDITOR"></a>Through an EDITOR</h3>
+
+<p>1. set EDITOR environment variable, for example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">export EDITOR=vi</pre>
+		</div>
+</div></div>
+
+<p>2. create a new role, for example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife role create foobar</pre>
+		</div>
+</div></div>
+
+<p>3. enter the data of the role in JSON, for example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+    "name": "foobar",
+    "default_attributes": {
+    },
+    "json_class": "Chef::Role",
+    "run_list": [
+
+    ],
+    "description": "",
+    "chef_type": "role",
+    "override_attributes": {
+    }
+}</pre>
+		</div>
+</div></div>
+
+<p>4. Save it. If there isn't an existing role with the same name, you will see a warning message about that, which is normal. For example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">WARN: HTTP Request Returned 404 Not Found: Cannot load role foobar
+Created (or updated) role[foobar]</pre>
+		</div>
+</div></div>
+
+<h1><a name="ManagingRolesWithKnife-EditingarolewithKnife"></a>Editing a role with Knife</h1>
+<p>1. set EDITOR environment variable, for example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">export EDITOR=vi</pre>
+		</div>
+</div></div>
+
+<p>2. edit a role, for example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife role edit foobar</pre>
+		</div>
+</div></div>
+
+<p>3. Update the JSON in the editor.<br/>
+4. Save it.</p>
+
+<h1><a name="ManagingRolesWithKnife-ViewingarolewithKnife"></a>Viewing a role with Knife</h1>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife role show foobar</pre>
+		</div>
+</div></div>
+
+<h1><a name="ManagingRolesWithKnife-ListingroleswithKnife"></a>Listing roles with Knife</h1>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife role list</pre>
+		</div>
+</div></div>
+
+<h1><a name="ManagingRolesWithKnife-DeletingarolewithKnife"></a>Deleting a role with Knife</h1>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife role delete foobar</pre>
+		</div>
+</div></div>
+
+<h1><a name="ManagingRolesWithKnife-BulkdeletingroleswithKnife"></a>Bulk deleting roles with Knife</h1>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife role bulk delete REGEX</pre>
+		</div>
+</div></div>
+
+<h1><a name="ManagingRolesWithKnife-CreatingrolesfromafilewithKnife"></a>Creating roles from a file with Knife</h1>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife role from file FILE</pre>
+		</div>
+</div></div>
+
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Managing Nodes With Knife.html" title="Managing Nodes With Knife"><span class="image-wrap" style="float: left"><img src="../attachments/20775563/20840715.png" hspace="4" style="border: 0px solid black"/></span> Managing Nodes with Knife </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Knife Plugins.html" title="Knife Plugins"><span class="image-wrap" style="float: right"><img src="../attachments/20775563/20840714.png" hspace="4" style="border: 0px solid black"/></span> Knife Plugins </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/20775563/20840713.jpg">9401037-angry-male-cook-in-white-uniform-and-hat-with-two-knifes-black-bckground.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/20775563/20840714.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/20775563/20840715.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

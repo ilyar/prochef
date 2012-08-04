@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Setup Opscode User Excerpt</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Setup Opscode User Excerpt
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jan 25, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 200x162" href='http://wiki.opscode.com/download../attachments/19923670/blocks.png'><img src="../attachments/thumbnails/19923670/21463242" hspace="12" vspace="4" style="border: 0px solid black"/></a></span></p>
+<hr />
+<h3><a name="SetupOpscodeUserExcerpt-"></a><font color="#f7681a">This page is to provide addition details on using Hosted Chef to setup a user and organization</font></h3>
+
+<p><br class="atl-forced-newline" />
+<b>You should already have Ruby installed on your system.</b><br/>
+If you don't, return to the <a href="Fast Start Guide.html" title="Fast Start Guide">Fast Start Guide</a> and complete that preceding step prior to returning here.</p>
+<hr />
+<p><br class="atl-forced-newline" /></p>
+<h2><a name="SetupOpscodeUserExcerpt-SignupandAccountValidation"></a>Signup and Account Validation</h2>
+<p>Head over to the <a href="http://www.opscode.com/hosted-chef/">Hosted Chef Sign Up page</a> to create your account. You will get an email validation shortly after you sign up.<br/>
+After you validate your email address with Hosted Chef, you need to do the following:</p>
+
+<ul>
+	<li>Download your User Key, which you will use to interact with Hosted Chef directly.</li>
+	<li>Create an organization on Hosted Chef</li>
+	<li>Download your Organization Key, which will be used to associate new nodes with your Organization. (Also sometimes called a validation key).</li>
+	<li>Download a Knife configuration file, which will configure our command line tools for you.</li>
+</ul>
+
+
+<p>Each of these steps are detailed below.  Place all of the files you download in this section in the same directory.</p>
+
+<h2><a name="SetupOpscodeUserExcerpt-DownloadYourUserKey"></a>Download Your User Key</h2>
+<p>Login to the <a href="http://manage.opscode.com">Management Console</a> and navigate to your user profile page:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923670/20086971.png" style="border: 1px solid black"/></span></p>
+
+<p>Follow the link to get a new User Key:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923670/23658556.png" style="border: 1px solid black"/></span></p>
+
+<p>Download your new User Key:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923670/23658557.png" style="border: 1px solid black"/></span></p>
+
+<h2><a name="SetupOpscodeUserExcerpt-CreateanOrganization"></a>Create an Organization</h2>
+
+<p>Login to the <a href="http://manage.opscode.com">Management Console</a> and navigate to the organizations page:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923670/23658558.png" style="border: 1px solid black"/></span></p>
+
+<p>Click on the 'create' sub-tab:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923670/20086970.png" style="border: 1px solid black"/></span></p>
+
+<p>Enter a name for the organization and select a service plan:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923670/20086969.png" style="border: 1px solid black"/></span></p>
+
+<h2><a name="SetupOpscodeUserExcerpt-DownloadYourOrganizationKeyandKnifeConfigurationFile"></a>Download Your Organization Key and Knife Configuration File</h2>
+
+<p>For the organization you would like to manage, download your Organization Key and your Knife Configuration File:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923670/20086968.png" style="border: 1px solid black"/></span></p>
+
+<h5><a name="SetupOpscodeUserExcerpt-"></a><font color="#f7681a">Opscode does not store copies of these keys! Keep them safe!</font></h5>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923670/20086968.png">orgkey-knife-download2.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923670/20086969.png">org-select-plan.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923670/20086970.png">create-org.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923670/20086971.png">user-profile-link2.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923670/20086972.jpg">blocks.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923670/21463242.png">blocks.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923670/23658556.png">user-key-link3.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923670/23658557.png">download-user-key2.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923670/23658558.png">manage-orgs-link2.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

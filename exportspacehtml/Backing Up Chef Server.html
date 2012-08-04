@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Backing Up Chef Server</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Backing Up Chef Server
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="70%">
+
+
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 550x580" href='http://wiki.opscode.com/download../attachments/2883754/BackupRecovery.jpg'><img src="../attachments/thumbnails/2883754/16678914" hspace="20" vspace="3" style="border: 0px solid black"/></a></span></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h3><a name="BackingUpChefServer-"></a><font color="#f7681a">There are three disaster recovery strategies for Chef</font></h3>
+
+<ol>
+	<li><h5><a name="BackingUpChefServer-ManageChefobjectsascodeinsourcecontrol"></a>Manage Chef objects as code in source control</h5></li>
+	<li><h5><a name="BackingUpChefServer-ExportobjectsfromtheChefServer"></a>Export objects from the Chef Server</h5></li>
+	<li><h5><a name="BackingUpChefServer-BackupandrestoreCouchDB%28database%29"></a>Backup and restore CouchDB (database)</h5></li>
+</ol>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<font color="#f7681a">Which method you chose depends on your existing infrastructure.</font> For instance, if your team is familiar with Chef and development practices then using the source control method is more flexible and less susceptible to data corruption. On the other hand, backing up the database and associated files on disk fits better into organizations with traditional disaster recovery systems with centralized backup.</p>
+
+<h2><a name="BackingUpChefServer-ManageChefobjectsinSourceControl"></a>Manage Chef objects in Source Control</h2>
+
+<p><font color="#f7681a">Chef enables the reconstruction of your business from nothing but a source code repository, an application data backup, and bare metal machines.</font> With Chef, you define in source code how each part of your infrastructure is built. Cookbooks, roles, data bags and environments should be created as JSON files in source control, and then uploaded to the Chef Server. </p>
+
+<p>Disaster recovery then becomes:</p>
+
+<ol>
+	<li>Create new Chef Server using preferred method</li>
+	<li>Load objects from source control using knife</li>
+</ol>
+
+
+<p>Using source control also means that previous versions are always available for restoration and provides a log for auditing changes.</p>
+
+<h2><a name="BackingUpChefServer-ExportobjectsfromtheChefserver"></a>Export objects from the Chef server</h2>
+
+<ul>
+	<li>Use this <a href="Knife Exec.html" title="Knife Exec">Knife Exec</a> script to perform a backup of an existing Chef Server:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cd ~/path/to/chef/repository   
+curl -O https://raw.github.com/jtimberman/knife-scripts/master/chef_server_backup.rb</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<ul>
+	<li>Run the knife exec script
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife exec chef_server_backup.rb</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<p>This will export your data bags, roles, and nodes stored on the chef server as JSON files within the <tt>.chef/chef_server_backup</tt> directory.  Simply copy that directory and all files within to your backup location, and you'll have all of the objects that you use within Chef available to you as JSON files. These files can be uploaded to a new Chef server using knife.</p>
+
+<h2><a name="BackingUpChefServer-CouchDBBackup"></a>CouchDB Backup</h2>
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>As indicated in <a href="CouchDB Administration for Chef Server.html" title="CouchDB Administration for Chef Server">CouchDB Administration for Chef Server</a>, the CouchDB database can become quite large over time, so you may want to use <a href="http://wiki.apache.org/couchdb/Compaction">Compaction</a> on the database prior to backup.  Please review the Compaction section of <a href="CouchDB Administration for Chef Server.html" title="CouchDB Administration for Chef Server">CouchDB Administration for Chef Server</a> for details if you desire to pursue this prior to backup, and ensure that you compact the views as well.</td></tr></table></div>
+
+<p>A minimal backup consists of configuration files and a dump of the CouchDB database. For all platforms, locate your database, configuration, and log files and perform a filesystem copy. Be careful to preserve file permissions, too. Archive these files to wherever you want-- ideally on a different machine in a different physical location &#8211; with appropriate security limiting access.</p>
+
+<p>For example, here are the directories to backup for a CouchDB install on Ubuntu:</p>
+
+<ul>
+	<li>Configuration: /etc/couchdb/</li>
+	<li>Database files: /var/lib/couchdb/</li>
+	<li>Logs: /var/log/couchdb/</li>
+</ul>
+
+
+<p>You'll want to backup both the .couch database file (which contains many objects, including the index to the cookbooks) and the directory in 'checksum_path' specified in your server.rb, which contains the file contents.  One possible example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">tar -czf /tmp/chef_server_backup.`date +%F`.tar.gz /var/lib/chef /etc/chef /etc/couchdb 
+couchdb-dump http://127.0.0.1:5984/chef |gzip -9c &gt; /tmp/chef.`date +%F`.couchdb.gz</pre>
+		</div>
+</div></div>
+
+<p>The SOLR <a href="Search.html" title="Search">Search</a> index the RabbitMQ queue <a href="Chef Indexer.html" title="Chef Indexer">Chef Indexer</a> should be rebuilt upon restoration.</p>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="CouchDB Administration for Chef Server.html" title="CouchDB Administration for Chef Server"><span class="image-wrap" style="float: left"><img src="../attachments/2883754/20840491.png" hspace="4" style="border: 0px solid black"/></span> CouchDB Administration for Chef Server </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Hosted Chef.html" title="Hosted Chef"><span class="image-wrap" style="float: right"><img src="../attachments/2883754/20840490.png" hspace="4" style="border: 0px solid black"/></span> Hosted Chef </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883754/16678914.jpg">BackupRecovery.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883754/20840490.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883754/20840491.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-4489222"></a>
+                                    <font class="smallfont"><p>There's a python-based couchdb dump tool available in Karmic, too.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jtimberman at Dec 08, 2009 05:14
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-8257913"></a>
+                                    <font class="smallfont"><p>Where does chef-server store the repo (cookbooks uploaded by clients?)</p>
+
+<p>On my CentOS installation, /etc/chef/server.rb has this line:<br/>
+cookbook_path      [ "/var/lib/chef/cookbooks" ]</p>
+
+<p>But that directory is empty on the server.</p>
+
+<p>Does the server store cookbooks in couchdb?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by bcle00 at Jan 05, 2011 02:10
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-8257919"></a>
+                                    <font class="smallfont"><p>The cookbooks are stored in the directory location specified by the <tt>checksum_path</tt> setting in the config, which would go in /etc/chef/server.rb.</p>
+
+<p>The default location is /var/chef/checksums, because the filenames are by the actual checksums of the file. We'll update this page and the <a href="Chef Configuration Settings.html" title="Chef Configuration Settings">Chef Configuration Settings</a>.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jtimberman at Jan 06, 2011 17:10
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-16089577"></a>
+                                    <font class="smallfont"><p>Parts of the cookbooks, such as the metadata, are stored in the couchdb database. These objects contain checksums for individual files in the cookbook such as recipes, where are stored in checksum_path. You can find this checksum from 'knife cookbook show COOKBOOK_NAME COOKBOOK_VERSION in the checksum field for the file, and then find it in the filesystem.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by btm at Aug 12, 2011 23:00
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24019216"></a>
+                                    <font class="smallfont"><p>Is there a documented process for reloading couchdb from the couchdb-dump?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by kevin.duane@disney.com at Feb 17, 2012 01:11
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24019329"></a>
+                                    <font class="smallfont"><p>Thank you for Chef&#33;</p>
+
+<p>Of the three strategies mentioned at the top of this page, are all three necessary?</p>
+
+<p>The way I am taking it is that you can do complete backup and recovery by managing Chef objects in a source code repository and backup up that repository.</p>
+
+<p>I understand that data bags, roles, etc can be created from source code. But what about nodes and node attributes? Aren't those stored in chef-server and not in source code? How, then, does that data get restored?</p>
+
+<p>Some node attributes would be restored when certain roles or cookbooks are applied, but what about attributes that are assigned to nodes with the "knife node edit NODE" command? I don't believe those are stored in source code. It seems that when you would try to restore everything from source code, node attributes applied by roles would be preserved but attributes applied directly to roles by "knife node edit NODE" would be lost. Is that correct?</p>
+
+
+<p>If it IS possible to backup and restore chef-server only using a source code repository, is it still necessary to backup and restore CouchDB as described here?</p>
+
+<p>Thanks again.</p>
+
+<p>Warmest regards,</p>
+
+<p>Ian D. Rossi</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ian.d.rossi@gmail.com at Mar 02, 2012 16:12
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24019391"></a>
+                                    <font class="smallfont"><p>bump</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ian.d.rossi@gmail.com at Mar 08, 2012 19:51
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

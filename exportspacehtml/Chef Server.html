@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Chef Server</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Chef Server
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/1179877/14876680.png" hspace="40" vspace="8" style="border: 0px solid black"/></span></p>
+
+<p><br class="atl-forced-newline" /></p>
+<h4><a name="ChefServer-"></a><font color="#f7681a">The Chef Server provides a central point for the distribution of <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a>, management and authentication of <a href="Nodes.html" title="Nodes">Nodes</a>, and the use of <a href="Search.html" title="Search">Search</a>.  <br/>
+<br/>
+It provides two layers of functionality - a <a href="Server API.html" title="Server API">REST API</a> and a human-readable Web Interface (<a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>).</font></h4>
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+<h1><a name="ChefServer-Components"></a>Components</h1>
+
+<p>The Chef Server is a <a href="http://www.merbivore.com">Merb</a> web application with some additional components.</p>
+
+<ul>
+	<li>API service.</li>
+	<li>Management Console (optional).</li>
+	<li>AMQP Server</li>
+	<li><a href="Chef Indexer.html" title="Chef Indexer">Search indexer</a> and Search Engine.</li>
+	<li>Data store with CouchDB.</li>
+</ul>
+
+
+<h2><a name="ChefServer-APIService"></a>API Service</h2>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Service Name</th>
+<td class='confluenceTd'>chef-server</td>
+</tr>
+<tr>
+<th class='confluenceTh'>Package/Gem</th>
+<td class='confluenceTd'>chef-server,chef-server-api</td>
+</tr>
+<tr>
+<th class='confluenceTh'>Default port</th>
+<td class='confluenceTd'>4000</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><font color="#f7681a">The API service is what clients use to interact with the server to manage node configuration in Chef.</font> By default, the service is started on port 4000 as a Merb application slice running with the <a href="http://code.macournoyer.com/thin/">thin</a> server adapter. </p>
+
+<p>The two methods of interaction with the API for humans are the command-line tool <a href="Knife.html" title="Knife">Knife</a> and the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>. The <a href="Chef Client.html" title="Chef Client">Chef Client</a> library is used for interacting with the API for client nodes.</p>
+</td> 
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ChefServer-Components'>Components</a></li>
+<ul>
+    <li><a href='#ChefServer-APIService'>API Service</a></li>
+    <li><a href='#ChefServer-OpenSourceServerManagementConsole'>Open Source Server Management Console</a></li>
+    <li><a href='#ChefServer-AMQPServer'>AMQP Server</a></li>
+    <li><a href='#ChefServer-SearchIndexes'>Search Indexes</a></li>
+    <li><a href='#ChefServer-DataStore'>Data Store</a></li>
+</ul>
+    <li><a href='#ChefServer-InformationStored'>Information Stored</a></li>
+<ul>
+    <li><a href='#ChefServer-APIClients'>API Clients</a></li>
+    <li><a href='#ChefServer-Cookbooks'>Cookbooks</a></li>
+    <li><a href='#ChefServer-Nodes'>Nodes</a></li>
+    <li><a href='#ChefServer-Roles'>Roles</a></li>
+    <li><a href='#ChefServer-DataBags'>Data Bags</a></li>
+</ul>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Bake in Scalability with Chef</b><br /><br class="atl-forced-newline" />
+Our friends at <a href="http://cyclecomputing.com/">Cycle Computing</a> use a CentOS 5.5 Chef Server to provide configuration management for hundreds of systems and automate the scalability of their infrastructure.  Read their <a href="http://blog.cyclecomputing.com/2011/05/why-baking-your-cluster-ami-limits-the-menu-devops-for-large-hpc-clusters.html">blog post</a> to see how they do it.</td></tr></table></div> </td>
+<td class="confluenceTd" valign="top" width="7%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<h2><a name="ChefServer-OpenSourceServerManagementConsole"></a>Open Source Server Management Console</h2>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Service Name</th>
+<td class='confluenceTd'>chef-server-webui</td>
+</tr>
+<tr>
+<th class='confluenceTh'>Package/Gem</th>
+<td class='confluenceTd'>chef-server-webui</td>
+</tr>
+<tr>
+<th class='confluenceTh'>Default port</th>
+<td class='confluenceTd'>4040</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><font color="#f7681a">The Open Source Server Management Console is an optional component that provides a nice way for humans to work with the Chef Server.</font> By default, the service is started on port 4040 also as a Merb application slice running with thin. The Management Console has Users that represent human logins and uses password-based authentication. Optionally, OpenIDs can be associated with Open Source Management Console users. </p>
+
+<p>The Management Console itself is an API <a href="#ChefServer-Clients">client</a>, and the private key is located in <tt>/etc/chef/webui.pem</tt>, and the default name is <tt>chef-webui</tt>. Within the Management Console are users and the default Management Console user is <tt>admin</tt> with password <tt>p@ssw0rd1</tt>. When using the <a href="http://wiki.opscode.com/display/LEG/Bootstrap+Chef+RubyGems+Installation" title="Bootstrap Chef RubyGems Installation">RubyGems bootstrap cookbook</a>, the password is randomly generated by Chef, or can be specified by a JSON attribute.</p>
+
+<p><a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a> has details on its use, while Hosted Chef customers should review the <a href="Hosted Chef Management Console.html" title="Hosted Chef Management Console">Hosted Chef Management Console</a>. Private Chef customers should turn to separately delivered Administration Documentation.</p>
+
+<h2><a name="ChefServer-AMQPServer"></a>AMQP Server</h2>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Service Names</th>
+<td class='confluenceTd'>rabbitmq-server</td>
+</tr>
+<tr>
+<th class='confluenceTh'>Package</th>
+<td class='confluenceTd'>rabbitmq-server*</td>
+</tr>
+<tr>
+<th class='confluenceTh'>Default port</th>
+<td class='confluenceTd'>5672,4369,50229</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>*rabbitmq-server package name varies by distribution.</p>
+
+<p><font color="#f7681a">The Chef Server runs RabbitMQ as an AMQP server.</font> Whenever data is stored in CouchDB that needs to be indexed by SOLR, the server sends a message and the data payload to the queue, and the indexer picks it up.</p>
+
+<h2><a name="ChefServer-SearchIndexes"></a>Search Indexes</h2>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Service Names</th>
+<td class='confluenceTd'>chef-solr-indexer</td>
+<td class='confluenceTd'>chef-solr</td>
+</tr>
+<tr>
+<th class='confluenceTh'>Package/Gem</th>
+<td class='confluenceTd'>chef-solr</td>
+<td class='confluenceTd'>chef-solr</td>
+</tr>
+<tr>
+<th class='confluenceTh'>Default port</th>
+<td class='confluenceTd'>-</td>
+<td class='confluenceTd'>8983</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>The search indexer, <tt>chef-solr-indexer</tt> listens to AMQP for messages about what to index, and then passes the results to <tt>chef-solr</tt>. Read more about the <a href="Chef Indexer.html" title="Chef Indexer">Chef Indexer</a> or <a href="Search.html" title="Search">Search</a>.</p>
+
+<h2><a name="ChefServer-DataStore"></a>Data Store</h2>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Service Name</th>
+<td class='confluenceTd'>couchdb</td>
+</tr>
+<tr>
+<th class='confluenceTh'>Package</th>
+<td class='confluenceTd'>couchdb</td>
+</tr>
+<tr>
+<th class='confluenceTh'>Default port</th>
+<td class='confluenceTd'>5984</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><font color="#f7681a">Chef Server utilizes <a href="http://couchdb.apache.org">CouchDB</a> for storing JSON data about <a href="Nodes.html" title="Nodes">Nodes</a>, <a href="Roles.html" title="Roles">Roles</a>, and <a href="Data Bags.html" title="Data Bags">Data Bags</a>.</font> The server requires CouchDB 0.9.1 or above for API compatibility reasons. For more information about CouchDB, please see <a href="http://couchdb.apache.org">CouchDB's project page</a>.</p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>CouchDB Administration</b><br /><a href="CouchDB Administration for Chef Server.html" title="CouchDB Administration for Chef Server">CouchDB Administration for Chef Server</a></td></tr></table></div>
+
+<h1><a name="ChefServer-InformationStored"></a>Information Stored</h1>
+
+<p>The Chef Server stores several bits of information about the configured objects in the infrastructure.</p>
+
+<h2><a name="ChefServer-APIClients"></a>API Clients</h2>
+
+<p><font color="#f7681a"><a href="API Clients.html" title="API Clients">Clients</a> are entities that access the API.</font> They are stored as JSON objects in CouchDB, are indexed and searchable. Each client has a public key stored on the server, and a private key that should be copied to the client. Clients come in two flavors for accessing the API.</p>
+
+<ul>
+	<li>Humans</li>
+	<li>Non-humans</li>
+</ul>
+
+
+<p>Humans interact with the API through <a href="Knife.html" title="Knife">Knife</a> or the <a href="Management Console.html" title="Management Console">Management Console</a>. In the Management Console, they have users, and the Management Console itself is a non-human API client whose name is chef-webui. Non-humans are <a href="Nodes.html" title="Nodes">Nodes</a> running the <tt>chef-client</tt> command/daemon, or services that otherwise access the API programatically.</p>
+
+<h2><a name="ChefServer-Cookbooks"></a>Cookbooks</h2>
+
+<p>The Chef Server distributes <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> to <a href="Chef Client.html" title="Chef Client">Chef Clients</a> - specifically, it distributes:</p>
+
+<ul>
+	<li><a href="Libraries.html" title="Libraries">Libraries</a></li>
+	<li><a href="Attributes.html" title="Attributes">Attributes</a></li>
+	<li><a href="Definitions.html" title="Definitions">Definitions</a></li>
+	<li><a href="Recipes.html" title="Recipes">Recipes</a></li>
+</ul>
+
+
+<p>Directly to each node based on the dependencies specified in the cookbook <a href="Metadata.html" title="Metadata">Metadata</a>.</p>
+
+<p>The Server also serves up <a href="File Distribution.html" title="File Distribution">File Distribution</a> and <a href="Templates.html" title="Templates">Templates</a> on an as-needed basis.</p>
+
+<h2><a name="ChefServer-Nodes"></a>Nodes</h2>
+
+<p><font color="#f7681a">The Chef Server provides for the management and authentication of <a href="Nodes.html" title="Nodes">Nodes</a> via <a href="Authentication and Authorization.html" title="Authentication and Authorization">pre-shared RSA keys</a>.</font> Node data is indexed and searchable. See the <a href="Nodes.html" title="Nodes">Nodes</a> section for more details on how to manage <a href="Nodes.html" title="Nodes">Nodes</a>. See <a href="Authentication and Authorization.html" title="Authentication and Authorization">Authentication and Authorization</a> to learn how the model works.</p>
+
+<h2><a name="ChefServer-Roles"></a>Roles</h2>
+
+<p>The Chef Server stores JSON objects about <a href="Roles.html" title="Roles">Roles</a> configured. Roles are indexed and searchable. Learn more about <a href="Roles.html" title="Roles">Roles</a> and how to manage them on the <a href="Roles.html" title="Roles">Roles</a> page.</p>
+
+<h2><a name="ChefServer-DataBags"></a>Data Bags</h2>
+
+<p>The server can optionally store arbitrary JSON data known as data bags. Data bags are indexed and searchable. See the <a href="Data Bags.html" title="Data Bags">Data Bags</a> page for more information on how to use this feature.</p>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Chef Solo.html" title="Chef Solo"><span class="image-wrap" style="float: left"><img src="../attachments/1179877/20840489.png" hspace="4" style="border: 0px solid black"/></span> Chef Solo </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Chef Indexer.html" title="Chef Indexer"><span class="image-wrap" style="float: right"><img src="../attachments/1179877/20840488.png" hspace="4" style="border: 0px solid black"/></span> Chef Indexer </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179877/14876680.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179877/20840488.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179877/20840489.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Installing Chef Client on Ubuntu or Debian</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Installing Chef Client on Ubuntu or Debian
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 12, 2011 by <font color="#0050B2">fearoffish</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<hr />
+
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 217x250" href='http://wiki.opscode.com/download../attachments/18645076/logo_ubuntu_linux_for_transparent.gif'><img src="../attachments/thumbnails/18645076/19005539" hspace="20" vspace="6" style="border: 0px solid black"/></a></span></p>
+
+<p><span class="image-wrap" style="float: right"><a class="confluence-thumbnail-link 300x395" href='http://wiki.opscode.com/download../attachments/18645076/Debian_logo.png'><img src="../attachments/thumbnails/18645076/19005540" hspace="20" vspace="6" style="border: 0px solid black"/></a></span></p>
+
+
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<h4><a name="InstallingChefClientonUbuntuorDebian-"></a><font color="#f7681a">These directions provide two methods of installing Chef client on a node running Ubuntu or Debian.</font>  </h4>
+
+<h5><a name="InstallingChefClientonUbuntuorDebian-NodesarehostswhoseconfigurationthatyouwanttomanageusingChef."></a><a href="Nodes.html" title="Nodes">Nodes</a> are hosts whose configuration that you want to manage using Chef.  </h5>
+
+<p><br class="atl-forced-newline" />
+<b>In general, installing chef-client on a node includes:</b></p>
+
+<ul class="alternate" type="square">
+	<li>Installing Ruby and Other Dependencies</li>
+	<li>Installing Chef</li>
+	<li>Configuring Chef</li>
+</ul>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+
+
+<p><b>Typically, chef-client is installed on Ubuntu and Debian systems using one of three possible methods:</b></p>
+
+<ol>
+	<li>Using the Opscode package repository,</li>
+	<li>Using Rubygems, or</li>
+	<li>Using a <tt>knife bootstrap</tt> script</li>
+</ol>
+
+
+<p>You only need to use one of these three methods on any given node.  Choose the method that makes the most sense for your environment.</p>
+<hr /></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="28%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#InstallingChefClientonUbuntuorDebian-PackageInstallation'>Package Installation</a></li>
+<ul>
+    <li><a href='#InstallingChefClientonUbuntuorDebian-AddtheOpscodeAPTRepository'>Add the Opscode APT Repository</a></li>
+    <li><a href='#InstallingChefClientonUbuntuorDebian-AddtheGPGKeyandUpdateIndex'>Add the GPG Key and Update Index</a></li>
+    <li><a href='#InstallingChefClientonUbuntuorDebian-UpgradeExistingPackages'>Upgrade Existing Packages</a></li>
+    <li><a href='#InstallingChefClientonUbuntuorDebian-InstallChefusingaptget'>Install Chef using apt-get</a></li>
+</ul>
+    <li><a href='#InstallingChefClientonUbuntuorDebian-Rubygem'>Rubygem</a></li>
+<ul>
+    <li><a href='#InstallingChefClientonUbuntuorDebian-InstallRubyandotherDependencies'>Install Ruby and other Dependencies</a></li>
+    <li><a href='#InstallingChefClientonUbuntuorDebian-InstallRubyGemsfromSource'>Install RubyGems from Source</a></li>
+    <li><a href='#InstallingChefClientonUbuntuorDebian-InstallChefGem'>Install Chef Gem</a></li>
+    <li><a href='#InstallingChefClientonUbuntuorDebian-Configurechefclient'>Configure chef-client</a></li>
+</ul>
+    <li><a href='#InstallingChefClientonUbuntuorDebian-Bootstrap'>Bootstrap</a></li>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Commands Run as Root</b><br />Commands that require root privileges are run with <tt>sudo</tt> in these directions.  If your system is not configured to use <tt>sudo</tt>, run these commands as root using a method appropriate for your configuration.</td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h1><a name="InstallingChefClientonUbuntuorDebian-PackageInstallation"></a>Package Installation</h1>
+
+<p><b>Installing using native Ubuntu or Debian ensures that Chef is installed in the same way as other software on your system.</b> <font color="#f7681a">These instructions use the <a href="http://apt.opscode.com">Opscode APT repository</a>.</font> Opscode maintains the packages in this APT repo, as well as the packages that get included in Debian and Ubuntu's repositories.  The following distributions are supported within the Opscode APT repository.</p>
+
+<ul class="alternate" type="square">
+	<li>Ubuntu 11.10 oneirc</li>
+	<li>Ubuntu 11.04 natty</li>
+	<li>Ubuntu 10.10 maverick</li>
+	<li>Ubuntu 10.04 lucid</li>
+	<li>Ubuntu 9.10 karmic</li>
+	<li>Debian (unstable) sid</li>
+	<li>Debian (testing) wheezy</li>
+	<li>Debian 6 (stable) squeeze</li>
+	<li>Debian 5 (oldstable) lenny</li>
+</ul>
+
+
+<p>
+<h2><a name="InstallingChefClientonUbuntuorDebian-AddtheOpscodeAPTRepository"></a>Add the Opscode APT Repository</h2>
+
+<p><font color="#f7681a">Create <tt>/etc/apt/sources.list.d/opscode.list</tt>.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/apt/sources.list.d/opscode.list</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[deb http://apt.opscode.com/ &lt;codename&gt; main]]></script>
+</div></div>
+
+<ul>
+	<li>For Chef 0.9.x, replace codename with the supported distribution codename, such as "lucid".</li>
+	<li>For Chef 0.10.x, replace codename with the codename, suffixed with "-0.10", for example, "lucid-0.10".</li>
+</ul>
+
+
+<p>If you would like to be able to download source packages, add an additional identical line, but change <tt>deb</tt> to <tt>deb-src</tt> line.</p>
+
+<p>You can copy and paste these examples to create the necessary sources.list entry:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Ubuntu for Chef 0.9.x</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[echo "deb http://apt.opscode.com/ `lsb_release -cs` main" | sudo tee /etc/apt/sources.list.d/opscode.list]]></script>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Ubuntu for Chef 0.10.x</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | sudo tee /etc/apt/sources.list.d/opscode.list]]></script>
+</div></div>
+<p>Debian users will likely need to run 'apt-get install sudo wget lsb-release' as root before pasting the examples.</p>
+
+<h2><a name="InstallingChefClientonUbuntuorDebian-AddtheGPGKeyandUpdateIndex"></a>Add the GPG Key and Update Index</h2>
+
+<p><font color="#f7681a">Before you install the packages, make sure you add the Opscode GPG key to apt.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo mkdir -p /etc/apt/trusted.gpg.d
+gpg --keyserver keys.gnupg.net --recv-keys 83EF826A
+gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg &gt; /dev/null]]></script>
+</div></div>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Issues downloading from gnupg.net?</b><br />If you get an error when trying to download the key that states that the "keyserver timed out", try downloading the key directly from our apt repository instead:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[gpg --fetch-key http://apt.opscode.com/packages@opscode.com.gpg.key]]></script>
+</div></div>
+<p>Afterwards you'll also want to run this command again:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg &gt; /dev/null]]></script>
+</div></div></td></tr></table></div>
+
+<p>Now, we update apt-get with the newly added Opscode repository:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo apt-get update]]></script>
+</div></div>
+
+<p>Installing the opscode-keyring package will keep the key up-to-date:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo apt-get install opscode-keyring # permanent upgradeable keyring]]></script>
+</div></div>
+
+<h2><a name="InstallingChefClientonUbuntuorDebian-UpgradeExistingPackages"></a>Upgrade Existing Packages</h2>
+
+<p>To ensure you are using the latest versions of libraries that chef depends on, you may wish to update your existing packages:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo apt-get upgrade]]></script>
+</div></div>
+</p>
+
+<h2><a name="InstallingChefClientonUbuntuorDebian-InstallChefusingaptget"></a>Install Chef using apt-get</h2>
+
+<p>WIth the Opscode repository installed, you can now install chef using apt-get:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get install chef</pre>
+		</div>
+</div></div>
+
+<p>You will be prompted for the Chef Server URL.</p>
+<ul>
+	<li>If you are using Hosted Chef, enter your organization's Hosted Chef URL, e.g., "https://api.opscode.com/organizations/ORGNAME".</li>
+	<li>If you installed a local Chef Server,  enter your Chef Server's FQDN, e.g., "http://chef.example.com:4000".</li>
+	<li>If you are using chef-solo, enter "none".</li>
+</ul>
+
+
+<p>Upon installation, this will:</p>
+
+<ul>
+	<li>Install all the dependencies for Chef as a client.</li>
+	<li>Start chef-client via /etc/init.d/chef-client.</li>
+	<li>Configure /etc/chef/client.rb</li>
+</ul>
+
+
+<p>After installation, you should move your validation client's private key onto the node and copy it to <tt>/etc/chef/validation.pem</tt>.</p>
+
+<p><b>Hosted Chef Users</b> should add the following line to the end of <tt>/etc/chef/client.rb</tt>, replacing ORGNAME with your organization name:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">validation_client_name 'ORGNAME-validator'</pre>
+		</div>
+</div></div>
+
+<p>If you are planning to run chef-solo or use just knife, you can stop and disable the chef-client service. An example config file for chef-solo is created in /usr/share/chef/solo.rb.</p>
+
+<h3><a name="InstallingChefClientonUbuntuorDebian-InstallSupportingPackages"></a>Install Supporting Packages</h3>
+
+<p><font color="#f7681a">The following packages are not required to run the chef-client or chef-solo and are optional.</font></p>
+
+<ul>
+	<li>libopenssl-ruby - if the chef-server has SSL (like the Opscode Platform), this is required.</li>
+	<li>ruby-dev and build-essential - required to build gems that have native extensions from source with gem_package</li>
+</ul>
+
+
+<h3><a name="InstallingChefClientonUbuntuorDebian-Scriptingtheaptgetinstallation"></a>Scripting the apt-get installation</h3>
+
+<p>If you plan on using this from a bash script, you can preseed the values so no popup occurs.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">echo "chef chef/chef_server_url string https://api.opscode.com/organizations/ORGNAME" | sudo debconf-set-selections &amp;&amp; sudo apt-get install chef -y</pre>
+		</div>
+</div></div>
+
+<h1><a name="InstallingChefClientonUbuntuorDebian-Rubygem"></a>Rubygem</h1>
+<p><h2><a name="InstallingChefClientonUbuntuorDebian-InstallRubyandotherDependencies"></a>Install Ruby and other Dependencies</h2>
+<p><font color="#f7681a">Chef is written in Ruby and thus requires Ruby as well as other system dependencies to run.</font> Run the following command to install ruby and other required dependencies:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo apt-get install ruby ruby-dev libopenssl-ruby rdoc ri irb build-essential wget ssl-cert curl]]></script>
+</div></div>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef 10.X Note</b><br />There are open issues with Chef 10.x and Ruby 1.8.6.  If you are using Chef 10.x, you should get 1.8.7 with SSL bindings. If you'd like to use 1.9.1 or 1.9.2, you'll want to follow the <a href="Installing Chef Client on Other Operating Systems.html" title="Installing Chef Client on Other Operating Systems">Installing Chef Client on Other Operating Systems</a> directions to install manually with gems.</td></tr></table></div>
+<br/>
+<h2><a name="InstallingChefClientonUbuntuorDebian-InstallRubyGemsfromSource"></a>Install RubyGems from Source</h2>
+
+<p><font color="#f7681a">We prefer to install RubyGems from source rather than use the OS-provided version (if any), as it is cross platform, so we know what to expect.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install RubyGems</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[cd /tmp
+curl -O http://production.cf.rubygems.org/rubygems/rubygems-1.8.10.tgz
+tar zxf rubygems-1.8.10.tgz
+cd rubygems-1.8.10
+sudo ruby setup.rb --no-format-executable]]></script>
+</div></div>
+
+<h2><a name="InstallingChefClientonUbuntuorDebian-InstallChefGem"></a>Install Chef Gem</h2>
+
+<p><font color="#f7681a">To install Chef and its dependencies, run the following code:</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Chef</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[sudo gem install chef --no-ri --no-rdoc]]></script>
+</div></div>
+</p>
+
+<p>If you are installing Chef to use chef-client, proceed below.  If you are installing Chef-solo as a means of installing Chef Server, return to <a href="Installing Chef Server using Chef Solo.html" title="Installing Chef Server using Chef Solo">Installing Chef Server using Chef Solo</a>. If you wish to use Chef-solo as your primary Chef client, see <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a>.  </p>
+
+<p><h2><a name="InstallingChefClientonUbuntuorDebian-Configurechefclient"></a>Configure chef-client</h2>
+
+<p>The initial configuration of a chef-client requires a <tt>client.rb</tt> configuration file and a <tt>validation.pem</tt> file to be placed in <tt>/etc/chef</tt>.   At a minimum <tt>client.rb</tt> must contain the configuration settings necessary for chef-client to communicate with chef-server.  <tt>validation.pem</tt> is the permission certificate for your validator client.  This API client is used on the first-run of chef-client and is used to create a new API client for the node.  To create these we do the following:</p>
+
+<ol>
+	<li>Create <tt>/etc/chef</tt>:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo mkdir -p /etc/chef]]></script>
+</div></div></li>
+	<li>Create <tt>client.rb</tt> and <tt>validation.pem</tt>:
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<b>If you have a properly configured workstation</b>, you should be able to run the following command from your workstation's chef repository
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife configure client ./]]></script>
+</div></div>
+<p>This will place <tt>client.rb</tt> and <tt>validation.pem</tt> in your current working directory on your chef workstation.  You can then use <tt>scp</tt> or another method to move both files into <tt>/etc/chef</tt> on the node you are configuring.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<b>If you do not have a configured workstation</b>, you should create a minimal <tt>/etc/chef/client.rb</tt>.  If you are using your own chef-server <tt>client.rb</tt> should look as follows (substituting the correct address of your chef server):</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>client.rb</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[log_level        :info
+log_location     STDOUT
+chef_server_url  'http://yourchefserver.com:4000'
+validation_client_name 'chef-validator']]></script>
+</div></div>
+<p>If you are using Hosted Chef, <tt>client.rb</tt> should look as follows (with ORGNAME replaced with your Organization Short Name}}:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>client.rb for Hosted Chef</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[log_level        :info
+log_location     STDOUT
+chef_server_url  'https://api.opscode.com/organizations/ORGNAME'
+validation_key         "/etc/chef/ORGNAME-validator.pem"
+validation_client_name 'ORGNAME-validator']]></script>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<b>Your <tt>validation.pem</tt> can be downloaded from your chef-server if you are running your own chef-server.  On your Chef Server, <tt>validation.pem</tt> should be in <tt>/etc/chef/</tt>. Users of Hosted Chef can find their validator client's key from the <a href="Managing Organizations with the Hosted Chef Management Console.html" title="Managing Organizations with the Hosted Chef Management Console">Hosted Chef Management Console</a>.  Note that if you are using Hosted Chef, your key is named <tt>ORGNAME-validator.pem</tt>.</b></p></li>
+</ol>
+
+
+<p>Chef client has a number of configuration settings that do not appear above. See <a href="Chef Configuration Settings.html" title="Chef Configuration Settings">Chef Configuration Settings</a> for further details.</p></p>
+
+<h1><a name="InstallingChefClientonUbuntuorDebian-Bootstrap"></a>Bootstrap</h1>
+
+<p>It is often easiest to install Chef on a node using knife-bootstrap. Bootstrapping runs a script on the target system which install Ruby, install chef-client, configure chef-client, and start a chef-client run. This method requires the node to be accessible over SSH.  In most cases, bootstrapping a new node will be as simple as running a single command.  For instance, to bootstrap an Ubuntu workstation using the APT-based installation method you might run the following command:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap IP_ADDR -d ubuntu10.04-apt --sudo</pre>
+		</div>
+</div></div>
+
+<p>See <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> and <a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a> for complete documentation.  The bootstrap scripts distributed with knife for Ubuntu use an install method similar to the installation methods above.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/18645076/21463103.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installing Chef Client and Chef Solo.html" title="Installing Chef Client and Chef Solo">Installing Chef Client and Chef Solo</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/18645076/21463102.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Upgrade Instructions.html" title="Upgrade Instructions">Upgrade Instructions</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645076/19005539.gif">logo_ubuntu_linux_for_transparent.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645076/19005540.png">Debian_logo.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645076/21463102.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645076/21463103.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

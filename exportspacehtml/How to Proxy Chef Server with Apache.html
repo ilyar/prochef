@@ -1,0 +1,359 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : How to Proxy Chef Server with Apache</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : How to Proxy Chef Server with Apache
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Feb 14, 2012 by <font color="#0050B2">btm</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<p><br class="atl-forced-newline" />
+This procedure describes how to use Apache's mod_proxy to provide an SSL front-end to the Chef Server Merb processes, without adding Passenger to the mix. This is tested on Debian and Ubuntu using the <a href="http://bit.ly/aptopscode">Opscode APT packages</a>, and will require adjustment for other platforms' methods of configuring Apache.</p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>New in Chef 0.8.x</b><br />The API and WebUI are separate, and run on separate ports on the Chef Server. This will require setting up multiple virtual hosts. Use two separate CNAMEs in your DNS, for example:
+
+<ul>
+	<li>chef.example.com - API</li>
+	<li>chef-www.example.com - WebUI</li>
+</ul>
+
+
+<p>The instructions below still require modification to reflect these changes, however, the <a href="http://community.opscode.com/cookbooks/chef-server">Opscode Chef Cookbook</a> apache-proxy recipe is up to date.</p></td></tr></table></div>
+
+<h1><a name="HowtoProxyChefServerwithApache-ConfigureandStartChefServer"></a>Configure and Start Chef-Server</h1>
+
+<p>The Chef Server is a Merb application, and the configuration file is /etc/chef/server.rb. Here's the minimum used in this configuration. Filesystem locations are <a href="http://www.pathname.com/fhs/pub/fhs-2.3.html">FHS compliant</a> per Debian Packaging. Adjust the locations for your platform requirements or preferences.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/chef/server.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">log_level          :debug
+log_location       "/var/log/chef/server.log"
+file_cache_path    "/srv/chef/cache"
+ssl_verify_mode    :verify_none
+chef_server_url    "http://127.0.0.1:4000"
+cookbook_path      [ "/srv/chef/cookbooks", "/srv/chef/site-cookbooks" ]
+search_index_path  "/var/chef/search_index"
+role_path          "/var/chef/roles"
+signing_ca_path    "/var/chef/ca"
+couchdb_database   'chef'
+
+validation_client_name "chef-validator"
+validation_key   "/etc/chef/validation.pem"
+client_key       "/etc/chef/client.pem"
+web_ui_client_name "chef-webui"
+web_ui_key "/etc/chef/webui.pem"
+supportdir = "/srv/chef/support"
+solr_jetty_path File.join(supportdir, "solr", "jetty")
+solr_heap_size "250M"
+solr_data_path File.join(supportdir, "solr", "data")
+solr_home_path File.join(supportdir, "solr", "home")
+solr_heap_size "256M"
+
+Mixlib::Log::Formatter.show_time = false</pre>
+		</div>
+</div></div>
+
+<p>Once the configuration file is tweaked as required for your environment, start the chef-server. On systems with the Debian/Ubuntu</p>
+</td> 
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#HowtoProxyChefServerwithApache-ConfigureandStartChefServer'>Configure and Start Chef-Server</a></li>
+    <li><a href='#HowtoProxyChefServerwithApache-InstallApache'>Install Apache</a></li>
+    <li><a href='#HowtoProxyChefServerwithApache-EnableApacheModules'>Enable Apache Modules</a></li>
+    <li><a href='#HowtoProxyChefServerwithApache-CreateChefServerVirtualHost'>Create Chef Server Virtual Host</a></li>
+    <li><a href='#HowtoProxyChefServerwithApache-AddlistenPortfortheWebUI'>Add listen Port for the WebUI</a></li>
+    <li><a href='#HowtoProxyChefServerwithApache-CreateSSLCertificates'>Create SSL Certificates</a></li>
+    <li><a href='#HowtoProxyChefServerwithApache-%28Re%29StartApache'>(Re)Start Apache</a></li>
+    <li><a href='#HowtoProxyChefServerwithApache-ClientConfiguration'>Client Configuration</a></li>
+    <li><a href='#HowtoProxyChefServerwithApache-NextSteps'>Next Steps</a></li>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="3%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<h1><a name="HowtoProxyChefServerwithApache-InstallApache"></a>Install Apache</h1>
+
+<p>Install Apache for your platform. For example, on Debian-based systems, use APT:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">apt-get install apache2</pre>
+		</div>
+</div></div>
+
+<h1><a name="HowtoProxyChefServerwithApache-EnableApacheModules"></a>Enable Apache Modules</h1>
+
+<p>The following Apache modules need to be enabled:</p>
+
+<ul>
+	<li>proxy</li>
+	<li>proxy_http</li>
+	<li>proxy_balancer</li>
+	<li>ssl</li>
+	<li>rewrite</li>
+	<li>headers</li>
+</ul>
+
+
+<p>For Debian-based systems, use the <tt>a2enmod</tt> script.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">for a2mod in proxy proxy_http proxy_balancer ssl rewrite headers
+do
+  sudo a2enmod $a2mod
+done</pre>
+		</div>
+</div></div>
+
+<p>See your platform's Apache documentation if you're not runnin Debian/Ubuntu.</p>
+
+<h1><a name="HowtoProxyChefServerwithApache-CreateChefServerVirtualHost"></a>Create Chef Server Virtual Host</h1>
+
+<p>Set up a vhost config file for the Chef Server. This will use the Proxy balancer for the Merb workers running on the localhost. Replace "server_fqdn" with the fully qualified domain name of the server.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/apache2/sites-available/chef_server.conf</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&lt;VirtualHost *:443&gt;
+  ServerName server_fqdn
+  DocumentRoot /usr/share/chef-server-api/public
+ 
+  &lt;Proxy balancer://chef_server&gt;
+    BalancerMember http://127.0.0.1:4000
+    Order deny,allow
+    Allow from all
+  &lt;/Proxy&gt;
+ 
+  LogLevel info
+  ErrorLog /var/log/apache2/chef_server-error.log
+  CustomLog /var/log/apache2/chef_server-access.log combined
+  
+  SSLEngine On
+  SSLCertificateFile /etc/chef/certificates/server_fqdn.pem
+  SSLCertificateKeyFile /etc/chef/certificates/server_fqdn.pem
+ 
+  RequestHeader set X_FORWARDED_PROTO 'https'
+ 
+  RewriteEngine On
+  RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_FILENAME} !-f
+  RewriteRule ^/(.*)$ balancer://chef_server%{REQUEST_URI} [P,QSA,L]
+&lt;/VirtualHost&gt;
+ 
+&lt;VirtualHost *:444&gt;
+  ServerName server_fqdn
+  DocumentRoot /usr/share/chef-server-webui/public
+ 
+  &lt;Proxy balancer://chef_server_webui&gt;
+    BalancerMember http://127.0.0.1:4040
+    Order deny,allow
+    Allow from all
+  &lt;/Proxy&gt;
+ 
+  LogLevel info
+  ErrorLog /var/log/apache2/chef_server-error.log
+  CustomLog /var/log/apache2/chef_server-access.log combined
+  
+  SSLEngine On
+  SSLCertificateFile /etc/chef/certificates/server_fqdn.pem
+  SSLCertificateKeyFile /etc/chef/certificates/server_fqdn.pem
+ 
+  RequestHeader set X_FORWARDED_PROTO 'https'
+ 
+  RewriteEngine On
+  RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_FILENAME} !-f
+  RewriteRule ^/(.*)$ balancer://chef_server_webui%{REQUEST_URI} [P,QSA,L]
+&lt;/VirtualHost&gt;</pre>
+		</div>
+</div></div>
+
+<p>On Debian/Ubuntu systems, use <tt>a2ensite</tt> script to enable the vhost:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">sudo a2ensite chef_server.conf</pre>
+		</div>
+</div></div>
+
+<h1><a name="HowtoProxyChefServerwithApache-AddlistenPortfortheWebUI"></a>Add listen Port for the WebUI</h1>
+
+<p>Add <tt>Listen 444</tt> to the Apache config. On Debian/Ubuntu, this is in <tt>/etc/apache2/ports.conf</tt>. Depending on your environment, you may need to enable access to port 444 on your firewall.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">NameVirtualHost *:80
+Listen 80
+
+&lt;IfModule mod_ssl.c&gt;
+    Listen 443
+    Listen 444
+&lt;/IfModule&gt;</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Default Port 80</b><br />If you're not using another web service running on port 80, you may wish to set up a <a href="http://www.google.com/search?q=mod_rewrite+force+ssl">mod_rewrite rule to force SSL</a>.</td></tr></table></div>
+
+<h1><a name="HowtoProxyChefServerwithApache-CreateSSLCertificates"></a>Create SSL Certificates</h1>
+
+<p>If you're using the <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a>, you can use the <tt>ssl_cert</tt> rake task to create a self-signed certificate.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">rake ssl_cert FQDN=`hostname -f`
+sudo mkdir -p /etc/chef/certificates
+sudo cp certificates/`hostname -f`.pem /etc/chef/certificates</pre>
+		</div>
+</div></div>
+
+<p>If you purchased an SSL certificate, you can use that instead, be sure to name it appropriately and change the vhost configuration as required.</p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef Repository</b><br />We recommend using the <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a>, anyway. The Rakefile provides a number of helpers for maintaining Chef, and it is a convenient way to get started using a Version Control System for your infrastructure's configuration.</td></tr></table></div>
+
+<h1><a name="HowtoProxyChefServerwithApache-%28Re%29StartApache"></a>(Re)Start Apache</h1>
+
+<p>With all the proper bits in place, (re)start Apache.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo /etc/init.d/apache2 restart</pre>
+		</div>
+</div></div>
+
+<h1><a name="HowtoProxyChefServerwithApache-ClientConfiguration"></a>Client Configuration</h1>
+
+<p>The following configuration is required for clients to connect to the Chef server.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/chef/client.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">log_level        :info
+log_location     STDOUT
+ssl_verify_mode  :verify_none
+chef_server_url  "https://#{chef_server_fqdn}"
+validation_client_name "chef-validator"
+file_cache_path  "/srv/chef/cache"
+if FileTests.exists?("/etc/chef/validation.pem")
+  validation_key   "/etc/chef/validation.pem"
+end
+client_key       "/etc/chef/client.pem"
+
+pid_file           "/var/run/chef/client.pid"
+ 
+Mixlib::Log::Formatter.show_time = true</pre>
+		</div>
+</div></div>
+
+<p>Replace server_fqdn with the server's fully qualified domain name.</p>
+
+<h1><a name="HowtoProxyChefServerwithApache-NextSteps"></a>Next Steps</h1>
+
+<p>Point your browser at <a href="https://server_fqdn:444">https://server_fqdn:444</a>, where server_fqdn is the server you just configured. You should get the login page. 
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-2883794"></a>
+                                    <font class="smallfont"><p>So, why is this preferable to the apache + passenger approach (or is it)?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by eas at Sep 17, 2009 22:25
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-2883796"></a>
+                                    <font class="smallfont"><p>This will be the new default recommendation for configuring an SSL-frontend for Chef because it works well with both RubyGems installations and Platform-specific packages. Not all platforms have Passenger available as a package that can be added as a dependency (e.g., Debian/Ubuntu). We will still make a passenger recipe available for the Chef server, but it won't be the default.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jtimberman at Sep 18, 2009 01:46
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-5407184"></a>
+                                    <font class="smallfont"><p>Is there an example for doing the same with Nginx?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Mar 09, 2010 06:49
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-11141194"></a>
+                                    <font class="smallfont"><div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>nginx version</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">upstream chef-server {
+  server 127.0.0.1:4000;
+}
+
+server {
+  listen 443 ssl;
+
+  server_name chef.example.com;
+  root /var/lib/chef/rack/api/public;
+
+  ssl_certificate     /etc/ssl/nginx/chef.example.com.crt;
+  ssl_certificate_key /etc/ssl/nginx/chef.example.com.key;
+
+  location / {
+    try_files $uri @backend;
+  }
+
+  location @backend {
+    proxy_set_header X-Forwarded-Proto 'https';
+    proxy_set_header Host $server_name;
+    proxy_pass http://chef-server;
+  }
+}</pre>
+		</div>
+</div></div></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by hollow at Apr 12, 2011 08:25
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : CouchDB Administration for Chef Server</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : CouchDB Administration for Chef Server
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/6357032/16187408.jpg" hspace="16" vspace="30" style="border: 0px solid black"/></span></p>
+
+<h1><a name="CouchDBAdministrationforChefServer-Overview"></a>Overview</h1>
+
+<h5><a name="CouchDBAdministrationforChefServer-"></a><font color="#f7681a">This page gives some guidance on how to maintain and troubleshoot a CouchDB installation for the <a href="Chef Server.html" title="Chef Server">Chef Server</a>.</font></h5>
+
+<p>It is not meant to be comprehensive, merely to cover the common topics that users will encounter when working with CouchDB and Chef.</p>
+
+<p><br class="atl-forced-newline" /></p>
+
+<p><em>For full details about CouchDB, please see its <a href="http://couchdb.apache.org">project page</a>.</em></p>
+
+<h1><a name="CouchDBAdministrationforChefServer-RESTfulAPI"></a>RESTful API</h1>
+<p><font color="#f7681a">CouchDB has a <a href="http://wiki.apache.org/couchdb/Reference">RESTful API</a>.</font> This means you can interact with it using any tool that speaks HTTP. For example, curl.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% curl http://localhost:5984
+{"couchdb":"Welcome","version":"0.10.0"}
+
+% curl http://localhost:5984/chef
+{"db_name":"chef","doc_count":36,"doc_del_count":177,"update_seq":66256,"purge_seq":0, /joined with next line/
+"compact_running":false,"disk_size":28434524,"instance_start_time":"1273693455462751","disk_format_version":4}</pre>
+		</div>
+</div></div>
+
+<h1><a name="CouchDBAdministrationforChefServer-Compaction"></a>Compaction</h1>
+<p><font color="#f7681a">CouchDB stores a revision for every document when it is updated.</font> When the <a href="Chef Client.html" title="Chef Client">Chef Client</a> runs, it saves the node data to the server multiple times. Each time it saves, CouchDB creates a new revision. Over time with a number of clients, this can add up and cause the CouchDB database to become quite large.</p>
+
+<p>CouchDB has a feature called <a href="http://wiki.apache.org/couchdb/Compaction">Compaction</a> that can be used to remove older revisions of documents. To compact a growing database, use curl to POST on the server:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% curl -H "Content-Type: application/json" -X POST http://localhost:5984/chef/_compact
+{"ok":true}
+
+% curl http://localhost:5984/chef                 
+{"db_name":"chef","doc_count":36,"doc_del_count":177,"update_seq":66256,"purge_seq":0, /joined with next line/
+"compact_running":false,"disk_size":507996,"instance_start_time":"1273761005173758","disk_format_version":4}</pre>
+		</div>
+</div></div>
+
+<p>Since this is a common thing to do on a <a href="Chef Server.html" title="Chef Server">Chef Server</a>, the <a href="http://community.opscode.com/cookbooks/chef-server">Opscode chef-server cookbook</a> does this in its default recipe.  </p>
+
+<p>Use of the Opscode chef-server cookbook means that every time Chef runs on the <a href="Chef Server.html" title="Chef Server">Chef Server</a> with the default <a href="https://github.com/opscode-cookbooks/chef-server/blob/master/recipes/default.rb">Recipe for CouchDB compaction</a>, it will compact the database. In addition to compacting the database, the default recipe also compacts the views.</p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Compact the Views</b><br />If you are managing the CouchDB compaction yourself (<em>rather than using the <a href="http://community.opscode.com/cookbooks/chef-server">chef-server cookbook</a> cookbook to compact the database and the views</em>), be sure to run compaction on the individual views as well as the database.  
+
+<p>The <a href="http://community.opscode.com/cookbooks/chef-server">Opscode chef-server cookbook</a> contains the <a href="https://github.com/opscode/cookbooks/blob/master/chef-server/recipes/default.rb">default recipe</a> which compacts both the database and the views.  You can review it as an example on one method for compacting the views.  <em>Without compaction, the views may eventually consume all available disk space.</em></p></td></tr></table></div>
+
+<h1><a name="CouchDBAdministrationforChefServer-AdministrativeInterface"></a>Administrative Interface</h1>
+<p><font color="#f7681a">CouchDB comes with a web interface for administration.</font> It can be accessed via <a href="http://localhost:5984/_utils">http://localhost:5984/_utils</a>. Obviously since this is running on localhost by default, it won't be accessible from your management workstation, so create an SSH tunnel to the server to forward the port. If your Chef server is <tt>chef.example.com</tt>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">ssh -L 5984:localhost:5984 chef.example.com</pre>
+		</div>
+</div></div>
+
+<p>Then point your local system's web browser to <a href="http://localhost:5984/_utils">http://localhost:5984/_utils</a>.</p>
+
+<h1><a name="CouchDBAdministrationforChefServer-Client%2FNodeIDfromCouchDB"></a>Client/Node ID from CouchDB</h1>
+
+<p>To get the ID of a client/node from CouchDB execute</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">curl -s http://localhost:5984/chef/_design/nodes/_view/all_id | grep NODE_OR_CLIENT_NAME</pre>
+		</div>
+</div></div>
+
+<p>The returned data should look something like</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{"id":"e497412a-f4be-4e73-affe-e5c0d557c94d","key":"lucid1test","value":"lucid1test"}</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Chef Indexer.html" title="Chef Indexer"><span class="image-wrap" style="float: left"><img src="../attachments/6357032/20840493.png" hspace="4" style="border: 0px solid black"/></span> Chef Indexer </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Backing Up Chef Server.html" title="Backing Up Chef Server"><span class="image-wrap" style="float: right"><img src="../attachments/6357032/20840492.png" hspace="4" style="border: 0px solid black"/></span> Backing Up Chef Server </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/6357032/16187408.jpg">couch.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/6357032/20840492.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/6357032/20840493.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-23429596"></a>
+                                    <font class="smallfont"><p>wheezy and sid users, debian provides couchdb 1.1.1 compiled with &#45;-enable-js-trunk.<br/>
+recent spidermonkey doesn't work well with couchdb 1.1.1 and chef (see <a href="http://tickets.opscode.com/browse/CHEF-2827?focusedCommentId=21164&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-21164">http://tickets.opscode.com/browse/CHEF-2827?focusedCommentId=21164&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-21164</a>)<br/>
+you'll have to recompile it without this option. (remove &#45;-enable-js-trunk from debian/rules, and replace libmozjs-dev by libmozjs185-dev in debian/control, you might also want to edit the debian/changelog before rebuilding your own package)</p>
+
+<p>squeeze users might encounter this issue : <a href="https://gist.github.com/1726030">https://gist.github.com/1726030</a> (it looks like <a href="https://issues.apache.org/jira/browse/COUCHDB-893">https://issues.apache.org/jira/browse/COUCHDB-893</a>)<br/>
+I've managed to workaround the issue by using the couchdb replicator to copy from my 0.11.0 server to a new 1.1.1 server. (iow, i had to upgrade to couchdb 1.1.1)</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by laurent at Feb 04, 2012 01:08
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

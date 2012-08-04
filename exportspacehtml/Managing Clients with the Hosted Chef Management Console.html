@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Clients with the Hosted Chef Management Console</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Clients with the Hosted Chef Management Console
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<h3><a name="ManagingClientswiththeHostedChefManagementConsole-"></a><font color="#f7681a">The Management Console can be used to manage your clients</font></h3>
+
+<ul>
+	<li><h5><a name="ManagingClientswiththeHostedChefManagementConsole-ListingClients"></a>Listing Clients</h5></li>
+	<li><h5><a name="ManagingClientswiththeHostedChefManagementConsole-DeletingClients"></a>Deleting Clients</h5></li>
+	<li><h5><a name="ManagingClientswiththeHostedChefManagementConsole-CreatingaNewClient"></a>Creating a New Client</h5></li>
+	<li><h5><a name="ManagingClientswiththeHostedChefManagementConsole-RegeneratingthePrivateKeyfortheClientAPI"></a>Regenerating the Private Key for the Client API</h5></li>
+</ul>
+</div></div>
+
+<div class='navmenu' style='float:right; width:500px; background:#ffffff; border:8px solid #d7d4c3; margin:10px; padding:10px'><ul>
+	<li><b>To follow these directions, first <a href="Managing your Account and Billing Information.html#ManagingyourAccountandBillingInformation-LogintotheManagementConsole">log into the Hosted Chef Management Console</a> with your existing username.</b> If you have not signed up for an account yet, follow the directions on the <a href="Setup Opscode User and Organization.html" title="Setup Opscode User and Organization">Setup Opscode User and Organization</a> page.</li>
+</ul>
+
+
+<ul>
+	<li><b>If you're interested in editing account, node or other data in the Management Console instead, return to the <a href="Hosted Chef Management Console.html" title="Hosted Chef Management Console">Hosted Chef Management Console</a>, and make the appropriate selection.</b></li>
+</ul>
+
+</div>
+
+<h2><a name="ManagingClientswiththeHostedChefManagementConsole-Clients"></a>Clients</h2>
+
+<p><font color="#f7681a">On Hosted Chef, "<a href="API Clients.html" title="API Clients">API Clients</a>" are entities that are similar to Users, except that clients are always scoped to your organization and only have access to the Hosted Chef API.</font> API Clients are used by chef-client to authenticate when connecting to Hosted Chef. Typically, there is one client for each node under management. </p>
+
+<p>When you first sign up, a "validator" client is created for your organization named <tt>ORGANIZATION-validator.pem</tt>. This "validator" client can be used to create new clients for your organization via the Hosted Chef API. <em>If the "validator" client is deleted for any reason, you will need to recreate it to authenticate new nodes.</em> Be careful not to let this happen, if it does, following directions on the <a href="Common Errors.html#CommonErrors-401Unauthorized%2528usingvalidatorAPIclient%2529">Common Errors</a> page will to recreate it.</p>
+
+<p><font color="#f7681a">Anyone in possession of a client's private key can do anything on your Hosted Chef account that the client is authorized to do, so be sure to protect you clients' private keys.</font> These keys are typically created the first time a given chef-client connects to Hosted Chef, and stored locally on the node.</p>
+
+<p><b>You can also manage clients with the command line tool <a href="Knife.html" title="Knife">Knife</a>.</b></p>
+
+<h2><a name="ManagingClientswiththeHostedChefManagementConsole-ListingClients"></a>Listing Clients</h2>
+
+<p>In order to see a list of the clients in the organization:</p>
+
+<p>1. Log in to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Select the <em>Clients</em> tab and you will see a list similar to this: </p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923221/20086887.png" style="border: 0px solid black"/></span></p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">list permissions</a> on the global clients level to list the clients.</p>
+
+<h2><a name="ManagingClientswiththeHostedChefManagementConsole-DeletingClients"></a>Deleting Clients</h2>
+
+<p>In order to delete a client:</p>
+
+<p>1. Log in to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Select the <em>Clients</em> tab</p>
+
+<p>3. Click on the <em>delete</em> link next to the client you want to delete. </p>
+
+<p><font color="#f7681a"><b>Do not delete the validator client, which will be named ORGANIZATION-validator or you will be unable to authenticate new nodes until you <a href="Common Errors.html#CommonErrors-401Unauthorized%2528usingvalidatorAPIclient%2529">recreate the validator key</a>.</b></font></p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923221/20086888.png" style="border: 0px solid black"/></span></p>
+
+<p>This will prevent that client from authenticating to Hosted Chef.</p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">delete permissions</a> on the client to delete it.</p>
+
+<h2><a name="ManagingClientswiththeHostedChefManagementConsole-CreatingaNewClient"></a>Creating a New Client</h2>
+
+<p>New clients are typically created by chef-client when it first connects to Hosted Chef, so there is no need in that case to manually create a new client. </p>
+
+<p>If you need to manually create one, you can follow these steps:  </p>
+
+<p>1. Log in to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Select the <em>Clients</em> tab</p>
+
+<p>3. Click on the <em>Create</em> sub-menu</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923221/20086889.png" style="border: 0px solid black"/></span></p>
+
+<p>4. Enter a name for the client and press <em>Create Client</em>. A link to your client's private key will be shown. Opscode does not store your private keys, so be sure to download and save the private key. You can generate a new private key if you lose it, however.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923221/20086890.png" style="border: 0px solid black"/></span></p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">create permissions</a> on the global clients level to create a client.</p>
+
+<h2><a name="ManagingClientswiththeHostedChefManagementConsole-RegeneratingaprivatekeyforanOpscodeAPIClient"></a>Regenerating a private key for an Opscode API Client</h2>
+
+<p>Regenerating a client's private key invalidates the client's old private key and replaces it with a new one. Regenerating the key will be useful if you have lost the client's private key, if the client's private key has been exposed to someone you don't want to have access to your Hosted Chef account, or if you wish to regularly rotate keys for security purposes.</p>
+
+<h3><a name="ManagingClientswiththeHostedChefManagementConsole-RegeneratingtheKeyviatheHostedChefManagementConsole"></a>Regenerating the Key via the Hosted Chef Management Console</h3>
+
+<p>In order to regenerate a client's private key:</p>
+
+<p>1. Log in to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Select the <em>Clients</em> tab</p>
+
+<p>3. Click on the <em>regenerate private key</em> link next to the client whose key you want to regenerate:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923221/20086891.png" style="border: 0px solid black"/></span></p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">update permissions</a> on the client to recreate this key.</p>
+
+<p>Your new private key will start downloading. Save this key! There is no way for Opscode to recover the key if you lose it, though you can generate a new key again. </p>
+
+<h3><a name="ManagingClientswiththeHostedChefManagementConsole-RegeneratingtheKeywithKnife"></a>Regenerating the Key with Knife</h3>
+
+<p>To regenerate a client's key with knife, use `knife client reregister CLIENT`. This is explained further in the <a href="http://wiki.opscode.com/display/chef/API+Clients#APIClients-RegenerateaclientprivatekeywithKnife">API Clients</a> article.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Hosted Chef Management Console.html" title="Hosted Chef Management Console"><span class="image-wrap" style="float: left"><img src="../attachments/19923221/21463157.png" hspace="4" style="border: 0px solid black"/></span> Hosted Chef Management Console </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Managing Cookbooks with the Hosted Chef Management Console.html" title="Managing Cookbooks with the Hosted Chef Management Console"><span class="image-wrap" style="float: right"><img src="../attachments/19923221/21463156.png" hspace="4" style="border: 0px solid black"/></span> Managing Cookbooks with the Hosted Chef Management Console </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923221/20086887.png">clients-list.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923221/20086888.png">client-delete.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923221/20086889.png">client-create.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923221/20086890.png">client-key.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923221/20086891.png">regenerate-private-key-link.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923221/21463156.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923221/21463157.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

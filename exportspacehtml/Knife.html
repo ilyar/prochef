@@ -1,0 +1,527 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Knife</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Knife
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top"></td>
+<p><br class="atl-forced-newline" /></p>
+<div class='navmenu' style='float:right; width:300px; background:#d7d4c3; border:4px solid #d7d4c3; margin:10px; padding:4px'><div>
+<ul>
+    <li><a href='#Knife-WhatisKnife%3F'>What is Knife?</a></li>
+    <li><a href='#Knife-Overview'>Overview</a></li>
+    <li><a href='#Knife-KnifeBuiltInSubcommands'> Knife Built In Subcommands</a></li>
+    <li><a href='#Knife-ContextualHelp'>Contextual Help</a></li>
+    <li><a href='#Knife-ConfiguringYourSystemForKnife'>Configuring Your System For Knife</a></li>
+<ul>
+    <li><a href='#Knife-Knifeconfiguration'>Knife configuration</a></li>
+    <li><a href='#Knife-KnifePlugins'> Knife Plugins</a></li>
+    <li><a href='#Knife-EDITOREnvironmentVariable'>EDITOR Environment Variable</a></li>
+</ul>
+    <li><a href='#Knife-CommandandOutputOptions'>Command and Output Options</a></li>
+<ul>
+    <li><a href='#Knife-CommonOptions'>Common Options</a></li>
+    <li><a href='#Knife-OutputFormats'>Output Formats</a></li>
+</ul>
+    <li><a href='#Knife-BashCommandCompletion'>Bash Command Completion</a></li>
+<ul>
+    <li><a href='#Knife-Completioncache'>Completion cache</a></li>
+    <li><a href='#Knife-BashcommandcompletiononOSX%28TestedonOSX10.7.3%29'>Bash command completion on OS X (Tested on OS X 10.7.3)</a></li>
+</ul>
+</ul></div>
+<p><br class="atl-forced-newline" /></p></div>
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 193x200" href='http://wiki.opscode.com/download../attachments/4620311/chefknife.png'><img src="../attachments/thumbnails/4620311/21463128" hspace="14" vspace="4" style="border: 0px solid black"/></a></span></p>
+<h1><a name="Knife-WhatisKnife%3F"></a>What is Knife?</h1>
+<h3><a name="Knife-"></a><font color="#f7681a">Knife is a powerful command-line interface (CLI) that comes with Chef.</font> </h3>
+
+<h4><a name="Knife-ItisusedbyadministratorstointeractwiththeChefServerAPIandthelocalChefrepository.Itprovidesthecapabilitytomanipulatenodes%2Ccookbooks%2Croles%2Cdatabags%2Cenvironments%2Cetc.%2C..."></a>It is used by administrators to interact with the Chef <a href="Server API.html" title="Server API">Server API</a> and the local Chef repository. It provides the capability to manipulate nodes, cookbooks, roles, databags, environments, etc., and can also be used to provision cloud resources and to bootstrap systems. </h4>
+
+<h1><a name="Knife-Overview"></a>Overview</h1>
+<div class='navmenu' style='float:right; width:420px; background:#f4f2e6; margin:5px; padding:3px'><div class="panel" style="border-width: 1px;"><div class="panelContent">
+<h5><a name="Knife-"></a><font color="navy">Knife commands all have the following form</font></h5>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife sub-command [ARGUMENTS] (options)</pre>
+		</div>
+</div></div>
+</div></div></div>
+<p>As the administrators command line tool for interacting for the chef server, Knife is run from <a href="Architecture Introduction.html#ArchitectureIntroduction-ChefServer%2CNodes%2CandWorkstations">the management workstation</a>, acting as the intersection between the Chef Server and your infrastructure.</p>
+
+<p>Knife interacts with the Chef Server through the same <a href="Server API.html" title="Server API">REST API</a> that the <a href="Chef Client.html" title="Chef Client">Chef Client</a> software uses, authenticating as an <a href="API Clients.html" title="API Clients">API client</a>. Hosted Chef and Private Chef then have the additional role based authentication controls (RBAC) that authorize changes based upon users and organizations. See <a href="Authentication and Authorization.html" title="Authentication and Authorization">Authentication and Authorization</a> for more information on this model.</p>
+
+<p>Knife comes with a series of <a href="Knife Built In Subcommands.html" title="Knife Built In Subcommands">built in subcommands</a>, which provide the functionality and capability for specific actions upon cookbooks, nodes, roles, etc. within your infrastructure. Knife also has the capability to be a container for <a href="Knife Plugins.html" title="Knife Plugins">Knife Plugins</a> - which extend its functionality beyond the built in commands to features including launching cloud instances and bootstrapping systems.</p>
+
+<p>There is a built in contextual help system for obtaining more information on the commands and subcommands, options for their use, or reviewing manpage documentation. When you go through <a href="Workstation Setup.html" title="Workstation Setup">Workstation Setup</a>, one of the actions includes establishing and configuring knife for use. Subsequent modifications can be made through editing the knife.rb configuration file. </p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Knife-KnifeBuiltInSubcommands"></a><a href="Knife Built In Subcommands.html" title="Knife Built In Subcommands">Knife Built In Subcommands</a></h1>
+<p><font color="#f7681a">The following subcommands are built into Knife, and available for managing their respective components from the Knife command line interface.</font><br/>
+ See <b><a href="Knife Built In Subcommands.html" title="Knife Built In Subcommands">Knife Built In Subcommands</a></b> for details on use of each.  </p>
+</div></div>
+<p><em><a href="#Knife-top">return to top of page</a></em></p>
+<div class='navmenu' style='float:right; width:520px; background:#ffffff; border:4px solid #d7d4c3; margin:20px; padding:14px'><div class="" align="center"><h5><a name="Knife-"></a><font color="navy">Knife sub-commands are structured to take the form <br/>
+<tt>NOUN verb NOUN</tt> (options)</font> </h5></div>
+
+<p>Because the Chef Server API is RESTful, the <tt>verb</tt> of a knife command is generally a  CRUD operation:</p>
+
+<ul>
+	<li><b>create</b> (create)</li>
+	<li><b>list</b> and show (read)</li>
+	<li><b>edit</b> (update)</li>
+	<li><b>delete</b> (destroy)</li>
+</ul>
+</div>
+<h5><a name="Knife-SubcommandsbuiltintoKnife%3A"></a>Subcommands built into Knife:</h5>
+<ul>
+	<li>Bootstrap</li>
+	<li>Client</li>
+	<li>Cloud Plugins</li>
+	<li>Configure</li>
+	<li>Cookbook</li>
+	<li>Cookbook Site</li>
+	<li>Data Bag</li>
+	<li>Environment</li>
+	<li>Exec</li>
+	<li>Node</li>
+	<li>Recipe</li>
+	<li>Role</li>
+	<li>Search</li>
+	<li>SSH</li>
+	<li>Status</li>
+	<li>Tag</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Knife-ContextualHelp"></a>Contextual Help</h1>
+<p><font color="#f7681a">Knife has a smart contextual help system built right in.</font></p>
+</div></div>
+
+<p><em><a href="#Knife-top">return to top of page</a></em></p>
+
+<h5><a name="Knife-"></a><font color="navy">If you invoke knife with the <tt>--help</tt> option at the top level you will see options common to all subcommands.</font></h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">% knife --help
+Usage: knife sub-command (options)
+    -s, --server-url URL             Chef Server URL
+    -k, --key KEY                    API Client Key
+        --[no-]color                 Use colored output, defaults to enabled
+    -c, --config CONFIG              The configuration file to use
+        --defaults                   Accept default values for all questions
+    -d, --disable-editing            Do not open EDITOR, just accept the data as is
+    -e, --editor EDITOR              Set the editor to use for interactive commands
+    -E, --environment ENVIRONMENT    Set the Chef environment
+    -F, --format FORMAT              Which format to use for output
+    -u, --user USER                  API Client Username
+        --print-after                Show the data after a destructive operation
+    -V, --verbose                    More verbose output. Use twice for max verbosity
+    -v, --version                    Show chef version
+    -y, --yes                        Say yes to all prompts for confirmation
+    -h, --help                       Show this message
+
+Available subcommands: (for details, knife SUB-COMMAND --help)
+
+...</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<h5><a name="Knife-"></a><font color="navy"> If you invoke knife with the <tt>--help</tt> option at a specific subcommand level, knife presents the options specific to that subcommand.</font></h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">% knife ssh --help
+knife ssh QUERY COMMAND (options)
+    -a, --attribute ATTR             The attribute to use for opening the connection - default is fqdn
+    -s, --server-url URL             Chef Server URL
+    -k, --key KEY                    API Client Key
+        --color                      Use colored output
+    -C, --concurrency NUM            The number of concurrent connections
+    -c, --config CONFIG              The configuration file to use
+        --defaults                   Accept default values for all questions
+    -e, --editor EDITOR              Set the editor to use for interactive commands
+    -E, --environment ENVIRONMENT    Set the Chef environment
+    -F, --format FORMAT              Which format to use for output
+    -i IDENTITY_FILE,                The SSH identity file used for authentication
+        --identity-file
+    -m, --manual-list                QUERY is a space separated list of servers
+        --no-color                   Don't use colors in the output
+    -n, --no-editor                  Do not open EDITOR, just accept the data as is
+        --no-host-key-verify         Disable host key verification
+    -u, --user USER                  API Client Username
+        --print-after                Show the data after a destructive operation
+    -P, --ssh-password PASSWORD      The ssh password
+    -p, --ssh-port PORT              The ssh port
+    -x, --ssh-user USERNAME          The ssh username
+    -V, --verbose                    More verbose output. Use twice for max verbosity
+    -v, --version                    Show chef version
+    -y, --yes                        Say yes to all prompts for confirmation
+    -h, --help                       Show this message</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<h5><a name="Knife-"></a><font color="navy">Further, you can directly access manpages with content similar to this page using the <tt>help</tt> sub-command.  Use <tt>knife help list</tt>.</font></h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife help list
+Available help topics are:
+  bootstrap
+  client
+  configure
+  cookbook
+  cookbook-site
+  data-bag
+  environment
+  exec
+  index
+  knife
+  node
+  role
+  search
+  shef
+  ssh
+  status
+  tag</pre>
+		</div>
+</div></div>
+<div class='navmenu' style='float:right; width:580px; background:#f4f2e6; margin:5px; padding:3px'><div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Knife has a Man Page</b><br />The man page for knife is the authoritative reference for knife. It is also shipped with the chef gem, rpm and deb. It can be easily accessed using knife's built-in help system: 
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife help knife</pre>
+		</div>
+</div></div></td></tr></table></div></div>
+<p><br class="atl-forced-newline" /></p>
+<h5><a name="Knife-"></a><font color="navy">You can then read individual pages by using a command in the form of:</font></h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife help topic</pre>
+		</div>
+</div></div>
+
+<h1><a name="Knife-ConfiguringYourSystemForKnife"></a>Configuring Your System For Knife</h1>
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="Knife-Knifeconfiguration"></a>Knife configuration</h2>
+<p><font color="#f7681a">The knife configuration file is a Ruby DSL to set configuration parameters for Knife's common options.</font> </p>
+</div></div>
+
+<p><em><a href="#Knife-top">return to top of page</a></em></p>
+
+<p>Knife's configuration file is named <tt>knife.rb</tt>.  <em>Unless directly passed the configuration file location via the <tt>&#45;c</tt> command line option, Knife searches for this configuration by searching for <tt>.chef/knife.rb</tt>, starting at the current working directory and moving upward.</em>  If no configuration is found <tt>~/.chef/knife.rb</tt> is used if it exists.</p>
+
+<h5><a name="Knife-Thefollowingparameterscanbesetin%7B%7Bknife.rb%7D%7D%3A"></a>The following parameters can be set in <tt>knife.rb</tt>:</h5>
+
+<ul>
+	<li><tt>node_name</tt>:<br/>
+    User or client identity (i.e., name) to use for authenticating requests to the Chef Server.</li>
+	<li><tt>client_key</tt>:<br/>
+    Private key file to authenticate to the Chef server. Corresponds to the -k or --key option.</li>
+	<li><tt>chef_server_url</tt>:<br/>
+    URL of the Chef server. Corresponds to the -s or --server-url option. This is requested from the user when running this sub-command.</li>
+	<li><tt>cache_type</tt>:<br/>
+    The type of cache to use. Default is BasicFile. This can be any type of Cache that moneta supports: BasicFile, Berkeley, Couch, DataMapper, File, LMC, Memcache, Memory, MongoDB, Redis, Rufus, S3, SDBM, Tyrant, Xattr, YAML.</li>
+	<li><tt>cache_option</tt>:<br/>
+    Specifies various options to use for caching. These options are dependent on the cache_type.</li>
+	<li><tt>validation_client_name</tt>:<br/>
+    Specifies the name of the client used to validate new clients.</li>
+	<li><tt>validation_key</tt>:<br/>
+    Specifies the private key file to use when bootstrapping new hosts. See knife-client(1) for more information about the validation client.</li>
+	<li><tt>cookbook_copyright</tt>, <tt>cookbook_email</tt>, <tt>cookbook_license</tt>:<br/>
+    Used by knife cookbook create sub-command to specify the copyright holder, maintainer email and license (respectively) for new cookbooks. The copyright holder is listed as the maintainer in the cookbook's metadata and as the Copyright in the comments of the default recipe. The maintainer email is used in the cookbook metadata. The license determines what preamble to put in the comment of the default recipe, and is listed as the license in the cookbook metadata. Currently supported licenses are "apachev2" and "none". Any other values will result in an empty license in the metadata (needs to be filled in by the author), and no comment preamble in the default recipe.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="Knife-KnifePlugins"></a><a href="Knife Plugins.html" title="Knife Plugins">Knife Plugins</a></h2>
+<p><font color="#f7681a">As Chef will load commands from a set of specific locations, you can create plugins for reuse across projects in your home directory, share plugins with your team by including them in your cookbook repo, and share plugins with the whole Chef community by distributing them as Ruby gems.</font> </p>
+</div></div>
+<p><em><a href="#Knife-top">return to top of page</a></em></p>
+
+<p>With Chef 0.10, knife will load commands from the following locations:</p>
+
+<ul>
+	<li>The core set of knife commands shipped with Chef</li>
+	<li>Commands in your home chef directory: ~/.chef/plugins/knife/</li>
+	<li>Commands in a .chef/plugins/knife/ directory in your cookbook repo</li>
+	<li>Commands located in a chef/knife/ directory in a Ruby Gem you have installed.</li>
+</ul>
+
+
+<p><font color="#f7681a">See <b><a href="Knife Plugins.html" title="Knife Plugins">Knife Plugins</a></b> for details on creating and installing plugins, and <b><a href="Community Plugins.html" title="Community Plugins">Community Plugins</a></b> for a listing of plugins that have been made available by Chef community members.</font></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h2><a name="Knife-EDITOREnvironmentVariable"></a>EDITOR Environment Variable</h2>
+<p><font color="#f7681a">Many knife commands use the EDITOR environment variable when create or editing objects that will be saved on the Chef Server.</font> </p>
+</div></div>
+
+<p><em><a href="#Knife-top">return to top of page</a></em></p>
+
+<h5><a name="Knife-"></a><font color="navy">You can set this variable when issuing the command.</font></h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; EDITOR=nano knife node edit NODENAME</pre>
+		</div>
+</div></div>
+
+<h5><a name="Knife-"></a><font color="navy">Alternatively you can set the variable for the rest of your shell's session.</font></h5>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; export EDITOR=nano
+&gt; knife node edit NODENAME</pre>
+		</div>
+</div></div>
+
+<p>See your shell's documentation for information on how to ensure that EDITOR is always set when you start a new shell.</p>
+
+<h1><a name="Knife-CommandandOutputOptions"></a>Command and Output Options</h1>
+<p><br class="atl-forced-newline" /></p>
+<h2><a name="Knife-CommonOptions"></a>Common Options</h2>
+
+<p><font color="#f7681a">The following options can be passed to any subcommand.</font>  For sub-command specific options, see the section of <a href="Knife Built In Subcommands.html" title="Knife Built In Subcommands">Knife Built In Subcommands</a> for the relevant subcommand.</p>
+
+<ul>
+	<li><tt>&#45;s</tt>, <tt>&#45;&#45;server-url URL</tt>:<br/>
+    Chef Server URL</li>
+	<li><tt>&#45;k</tt>, <tt>&#45;&#45;key KEY</tt>:<br/>
+    API Client Key</li>
+	<li><tt>&#45;&#45;color</tt>:<br/>
+    Use colored output</li>
+	<li><tt>&#45;c</tt>, <tt>&#45;&#45;config CONFIG</tt>:<br/>
+    The configuration file to use</li>
+	<li><tt>&#45;&#45;defaults</tt>:<br/>
+    Accept default values for all questions</li>
+	<li><tt>&#45;e</tt>, <tt>&#45;&#45;editor EDITOR</tt>:<br/>
+    Set the editor to use for interactive commands</li>
+	<li><tt>&#45;E</tt>, <tt>&#45;&#45;environment ENVIRONMENT</tt>:<br/>
+    Set the Chef environment</li>
+	<li><tt>&#45;F</tt>, <tt>&#45;&#45;format FORMAT</tt>:<br/>
+    Which format to use for output. See the Output Formats section below.</li>
+	<li><tt>&#45;&#45;no-color</tt>:<br/>
+    Don't use colors in the output</li>
+	<li><tt>&#45;n</tt>, <tt>&#45;&#45;no-editor</tt>:<br/>
+    Do not open EDITOR, just accept the data as is</li>
+	<li><tt>&#45;u</tt>, <tt>&#45;&#45;user USER</tt>:<br/>
+    API Client Username</li>
+	<li><tt>&#45;&#45;print-after</tt>:<br/>
+    Show the data after a destructive operation</li>
+	<li><tt>&#45;V</tt>, <tt>&#45;&#45;verbose</tt>:<br/>
+    More verbose output. Use twice for max verbosity</li>
+	<li><tt>&#45;v</tt>, <tt>&#45;&#45;version</tt>:<br/>
+    Show chef version</li>
+	<li><tt>&#45;y</tt>, <tt>&#45;&#45;yes</tt>:<br/>
+    Say yes to all prompts for confirmation</li>
+	<li><tt>&#45;h</tt>, <tt>&#45;&#45;help</tt>:<br/>
+    Show this message</li>
+</ul>
+
+
+<div class='navmenu' style='float:right; width:420px; background:#f4f2e6; margin:5px; padding:3px'><p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Knife Output Change</b><br /><br class="atl-forced-newline" />
+The default knife output changed with version 0.10.  Previous version of knife output JSON while 0.10 formats its output for human consumption.
+
+<p>  <em>Knife will still output JSON if passed the option <b><tt>-Fj</tt></b> at the command line.</em></p></td></tr></table></div></div>
+<h2><a name="Knife-OutputFormats"></a>Output Formats</h2>
+<p><font color="#f7681a">The amount of content displayed and the output format can be modified by the `--format` option.</font> If no alternate format is selected, the default is summary.</p>
+
+<p>Valid formats are:</p>
+
+<ul>
+	<li><tt>summary</tt>:<br/>
+    displays the node in a custom, summarized format (default)</li>
+	<li><tt>text</tt>:<br/>
+    displays the node data in its entirety using the colorized tree display</li>
+	<li><tt>json</tt>:<br/>
+    displays the node in JSON format</li>
+	<li><tt>yaml</tt>:<br/>
+    displays the node in YAML format</li>
+	<li><tt>pp</tt>:<br/>
+    displays the node using Ruby's pretty printer.</li>
+</ul>
+
+
+<p>For brevity, only the first character of the format is required, for example, -Fj will produce JSON format output.</p>
+
+<p><br class="atl-forced-newline" /></p></tr></tbody></table>
+
+<h1><a name="Knife-BashCommandCompletion"></a>Bash Command Completion</h1>
+
+<p>Get the code here: from <a href="https://gist.github.com/1050685">Gist</a><br/>
+To use, you need the <tt>bash-completion</tt> package; Source the script from <tt>.bashrc</tt> or elsewhere.<br/>
+The script uses the KNIFE_HOME variable to location knife.rb, so be sure to export it if your knife.rb is can't be found.</p>
+
+<h2><a name="Knife-Completioncache"></a>Completion cache</h2>
+
+<p>The completion reads completion alternatives from knife invocations and can be a little slow without caching. To enable the cache, simply create the directory <tt>$KNIFE_HOME/.chef/.completion_cache</tt> (KNIFE_HOME defaults to $HOME/.chef)<br/>
+Since environment, role, node and data bag names are cached cache cleanup may be necessary when they change. Simply delete the files in the completion directory.</p>
+
+<h2><a name="Knife-BashcommandcompletiononOSX%28TestedonOSX10.7.3%29"></a>Bash command completion on OS X (Tested on OS X 10.7.3)</h2>
+
+<p>1. Install bash-completion</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">brew install bash-completion</pre>
+		</div>
+</div></div>
+
+<p>2. Install gnu-sed</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">brew install gnu-sed</pre>
+		</div>
+</div></div>
+
+<p>3. Create local bash-completion dir</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mkdir ~/bash_completion.d/</pre>
+		</div>
+</div></div>
+
+<p>4. Install knife completions</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">Get the code here: https://gist.github.com/1050685
+cd ~/bash_completion.d/ &amp;&amp; copy the code from the gist above into the file ~/bash_completion.d/knife</pre>
+		</div>
+</div></div>
+<p>5. Source core brew-installed bash completion and then our knife stuff in ~/.bash_profile</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">if [ -f `brew --prefix`/etc/bash_completion ]; then
+  . `brew --prefix`/etc/bash_completion
+fi
+
+if [ -f ~/bash_completion.d/knife ]; then
+  . ~/bash_completion.d/knife
+fi</pre>
+		</div>
+</div></div>
+
+<p>6. Source your ~/.bash_profile again to refresh</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">. ~/.bash_profile</pre>
+		</div>
+</div></div>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<td class="confluenceTd" valign="top">
+<td class="confluenceTd" valign="top" width="5%"></td></td></tr></tbody></table>
+
+
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Managing Chef.html" title="Managing Chef"><span class="image-wrap" style="float: left"><img src="../attachments/4620311/21463130.png" hspace="4" style="border: 0px solid black"/></span> Managing Chef </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Knife Built In Subcommands.html" title="Knife Built In Subcommands"><span class="image-wrap" style="float: right"><img src="../attachments/4620311/21463129.png" hspace="4" style="border: 0px solid black"/></span> Knife Built In Subcommands </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/4620311/8323073.jpg">macterm_screenshot.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/4620311/14057502.gif">orange_dot.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/4620311/14057516.jpg">chefknife.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/4620311/14057515.jpg">chefknife.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/4620311/20840639.png">csshx_screenshot.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/4620311/21463128.png">chefknife.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/4620311/21463129.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/4620311/21463130.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-11666271"></a>
+                                    <font class="smallfont"><p>If you are using Mac OS X and want to use the knife bash completions mentioned on this page and you are using <em>brew</em> instead of <em>Macports</em> the command to install <em>gsed</em> is:<br/>
+<tt>brew install gnu-sed</tt></p>
+
+<p>You'll also have to install bash_completion no mater if you are using <em>Macports</em> or <em>brew</em>. Some good instructions for this and other Mac OS X setup goodness at <a href="http://justinhileman.info/article/building-a-lamp-development-environment-on-snow-leopard/">http://justinhileman.info/article/building-a-lamp-development-environment-on-snow-leopard/</a> Search for bash_completion on that page.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Apr 29, 2011 19:42
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

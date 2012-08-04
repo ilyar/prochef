@@ -1,0 +1,396 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Chef Repository</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Chef Repository
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/1179856/14057517.png" hspace="12" vspace="20" style="border: 0px solid black"/></span></p>
+<h1><a name="ChefRepository-Overview"></a>Overview</h1>
+<h5><a name="ChefRepository-"></a><font color="#f7681a">Every Chef installation needs a Chef Repository. This is the place where cookbooks, roles, config files and other artifacts for managing systems with Chef will live. <br/>
+<br/>
+We strongly recommend storing this repository in a version control system and treating it like source code.</font></h5>
+
+<p>While we prefer Git, and <a href="https://github.com/opscode/chef-repo">make this repository available via GitHub</a>, you are welcome to download a tar or zip archive and use your favorite version control system to manage the code.</p>
+
+<h1><a name="ChefRepository-ChefTermsusedonthispage"></a>Chef Terms used on this page</h1>
+<p>We use some terms regarding the Chef Repository that have further explanation on their own pages.</p>
+
+<ul>
+	<li><a href="Knife.html" title="Knife">Knife</a> - Chef's command-line API tool.</li>
+	<li><a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> - Unit of code distribution in Chef.</li>
+	<li><a href="Roles.html" title="Roles">Roles</a> - Describe what a node should be / do.</li>
+	<li><a href="Data Bags.html" title="Data Bags">Data Bags</a> - Arbitrary stores of data about the environment / infrastructure.</li>
+</ul>
+
+</td>
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ChefRepository-Overview'>Overview</a></li>
+    <li><a href='#ChefRepository-ChefTermsusedonthispage'>Chef Terms used on this page</a></li>
+    <li><a href='#ChefRepository-Gettingthechefrepo'>Getting the chef-repo</a></li>
+<ul>
+    <li><a href='#ChefRepository-CloningOpscode%27sChefRepofromGitHub'>Cloning Opscode's Chef Repo from GitHub</a></li>
+    <li><a href='#ChefRepository-Ifyoudon%27twantGitWorkingWithGitandCookbooks...'>If you don't want Git...</a></li>
+</ul>
+    <li><a href='#ChefRepository-RepositoryDirectories'>Repository Directories</a></li>
+<ul>
+    <li><a href='#ChefRepository-config'>config</a></li>
+    <li><a href='#ChefRepository-cookbooks'>cookbooks</a></li>
+    <li><a href='#ChefRepository-databags'>data_bags</a></li>
+    <li><a href='#ChefRepository-roles'>roles</a></li>
+    <li><a href='#ChefRepository-certificates'>certificates</a></li>
+</ul>
+    <li><a href='#ChefRepository-RakeTasks'>Rake Tasks</a></li>
+    <li><a href='#ChefRepository-Configuration'>Configuration</a></li>
+    <li><a href='#ChefRepository-NextSteps'>Next Steps</a></li>
+</ul></div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h1><a name="ChefRepository-Gettingthechefrepo"></a>Getting the <a href="http://github.com/opscode/chef-repo">chef-repo</a></h1>
+<p><font color="#f7681a">To create your own repository, start by cloning Opscode's <tt>chef-repo</tt> from GitHub.</font> <em>If you don't want to install Git, you can download a tarball.</em></p>
+
+<h3><a name="ChefRepository-CloningOpscode%27sChefRepofromGitHub"></a>Cloning Opscode's Chef Repo from GitHub</h3>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Git Clone chef-repo</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">git clone git://github.com/opscode/chef-repo.git</pre>
+		</div>
+</div></div>
+
+<p>If you want to wipe out the existing history and start fresh, feel free to remove the <tt>.git</tt> directory after you clone. Then you can initialize a new git repository, or create a subversion (or mercurial, or bazaar) repository.</p>
+
+<h3><a name="ChefRepository-Ifyoudon%27twantGitWorkingWithGitandCookbooks..."></a>If you don't want <a href="Working with Git and Cookbooks.html" title="Working with Git and Cookbooks">Git</a>...</h3>
+<p>You can download the tarball directly from GitHub:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Grab Tarball of Chef Repo</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">wget https://github.com/opscode/chef-repo/tarball/master</pre>
+		</div>
+</div></div>
+
+<p>You'll need to extract the tarball, and move the directory it creates (by default, <tt>username&#45;project&#45;commit/</tt>) to <tt>chef-repo</tt>. The commit ID may be different than this.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Extract Tarball</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">tar -zxf master
+mv opscode-chef-repo-a3bec38 chef-repo</pre>
+		</div>
+</div></div>
+
+<p><b>We still strongly recommend you use some kind of version control tool to manage the source code in your chef-repo, so use your favorite tool to initialize the repository for tracking.</b>  If you do use Git, there is more info on <a href="Working with Git and Cookbooks.html" title="Working with Git and Cookbooks">Working with Git and Cookbooks</a>.</p>
+
+<h1><a name="ChefRepository-RepositoryDirectories"></a>Repository Directories</h1>
+<p><font color="#f7681a">This repository contains several directories, and each directory contains a README file that describes what it is for in greater detail, and how to use it for managing your systems with Chef.</font></p>
+
+<ul>
+	<li><tt>config/</tt> - Contains the Rake configuration file, <tt>rake.rb</tt>.</li>
+	<li><tt>cookbooks/</tt> - Cookbooks you download or create.</li>
+	<li><tt>data_bags/</tt> - Store data bags and items in .json in the repository.</li>
+	<li><tt>roles/</tt> - Store roles in .rb or .json in the repository.</li>
+	<li><tt>certificates/</tt> - SSL certificates generated by <tt>rake ssl_cert</tt> live here.</li>
+</ul>
+
+
+<h3><a name="ChefRepository-config"></a>config</h3>
+<p>Contains the Rake config file. See <a href="#ChefRepository-Configuration">Configuration</a> below.</p>
+
+<h3><a name="ChefRepository-cookbooks"></a>cookbooks</h3>
+<p>This directory contains the <a href="Cookbooks.html" title="Cookbooks">cookbooks</a> used to configure systems in your infrastructure with Chef. Configure knife to use your preferred copyright holder, email contact and license by adding the following lines to <tt>~/chef-repo/.chef/knife.rb</tt>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbook_copyright "Example, Com."
+    cookbook_email     "cookbooks@example.com"
+    cookbook_license   "apachev2"</pre>
+		</div>
+</div></div>
+
+<p>Supported values for <tt>cookbook_license</tt> are "apachev2" or "none". These settings are used to prefill comments in the default recipe, and the corresponding values in the metadata.rb. You are free to change these in those files.</p>
+
+<p>Create new cookbooks in this directory with Knife.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook create COOKBOOK</pre>
+		</div>
+</div></div>
+
+<p>This will create all the cookbook directory components. You don't need to use them all, and can delete the ones you don't need. It also creates a README file, metadata.rb and default recipe.</p>
+
+<p>You can also download cookbooks directly from the <a href="http://community.opscode.com/cookbooks">Opscode Community Cookbook Site</a>. There are two subcommands to help with this depending on what your preference is.  The first and recommended method is to use a vendor branch if you're using <a href="Working with Git and Cookbooks.html" title="Working with Git and Cookbooks">Git</a>, this step is automatically handled with <a href="Knife.html" title="Knife">Knife</a>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site install COOKBOOK</pre>
+		</div>
+</div></div>
+
+<p>This will:</p>
+
+<ul>
+	<li>Download the cookbook tarball from cookbooks.opscode.com.</li>
+	<li>Ensure it's on the git master branch.</li>
+	<li>Checks for an existing vendor branch, and creates if it doesn't.</li>
+	<li>Checks out the vendor branch (chef-vendor-COOKBOOK).</li>
+	<li>Removes the existing (old) version.</li>
+	<li>Untars the cookbook tarball it downloaded in the first step.</li>
+	<li>Adds the cookbook files to the git index and commits.</li>
+	<li>Creates a tag for the version downloaded.</li>
+	<li>Checks out the master branch again.</li>
+	<li>Merges the cookbook into master.</li>
+</ul>
+
+
+<p>The last step will ensure that any local changes or modifications you have made to the cookbook are preserved, so you can keep your changes through upstream updates.</p>
+
+<p>If you're not using <a href="Working with Git and Cookbooks.html" title="Working with Git and Cookbooks">Git</a>, use the site download subcommand to download the tarball.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site download COOKBOOK</pre>
+		</div>
+</div></div>
+
+<p>This creates the COOKBOOK.tar.gz from in the current directory (e.g., <tt>~/chef-repo</tt>). We recommend following a workflow similar to the above for your version control tool.</p>
+
+<h3><a name="ChefRepository-databags"></a>data_bags</h3>
+
+<p>This directory contains directories of the various data bags you create for your infrastructure. Each subdirectory corresponds to a data bag on the Chef Server, and contains JSON files of the items that go in the bag.</p>
+
+<p>First, create a directory for the data bag.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mkdir data_bags/BAG</pre>
+		</div>
+</div></div>
+
+<p>Then create the JSON files for items that will go into that bag.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$EDITOR data_bags/BAG/ITEM.json</pre>
+		</div>
+</div></div>
+
+<p>The JSON for the ITEM must contain a key named "id" with a value equal to "ITEM". For example,</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+      "id": "foo"
+    }</pre>
+		</div>
+</div></div>
+
+<p>Next, create the data bag on the Chef Server.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag create BAG</pre>
+		</div>
+</div></div>
+
+<p>Then upload the items in the data bag's directory to the Chef Server.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag from file BAG ITEM.json</pre>
+		</div>
+</div></div>
+
+<h3><a name="ChefRepository-roles"></a>roles</h3>
+
+<p>Create roles here, in either the Role Ruby DSL (.rb) or JSON (.json) files. To install roles on the server, use knife.</p>
+
+<p>For example, create <tt>roles/base_example.rb</tt>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">name "base_example"
+    description "Example base role applied to all nodes."
+    # List of recipes and roles to apply. Requires Chef 0.8, earlier versions use 'recipes()'.
+    #run_list()
+    # Attributes applied if the node doesn't have it set already.
+    #default_attributes()
+    # Attributes applied no matter what the node has set already.
+    #override_attributes()</pre>
+		</div>
+</div></div>
+
+<p>Then upload it to the Chef Server:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife role from file roles/base_example.rb</pre>
+		</div>
+</div></div>
+
+<h3><a name="ChefRepository-certificates"></a>certificates</h3>
+
+<p>Creating SSL certificates is a common task done in web application infrastructures, so a rake task is provided to generate certificates. These certificates are stored here by the ssl_cert task.  </p>
+
+<p>Configure the values used in the SSL certificate by modifying <tt>config/rake.rb</tt>.  To generate a certificate set for a new monitoring server, for example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rake ssl_cert FQDN=monitoring.example.com</pre>
+		</div>
+</div></div>
+
+<p>Once the certificates are generated, copy them into the cookbook(s) where you want to use them.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cp certificates/monitoring.example.com.* cookbooks/COOKBOOK/files/default</pre>
+		</div>
+</div></div>
+
+<p>In the recipe for that cookbook, create a <a href="Resources.html#Resources-CookbookFile">cookbook_file resource</a> to configure a resource that puts them in place on the destination server.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cookbook_file '/etc/apache2/ssl/monitoring.example.com.pem'
+      owner 'root'
+      group 'root'
+      mode 0600
+    end</pre>
+		</div>
+</div></div>
+
+<h1><a name="ChefRepository-RakeTasks"></a>Rake Tasks</h1>
+
+<p><font color="#f7681a">The repository contains a <tt>Rakefile</tt> that includes tasks that are installed with the Chef libraries.</font> To view the tasks available with in the repository with a brief description, run <tt>rake &#45;T</tt>.</p>
+
+<p>The default task (<tt>default</tt>) is run when executing <tt>rake</tt> with no arguments. It will call the task <tt>test_cookbooks</tt>.</p>
+
+<p>The following tasks are not directly replaced by knife sub-commands:</p>
+
+<ul>
+	<li><tt>bundle_cookbook</tt> - Creates cookbook tarballs in the <tt>pkgs/</tt> dir.</li>
+	<li><tt>install</tt> - Calls <tt>update</tt>, <tt>roles</tt> and <tt>upload_cookbooks</tt> Rake tasks.</li>
+	<li><tt>ssl_cert</tt> - Create self-signed SSL certificates in <tt>certificates/</tt> dir.</li>
+	<li><tt>update</tt> - Update the repository from source control server, understands git and svn.</li>
+</ul>
+
+
+<p>The following tasks duplicate functionality from knife and may be removed in a future version of Chef:</p>
+
+<ul>
+	<li><tt>metadata</tt> - replaced by <tt>knife cookbook metadata &#45;a</tt>.</li>
+	<li><tt>new_cookbook</tt> - replaced by <tt>knife cookbook create</tt>.</li>
+	<li><tt>role</tt> - replaced by <tt>knife role from file</tt>.</li>
+	<li><tt>roles</tt> - iterates over the roles and uploads with <tt>knife role from file</tt>.</li>
+	<li><tt>test_cookbooks</tt> - replaced by <tt>knife cookbook test &#45;a</tt>.</li>
+	<li><tt>test_cookbook</tt> - replaced by <tt>knife cookbook test COOKBOOK</tt>.</li>
+	<li><tt>upload_cookbooks</tt> - replaced by <tt>knife cookbook upload &#45;a</tt>.</li>
+	<li><tt>upload_cookbook</tt> - replaced by <tt>knife cookbook upload COOKBOOK</tt>.</li>
+</ul>
+
+
+<h1><a name="ChefRepository-Configuration"></a>Configuration</h1>
+<p><font color="#f7681a">The repository uses two configuration files.</font></p>
+
+<ul>
+	<li>config/rake.rb</li>
+	<li>.chef/knife.rb (optional)</li>
+</ul>
+
+
+<p>The first, <tt>config/rake.rb</tt> configures the Rakefile in two sections.</p>
+
+<ul>
+	<li>Constants used in the <tt>ssl_cert</tt> task for creating the certificates.</li>
+	<li>Constants that set the directory locations used in various tasks.</li>
+</ul>
+
+
+<p>If you use the <tt>ssl_cert</tt> task, change the values in the <tt>config/rake.rb</tt> file appropriately. These values were also used in the <tt>new_cookbook</tt> task, but that task is replaced by the <tt>knife cookbook create</tt> command which can be configured below.</p>
+
+<p>The second config file, <tt>.chef/knife.rb</tt> is a repository specific configuration file for knife. If it exists, it will override your primary knife configuration file (in <tt>~/.chef/knife.rb</tt>). You do not need to have a <tt>knife.rb</tt> in your chef-repo if your primary knife configuration file is correct. If you're using the Opscode Platform, you can download a knife configuration for your organization from the management console. If you're using the Open Source Chef Server, you can generate a new one with <tt>knife configure</tt>. For more information about configuring Knife, see the <a href="Knife.html" title="Knife">Knife documentation</a>.</p>
+
+<h1><a name="ChefRepository-NextSteps"></a>Next Steps</h1>
+
+<p>Learn more about <a href="Chef Basics.html" title="Chef Basics">Chef Basics</a> or get started on working with <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> at the <a href="Cookbook Fast Start Guide.html" title="Cookbook Fast Start Guide">Cookbook Fast Start Guide</a>. If you did proceed with Git, we have a <a href="Guides.html" title="Guides">guide</a> on <a href="Working with Git and Cookbooks.html" title="Working with Git and Cookbooks">Working with Git and Cookbooks</a> that you may want to review.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Cookbook Site Help.html" title="Cookbook Site Help"><span class="image-wrap" style="float: left"><img src="../attachments/1179856/20840610.png" hspace="4" style="border: 0px solid black"/></span> Cookbook Site Help </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Data Bags.html" title="Data Bags"><span class="image-wrap" style="float: right"><img src="../attachments/1179856/20840609.png" hspace="4" style="border: 0px solid black"/></span> Data Bags </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179856/6094850.png">Cookbook_Upload_Flow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179856/6094849.png">Cookbook_Upload_Flow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179856/14057517.png">image_thumb.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179856/20840609.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179856/20840610.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

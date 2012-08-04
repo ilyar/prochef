@@ -1,0 +1,1173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Deploy Resource</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Deploy Resource
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/2883919/13238300.jpg" hspace="14" vspace="4" style="border: 0px solid black"/></span></p>
+<h5><a name="DeployResource-"></a><font color="#f7681a">There are two resources for deployment, the <a href="#DeployResource-DeployResource">Deploy Resource</a> - with extensive attributes available to specify use, and the <a href="#DeployResource-SCMResources">SCM Resources</a> - which can be used within the Deploy Resource, or independently.</font>  </h5>
+
+<p>There are many approaches and strategies that can be undertaken to use these resources for managing and automating deployment within your infrastructure.  <font color="navy"><b>The <a href="#DeployResource-Discussion">discussion</a> below goes over some of those approaches and provides some examples of use.</b></font></p>
+
+<h1><a name="DeployResource-SCMResources"></a>SCM Resources</h1>
+
+<p><font color="#f7681a">Source Control Management (SCM) Resources, which may be used within the Deploy resource, or independently.</font></p>
+
+<h2><a name="DeployResource-Actions"></a>Actions</h2>
+
+<p>"sync" is the default action.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Action</th>
+<th class='confluenceTh'>Description</th>
+<th class='confluenceTh'>Default</th>
+</tr>
+<tr>
+<th class='confluenceTh'><b>sync</b></th>
+<td class='confluenceTd'>Update the source to the specified revision, or get a new clone/checkout</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>checkout</b></th>
+<td class='confluenceTd'>Clone or checkout the source. Does nothing if a checkout is available</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>export</b></th>
+<td class='confluenceTd'> Export the source, excluding or removing any version control artifacts</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>force_export</b></th>
+<td class='confluenceTd'> (Subversion only) Force an export of the source overwriting the existing copy if it exists, excluding or removing any version control artifacts</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h2><a name="DeployResource-Attributes"></a>Attributes</h2>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Attribute</th>
+<th class='confluenceTh'>Description</th>
+<th class='confluenceTh'>Default Value</th>
+</tr>
+<tr>
+<th class='confluenceTh'><b>destination</b></th>
+<td class='confluenceTd'> <font color="green">Name attribute</font> Path to clone/checkout/export the source to.</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>repository</b></th>
+<td class='confluenceTd'> URI of the repository </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>revision</b></th>
+<td class='confluenceTd'> revision to checkout. can be symbolic, like "HEAD" or an SCM specific revision id</td>
+<td class='confluenceTd'> HEAD </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>reference</b></th>
+<td class='confluenceTd'> (Git only) alias for revision </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>user</b></th>
+<td class='confluenceTd'> System user to own the checked out code</td>
+<td class='confluenceTd'> nil (user chef runs as) </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>group</b></th>
+<td class='confluenceTd'> System group to own the checked out code </td>
+<td class='confluenceTd'>nil(user chef runs as) </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>svn_username</b></th>
+<td class='confluenceTd'> (Subversion only) Username for Subversion operations </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>svn_password</b></th>
+<td class='confluenceTd'> (Subversion only) Password for Subversion operations </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>svn_arguments</b></th>
+<td class='confluenceTd'> (Subversion only) Extra arguments passed to the subversion command</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>svn_info_args</b></th>
+<td class='confluenceTd'> (Subversion only) <b>svn_arguments</b> are not used when chef calls "svn info".  If you need arguments to be passed to "svn info", put them in <b>svn_info_args</b></td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>depth</b></th>
+<td class='confluenceTd'> (Git only) Number of past revisions to include in Git shallow clone </td>
+<td class='confluenceTd'> nil (full clone)</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>enable_submodules</b></th>
+<td class='confluenceTd'> (Git only) performs a <em>submodule init</em> and <em>submodule update</em> </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>remote</b></th>
+<td class='confluenceTd'> (Git only) remote repository to use for syncing an existing clone </td>
+<td class='confluenceTd'> origin </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>additional_remotes</b></th>
+<td class='confluenceTd'> (Git only) Array of additional remotes to add to the repositories configuration </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>ssh_wrapper</b></th>
+<td class='confluenceTd'> (Git only) path to a wrapper script for running SSH with git. GIT_SSH environment variable is set to this.</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+</td>
+<td class="confluenceTd" valign="top" width="1%"></td> 
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#DeployResource-SCMResources'>SCM Resources</a></li>
+<ul>
+    <li><a href='#DeployResource-Actions'>Actions</a></li>
+    <li><a href='#DeployResource-Attributes'>Attributes</a></li>
+    <li><a href='#DeployResource-Providers'>Providers</a></li>
+    <li><a href='#DeployResource-SCMExamples'>SCM Examples</a></li>
+</ul>
+    <li><a href='#DeployResource-DeployResource'>Deploy Resource</a></li>
+<ul>
+    <li><a href='#DeployResource-Actions'>Actions</a></li>
+    <li><a href='#DeployResource-Attributes'>Attributes</a></li>
+    <li><a href='#DeployResource-Providers'>Providers</a></li>
+    <li><a href='#DeployResource-Discussion'>Discussion</a></li>
+<ul>
+    <li><a href='#DeployResource-TheDeployStrategies'>The Deploy Strategies</a></li>
+<ul>
+    <li><a href='#DeployResource-TimestampedDeploy'>Timestamped Deploy</a></li>
+    <li><a href='#DeployResource-DeployRevision'>Deploy Revision</a></li>
+</ul>
+    <li><a href='#DeployResource-InteractingwithYourInfrastructureDuringDeployment'>Interacting with Your Infrastructure During Deployment</a></li>
+    <li><a href='#DeployResource-CustomApplicationLayouts'>Custom Application Layouts</a></li>
+    <li><a href='#DeployResource-HowtoNukeandStartOver'>How to Nuke and Start Over</a></li>
+</ul>
+    <li><a href='#DeployResource-DeployExamples'>Deploy Examples</a></li>
+<ul>
+    <li><a href='#DeployResource-PrivateDeployExample'>Private Deploy Example</a></li>
+<ul>
+    <li><a href='#DeployResource-Removethepassphrasefromyourprivatekey'>Remove the passphrase from your private key</a></li>
+    <li><a href='#DeployResource-WritingtherecipeandusingtheSSHwrapper'>Writing the recipe and using the SSH wrapper</a></li>
+    <li><a href='#DeployResource-Addingtheprivatekeytothenode'>Adding the private key to the node</a></li>
+</ul>
+</ul>
+</ul>
+    <li><a href='#DeployResource-OpenIssues'>Open Issues</a></li>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Doing Deployment from Your Git Repo?</b><br /><br class="atl-forced-newline" />
+Don't hit a dead end when you try to pull the code from your private git repo!  If you do, <em>one of the following should help:</em>
+
+<p><b>1. Have a passphrase-less key.</b><br/>
+You can strip your current key of the passphrase with:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">ssh-keygen -p -P 'YOURPASSPHRASE' -N '' -f id_deploy</pre>
+		</div>
+</div></div>
+<p>Run that from /srv/app_name, type your passphrase where 'YOURPASSPHRASE' appears, and the ssh-key will no longer require a passphrase.</p>
+
+<p>or</p>
+
+<p><b>2. Add the deployment private key to a <a href="Data Bags.html" title="Data Bags">Data Bag</a>.</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+     "id": "my_app",
+     ... truncated ...
+     "deploy_key": "SSH private key for private git repository"
+   }</pre>
+		</div>
+</div></div>
+<p>The key needs to be a string with the newlines converted to "\n"'s
+<br class="atl-forced-newline" /></p></td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h2><a name="DeployResource-Providers"></a>Providers</h2>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Provider</th>
+<th class='confluenceTh'>Shortcut Resource</th>
+<th class='confluenceTh'>Default For Platforms</th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>Chef::Provider::Git</b> </th>
+<td class='confluenceTd'> git </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>Chef::Provider::Subversion</b> </th>
+<td class='confluenceTd'> subversion </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h2><a name="DeployResource-SCMExamples"></a>SCM Examples</h2>
+
+<p><font color="navy"><em><b>Did you need the absolute latest version of CouchDB?</b></em></font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>grab_couchdb_from_svn</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">subversion "CouchDB Edge" do
+  repository "http://svn.apache.org/repos/asf/couchdb/trunk"
+  revision "HEAD"
+  destination "/opt/mysources/couch"
+  action :sync
+end</pre>
+		</div>
+</div></div>
+
+<p><font color="navy"><em><b>Prefer the git mirror?</b></em></font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>grab_couchdb_from_git_mirror</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">git "/opt/mysources/couch" do
+  repository "git://git.apache.org/couchdb.git"
+  reference "master"
+  action :sync
+end</pre>
+		</div>
+</div></div>
+
+<p><font color="navy"><em><b>Want to use different branches depending on the environment of the node?</b></em></font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>using_different_branches_in_git</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">if node.chef_environment == "QA"
+    branch_name = "staging"
+else
+    branch_name = "master"
+end
+
+git "/home/user/deployment" do                             
+    repository "git@github.com:gitsite/deployment.git" 
+    revision branch_name                                   
+    action :sync                                      
+    user "user"                                     
+    group "test"                                       
+end</pre>
+		</div>
+</div></div>
+
+<p>In the above example, the branch_name variable is being set to "staging" or "master" depending on the environment of the node. Once that is determined, it uses the branch_name variable to set the revision for the repository. </p>
+
+<p><em>Keep in mind that if you use the command "git status" after running this recipe it will return the branch name as "deploy" regardless, as this is a default value.</em> You should be able to see it checking out the correct branch when you run chef-client with debugging on:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo chef-client -l debug</pre>
+		</div>
+</div></div>
+
+<h1><a name="DeployResource-DeployResource"></a>Deploy Resource</h1>
+
+<p><font color="#f7681a">A resource to help you manage and control your deployments.</font>  <b>Please note the number of attributes available for specifying behavior, and review the <a href="#DeployResource-Discussion">Discussion</a> for strategies and examples of use.</b></p>
+
+<h2><a name="DeployResource-Actions"></a>Actions</h2>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Action</th>
+<th class='confluenceTh'>Description</th>
+<th class='confluenceTh'>Default</th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>deploy</b> </th>
+<td class='confluenceTd'> Deploy the application </td>
+<td class='confluenceTd'> yes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>force_deploy</b> </th>
+<td class='confluenceTd'> For the revision deploy strategy, this removes any existing release of the same code version and re-deploys in its place </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>rollback</b> </th>
+<td class='confluenceTd'> Rollback the application to the previous release </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h2><a name="DeployResource-Attributes"></a>Attributes</h2>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Attribute</th>
+<th class='confluenceTh'>Description</th>
+<th class='confluenceTh'>Default Value</th>
+</tr>
+<tr>
+<th class='confluenceTh'><b>deploy_to</b></th>
+<td class='confluenceTd'> The "meta root" for your application. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>repository</b></th>
+<td class='confluenceTd'> URI of the repository </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>repo</b></th>
+<td class='confluenceTd'> alias for <em>repository</em> </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>revision</b></th>
+<td class='confluenceTd'> revision to checkout. can be symbolic, like "HEAD" or an SCM specific revision id</td>
+<td class='confluenceTd'> HEAD </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>branch</b></th>
+<td class='confluenceTd'> alias for <em>revision</em> </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>user</b></th>
+<td class='confluenceTd'> System user to run the deploy as</td>
+<td class='confluenceTd'> nil (user chef runs as) </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>group</b></th>
+<td class='confluenceTd'> System group to run the deploy as </td>
+<td class='confluenceTd'> nil (group chef runs as) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>svn_username</b></th>
+<td class='confluenceTd'> (Subversion only) Username for Subversion operations </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>svn_password</b></th>
+<td class='confluenceTd'> (Subversion only) Password for Subversion operations </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>svn_arguments</b></th>
+<td class='confluenceTd'> (Subversion only) Extra arguments passed to the subversion command</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>shallow_clone</b></th>
+<td class='confluenceTd'> (Git only) boolean, true sets clone depth to 5 </td>
+<td class='confluenceTd'> nil (full clone)</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>enable_submodules</b></th>
+<td class='confluenceTd'> (Git only) performs a <em>submodule init</em> and <em>submodule update</em> </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>remote</b></th>
+<td class='confluenceTd'> (Git only) remote repository to use for syncing an existing clone </td>
+<td class='confluenceTd'> origin </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>ssh_wrapper</b></th>
+<td class='confluenceTd'> (Git only) path to a wrapper script for running SSH with git. GIT_SSH environment variable is set to this.</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>git_ssh_wrapper</b></th>
+<td class='confluenceTd'> alias for <em>ssh_wrapper</em> </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>scm_provider</b></th>
+<td class='confluenceTd'> SCM Provider to use. </td>
+<td class='confluenceTd'> Chef::Provider::Git </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>repository_cache</b></th>
+<td class='confluenceTd'> Name of the subdirectory where the pristine copy of your app's source is kept </td>
+<td class='confluenceTd'> cached-copy </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>environment</b></th>
+<td class='confluenceTd'> A hash of the form {"ENV_VARIABLE"=&gt;"VALUE"} </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>purge_before_symlink</b></th>
+<td class='confluenceTd'> An array of paths, relative to app root, to be removed from a checkout before symlinking </td>
+<td class='confluenceTd'> %w{log tmp/pids public/system} </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>create_dirs_before_symlink</b></th>
+<td class='confluenceTd'> Directories to create before symlinking. Runs after purge_before_symlink</td>
+<td class='confluenceTd'> %w{tmp public config} </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>symlinks</b></th>
+<td class='confluenceTd'> A hash that maps files in the shared directory to their paths in the current release </td>
+<td class='confluenceTd'> {"system" =&gt; "public/system", "pids" =&gt; "tmp/pids", "log" =&gt; "log"} </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>symlink_before_migrate</b></th>
+<td class='confluenceTd'> A hash that maps files in the shared directory into the current release. Runs before migration</td>
+<td class='confluenceTd'> {"config/database.yml" =&gt; "config/database.yml"} </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>migrate</b></th>
+<td class='confluenceTd'> Should the migration command be executed? (<em>true</em> or <em>false</em>)</td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>migration_command</b></th>
+<td class='confluenceTd'> A string containing a shell command to execute to run the migration </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>restart_command</b></th>
+<td class='confluenceTd'> A code block to evaluate or a string containing a shell command </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>rollback_on_error</b> </th>
+<td class='confluenceTd'> Boolean value that controls whether to rollback on error.  When true, the deploy resource will rollback to the previously deployed release if an error occurs when deploying the new release. (<b>Available in Chef 0.10.6+</b>) </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>before_migrate</b></th>
+<td class='confluenceTd'> A block or path to a file containing chef code to run before migrating </td>
+<td class='confluenceTd'> deploy/before_migrate.rb </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>before_symlink</b></th>
+<td class='confluenceTd'> A block or path to a file containing chef code to run before symlinking </td>
+<td class='confluenceTd'> deploy/before_symlink.rb </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>before_restart</b></th>
+<td class='confluenceTd'> A block or path to a file containing chef code to run before restarting </td>
+<td class='confluenceTd'> deploy/before_restart.rb </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>after_restart</b></th>
+<td class='confluenceTd'> A block or path to a file containing chef code to run after restarting </td>
+<td class='confluenceTd'> deploy/after_restart.rb </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h2><a name="DeployResource-Providers"></a>Providers</h2>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Provider</th>
+<th class='confluenceTh'>Shortcut Resource</th>
+<th class='confluenceTh'>Default For Platforms</th>
+</tr>
+<tr>
+<th class='confluenceTh'><b>Chef::Provider::Deploy::TimstampedDeploy</b></th>
+<td class='confluenceTd'> timestamped_deploy </td>
+<td class='confluenceTd'> all </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>Chef::Provider::Deploy::Revision</b> </th>
+<td class='confluenceTd'> deploy_revision, deploy_branch </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h2><a name="DeployResource-Discussion"></a>Discussion</h2>
+<h3><a name="DeployResource-TheDeployStrategies"></a>The Deploy Strategies</h3>
+<p><font color="#f7681a">The deploy resource is ported from <a href="http://capify.org">Capistrano</a> and works similarly.</font> </p>
+
+<p>In your deploy directory, you will need to create a subdirectory named <em>shared</em>, where your configuration and temporary files will be kept. For a rails application, you will typically have <em>config</em>, <em>log</em>, <em>pids</em>, and <em>system</em> directories within the shared directory to keep the files stored there independent of the code in your source repository. </p>
+
+<p>In addition to these, the deploy process will create subdirectories named <em>releases</em> and <em>current</em> in your deploy directory.  The <em>releases</em> directory holds up to the five most recently deployed versions of your application, and the <em>current</em> directory will be a link to the currently released version.</p>
+
+<p><font color="#f7681a">Deployment happens in four phases: checkout, migrate, symlink, and restart.</font>  </p>
+<ol>
+	<li>When the deploy is run, Chef uses the SCM resource to get the specified revision, placing the clone or checkout in a subdirectory of the deploy directory named <em>cached-copy</em>.
+	<ul>
+		<li>A copy of your application is then placed in a subdirectory under the releases directory.</li>
+	</ul>
+	</li>
+	<li>Next, if a migration is to be run, Chef symlinks the database configuration file in to the checkout, by default <em>config/database.yml</em>, into the checkout and runs the migration command.
+	<ul>
+		<li>For a rails application, <em>migration_command</em> is usually set to <em>rake db:migrate</em></li>
+	</ul>
+	</li>
+	<li>After migration, the symlink proceeds by removing directories for shared and temporary files from the checkout, by default <em>log</em>, <em>tmp/pids</em>, and <em>public/system</em>.
+	<ul>
+		<li>After this step, any needed directories, by default <em>tmp</em>, <em>public</em>, and <em>config</em>, are created if they don't yet exist.</li>
+		<li>The symlink step completes by symlinking shared directories into the current release, <em>public/system</em>, <em>tmp/pids</em>, and <em>log</em> by default, and then symlinking the release directory to <em>current</em>.</li>
+	</ul>
+	</li>
+	<li>Following the symlink step, the application is restarted according to the restart command set in the recipe.</li>
+</ol>
+
+
+<h4><a name="DeployResource-TimestampedDeploy"></a>Timestamped Deploy</h4>
+<p>The two available deploy providers mainly differ in how they name the directories that contain your releases. Although the difference might seem minor, it has a large effect on how the deployment behaves.</p>
+
+<p><font color="#f7681a">The "timestamped" deploy strategy is the default.</font> It names release directories with a timestamp of the form "YYYYMMDDHHMMSS". For example, your release might be located at the path <em>/my/deploy/dir/releases/20040815162342</em>.</p>
+
+<p><font color="#f7681a">The deploy provider determines whether or not to deploy your code based on the existence of the release dir it is attempting to deploy to.</font> </p>
+<ul>
+	<li>Because the timestamp will be different for every chef run, <b>the timestamped deploy provider is not idempotent</b>.</li>
+	<li>If you choose to use this deployment strategy, <em>you will need to manually manage the action setting on the resource to prevent unintended continuous deployment.</em></li>
+</ul>
+
+
+<h4><a name="DeployResource-DeployRevision"></a>Deploy Revision</h4>
+<p><font color="#f7681a">Although the "revision" deploy strategy is not the default for compatibility reasons, it is the recommended strategy.</font> </p>
+
+<p>With this strategy, the release subdirectory will be named after the revision id used by your SCM. For git users, this will be the familiar SHA checksum; For subversion users, it will be the integer revision number. <em>Note that even if you supply a branch name, tag, or other name instead of the revision id, Chef will lookup the revision id from your SCM and name this directory with the revision id.</em></p>
+
+<p><font color="#f7681a">As noted above, the deploy providers determine whether or not to deploy based on whether or not the releases directory it is trying to deploy to exists.</font> This means that deploy_revision will be completely idempotent if you specify an exact revision to deploy. You could also use this in more interesting ways, for example, if you have a "deploy" or "production" branch in git, you can set the provider to track this branch. This will cause your deployment to get updated the next time chef runs after pushing to that branch. </p>
+
+<p><font color="#f7681a">The deploy_revision resource results in deployed components under the destination location being owned by the user who runs the application.</font>  If this is an issue for your particular workflow, there are three approaches you can undertake:</p>
+<ul>
+	<li>you'll need to incorporate changing permissions to their desired end state within your recipe, or</li>
+	<li>add a before_restart block to fix up the permissions, or</li>
+	<li>have an unprivileged user (e.g., "opscode") as the owner of the deploy directory, and another unprivileged user (e.g., "opscodeapp") run it. This is the approach we'd recommend.</li>
+</ul>
+
+
+<p><b>The drawback to the revision deploy strategy is that if the deploy fails for any reason, and you want to re-deploy with the same code, you'll need to manually set the action to :force_deploy.</b> Forcing a deploy will remove the old release directory and then proceed with the deployment as usual. <em>Be forewarned that this can cause downtime if you force a deployment over the current release.</em></p>
+
+<p>The deployed revisions are stored in (file_cache_path)/revision-deploys/(deploy_path)</p>
+
+<h3><a name="DeployResource-InteractingwithYourInfrastructureDuringDeployment"></a>Interacting with Your Infrastructure During Deployment</h3>
+<p><font color="#f7681a">In between each step of the deployment process, you can run arbitrary ruby or chef code using callbacks.</font> The available callbacks are:</p>
+<ul>
+	<li><b>before_migrate</b></li>
+	<li><b>before_symlink</b></li>
+	<li><b>before_restart</b></li>
+	<li><b>after_restart</b></li>
+	<li><b>restart_command</b></li>
+</ul>
+
+
+<p>All of the above callbacks support embedded recipes given in a block, but assume a shell command (instead of a deploy hook filename) when given a string.</p>
+
+<p>Each of these callbacks can be used in one of three ways:</p>
+<ul>
+	<li>You can pass a block:
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>callback_blocks</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">deploy_revision "/deploy/dir/" do
+  # other attributes
+  # ...
+  
+  before_migrate do
+    # release_path is the path to the timestamp dir 
+    # for the current release
+    current_release = release_path
+    
+    # Create a local variable for the node so we'll have access to
+    # the attributes
+    deploy_node = node
+
+    # A local variable with the deploy resource.
+    deploy_resource = new_resource
+
+    python do
+      cwd current_release
+      user "myappuser"
+      code&lt;&lt;-PYCODE
+        # Woah, callbacks in python!
+        # ...
+        # current_release, deploy_node, and deploy_resource are all available
+        # within the deploy hook now.
+      PYCODE
+    end
+  end
+ 
+end</pre>
+		</div>
+</div></div></li>
+	<li>You can specify a file. Files are searched relative to the current release. The code in the file is evaluated exactly as if you had put that code in a block.
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>callback_files</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">deploy "/deploy/dir/" do
+  # ...
+  
+  before_migrate "callbacks/do_this_before_migrate.rb"
+end</pre>
+		</div>
+</div></div></li>
+	<li>If you don't provide a block or file, Chef will look for a file in the current checkout named <em>deploy/callback_name.rb</em>, such as <em>deploy/before_migrate.rb</em>. If it exists, it will be evaluated as above.</li>
+</ul>
+
+
+<p><font color="#f7681a">Within your callbacks, there are several ways to get access to information about the deployment.</font> </p>
+<ul>
+	<li>As shown in the example above, you can use <em>release_path</em> to get the path to the current release.</li>
+	<li>You can access the deploy resource itself using the <em>new_resource</em> method, allowing you to access the environment variables you've set.</li>
+	<li>If you've relied on access to an @configuration variable using the original chef-deploy gem, you can continue to use that as well, however, <em>new_resource</em> is the preferred way.</li>
+</ul>
+
+
+<p>These are all available only at the "top level" within callbacks, so you need to assign any values you intend to use to local variables as shown in the callback_blocks example above.</p>
+
+<h3><a name="DeployResource-CustomApplicationLayouts"></a>Custom Application Layouts</h3>
+<p><font color="#f7681a">By default, the deploy resource expects your application to be structured like a rails app, but you can customize the layout for any kind of application.</font></p>
+<ul>
+	<li><b>symlink_before_migrate</b><br/>
+<em>symlink_before_migrate</em> is a hash mapping files in the shared directory to files in the current release. The primary use is to link required configuration files into place so they're available during the migration step. The default is <br/>
+{<tt>"config/database.yml" =&gt; "config/database.yml"</tt>}<br/>
+Note that if you try to do "symlink_before_migrate {}", the "{}" will be interpreted as a block rather than an empty hash. Instead, use "symlink_before_migrate({})" or "symlink_before_migrate nil".</li>
+	<li><b>purge_before_symlink</b><br/>
+<em>purge_before_symlink</em> is an array of directories which will be removed before the symlink step. This removes directories before the production copy from the shared directory is symlinked in. Defaults to <br/>
+<tt>["log", "tmp/pids", "public/system"]</tt></li>
+	<li><b>create_dirs_before_symlink</b><br/>
+This list is used to create directories that need to exist in the release before the symlink step. To illustrate in the context of a rails app, you might use .gitignore to keep all tempfiles out of your repository and not have the tmp/ directory in your checked out code, but the symlink step will create a symlink from shared/pids to RELEASE/tmp/pids. Since this would fail if the RELEASE/tmp directory did not exist, the directory must be created for the deploy to proceed. Note that it is not necessary to create directories that will be symlinked in the symlink step, such as log/, as these don't rely on the existence of other directories in the release. Directories that already exist won't be overwritten. Defaults: <br/>
+<tt>["tmp", "public", "config"]</tt> </li>
+	<li><b>symlinks</b><br/>
+<em>symlinks</em> is a hash mapping files and directories from their locations in the shared dir to locations in the release dir, used in the main symlinking step. Defaults to <br/>
+{<tt>"system" =&gt; "public/system", "pids" =&gt; "tmp/pids", "log" =&gt; "log"</tt>}</li>
+</ul>
+
+
+<h3><a name="DeployResource-HowtoNukeandStartOver"></a>How to Nuke and Start Over</h3>
+<p><font color="#f7681a">Chef keeps track of the order in which you've deployed each revision of your application in a cache file.</font> <em>If you delete the deployed code from a box in order to force a redeployment, you need to delete this cache file as well.</em> Under the default configuration, this cache file is located in <tt>/var/chef/cache/revision-deploys/APPNAME</tt>/</p>
+
+<h2><a name="DeployResource-DeployExamples"></a>Deploy Examples</h2>
+
+<p><font color="navy"><b>Basic attribute usage</b></font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>basic_usage</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">deploy "/my/deploy/dir" do
+  repo "git@github.com/whoami/project"
+  revision "abc123" # or "HEAD" or "TAG_for_1.0" or (subversion) "1234"
+  user "deploy_ninja"
+  enable_submodules true
+  migrate true
+  migration_command "rake db:migrate"
+  environment "RAILS_ENV" =&gt; "production", "OTHER_ENV" =&gt; "foo"
+  shallow_clone true
+  action :deploy # or :rollback
+  restart_command "touch tmp/restart.txt"
+  git_ssh_wrapper "wrap-ssh4git.sh"
+  scm_provider Chef::Provider::Git # is the default, for svn: Chef::Provider::Subversion
+end</pre>
+		</div>
+</div></div>
+
+<p><font color="navy"><b>Any recipes using the git-deploy gem can continue using the same API</b></font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>backwards_compatible_API</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">deploy "/srv/#{appname}" do
+  repo "git://github.com/radiant/radiant.git"
+  revision "HEAD"
+  user "railsdev"
+  enable_submodules false
+  migrate true
+  migration_command "rake db:migrate"
+  # Giving a string for environment sets RAILS_ENV, MERB_ENV, RACK_ENV
+  environment "production"
+  shallow_clone true
+  action :deploy
+  restart_command "touch tmp/restart.txt"
+end</pre>
+		</div>
+</div></div>
+
+<p><font color="navy"><b>The layout of the application matches a Rails app by default, but you can customize it to fit your needs</b></font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>customizing_the_application_layout</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">deploy "/my/apps/dir/deploy" do
+  # Use a local repo if you prefer
+  repo "/path/to/gitrepo/typo/"
+  environment "RAILS_ENV" =&gt; "production"
+  revision "HEAD"
+  action :deploy
+  migration_command "rake db:migrate --trace"
+  migrate true
+  restart_command "touch tmp/restart.txt"
+  create_dirs_before_symlink  %w{tmp public config deploy}
+
+  # You can use this to customize if your app has extra configuration files 
+  # such as amqp.yml or app_config.yml
+  symlink_before_migrate  "config/database.yml" =&gt; "config/database.yml"
+  
+  # If your app has extra files in the shared folder, specify them here
+  symlinks  "system" =&gt; "public/system", "pids" =&gt; "tmp/pids", "log" =&gt; "log",
+            "deploy/before_migrate.rb" =&gt; "deploy/before_migrate.rb",
+            "deploy/before_symlink.rb" =&gt; "deploy/before_symlink.rb",
+            "deploy/before_restart.rb" =&gt; "deploy/before_restart.rb",
+            "deploy/after_restart.rb" =&gt; "deploy/after_restart.rb"
+end</pre>
+		</div>
+</div></div>
+
+<p><font color="navy"><b>When deploying non-rails code and you don't want any symlinks to the shared folder, use parentheses or Hash.new to avoid an ambiguity in Ruby</b></font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>How to Deploy Without Symlinking to Shared</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">deploy "/my/apps/dir/deploy" do
+  # OTHER PARAMETERS
+  # ...
+
+  # THIS DOESN'T WORK, the {} gets parsed as a code block:
+  symlinks {}
+  # Instead, use parentheses:
+  symlinks({})
+  # Or create your hash by calling new instead of using a literal:
+  symlinks Hash.new
+end</pre>
+		</div>
+</div></div>
+
+<p><font color="navy"><b>Using resources from within your callbacks as blocks or within callback files distributed with your application's source code</b></font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>using_embedded_recipes_for_callbacks</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">deploy "#{node[:tmpdir]}/deploy" do
+  repo "#{node[:tmpdir]}/gitrepo/typo/"
+  environment "RAILS_ENV" =&gt; "production"
+  revision "HEAD"
+  action :deploy
+  migration_command "rake db:migrate --trace"
+  migrate true
+  
+  # Callback awesomeness:
+  before_migrate do
+    current_release = release_path
+    
+    directory "#{current_release}/deploy" do
+      mode "0755"
+    end
+    
+    # creates a callback for before_symlink
+    template "#{current_release}/deploy/before_symlink_callback.rb" do
+      source "embedded_recipe_before_symlink.rb.erb"
+      mode "0644"
+    end
+    
+  end
+  
+  # This file can contain Chef recipe code, plain ruby also works
+  before_symlink "deploy/before_symlink_callback.rb"
+  
+  restart do
+    current_release = release_path
+    file "#{release_path}/tmp/restart.txt" do
+      mode "0644"
+    end
+  end
+  
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="DeployResource-PrivateDeployExample"></a>Private Deploy Example</h3>
+<p>To deploy from a private git repo without using the application cookbook, you'll need to add your private key to the node and use an SSH wrapper. </p>
+
+<h4><a name="DeployResource-Removethepassphrasefromyourprivatekey"></a>Remove the passphrase from your private key</h4>
+<p>You'll want to make sure your private key doesn't have a passphrase, as this will pause a Chef run to wait for input. You can remove the passphrase with this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">ssh-keygen -p -P 'YOURPASSPHRASE' -N '' -f id_deploy</pre>
+		</div>
+</div></div>
+
+<h4><a name="DeployResource-WritingtherecipeandusingtheSSHwrapper"></a>Writing the recipe and using the SSH wrapper</h4>
+<p>First, you'll want to create a file in the <tt>cookbooks/COOKBOOKNAME/files/default/</tt> directory named <tt>wrap-ssh4git.sh</tt> with these contents:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">#!/usr/bin/env bash
+/usr/bin/env ssh -o "StrictHostKeyChecking=no" -i "/tmp/private_code/.ssh/id_deploy" $1 $2</pre>
+		</div>
+</div></div>
+
+<p>Once the cookbook file is setup, you'll want to start with a recipe such as this one:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">directory "/tmp/private_code/.ssh" do
+  owner "ubuntu"
+  recursive true
+end
+
+cookbook_file "/tmp/private_code/wrap-ssh4git.sh" do
+  source "wrap-ssh4git.sh"
+  owner "ubuntu"
+  mode 0700
+end
+
+deploy "private_repo" do
+  repo "git@github.com:acctname/private-repo.git"
+  user "ubuntu"  
+  deploy_to "/tmp/private_code"
+  action :deploy
+  ssh_wrapper "/tmp/private_code/wrap-ssh4git.sh"
+end</pre>
+		</div>
+</div></div>
+
+<p>This would deploy the git repo at git@github.com:acctname/private-repo.git to the <tt>/tmp/private_code</tt> folder.</p>
+
+<h4><a name="DeployResource-Addingtheprivatekeytothenode"></a>Adding the private key to the node</h4>
+<p>There are two ways you can add the key, depending on how secure you need it to be. </p>
+
+<p><font color="#f7681a">If you aren't concerned about other people seeing the key,</font> you can add the private key by just placing it in <tt>cookbook/COOKBOOKNAME/files/default/id_deploy</tt> and using a cookbook_file block somewhere in the recipe to add it to the <tt>.ssh</tt> file locally on the node:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbook_file "/tmp/private_code/.ssh/id_deploy" do
+  source "id_deploy"
+  owner "ubuntu"
+  mode 0600
+end</pre>
+		</div>
+</div></div>
+
+<p>Once this has been added to the recipe, it should be able to deploy the private repository.</p>
+
+<p><font color="#f7681a">If you only want people who have access to your Chef organization to get access to this key,</font> you could add it to an encrypted data bag instead. You could also add the repository, deploy_to, etc to the databag if desired as well:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+  "id": "app",
+  "repository": "git@github.com:acctname/private-repo.git",
+  "deploy_key": "-----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEAoEN9TWqCSMvdfjke\n …truncated…",
+  "deploy_to": "/tmp/private_code"
+}</pre>
+		</div>
+</div></div>
+
+<p>Remember to convert new lines in the private key to <tt>\n</tt> when copying it to the databag. Then you can use a file block within the recipe to add it to the node:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">app = Chef::EncryptedDataBagItem.load('deploytest', 'app')
+
+file "/tmp/private_code/.ssh/id_deploy" do
+  content app['deploy_key']
+  owner "ubuntu"
+  mode 0600
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="DeployResource-OpenIssues"></a>Open Issues</h1>
+
+<ul>
+	<li>Only One Level of Submodules<br/>
+If you have submodules that themselves depend on submodules, the second level of submodules won't be initialized/updated. See the comments below.</li>
+	<li>Directories are Assumed to Exist (<a href="http://tickets.opscode.com/browse/CHEF-630">CHEF-630</a>)<br/>
+You'll need to have most of the directories needed by deploy already created before the deploy runs. <em>This issue is addressed with version 0.10.6+.</em>
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></li>
+</ul>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Resources.html" title="Resources"><span class="image-wrap" style="float: left"><img src="../attachments/2883919/20840708.png" hspace="4" style="border: 0px solid black"/></span> Resources </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Yum Package Resource.html" title="Yum Package Resource"><span class="image-wrap" style="float: right"><img src="../attachments/2883919/20840707.png" hspace="4" style="border: 0px solid black"/></span> YUM Package Resource </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883919/13238300.jpg">631010.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883919/20840707.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883919/20840708.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-2883949"></a>
+                                    <font class="smallfont"><p>would be great if enable_submodules works recursively from the start ... (like <a href="http://speakmy.name/2008/10/capistrano-and-nested-submodules-in-git/">http://speakmy.name/2008/10/capistrano-and-nested-submodules-in-git/</a>)</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ehaselwanter at Oct 02, 2009 07:25
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-2883954"></a>
+                                    <font class="smallfont"><p>I believe our code still has this same enable_submodules problem; thanks Edmund I'll look into it!</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by aj at Oct 02, 2009 23:58
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-4620322"></a>
+                                    <font class="smallfont"><p>It's not clear how to use the alternate providers.  I stumbled around before I figured out I had to say:<br/>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">deploy_revision "/some/where" do
+..
+end</pre>
+		</div>
+</div></div>As a side note: Doing this made me realize why I never liked capistrano: Why should my app know where it's source code lives? I shouldn't need to change my app if I move my source code. Also, having the app start/stop itself doesn't make sense because there are so many servers in ruby (mongrel, thin, passenger, unicorn, etc.)&nbsp; Why should I update my app when I change server technology?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by dmag at Dec 21, 2009 19:36
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-7274639"></a>
+                                    <font class="smallfont"><p>I'm getting the release directory sym-linked below the current/ directory, i.e. something like </p>
+
+<p>/srv/myapp/current/20100723075228 -&gt; /srv/myapp/releases/20100723075228</p>
+
+<p>instead of </p>
+
+<p>/srv/myapp/current -&gt; /srv/myapp/releases/20100723075228</p>
+
+<p>I think here is why <a href="http://github.com/opscode/chef/commit/b86c5b063f6544b3767abec03ce0509aaa8c372b#L2R150">http://github.com/opscode/chef/commit/b86c5b063f6544b3767abec03ce0509aaa8c372b#L2R150</a> but can somebody check that?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by dolzenko@gmail.com at Jul 23, 2010 08:12
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-7274855"></a>
+                                    <font class="smallfont"><p>There also seems to be a bug with caching &amp; failed deploys.  Chef will write to $CACHE/revision-deploys at the start of a deploy.  If the deploy fails, the next chef-client run will not even try to deploy b/c it sees the latest deploy already in this cache.  Perhaps chef should wait to write to the cache until after the deploy block exits successfully?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by dhruvbansal at Aug 07, 2010 20:11
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-7897104"></a>
+                                    <font class="smallfont"><p>How do you change the deployment strategy?  Above it says: "The 'timestamped' deploy strategy is the default" but I can't figure out how to change the default!</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ithinkihaveacat at Aug 27, 2010 11:51
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-7897105"></a>
+                                    <font class="smallfont"><p>I figured it out--instead of:</p>
+
+<p>deploy "xxx" do<br/>
+  ...<br/>
+end</p>
+
+<p>you need to do</p>
+
+<p>deploy_revision "xxx" do<br/>
+  ...<br/>
+end</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ithinkihaveacat at Aug 27, 2010 12:29
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-7897215"></a>
+                                    <font class="smallfont"><p>"For a rails application, you will typically have config, log, pids, and system directories within the shared directory"</p>
+
+<p>I think 'config' should be removed from this sentence. When I deployed a Rails app, the config dir didn't get symlinked. It's not capistrano-y to do so, anyway.</p>
+
+<p>EDIT: the individual files seem to get symlinked. Oops!</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by camelpunch at Sep 10, 2010 09:38
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-8683652"></a>
+                                    <font class="smallfont"><p>Yep. Capistrano was written before config management was popular in the rails community and one of the design goals was to allow you to set your production db password without having to check it in to source control, which it accomplishes by reusing the same database.yml and symlinking it in to place. Chef matches this behavior, though it's easy enough to grab your db password from a data bag and render your database.yml from a template.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by dan@kallistec.com at Feb 14, 2011 03:27
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-9797637"></a>
+                                    <font class="smallfont"><p>Any ideas on what to do with SSH keys and Github? copying the key to Github for each server is rather arduous. Maybe this isn't the correct way to do it? </p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by mrpink at Mar 03, 2011 18:08
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-11666144"></a>
+                                    <font class="smallfont"><p>I was surprised by the <b>deploy_revision</b> resource changing ownership of everything under <b>destination</b> to be owned by <b>user</b>. </p>
+
+<p>This doesn't seem to be what I want, for a Rails application. I'd like shared/logs to be writeable by the user running my rails app, but the majority of the code should <em>not</em> be writeable by that same user. If my permissions are rw-r-----, then changing ownership to a single-user makes it difficult to meet this goal.</p>
+
+<p>For now I've added a <b>before_restart</b> block to fix up the permissions.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by davcamer at Apr 27, 2011 01:47
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-12910600"></a>
+                                    <font class="smallfont"><p>Will:</p>
+
+<p>I am new to this, so if my answers seems overly simple please say so.  That said, I simply put the private key in template/default and included this in the recipe that configures the machine that my app lives on:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Bar.ruby</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">template "#{code_base}/.ssh/id_dsa" do    
+        source      "id_dsa.erb"
+        mode        "0600"
+        owner       "app_owner"
+        group       "app_group"
+    end</pre>
+		</div>
+</div></div>
+
+<p>So I am not sure why this would be "arduous".  I manage about 20 servers this way.</p>
+</font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by behemphi at May 19, 2011 14:49
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-19562523"></a>
+                                    <font class="smallfont"><p>Since it's a private key, I'd suggest an encrypted data bag instead of storing it semi-openly in your chef-repo.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ches at Oct 13, 2011 11:50
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-20775424"></a>
+                                    <font class="smallfont"><p>Is it possible to have multiple callbacks?<br/>
+I'm using the default application recipe in my setup, but I'm intentionally not triggering the bundle command, as I have some tasks I need to perform first.</p>
+
+<p>Application recipe automatically does a deploy_revision and before_migrate block, does this prevent me from doing one of my own in myApp recipe?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ashr at Nov 22, 2011 23:37
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-23429504"></a>
+                                    <font class="smallfont"><p>One way seems to be via ssh_wrapper, although it's a bit messy.  Basically you create a ssh private/public key pair that's used for deployment only, and enter the public key part in the "Admin" section the github repo.  Then, to use the private key during deployment itself, you write it to a file, the create an ssh_wrapper shell script that uses the key.  You can see this being done in the application::php recipe:</p>
+
+<p><a href="https://github.com/opscode/cookbooks/blob/master/application/recipes/php.rb">https://github.com/opscode/cookbooks/blob/master/application/recipes/php.rb</a></p>
+
+<p>(Search for deploy_key.)</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ithinkihaveacat at Jan 29, 2012 22:24
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

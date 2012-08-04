@@ -1,0 +1,799 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Search</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Search
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 200x194" href='http://wiki.opscode.com/download../attachments/1179830/SEARCH-1-1.png'><img src="../attachments/thumbnails/1179830/20840724" hspace="12" vspace="22" style="border: 0px solid black"/></a></span></p>
+
+<h1><a name="Search-Overview"></a>Overview</h1>
+
+<h4><a name="Search-"></a><font color="#f7681a">Search is a feature of the</font> <font color="#f7681a"><a href="Chef Server.html" title="Chef Server">Chef Server</a></font> <font color="#f7681a">that allows you to use a full-text search engine (based on</font> <font color="#f7681a"><a href="http://lucene.apache.org/solr/">Apache Solr</a></font><font color="#f7681a">) to query information about your infrastructure and applications.</font></h4>
+
+<h4><a name="Search-"></a><font color="#f7681a">Searches are built by the Chef Server, and allow you to query arbitrary data about your infrastructure. You can utilize this service via</font> <font color="#f7681a"><a href="#Search-UsingSearchInRecipes">search calls in a recipe</a></font> <font color="#f7681a">or the</font> <font color="#f7681a"><tt>knife search</tt></font> <font color="#f7681a">command.</font></h4>
+
+<h5><a name="Search-MostdatathatChefstoresisautomaticallyindexedinSolrincludingDataBags%2CAPIClients%2CNodes%2CandRoles."></a>Most data that Chef stores is automatically indexed in Solr including <a href="Data Bags.html" title="Data Bags">Data Bags</a>, <a href="API Clients.html" title="API Clients">API Clients</a>, <a href="Nodes.html" title="Nodes">Nodes</a>, and <a href="Roles.html" title="Roles">Roles</a>.</h5>
+
+<h1><a name="Search-SearchIndexNames"></a>Search Index Names</h1>
+
+<p><font color="#f7681a">Chef's built-in types are indexed in the following search indexes</font> (don't worry about the search syntax for now):</p>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Data Type </th>
+<th class='confluenceTh'> Index Name </th>
+<th class='confluenceTh'> Example Knife Search </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <a href="Roles.html" title="Roles">Roles</a> </th>
+<td class='confluenceTd'> role </td>
+<td class='confluenceTd'> <tt>knife search role "name:production*"</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <a href="Nodes.html" title="Nodes">Nodes</a> </th>
+<td class='confluenceTd'> node </td>
+<td class='confluenceTd'> <tt>knife search node "name:app*"</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <a href="API Clients.html" title="API Clients">API Clients</a> </th>
+<td class='confluenceTd'> client </td>
+<td class='confluenceTd'> <tt>knife search client "name:c*"</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <a href="Environments.html" title="Environments">Environments</a> </th>
+<td class='confluenceTd'> environment </td>
+<td class='confluenceTd'> <tt>knife search environment "</tt><tt><b>:</b></tt><tt>"</tt> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>Data bags are indexed by the data bag's name. For example, to search for items in a data bag named 'bag_o_data' in knife, use a query like:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search bag_o_data "arbitrary_key:some_value"</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>The 'client' index is currently affected by a bug and will return incorrect results.</td></tr></table></div>
+
+
+<h1><a name="Search-QuerySyntax"></a>Query Syntax</h1>
+
+<p><font color="#f7681a">Queries have the form "field:search_pattern" where "field" is a key in the JSON description of the objects being searched.</font> The search pattern supports exact, wildcard, range, or fuzzy matching.  The field name has limited support for wildcard matching.</p>
+
+<p><b><em>Note:</em></b> <font color="#f7681a">Both the field and search pattern is case sensitive.</font></p>
+
+
+<h2><a name="Search-FieldNameSyntax"></a>Field Name Syntax</h2>
+
+<p>Field names are keys in the JSON description of the object being searched.</p>
+
+<p>To search in a nested key, for example <tt>dmi / system / product_name</tt>, insert an underscore "_" between key names:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node "dmi_system_product_name:ProLiant*"</pre>
+		</div>
+</div></div>
+
+<p>Note that wildcard use with nested field has changed between version 0.9 and 0.10. See <a href="#Search-SearchNestedFields">Nested Fields</a> below for details.</p>
+
+<h3><a name="Search-DiscoveringKeyNames"></a>Discovering Key Names</h3>
+
+<p>The definitive list of search keys are the keys in the JSON description of the object being searched.  To see the keys available when searching nodes:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife node show staging -Fj | less</pre>
+		</div>
+</div></div>
+<p>This command will open a full JSON description of the node "staging" in the pager <tt>less</tt>.  Similarly <tt>knife data bag show</tt>, <tt>knife client show</tt>, and <tt>knife role show</tt> can be used to find keys available for their respective objects. <font color="#f7681a">The json keys are the definitive search keys to be used in any search context (knife, recipe, Hosted Chef, etc).</font></p>
+
+<h3><a name="Search-WildcardMatchingforFieldNames"></a>Wildcard Matching for Field Names</h3>
+
+<p>The field name also has limited support for wildcard matching.  Both the "*" and "?" wildcards (see below) can be used within a field name; however, they cannot be the first character of the field name.  For example, the following are valid queries:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife search node 'platfo*:ubuntu'
+knife search node 'platfor?:ubuntu'</pre>
+		</div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="25%">
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#Search-Overview'>Overview</a></li>
+    <li><a href='#Search-SearchIndexNames'>Search Index Names</a></li>
+    <li><a href='#Search-QuerySyntax'>Query Syntax</a></li>
+<ul>
+    <li><a href='#Search-FieldNameSyntax'>Field Name Syntax</a></li>
+<ul>
+    <li><a href='#Search-DiscoveringKeyNames'>Discovering Key Names</a></li>
+    <li><a href='#Search-WildcardMatchingforFieldNames'>Wildcard Matching for Field Names</a></li>
+</ul>
+    <li><a href='#Search-ExactMatches'>Exact Matches</a></li>
+    <li><a href='#Search-WildcardMatches'>Wildcard Matches</a></li>
+    <li><a href='#Search-RangeSearch'>Range Search</a></li>
+    <li><a href='#Search-FuzzySearch'>Fuzzy Search</a></li>
+    <li><a href='#Search-JoiningMultipleQueryCriteriawithBooleanOperators'>Joining Multiple Query Criteria with Boolean Operators</a></li>
+    <li><a href='#Search-FindingAll'>Finding All</a></li>
+    <li><a href='#Search-SpecialCharacters%3A'>Special Characters:</a></li>
+</ul>
+    <li><a href='#Search-NestedFields'>Nested Fields</a></li>
+    <li><a href='#Search-UsingSearchinRecipes'>Using Search in Recipes</a></li>
+<ul>
+    <li><a href='#Search-SearchforNodesBasedonRunListEntries'>Search for Nodes Based on Run List Entries</a></li>
+<ul>
+    <li><a href='#Search-FindNodesWithaGivenRecipeintheRunList'>Find Nodes With a Given Recipe in the Run List</a></li>
+    <li><a href='#Search-FindNodeswithaRecipeintheExpandedRunList'>Find Nodes with a Recipe in the Expanded Run List</a></li>
+    <li><a href='#Search-FindNodeswithaRoleintheRunList'>Find Nodes with a Role in the Run List</a></li>
+    <li><a href='#Search-FindNodeswithaRoleintheExpandedRunList'>Find Nodes with a Role in the Expanded Run List</a></li>
+    <li><a href='#Search-Client%2FServerSettingsforaDatabase'>Client/Server Settings for a Database</a></li>
+</ul>
+    <li><a href='#Search-Searchingfornodeshavingagivenrecipeapplied%28pre0.9.8%29'>Searching for nodes having a given recipe applied (pre 0.9.8)</a></li>
+</ul>
+    <li><a href='#Search-SearchingwithinEnvironments'>Searching within Environments</a></li>
+    <li><a href='#Search-ProblemsandSolutions'>Problems and Solutions</a></li>
+<ul>
+<ul>
+    <li><a href='#Search-MysearchisnotreturningthenodeordatabagIjustenteredintothesystem'>My search is not returning the node or databag I just entered into the system</a></li>
+    <li><a href='#Search-Updatesnotpropagatingtosearchresults'>Updates not propagating to search results</a></li>
+    <li><a href='#Search-AddingindexersusingRunit'>Adding indexers using Runit</a></li>
+    <li><a href='#Search-Fieldsmissingfromcertainnodes'>Fields missing from certain nodes</a></li>
+    <li><a href='#Search-SearchonlyreturnsIPAddressoftheNode%2Cnotofaspecificinterface'>Search only returns IP Address of the Node, not of a specific interface</a></li>
+</ul>
+</ul>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<div class="" align="center">
+<h4><a name="Search-"></a><font color="#f7681a">Tutorials from the Community</font></h4></div>
+
+<hr />
+<ul>
+	<li><h6><a name="Search-ChefSearchAsAManagementandAutomationTool"></a><a href="http://redbluemagenta.com/2010/12/02/chef-as-a-system-integration-tool/">Chef Search As A Management and Automation Tool</a></h6></li>
+</ul>
+
+
+<p>Community member <a href="http://community.opscode.com/users/cparedes">Christian Paredes</a> put together a blog post on <b><a href="http://redbluemagenta.com/2010/12/02/chef-as-a-system-integration-tool/">using Search in Recipes</a></b> to gather information on the database nodes and then to take action based upon that defined criteria.</p>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h2><a name="Search-ExactMatches"></a>Exact Matches</h2>
+
+<p><font color="#f7681a">To search for an exact match in a field, use a query of the form "field:TEXT_TO_MATCH".</font> Be sure to quote any search patterns with spaces using double quotes. You'll still need to quote the entire query to prevent your shell or ruby from trying to interpret it. The best way to do this is to quote your query with single quotes and the search pattern with double quotes, as shown in the second example below.</p>
+
+<p>Examples:<br/>
+Search for a data bag item in the 'admin' data bag with the exact value of 'charlie' for the key 'id':</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search admins 'id:charlie'</pre>
+		</div>
+</div></div>
+<p>EXAMPLE RESULT:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">1 items found
+_rev:       1-39ff4099f2510f477b4c26bef81f75b9
+chef_type:  data_bag_item
+comment:    Charlie the Unicorn
+data_bag:   admins
+gid:        ops
+id:         charlie
+shell:      /bin/zsh
+uid:        1005</pre>
+		</div>
+</div></div>
+<p>Search for a data bag item with the exact text 'Charlie the Unicorn' for the key 'comment':</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$knife search admins 'comment:"Charlie the Unicorn"'</pre>
+		</div>
+</div></div>
+<p>EXAMPLE RESULT:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">1 items found
+
+_rev:       1-39ff4099f2510f477b4c26bef81f75b9
+chef_type:  data_bag_item
+comment:    Charlie the Unicorn
+data_bag:   admins
+gid:        ops
+id:         charlie
+shell:      /bin/zsh
+uid:        1005</pre>
+		</div>
+</div></div>
+
+<h2><a name="Search-WildcardMatches"></a>Wildcard Matches</h2>
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Change to Query Syntax in Chef 0.10</b><br />Prior to Chef 0.10, search queries could not include the wildcards '*' or "?" as the first character of the search pattern.
+
+<p>In version Chef 0.10 and beyond, the "*" wildcard can now be used as the first character of a search pattern (but not a field/key name). "?" still cannot be used as the first character of the search pattern.</p>
+
+<p>In Chef 0.10+, the following queries will return any node in which the key <tt>foo</tt> exists:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node 'foo:*'</pre>
+		</div>
+</div></div>
+
+<p>This same behavior can be achieved in 0.9 with the following query:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node 'foo:[* TO *]'</pre>
+		</div>
+</div></div></td></tr></table></div>
+
+<p><font color="#f7681a">Chef searches can use the familiar</font> <font color="#f7681a"><tt>&#42;</tt></font> <font color="#f7681a">(asterisk) and</font> <font color="#f7681a"><tt>?</tt></font> <font color="#f7681a">wildcard symbols to query for substring matches.</font> These work much as they do in the shell: the <tt>&#42;</tt> symbol matches zero or more characters, while the <tt>?</tt> matches exactly one character. If we have a node named 'app1.example.com', the following queries will find it (and possibly other nodes as well):</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node 'name:app*'
+knife search node 'name:app1*.example.com'
+knife search node 'name:app?.example.com'
+knife search node 'name:app1.example.???'</pre>
+		</div>
+</div></div>
+
+
+<h2><a name="Search-RangeSearch"></a>Range Search</h2>
+
+<p><font color="#f7681a">Chef also supports range searches.</font> To see how these work, suppose we have a data bag named 'sample' with items 'abc', 'bar', 'baz', and 'qux'. We can search for all of the items between 'bar' and 'foo', inclusive, using the search pattern <tt>[bar TO foo]</tt> (<font color="#f7681a">"TO"</font> <font color="#f7681a"><b>must</b></font> <font color="#f7681a">be capitalized</font>):</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search sample "id:[bar TO foo]"</pre>
+		</div>
+</div></div>
+
+<p>To search an <em>exclusive</em> range, use curly braces, like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search sample "id:{bar TO foo}"</pre>
+		</div>
+</div></div>
+
+<h2><a name="Search-FuzzySearch"></a>Fuzzy Search</h2>
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>This search feature is currently affected by a bug and does not work.</td></tr></table></div>
+<p>Solr supports fuzzy matching of terms using an edit distance measure. <font color="#f7681a">To specify a fuzzy match, add a</font> <font color="#f7681a"><tt>~</tt></font> <font color="#f7681a">(tilde) symbol to the end of your query term.</font> For example, if you have an API client named 'FOO', you can find it by searching for 'BOO~', like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search client "name:BOO~"</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "total": 1,
+  "start": 0,
+  "rows": [
+    {
+      "public_key": "too long didn't read",
+      "name": "FOO",
+      "_rev": "1-f11a58043906e33d39a686e9b58cd92f",
+      "json_class": "Chef::ApiClient",
+      "admin": false,
+      "chef_type": "client"
+    }
+  ]
+}</pre>
+		</div>
+</div></div>
+
+<h2><a name="Search-JoiningMultipleQueryCriteriawithBooleanOperators"></a>Joining Multiple Query Criteria with Boolean Operators</h2>
+
+<p><font color="#f7681a">For more exacting searches you can join multiple criteria with 'AND' or 'OR' or you can negate a query with 'NOT' (all three keywords</font> <font color="#f7681a"><b>must</b></font> <font color="#f7681a">be capitalized).</font></p>
+
+<p>The following examples assume you have a data bag named 'sample' with items 'abc', 'foo', 'bar', 'baz', and 'qux'.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Negating with NOT</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search sample "(NOT id:foo)"</pre>
+		</div>
+</div></div>
+<p><b>Result:</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "total": 4,
+  "start": 0,
+  "rows": [
+    {
+      "comment": "an item named bar",
+      "id": "bar",
+      "animal": "cat"
+    },
+    {
+      "comment": "an item named baz",
+      "id": "baz"
+      "animal": "dog"
+    },
+    {
+      "comment": "an item named abc",
+      "id": "abc",
+      "animal": "unicorn"
+    },
+    {
+      "comment": "an item named qux",
+      "id": "qux",
+      "animal", "penguin"
+    }
+  ]
+}</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Joining Queries with OR</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search sample "id:foo OR id:abc"</pre>
+		</div>
+</div></div>
+<p><b>Results:</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "total": 2,
+  "start": 0,
+  "rows": [
+    {
+      "comment": "an item named foo",
+      "id": "foo",
+      "animal": "pony"
+    },
+    {
+      "comment": "an item named abc",
+      "id": "abc",
+      "animal": "unicorn"
+    }
+  ]
+}</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Joining Queries with AND</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search sample "id:b* AND animal:dog"</pre>
+		</div>
+</div></div>
+<p><b>Results:</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "total": 1,
+  "start": 0,
+  "rows": [
+    {
+      "comment": "an item named baz",
+      "id": "baz",
+      "animal": "dog"
+    }
+  ]
+}</pre>
+		</div>
+</div></div>
+
+<h2><a name="Search-FindingAll"></a>Finding All</h2>
+
+<p>To find all of the items in an index, use an asterisk for both the field (key) name and search pattern, for example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node "*:*"</pre>
+		</div>
+</div></div>
+<p>Will find all nodes.</p>
+
+
+<h2><a name="Search-SpecialCharacters%3A"></a>Special Characters:</h2>
+
+<p>The following characters have special meaning to the query parser. If you need to use them in a search pattern, escape them with a \ (backslash):</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">+ - &amp;&amp; || ! ( ) { } [ ] ^ " ~ * ? : \</pre>
+		</div>
+</div></div>
+
+<p>As previously noted, Chef's search feature uses Apache SOLR, which is built on Apache <a href="http://lucene.apache.org/">Lucuene</a>. Definitive documentation for the query syntax can be found in the projects' documentation sites:</p>
+<ul>
+	<li><a href="http://wiki.apache.org/solr/SolrQuerySyntax">http://wiki.apache.org/solr/SolrQuerySyntax</a></li>
+	<li><a href="http://lucene.apache.org/java/2_3_2/queryparsersyntax.html">http://lucene.apache.org/java/2_3_2/queryparsersyntax.html</a></li>
+</ul>
+
+
+<h1><a name="Search-NestedFields"></a>Nested Fields</h1>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Nested Field Syntax Changes in 0.10.0</b><br />The syntax for searching within nested fields will change in Chef 0.10.0. Instead of using 'X' as the wildcard character, you must now use '<b>'. In addition, you will now have full wildcard expansion on the search keys. A pre-0.10.0 query written as &#42;'network_interfaces_X_addresses:192.168'</b> will now be written as <b>'network_interfaces&#95;</b>&#95;addresses:192.168'&#42; or any other wildcard expansion of the key, such as <b>'network*addresses:192.168'</b>.</td></tr></table></div>
+
+<p><font color="#f7681a">It is quite common in Chef for data you want to be a few levels deep in a data structure.</font> For example, information about a network interface might be in a node's attributes at <tt>node[:network][:interfaces][:eth0]</tt>. Here's how Chef's search feature handles this. Consider this snippet of ohai data from my laptop:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{"network":
+  [
+//snipped...
+    "interfaces",
+      {"en1": {
+        "number": "1",
+        "flags": [
+          "UP",
+          "BROADCAST",
+          "SMART",
+          "RUNNING",
+          "SIMPLEX",
+          "MULTICAST"
+        ],
+        "addresses": {
+          "fe80::fa1e:dfff:fed8:63a2": {
+            "scope": "Link",
+            "prefixlen": "64",
+            "family": "inet6"
+          },
+          "f8:1e:df:d8:63:a2": {
+            "family": "lladdr"
+          },
+          "192.168.0.195": {
+            "netmask": "255.255.255.0",
+            "broadcast": "192.168.0.255",
+            "family": "inet"
+          }
+        },
+        "mtu": "1500",
+        "media": {
+          "supported": {
+            "autoselect": {
+              "options": [
+
+              ]
+            }
+          },
+          "selected": {
+            "autoselect": {
+              "options": [
+
+              ]
+            }
+          }
+        },
+        "type": "en",
+        "status": "active",
+        "encapsulation": "Ethernet"
+      },
+// snipped</pre>
+		</div>
+</div></div>
+<p>Before adding this node data to the indexer, Chef extracts nested fields into the top level:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">"broadcast" =&gt; "192.168.0.255",
+"flags"     =&gt; ["UP", "BROADCAST", "SMART", "RUNNING", "SIMPLEX", "MULTICAST"]
+"mtu"       =&gt; "1500"</pre>
+		</div>
+</div></div>
+<p>So the following searches will find this node:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node "broadcast:192.168.0.*"
+knife search node "mtu:1500"
+knife search node "flags:UP"</pre>
+		</div>
+</div></div>
+
+<p>Chef will also flatten nested items into compound keys, like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># ...snip...
+"network_interfaces_en1_addresses_192.168.0.195_broadcast" =&gt; "192.168.0.255",
+"network_interfaces_en1_addresses_fe80::fa1e:tldr_family"  =&gt; "inet6",
+"network_interfaces_en1_addresses"                         =&gt; ["fe80::fa1e:tldr","f8:1e:df:tldr","192.168.0.195"]
+# ...snip...</pre>
+		</div>
+</div></div>
+<p>So you can also find the node with the following search:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node "network_interfaces_en1_addresses:192.168.0.195"</pre>
+		</div>
+</div></div>
+
+<p>Chef also creates "wildcard" compound keys, where 'X' is the wildcard character:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">"network_interfaces_X_flags"     =&gt; ["UP", "BROADCAST", "SMART", "RUNNING", "SIMPLEX", "MULTICAST"]
+"network_interfaces_X_addresses" =&gt; ["fe80::fa1e:dfff:fed8:63a2", "192.168.0.195", "f8:1e:df:d8:63:a2"]
+"network_interfaces_en0_media_X" =&gt; ["autoselect", "none", "1000baseT", "10baseT/UTP", "100baseTX"]
+"network_interfaces_en1_X"       =&gt; ["1", "UP", "BROADCAST", "SMART", "RUNNING", "SIMPLEX", "MULTICAST",
+                                     "fe80::fa1e:dfff:fed8:63a2", "f8:1e:df:d8:63:a2", "192.168.0.195",
+                                     "1500", "supported", "selected", "en", "active", "Ethernet"]</pre>
+		</div>
+</div></div>
+<p>These compound keys can be extremely helpful when a key you don't care about is between two keys that you do care about. For example to find every node with an IP address starting with 192.168, regardless of the interface name, you can search for:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node 'network_interfaces_X_addresses:192.168*'</pre>
+		</div>
+</div></div>
+<p>You could even use a range search to find every node with an address in a given subnet:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node 'network_interfaces_X_addresses:[192.168.0.* TO 192.168.127.*]'</pre>
+		</div>
+</div></div>
+<p>You can see that by combining these wild card fields with range and wildcard queries, it is possible to perform very powerful searches such as using the vendor part of the MAC address to find every node that has a network card made by a given vendor (Broadcom, Intel, etc.).</p>
+
+<h1><a name="Search-UsingSearchinRecipes"></a>Using Search in Recipes</h1>
+
+<p><font color="#f7681a">The Chef DSL provides the</font> <font color="#f7681a"><tt>search(INDEX, QUERY)</tt></font> <font color="#f7681a">method for accessing search indexes in recipes.</font> Basic use of search looks like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Returns an array of all nodes
+search(:node, "*:*")</pre>
+		</div>
+</div></div>
+
+<p>If you just want to use each result of the search and don't care about the aggregate result you can provide a code block to the search method. Each result will be passed to the block in turn:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Print every node matching the search pattern
+search(:node, "*:*") do |matching_node|
+  puts matching_node.to_s
+end</pre>
+		</div>
+</div></div>
+
+<h2><a name="Search-SearchforNodesBasedonRunListEntries"></a>Search for Nodes Based on Run List Entries</h2>
+
+<h3><a name="Search-FindNodesWithaGivenRecipeintheRunList"></a>Find Nodes With a Given Recipe in the Run List</h3>
+
+<p><font color="#f7681a">To find nodes with a specified recipe in the run list, just search within the</font> <font color="#f7681a"><tt>run_list</tt></font> <font color="#f7681a">field.</font> Be careful, Lucene treats : and [ as special characters, hence escaping is needed (also note the single quoting):</p>
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Use the <tt>recipe</tt> (singular&#33;) keyword for searching in the top-level run list.</td></tr></table></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:node, 'run_list:recipe\[foo\:\:bar\]')</pre>
+		</div>
+</div></div>
+
+<p>If you also want to interpolate variables into the search string using ruby's alternate quoting syntax makes this easier:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:node, %Q{run_list:"recipe[#{the_recipe}]"} )</pre>
+		</div>
+</div></div>
+
+
+<h3><a name="Search-FindNodeswithaRecipeintheExpandedRunList"></a>Find Nodes with a Recipe in the Expanded Run List</h3>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>0.9.8 and up</b><br />This is a new feature as of Chef 0.9.8. The change is made on the client, so you'll only be able to find nodes running chef-client 0.9.8 and greater when using this feature.</td></tr></table></div>
+
+<p><font color="#f7681a">Chef saves expanded list of roles and recipes to the</font> <font color="#f7681a"><tt>roles</tt></font> <font color="#f7681a">and</font> <font color="#f7681a"><tt>recipes</tt></font> <font color="#f7681a">attributes on the node.</font> This makes it possible to find nodes that run a given recipe even if it's included by a role (or a role-within-a-role). For example, consider a "tomcat_server" role that includes <tt>apache2::mod_proxy_ajp</tt> in its run list. A node that is in this role would be found by the following search:</p>
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Use the <tt>recipes</tt> (plural&#33;  Note the extra "s"&#33;) keyword for searching in the expanded run list. This field is updated on each run of chef-client, thus changes to the run list will not affect "recipes" until chef-client has been run on the node.</td></tr></table></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:node, 'recipes:apache2\:\:mod_proxy_ajp')</pre>
+		</div>
+</div></div>
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>If you need to use string interpolation while searching for a recipe you can do that with double \&nbsp;for the cookbook::recipe :'s</td></tr></table></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:node, "chef_environment:#{node.chef_environment} AND recipes:apache2\\:\\:mod_proxy_ajp")</pre>
+		</div>
+</div></div>
+
+
+<h3><a name="Search-FindNodeswithaRoleintheRunList"></a>Find Nodes with a Role in the Run List</h3>
+
+<p>To find a node that includes a role in the top level of its run list, use a search of the form <tt>role:ROLE_NAME</tt>.</p>
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Use the <tt>role</tt> (singular&#33;) keyword for searching in the top-level run list.</td></tr></table></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:node, 'role:load_balancer')</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node role:load_balancer</pre>
+		</div>
+</div></div>
+
+<h3><a name="Search-FindNodeswithaRoleintheExpandedRunList"></a>Find Nodes with a Role in the Expanded Run List</h3>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>0.9.8 and up</b><br />This is a new feature as of Chef 0.9.8. The change is made on the client, so you'll only be able to find nodes running chef-client 0.9.8 and greater when using this feature.</td></tr></table></div>
+
+<p>Since Chef 0.9.8, chef-client automatically saves the expanded list of roles (i.e., all roles applied to a node, including nested roles) to the node's automatic attributes. You can find every node that has a given role by a search of the form <tt>roles:ROLE_NAME</tt>.</p>
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Use the <tt>roles</tt> (plural&#33;  Note the extra "s"&#33;) keyword for searching in the expanded run list.  This field is updated on each run of chef-client, thus changes to a node's run list will not affect "roles" until chef-client has been run on the node.</td></tr></table></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:node, 'roles:load_balancer')</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node roles:load_balancer</pre>
+		</div>
+</div></div>
+
+<h3><a name="Search-Client%2FServerSettingsforaDatabase"></a>Client/Server Settings for a Database</h3>
+
+<p><font color="#f7681a">If you don't have</font> <font color="#f7681a"><a href="Roles.html" title="Roles">roles</a></font> <font color="#f7681a">fully defined and implemented, you may find it necessary on a webserver to place the hostname, ip or private ip of another machine in a settings file so that it can connect to a database, solr or other persistence server.</font> It is assumed here that if a webserver is named mysqlchef that its database server is mysqlchefutil.</p>
+
+<p>Consider this simplified settings file for the webserver mysqlchef1:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">username: "mysql"
+password: "MoveAlong"
+host:     "10.40.64.202"  #Private IP of mysqlchefutil
+port:     "3306"</pre>
+		</div>
+</div></div>
+
+<p>You can see all the information about the node with the following command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">knife search node "name:mysqlchefutil" --long</pre>
+		</div>
+</div></div>
+
+<p>To access it as part of a recipe that is to run on mysqlchef (the webserver):</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">db_server = search(:node,"name:mysqlchefutil")
+private_ip = "#{db_server[0][:rackspace][:private_ip]}"
+puts private_ip</pre>
+		</div>
+</div></div>
+
+<p>Note the 0 (zero) index for the db_server identifier is used because you will get a single document returned from solr because the node is being searched on its unique name.  The identifier "private_ip" now has the value "10.40.64.202" and can be used in templates as a variable, etc.</p>
+
+<h2><a name="Search-Searchingfornodeshavingagivenrecipeapplied%28pre0.9.8%29"></a>Searching for nodes having a given recipe applied (pre 0.9.8)</h2>
+
+<p>If you want to handle role inclusion gracefully, you can patch the Chef Language (see <a href="http://gist.github.com/443833">this gist</a>) to allow that kind of search:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># returns all node having this role applied, even if the role is included in a role)
+ nodes = esearch(:node, 'role\[admin\]')</pre>
+		</div>
+</div></div>
+
+<h1><a name="Search-SearchingwithinEnvironments"></a>Searching within Environments</h1>
+
+<p><font color="#f7681a">To search within a specific environment, see</font> <font color="#f7681a"><a href="http://wiki.opscode.com/display/chef/Environments#Environments-SearchingwithinEnvironments">Searching within Environments</a></font><font color="#f7681a">.</font></p>
+
+<h1><a name="Search-ProblemsandSolutions"></a>Problems and Solutions</h1>
+
+<p>The following are solutions to problems/questions that arise in use of the Search feature and in maintaining the Indexes.</p>
+
+<h3><a name="Search-MysearchisnotreturningthenodeordatabagIjustenteredintothesystem"></a>My search is not returning the node or databag I just entered into the system</h3>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Indexing of new 'nodes', 'clients', 'data bags', etc is not instantaneous. You may have to use the meta attributes 'retries' and 'retry_delay' in a ruby_block to pause your recipe until the search index is populated.</td></tr></table></div>
+
+<h3><a name="Search-Updatesnotpropagatingtosearchresults"></a>Updates not propagating to search results</h3>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>0.9.x and Lower</b><br />This discussion applies to Chef 0.8.x and 0.9.x. Read <a href="Chef Indexer.html#ChefIndexer-ChefExpander">the guide for Chef Expander</a> for tips on diagnosing and troubleshooting queue backlogs in Chef 0.10.x</td></tr></table></div>
+
+<p><font color="#f7681a">Sometimes you will notice that your search results get stale.</font> For instance, you may have a node visible from "knife node show", but "knife search node" does not show the node. The first thing to check is the size of your message queue:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$ sudo /usr/sbin/rabbitmqctl list_queues -p /chef
+Listing queues ...
+chef-index-consumer-default     4
+...done.</pre>
+		</div>
+</div></div>
+
+<p>A low number is expected here. <em>If it gets past 15 or 20, and especially if it is constantly increasing, you need to add more chef-solr-indexer instances.</em></p>
+
+
+<h3><a name="Search-AddingindexersusingRunit"></a>Adding indexers using Runit</h3>
+
+<p><font color="#f7681a">Instructions on adding services is here:</font> <font color="#f7681a"><a href="http://smarden.org/runit/faq.html">http://smarden.org/runit/faq.html</a></font><font color="#f7681a">.</font> You can reuse the scripts from /etc/sv/chef-solr-indexer.</p>
+
+<h3><a name="Search-Fieldsmissingfromcertainnodes"></a>Fields missing from certain nodes</h3>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>0.10.x and above</b><br />This discussion applies to Chef 0.10.x and above</td></tr></table></div>
+<p>If you are getting strange results from your search queries, like certain nodes missing from searches for attributes you know exist (such as those confirmed to exist via the webui), you may have run into solr's maxFieldLength issue described in <a href="http://tickets.opscode.com/browse/CHEF-2346" title="CHEF-2346">CHEF-2346</a>. <font color="#f7681a">So far this has been noted on linux servers with complex configurations and Windows machines - anywhere with a lot of attributes and</font> <font color="#f7681a"><a href="Ohai.html" title="Ohai">Ohai</a></font> <font color="#f7681a">data.</font> This is currently unresolved as of 10.12.0.</p>
+
+<h3><a name="Search-SearchonlyreturnsIPAddressoftheNode%2Cnotofaspecificinterface"></a>Search only returns IP Address of the Node, not of a specific interface</h3>
+
+<p><font color="#f7681a">The issue is complicated, as the JSON data for interfaces is structured as hierarchical attributes of the parent.</font> (Where the interface has an attribute, which is an address, which has an attribute which is a family)  However, the way our minds tend to work is that the interface has an address of a particularly family, usually ipv4 (inet).  There is a tendency to want something like: <tt>node[:ipaddress_eth1] or node[:ipaddress][:eth1]</tt> but these diverge from the data hierarchy. <a href="http://tickets.opscode.com/browse/OHAI-88">OHAI-88</a> is based in this issue.</p>
+
+<p>Pending the determination on how to best address this circumstance, <font color="#f7681a">the</font> <font color="#f7681a"><a href="https://gist.github.com/1040543">network_addr.rb</a></font> <font color="#f7681a">Ohai</font> <font color="#f7681a"><a href="Community Plugins.html" title="Community Plugins">plugin</a></font><font color="#f7681a">, from Opscode Team Member Joshua Timberman, extends the</font> <font color="#f7681a"><a href="Ohai.html" title="Ohai">Ohai</a></font> <font color="#f7681a">network attribute with additional</font> <font color="#f7681a"><tt>ipaddrtype_iface</tt></font> <font color="#f7681a">attributes to make semantically easier to retrieve the addresses.</font></p>
+
+<p>Additionally, the following code should get the ip address of a specific interface, as it is constructed consistently with how the JSON data for interfaces is structured.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">ipaddress_eth1 = host["network"]["interfaces"]["eth1"]["addresses"].select { |address, data| data["family"] == "inet" }[0][0]</pre>
+		</div>
+</div></div>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Roles.html" title="Roles"><span class="image-wrap" style="float: left"><img src="../attachments/1179830/20840723.png" hspace="4" style="border: 0px solid black"/></span> Roles </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Installation.html" title="Installation"><span class="image-wrap" style="float: right"><img src="../attachments/1179830/20840722.png" hspace="4" style="border: 0px solid black"/></span> Installation </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179830/13238294.jpg">SEARCH-1-1.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179830/20840722.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179830/20840723.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179830/20840725.png">SEARCH-1-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179830/20840724.png">SEARCH-1-1.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

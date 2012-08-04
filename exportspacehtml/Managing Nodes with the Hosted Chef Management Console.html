@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Nodes with the Hosted Chef Management Console</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Nodes with the Hosted Chef Management Console
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<h3><a name="ManagingNodeswiththeHostedChefManagementConsole-"></a><font color="#f7681a">Manage your nodes with the Management Console</font></h3>
+
+<ul>
+	<li>Listing Nodes</li>
+	<li>Viewing a Node</li>
+	<li>Creating a node</li>
+	<li>Editing a node</li>
+	<li>Moving a Node to an Environment</li>
+	<li>Modifying Node Attributes</li>
+	<li>Deleting a Node</li>
+	<li>Checking Node Status</li>
+</ul>
+</div></div>
+
+<div class='navmenu' style='float:right; width:500px; background:#ffffff; border:8px solid #d7d4c3; margin:3px; padding:10px'><ul>
+	<li><b>To follow these directions, first <a href="Managing your Account and Billing Information.html#ManagingyourAccountandBillingInformation-LogintotheManagementConsole">log into the Hosted Chef Management Console</a> with your existing username.</b> If you have not signed up for an account yet, follow the directions on the <a href="Setup Opscode User and Organization.html" title="Setup Opscode User and Organization">Setup Opscode User and Organization</a> page.</li>
+</ul>
+
+
+<ul>
+	<li><b>If you're interested in editing account, nodes or other data in the Management Console instead, return to <a href="Hosted Chef Management Console.html" title="Hosted Chef Management Console">Hosted Chef Management Console</a>, and make the appropriate selection.</b></li>
+</ul>
+
+</div>
+<p><br class="atl-forced-newline" />
+<b>You can also manage nodes with the command line tool <a href="Knife.html" title="Knife">Knife</a>.</b></p>
+
+<h2><a name="ManagingNodeswiththeHostedChefManagementConsole-ListingNodesintheOrganization"></a>Listing Nodes in the Organization</h2>
+
+<p>In order to list nodes in your organization:</p>
+
+<p>1. Log on to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Click <em>Nodes</em> on the main navigation menu.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923223/20086897.png" style="border: 0px solid black"/></span></p>
+
+<p><b>Note:</b> If a specific environment is selected on the top of the page, then only the nodes in that environment will be shown. You also need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">list permissions</a> on the global nodes level to list the nodes.</p>
+
+<h2><a name="ManagingNodeswiththeHostedChefManagementConsole-ViewingaNode"></a>Viewing a Node</h2>
+
+<p>Viewing a node shows the recipes and roles in the node's run list, as well as the node's attributes.</p>
+
+<p>In order to view a specific node:</p>
+
+<p>1. Login to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Click on the <em>Nodes</em> tab.</p>
+
+<p>3. Click on the name of the node you want to view.</p>
+
+<p>On this page you can see the roles and recipes in the node's run list, as well as an expandable tree view of the JSON attributes on the node.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923223/20086899.png" style="border: 0px solid black"/></span></p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">read permissions</a> on the node to view it. </p>
+
+<h2><a name="ManagingNodeswiththeHostedChefManagementConsole-CreatingaNode"></a>Creating a Node</h2>
+
+<p>The node create page lists all available recipes and roles in the organization, and allows you to include these in the run list of the node you are creating. There is also a JSON editor for editing, adding and removing the node's attributes.</p>
+
+<p><font color="#f7681a">A node is also created the first time you run chef-client, or when you use <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> commands.</font></p>
+
+<p>In order to create a node through the Management Console:</p>
+
+<p>1. Login to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization.</p>
+
+<p>2. Click on the <em>Nodes</em> tab.</p>
+
+<p>3. Click <em>Create</em> on the sub navigation bar.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923223/20086895.png" style="border: 0px solid black"/></span></p>
+
+<p>4. Give the node a name and select an Environment for the node.</p>
+
+<p>5. Edit the node, further information is in the <a href="#ManagingNodeswiththeHostedChefManagementConsole-EditingaNode">next section</a>. Click <em>Create Node</em> to save the new node when you are done.</p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">create permissions</a> on the global nodes level to create a node.</p>
+
+<h2><a name="ManagingNodeswiththeHostedChefManagementConsole-EditingaNode"></a>Editing a Node</h2>
+
+<p>1. Login to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization.</p>
+
+<p>2. Select the <em>Nodes</em> tab.</p>
+
+<p>3. Click on the <em>Edit</em> link next to the node you want to edit.</p>
+
+<p>4. To <b><font color="#f7681a">add</font></b> a role or recipe to the node being edited, drag it from <em>Available Roles</em> or <em>Available Recipes</em> to <em>Run List</em>:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923223/20086952.png" style="border: 0px solid black"/></span></p>
+
+<p>5. To <b><font color="#f7681a">remove</font></b> a role or recipe from the node being edited, drag it from the <em>Run List</em> back to an <em>Available</em> section:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923223/20086951.png" style="border: 0px solid black"/></span></p>
+
+<p>6. Click <em>Save Node</em> to save.</p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">update permissions</a> on the node to edit it. </p>
+
+<h3><a name="ManagingNodeswiththeHostedChefManagementConsole-MovingaNodetoanEnvironment"></a>Moving a Node to an Environment</h3>
+
+<p>You can move the node to an environment with the drop down box on the top of this page. More information on this can be found on the <a href="Managing Environments with the Hosted Chef Management Console.html#ManagingEnvironmentswiththeHostedChefManagementConsole-MovingaNodetoanEnvironment">Managing Environments</a> page.</p>
+
+<h3><a name="ManagingNodeswiththeHostedChefManagementConsole-ModifyingNodeAttributes"></a>Modifying Node Attributes</h3>
+
+<p>To modify the <a href="Attributes.html" title="Attributes">Attributes</a> of a node, such that they override the values of the included recipe or role, you can use the <em>Editor</em> or <em>Source</em> tabs on this page. With the <em>Editor</em> tab you can edit the attributes by selecting the location on the tree and adding the details. You can use the <em>Source</em> tab to paste in JSON directly.</p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">update permissions</a> on the node to edit the attributes.</p>
+
+<h4><a name="ManagingNodeswiththeHostedChefManagementConsole-UsingtheEditortab"></a>Using the <em>Editor</em> tab</h4>
+
+<p>1. Select "json" from the tree on the left and click on the <em>Editor</em> tab on the right.</p>
+
+<p>2. Push the green add button under the <em>Editor</em> tab: <span class="image-wrap" style=""><img src="../attachments/19923223/20086900.png" style="border: 0px solid black"/></span></p>
+
+<p>3. Enter a name as the key and a body as the value and click <em>Add Attribute</em>. The following figure shows the Attributes tree and the JSON editor.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923223/20086893.jpg" style="border: 0px solid black"/></span></p>
+
+<p>4. Click the <em>Create Node</em> or <em>Save Node</em> button to save the node. </p>
+
+<h4><a name="ManagingNodeswiththeHostedChefManagementConsole-UsingtheSourcetab"></a>Using the <em>Source</em> tab</h4>
+
+<p>1. Enter the JSON body in the editor, and click the <em>Load JSON from source</em> button: <span class="image-wrap" style=""><img src="../attachments/19923223/20086913.png" style="border: 0px solid black"/></span></p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923223/20086894.jpg" style="border: 0px solid black"/></span></p>
+
+<p>2. Click the <em>Create Node</em> or <em>Save Node</em> button to save the node. </p>
+
+<h2><a name="ManagingNodeswiththeHostedChefManagementConsole-DeletingaNode"></a>Deleting a Node</h2>
+
+<p>In order to delete a node:</p>
+
+<p>1. Login to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization.</p>
+
+<p>2. Click on the <em>Nodes</em> tab.</p>
+
+<p>2. Click the <em>Delete</em> link next to the name of the node you want to delete, and click <em>OK</em> on the confirmation message box. Or, click the link of the node to view its details, and click <em>Delete</em> on the sub navigation menu. </p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">delete permissions</a> on the node to delete it. If you don't have this permission, you may not see a <em>Delete</em> link or tab.</p>
+
+<h2><a name="ManagingNodeswiththeHostedChefManagementConsole-CheckingNodeStatus"></a>Checking Node Status</h2>
+
+<p>Node status such as platform, FQDN, IP Address, up time, last check-in time, and run list can be checked on the Management Console. </p>
+
+<p>In order to check node status:</p>
+
+<p>1. Log in to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a>. </p>
+
+<p>2. Click <em>Status</em> tab.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Managing Groups with the Hosted Chef Management Console.html" title="Managing Groups with the Hosted Chef Management Console"><span class="image-wrap" style="float: left"><img src="../attachments/19923223/21463167.png" hspace="4" style="border: 0px solid black"/></span> Managing Groups with the Hosted Chef Management Console </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Managing Organizations with the Hosted Chef Management Console.html" title="Managing Organizations with the Hosted Chef Management Console"><span class="image-wrap" style="float: right"><img src="../attachments/19923223/21463166.png" hspace="4" style="border: 0px solid black"/></span> Managing Organizations with the Hosted Chef Management Console </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923223/20086893.jpg">manage-node-attribute-editor.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923223/20086894.jpg">manage-node-attribute-source.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923223/20086895.png">node-create.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923223/20086897.png">node-list.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923223/20086899.png">node-show.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923223/20086900.png">node-editor-green-button.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923223/20086913.png">data-bags-attributes-source1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923223/20086951.png">node-runlist-remove.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923223/20086952.png">node-runlist-add.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923223/21463166.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923223/21463167.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

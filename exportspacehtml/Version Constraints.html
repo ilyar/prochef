@@ -1,0 +1,311 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Version Constraints</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Version Constraints
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Apr 23, 2012 by <font color="#0050B2">sean_horn</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 525x391" href='http://wiki.opscode.com/download../attachments/8257584/IfThen.jpg'><img src="../attachments/thumbnails/8257584/15892490" hspace="20" vspace="8" style="border: 0px solid black"/></a></span></p>
+<h2><a name="VersionConstraints-Overview"></a>Overview</h2>
+
+<h5><a name="VersionConstraints-"></a><font color="#f7681a">This page clarifies the syntax for cookbook versions and describes <em>version constraints</em>, which can be used in cookbook <a href="Metadata.html" title="Metadata">metadata</a> and in <a href="Environments.html" title="Environments">environments</a> feature to limit which versions of a cookbook should be used.</font></h5>
+
+<p>This departs from the currently documented, but not used, version constraint features found <a href="Metadata.html#Metadata-depends">here</a>.</p>
+
+<h2><a name="VersionConstraints-CookbookVersionSyntax"></a>Cookbook Version Syntax</h2>
+<p><font color="#f7681a">A cookbook version has the form x.y.z, where x, y and z are decimal numbers representing major, minor and patch versions, respectively.</font>  A two-part version (e.g. x.y) is also allowed.</p>
+
+<p>Note that alpha-numeric version numbers, such as 3.4.rc4, and version numbers with more than three parts (e.g. 1.2.3.4) are not allowed.</p>
+
+<h2><a name="VersionConstraints-VersionConstraints"></a>Version Constraints</h2>
+
+<p><font color="#f7681a">A version constraint is a string of the form "OP VERSION", where OP is one of the operators listed below and VERSION is a cookbook version as described above.</font></p>
+
+<h3><a name="VersionConstraints-Operators"></a>Operators</h3>
+
+<ul>
+	<li>= Equal to</li>
+	<li>&gt; Greater than</li>
+	<li>&lt; Less than</li>
+	<li>&gt;= Greater than or equal to</li>
+	<li>&lt;= Less than or equal to</li>
+	<li>&#126;&gt; Approximately greater than</li>
+</ul>
+
+
+<p>Specifying <tt>"&gt;= 2.6.5"</tt> is an optimistic version constraint.  All versions greater than the one specified, including major releases (e.g. 3.0.0) are allowed.</p>
+
+<p>Conversely, specifying <tt>"&#126;&gt; 2.6"</tt> is pessimistic about future major revisions and <tt>"~&gt; 2.6.5"</tt> is pessimistic about future minor revisions.</p>
+
+<p><tt>"~&gt; 2.6"</tt> matches cookbooks <tt>&gt;= 2.6.0 AND &lt; 3.0.0</tt><br/>
+<tt>"~&gt; 2.6.5"</tt> matches cookbooks <tt>&gt;= 2.6.5 AND &lt; 2.7.0</tt></p>
+</td>
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Requires Chef 0.10</b><br />The Version Constraints functionality is only available in Chef 0.10.x and after.</td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#VersionConstraints-Overview'>Overview</a></li>
+    <li><a href='#VersionConstraints-CookbookVersionSyntax'>Cookbook Version Syntax</a></li>
+    <li><a href='#VersionConstraints-VersionConstraints'>Version Constraints</a></li>
+<ul>
+    <li><a href='#VersionConstraints-Operators'>Operators</a></li>
+    <li><a href='#VersionConstraints-CookbookMetadata'>Cookbook Metadata</a></li>
+    <li><a href='#VersionConstraints-EnvironmentCookbookVersions'>Environment Cookbook Versions</a></li>
+    <li><a href='#VersionConstraints-CookbookVersionsinRunListItems'>Cookbook Versions in Run List Items</a></li>
+    <li><a href='#VersionConstraints-FreezingCookbooks'>Freezing Cookbooks</a></li>
+    <li><a href='#VersionConstraints-BranchTrackingStrategy'>Branch Tracking Strategy</a></li>
+    <li><a href='#VersionConstraints-MaximumVersionControlStrategy'>Maximum Version Control Strategy</a></li>
+</ul>
+</ul></div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="7%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<h3><a name="VersionConstraints-CookbookMetadata"></a>Cookbook Metadata</h3>
+
+<p>The following DSL functions can be used in a cookbook's metadata.rb file.  <font color="#f7681a">Each function accepts a name and an optional version constraint.</font>  If the version constraint is not provided, the default constraint of <tt>"&gt;= 0.0.0"</tt> will be used.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">conflicts
+depends
+provides
+recommends
+replaces
+suggests
+supports</pre>
+		</div>
+</div></div>
+
+<p>Example version constraints in a cookbook/metadata.rb file:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">depends   "opscode-base"
+depends   "opscode-github", "&gt; 1.0.0"
+depends   "runit", "~&gt; 1.2.3"
+conflicts "apache2", "&lt; 3.0"
+conflicts "daemon-tools"</pre>
+		</div>
+</div></div>
+
+<p>Specifying a version constraint for these functions is <b>optional</b>.  If no version constraint is provided, the default version constraint of "&gt;= 0.0.0" will be used.</p>
+
+<h3><a name="VersionConstraints-EnvironmentCookbookVersions"></a>Environment Cookbook Versions</h3>
+
+<p><font color="#f7681a">An environment can specify a list of allowed cookbook versions using version constraints.</font>  When defining a constraint, you must specify the cookbook name and the version constraint. Any cookbook not explicitly constrained in the environment file is assumed to have no version constrain and can be used at any version by every node in that environment.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbook "apache2", "~&gt; 1.2.3"
+cookbook "runit", "= 4.2.0"</pre>
+		</div>
+</div></div>
+
+<h3><a name="VersionConstraints-CookbookVersionsinRunListItems"></a>Cookbook Versions in Run List Items</h3>
+
+<p><font color="#f7681a">You can peg the cookbook version to use for recipe items in a node's run list.</font>  The syntax uses '@' to specify a version.  Only the equality constraint is supported for specifying constraints in run lists.</p>
+
+<p>Example run list JSON</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{"run_list":["recipe[nginx@1.2.3]"]}</pre>
+		</div>
+</div></div>
+
+<h3><a name="VersionConstraints-FreezingCookbooks"></a>Freezing Cookbooks</h3>
+
+<p><font color="#f7681a">You can also freeze your cookbooks, to prevent anyone from uploading the frozen cookbook at the same version number.</font> Once a cookbook is frozen, you can only upload a cookbook with the same name and version by using the --force option:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook upload redis --freeze
+Uploading redis…
+upload completed
+
+% knife cookbook show redis 0.1.6 | grep frozen
+frozen?:        true
+
+% knife cookbook upload redis
+Uploading redis…
+ERROR: Version 0.1.6 of cookbook redis is frozen. Use --force to override.</pre>
+		</div>
+</div></div>
+<p>By combining frozen cookbook versions with environments you can make sure that production is safe from accidental updates when testing out changes in your development infrastructure.</p>
+
+<p><font color="#f7681a">There are two main strategies for implementing version control:</font></p>
+
+<ul>
+	<li>If you place supreme importance on always keeping every last bit of data in version control, you’ll want to use the maximum version control strategy and drive your use of environments by editing files only.</li>
+	<li>If you’re already managing your cookbooks for separate environments using git branches, and you already have your versioning policy information stored in your cookbooks’ metadata, you might opt for a lighter weight branch tracking strategy.</li>
+</ul>
+
+
+<p>Below are examples of both of these strategies.</p>
+
+<h3><a name="VersionConstraints-BranchTrackingStrategy"></a>Branch Tracking Strategy</h3>
+
+<p><font color="#f7681a">In the branch tracking strategy, you have a branch in your source control repo for each environment, and your cookbook versioning policy tracks whatever is in the tip of each branch.</font> This strategy is simple and lightweight. For development environments that track the latest cookbooks, you just need to bump the version before you upload the cookbook for testing. For environments that need special protection, i.e., production, you always upload cookbooks using the -E ENVRIONMENT and --freeze flags.</p>
+
+<p>In development:</p>
+
+<p>1. Bump the version number as appropriate.<br/>
+2. Make the changes needed to the cookbook.<br/>
+3. Upload and test. Upload for dev is the same as always: </p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload my-app</pre>
+		</div>
+</div></div>
+<p>Repeat steps 2 and 3 as necessary.</p>
+
+<p>When you’re ready to move your changes into production:</p>
+
+<p>1. Upload for prod with automatic version constraints:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload  my-app -E production --freeze</pre>
+		</div>
+</div></div>
+<p>Adding the -E ENVIRONMENT option will cause knife to automatically set the version constraint on that environment to match the version you’re uploading.</p>
+
+<h3><a name="VersionConstraints-MaximumVersionControlStrategy"></a>Maximum Version Control Strategy</h3>
+
+<p><font color="#f7681a">If you prefer to version control absolutely everything, then you need to use a file-editing based approach to environments.</font> In your development environment, you work the same as the branch tracking strategy. </p>
+
+<p>In development:</p>
+
+<p>1. Bump the version number as appropriate.<br/>
+2. Make the changes needed to the cookbook.<br/>
+3. Upload and test. Upload for dev is the same as always: </p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload my-app</pre>
+		</div>
+</div></div>
+<p>Repeat 2 and 3 as necessary.</p>
+
+<p>When you’re ready to move your cookbooks into production, you’ll do the following:</p>
+
+<p>1. Upload and freeze your cookbooks:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload my-app --freeze</pre>
+		</div>
+</div></div>
+<p>2. Modify your environment to prefer the new version you uploaded:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">(vim|emacs|mate|ed) YOUR_REPO/environments/production.rb</pre>
+		</div>
+</div></div>
+<p>3. Upload the updated environment:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife environment from file production.rb</pre>
+		</div>
+</div></div>
+<p>4. Deploy!</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/8257584/20840604.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Templates.html" title="Templates">Templates</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/8257584/20840603.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Cookbook Site Help.html" title="Cookbook Site Help">Cookbook Site Help</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257584/15892490.jpg">IfThen.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257584/20840603.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257584/20840604.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-24773894"></a>
+                                    <font class="smallfont"><p>What is the possible way to include multiple versions for a platform support in metadata? <br/>
+I would like to be able to specify the version constraint in the following format.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">supports "ubuntu", "~&gt; 10.04", "~&gt;12.04"</pre>
+		</div>
+</div></div>
+
+<p>If I use the above format, I get an error from chef saying it is not supported. If I use simply the "&gt;=" constraint, it will also include newer versions that might come in the future. Any advice would be greatly appreciated.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by kannan@rightscale.com at Jul 31, 2012 18:41
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Installing Chef Server using Chef Solo</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Installing Chef Server using Chef Solo
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jun 26, 2012 by <font color="#0050B2">pfitzgibbons</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<hr />
+<p><span class="image-wrap" style="float: left"><img src="../attachments/18645206/19005526.png" hspace="30" vspace="8" style="border: 0px solid black"/></span></p>
+
+<h6><a name="InstallingChefServerusingChefSolo-"></a><font color="navy"><cite>"Configuring my chef server with chef - it doesn't get any more meta than this" - bbrowning</cite></font></h6>
+
+<h5><a name="InstallingChefServerusingChefSolo-BootstrapinthecontextofthisdocumentreferstotheinitialconfigurationofaChefServerforyourinfrastructure."></a>Bootstrap in the context of this document refers to the initial configuration of a Chef Server for your infrastructure.</h5>
+
+
+<h3><a name="InstallingChefServerusingChefSolo-"></a><font color="#f7681a">The bootstrap install works using</font> <font color="#f7681a"><tt>chef-solo</tt></font> <font color="#f7681a">to run chef recipes that install a full Chef Server.</font></h3>
+
+<p><br class="atl-forced-newline" />
+The bootstrap install does this because RubyGems does not have a way to handle several things package management systems do easily:</p>
+
+<ul>
+	<li>Create configuration files.</li>
+	<li>Create system-level init scripts.</li>
+	<li>Start new services from init scripts.</li>
+	<li>Install non-Ruby programs/libraries.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<b>This bootstrap is handled by a special recipe in the Opscode Chef Cookbook,</b> <tt><b>chef-server::rubygems-install</b></tt><b>.</b> <font color="#f7681a">This page will describe the basics of how to use this recipe.</font> The documentation for the cookbook, including the details of the settings available to configure these recipes, is in the <a href="https://github.com/opscode-cookbooks/chef-server/blob/master/README.md">README</a> for the server and <a href="https://github.com/opscode-cookbooks/chef-client/blob/master/README.md">README</a> for the client side.</p>
+
+<hr />
+<h1><a name="InstallingChefServerusingChefSolo-InstallProcess"></a>Install Process</h1>
+
+<p>Installing chef-server using Chef Solo requires that you</p>
+
+<ol>
+	<li>Install Chef Solo,</li>
+	<li>Create the necessary Chef Solo configuration files,</li>
+	<li>Run chef-solo using the chef-server cookbook,</li>
+	<li>Verify the installation succeeded, and</li>
+	<li>Complete post-installation configuration task.</li>
+</ol>
+
+
+<p>The following sections explain each part of this process in detail.</p></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: right"><a class="confluence-thumbnail-link 139x186" href='http://wiki.opscode.com/download../attachments/18645206/Bootstrapping.jpg'><img src="../attachments/thumbnails/18645206/21463091" hspace="12" vspace="4" style="border: 0px solid black"/></a></span></p>
+<div>
+<ul>
+    <li><a href='#InstallingChefServerusingChefSolo-InstallProcess'>Install Process</a></li>
+<ul>
+    <li><a href='#InstallingChefServerusingChefSolo-InstallChefSolo'>Install Chef-Solo</a></li>
+    <li><a href='#InstallingChefServerusingChefSolo-ConfigureChefsolo'>Configure Chef-solo</a></li>
+    <li><a href='#InstallingChefServerusingChefSolo-BootstrapChefServer'>Bootstrap Chef Server</a></li>
+    <li><a href='#InstallingChefServerusingChefSolo-VerifyThatAllComponentsareRunning'>Verify That All Components are Running</a></li>
+    <li><a href='#InstallingChefServerusingChefSolo-ConfiguretheCommandLineClient'>Configure the Command Line Client</a></li>
+    <li><a href='#InstallingChefServerusingChefSolo-VerifyYourKnifeClientConfiguration'>Verify Your Knife Client Configuration</a></li>
+    <li><a href='#InstallingChefServerusingChefSolo-CreateaKnifeClientforYourLaptop%2FDesktop'>Create a Knife Client for Your Laptop/Desktop</a></li>
+    <li><a href='#InstallingChefServerusingChefSolo-VerifyYourConfiguration'>Verify Your Configuration</a></li>
+</ul>
+    <li><a href='#InstallingChefServerusingChefSolo-CentOS%2FRHELInstallationNotes'>CentOS/RHEL Installation Notes</a></li>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Commands Run as Root</b><br />Commands that require root privileges are run with <tt>sudo</tt> in these directions.  If your system is not configured to use <tt>sudo</tt>, run these commands as root using a method appropriate for your configuration.</td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h2><a name="InstallingChefServerusingChefSolo-InstallChefSolo"></a>Install Chef-Solo</h2>
+
+<p>Chef-solo is packaged together with Chef-client.  To install chef-solo on the host that will become your chef server, follow the directions to install chef-client:</p>
+
+<ul>
+	<li><a href="Installing Chef Client and Chef Solo.html" title="Installing Chef Client and Chef Solo">Installing Chef Client and Chef Solo</a></li>
+</ul>
+
+
+
+<h2><a name="InstallingChefServerusingChefSolo-ConfigureChefsolo"></a>Configure Chef-solo</h2>
+
+<p><font color="#f7681a">You need to give chef-solo a minimal configuration before it can run the bootstrap recipes.</font> You need to configure two parts: chef-solo's own configuration file (<tt>/etc/chef/solo.rb</tt> by default) tells chef-solo where to store its files, and a JSON attributes file gives chef-solo the values it uses to configure your Chef Server.</p>
+
+
+
+<h3><a name="InstallingChefServerusingChefSolo-ChefSoloConfigurationFile%3Asolo.rb"></a>Chef Solo Configuration File: solo.rb</h3>
+
+<p>We're going to use Chef Solo to run the bootstrap recipes, so it needs to be configured to point the right locations.</p>
+
+<p>First, create a chef directory in <tt>/etc</tt></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo mkdir /etc/chef/</pre>
+		</div>
+</div></div>
+
+<p>Now create a chef-solo configuration file. Save it as <tt>/etc/chef/solo.rb</tt>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Edit /etc/chef/solo.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file_cache_path "/tmp/chef-solo"
+cookbook_path "/tmp/chef-solo/cookbooks"</pre>
+		</div>
+</div></div>
+
+<h3><a name="InstallingChefServerusingChefSolo-ChefSoloAttributesConfiguration%3Achef.json"></a>Chef Solo Attributes Configuration: chef.json</h3>
+
+<p>Chef can use JSON data passed to Solo or the Client to specify a certain list of recipes to run and specific <a href="Attributes.html" title="Attributes">Attributes</a> to configure on the system. We're going to configure the node with a JSON file particular to whether it will be a Chef Server or a Chef Client. Create the file <tt>&#126;/chef.json</tt> with the applicable contents below.</p>
+
+<p>Chef Server with no webui:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Server Attributes (API Only)</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "chef_server": {
+    "server_url": "http://localhost:4000"
+  },
+  "run_list": [ "recipe[chef-server::rubygems-install]" ]
+}</pre>
+		</div>
+</div></div>
+
+<p>Chef Server with the webui installed and enabled:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Server Attributes (API and WebUI)</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "chef_server": {
+    "server_url": "http://localhost:4000",
+    "webui_enabled": true
+  },
+  "run_list": [ "recipe[chef-server::rubygems-install]" ]
+}</pre>
+		</div>
+</div></div>
+
+<h3><a name="InstallingChefServerusingChefSolo-SetTheInitStyleForYourSystem"></a>Set The Init Style For Your System</h3>
+
+<p>The bootstrap recipes currently default to using runit as the init system. We're big fans of runit, but you might prefer a different init system.</p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>The default Init Style for RHEL and RHEL-like Distros is "init"</b><br />RHEL, CentOS, and related distros don't have a runit package. The default is "init" init style for these systems.</td></tr></table></div>
+<p>If you need to specify a different init system, add the <tt>init_style</tt> attribute to your chef.json:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Server Attributes for Using Your System's Default Init System</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "chef_server": {
+    "server_url": "http://localhost:4000",
+    "init_style": "init"
+  },
+  "run_list": [ "recipe[chef-server::rubygems-install]" ]
+}</pre>
+		</div>
+</div></div>
+
+<p>There are a lot of other attributes available to configure for the Chef Server. See the <a href="http://github.com/opscode-cookbooks/chef-server/tree/master/README.md">Chef Server Cookbook README</a> for complete details.</p>
+
+<h2><a name="InstallingChefServerusingChefSolo-BootstrapChefServer"></a>Bootstrap Chef Server</h2>
+
+<p><font color="#f7681a">This procedure will set up the</font> <font color="#f7681a"><tt>chef-server-api</tt></font> <font color="#f7681a">to run on port 4000 using the</font> <font color="#f7681a"><tt>thin</tt></font> <font color="#f7681a">adapter, and optionally the</font> <font color="#f7681a"><tt>chef-server-webui</tt></font> <font color="#f7681a">on port 4040.</font> SSL encryption can be provided by <a href="How to Proxy Chef Server with Apache.html" title="How to Proxy Chef Server with Apache">proxying with Apache</a>.</p>
+
+<p>The webui is now separate from the API, so it is now optional. Setting the attribute <tt>webui_enabled</tt> to true will install and configure it.</p>
+
+<h3><a name="InstallingChefServerusingChefSolo-Run%7B%7Bchefsolo%7D%7D"></a>Run <tt>chef-solo</tt></h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Chef Solo Installs and Configures Chef Server</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">sudo chef-solo -c /etc/chef/solo.rb -j ~/chef.json -r http://s3.amazonaws.com/chef-solo/bootstrap-latest.tar.gz</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>CentOS/RHEL Issues</b><br />There are a number of issues setting up Chef Server on CentOS/RHEL, please see the <a href="#InstallingChefServerusingChefSolo-CentOS%2FRHELInstallationNotes">CentOS/RHEL Installation Notes</a></td></tr></table></div>
+
+<p>This command will bring up the Chef Server by doing the following:</p>
+
+<ul>
+	<li>Bootstrap the system as a Client (<a href="#InstallingChefServerusingChefSolo-BootstrapChefClients">see section below</a> for what this entails).</li>
+	<li>Install RabbitMQ if possible <a href="#InstallingChefServerusingChefSolo-rabbitmq">(see below)</a>.</li>
+	<li>Install CouchDB if possible <a href="#InstallingChefServerusingChefSolo-couchdb">(see below)</a>.</li>
+	<li>Install development libraries zlib and xml, for <tt>chef-solr</tt>.</li>
+	<li>Install the <tt>chef-server</tt>, <tt>chef-server-api</tt>, <tt>chef-solr</tt> gems.</li>
+	<li>Optionally (if webui_enabled) install <tt>chef-server-webui</tt> gem.</li>
+	<li>Create the server configuration file, <tt>/etc/chef/server.rb</tt>.</li>
+	<li>Create some directories the server needs.</li>
+	<li>If <tt>init_style</tt> is "runit", set up <tt>chef-expander</tt>, <tt>chef-solr</tt>, <tt>chef-server</tt> (API) as runit services. If webui_enabled, it <tt>chef-server-webui</tt> will be added as a runit service as well. If "init", copy the init scripts for these services from the installed Chef gem for the current platform (Debian and Red Hat families supported). If "bsd", display a hint about startup commands. Otherwise, display a message about manual setup.</li>
+</ul>
+
+
+
+
+<p>
+<h2><a name="InstallingChefServerusingChefSolo-VerifyThatAllComponentsareRunning"></a>Verify That All Components are Running</h2>
+
+<p>Now that you have Chef Server installed, you should have the following processes running.</p>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Name </th>
+<th class='confluenceTh'> Listen Port </th>
+<th class='confluenceTh'> Example Program Name in <tt>ps</tt> (Erlang programs truncated) </th>
+</tr>
+<tr>
+<td class='confluenceTd'> Chef Server </td>
+<td class='confluenceTd'> 4000 </td>
+<td class='confluenceTd'> <tt>merb : chef-server (api) : worker (port 4000)</tt> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> Chef Server WebUI </td>
+<td class='confluenceTd'> 4040 </td>
+<td class='confluenceTd'> <tt>merb : chef-server-webui : worker (port 4040)</tt> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> CouchDB </td>
+<td class='confluenceTd'> 5984 </td>
+<td class='confluenceTd'> <tt>beam.smp -Bd -K true &#8211; -root /usr/local/lib/erlang -progname erl &#8211; -noshell -noinput -couch_ini /usr/local/etc/couchdb/default.ini /usr/local/etc/couchdb/local.ini -s couch</tt> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> RabbitMQ </td>
+<td class='confluenceTd'> 5672 </td>
+<td class='confluenceTd'> {{beam.smp -W w -K true -A30 &#8211; -root /usr/local/lib/erlang -progname erl &#8211; -noshell -noinput -s rabbit -sname <br/>
+rabbit -rabbit tcp_listeners [{"0.0.0.0", 5672}]}} </td>
+</tr>
+<tr>
+<td class='confluenceTd'> Chef Solr </td>
+<td class='confluenceTd'> 8983</td>
+<td class='confluenceTd'> <tt>/usr/bin/java -Xmx250M -Xms250M -Dsolr.data.dir=/opscode/chef/features/data/solr/data -Dsolr.solr.home=/opscode/chef/features/data/solr/home -jar /opscode/chef/features/data/solr/jetty/start.jar</tt> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> Chef Expander </td>
+<td class='confluenceTd'> <em>none</em> </td>
+<td class='confluenceTd'> <tt>ruby ./chef-solr/bin/chef-expander -c /etc/chef/solr.rb -l debug</tt> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h2><a name="InstallingChefServerusingChefSolo-ConfiguretheCommandLineClient"></a>Configure the Command Line Client</h2>
+
+<p><font color="#f7681a">Once you've verified that all of Chef's components are working, it's time to configure the <a href="Knife.html" title="Knife">knife</a> command line tool.</font>  On your Chef Server, run <tt>knife configure -i</tt> to interactively configure your knife client and create an admin account on the server. You can accept the default responses shown in brackets by pressing <tt>&lt;enter&gt;</tt>.</p>
+
+<p>First, create the ~/.chef directory and copy the required certificates created by the server.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[mkdir -p ~/.chef
+sudo cp /etc/chef/validation.pem /etc/chef/webui.pem ~/.chef
+sudo chown -R $USER ~/.chef]]></script>
+</div></div>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Certificates Read Only</b><br />Presumably you're running this as a normal non-privileged user. When the <tt>chef-server-api</tt> starts, it creates the validation and webui certificates as read/write only by the user that starts the process (<tt>chef</tt>).</td></tr></table></div>
+
+<p>Next run the <tt>knife configure</tt> command, and pass the <tt>-i</tt> flag so the initial <a href="API Clients.html" title="API Clients">client</a> that will be used to authenticate with the API.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[chef-server &gt; knife configure -i
+Where should I put the config file? [~/.chef/knife.rb] 
+Please enter the chef server URL: [http://localhost:4000] 
+Please enter a clientname for the new client: [bob]]]></script>
+</div></div>
+
+<p><a href="API Clients.html" title="API Clients">API Client</a> creation must use an existing admin client's credentials to create the new account. On a brand new server, the <tt>chef-webui</tt> is created by <tt>chef-server-api</tt> startup. Use the default for the clientname, and specify the webui.pem copied above.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[Please enter the existing admin clientname: [chef-webui] 
+Please enter the location of the existing admin client's private key: [/etc/chef/webui.pem] .chef/webui.pem]]></script>
+</div></div>
+
+<p>The "chef-validator" client is a special account used to auto-register new nodes. Use the default clientname, and specify the validation.pem copied above.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[Please enter the validation clientname: [chef-validator] 
+Please enter the location of the validation key: [/etc/chef/validation.pem] .chef/validation.pem]]></script>
+</div></div>
+
+<p>Finally, specify a location for the <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a>. This is used to configure knife to point to the directory where <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> will be stored.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[Please enter the path to a chef repository (or leave blank): 
+WARN: Creating initial API user...
+INFO: Created (or updated) client[bob]
+WARN: Configuration file written to /home/bob/.chef/knife.rb]]></script>
+</div></div>
+
+<h2><a name="InstallingChefServerusingChefSolo-VerifyYourKnifeClientConfiguration"></a>Verify Your Knife Client Configuration</h2>
+
+<p><font color="#f7681a">You can now run some basic knife commands to verify that you can communicate with the server.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[chef-server&gt; knife client list
+  chef-webui
+  bob
+  chef-validator]]></script>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[chef-server&gt; knife cookbook list]]></script>
+</div></div>
+
+<h2><a name="InstallingChefServerusingChefSolo-CreateaKnifeClientforYourLaptop%2FDesktop"></a>Create a Knife Client for Your Laptop/Desktop</h2>
+
+<h3><a name="InstallingChefServerusingChefSolo-CreateYourClientAccount"></a>Create Your Client Account</h3>
+
+<p><font color="#f7681a">When working with chef, you will spend a lot of time editing recipes and other files, and you'll find it much more convenient to edit them on your laptop/desktop (your management workstation), where you have your editor configured just to your liking.</font> <b>To facilitate this mode of working, we recommend you create a knife client to use knife on your development machine.</b></p>
+
+<p>Make sure you've configured knife on your chef server as described above before proceeding with this step.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[chef-server&gt; knife client create my-username -d -a -f /tmp/my-username.pem
+INFO: Created (or updated) client[my-username]]]></script>
+</div></div>
+
+<p>This command creates the client and writes its private key to <tt>/tmp/my-username.pem</tt>. To verify the operation, use the <tt>knife client show</tt> command:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[chef-server&gt; knife client show my-username
+admin:      true
+chef_type:  client
+json_class: Chef::ApiClient
+name:       "my-username"
+public_key: "-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAvZQlkA3EzaC+qtsZnSZG6ildyCVXvnQqShOm4\ (...) \n-----END RSA PUBLIC KEY-----\n"]]></script>
+</div></div>
+
+<h3><a name="InstallingChefServerusingChefSolo-CopyYourKeyandConfigureKnife"></a>Copy Your Key and Configure Knife</h3>
+
+<p>Now you need to copy the key you just created to your development machine using scp (or some other file copy mechanism).</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[your-laptop &gt; mkdir ~/.chef
+your-laptop &gt; scp chef-server.example.com:/tmp/my-username.pem ~/.chef/my-username.pem]]></script>
+</div></div>
+
+<p><font color="#f7681a">In order to use knife on your laptop, you'll need to install the chef-client.</font> If your laptop's OS comes with rubygems (Mac OS X, for example) you can run <tt>sudo gem install chef</tt>; otherwise, check out the <a href="Installation.html#Installation-InstallationInstallingChefClientandChefSolo">client installation instructions for your OS</a>. Once you have chef installed, you can use knife's interactive configuration on your laptop (note we're <b>not</b> using the <tt>-i</tt> option here):</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[your-laptop &gt; knife configure
+No knife configuration file found]]></script>
+</div></div>
+
+<p>Knife looks for its configuration in <tt>HOME/.chef/knife.rb by default</tt>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[Where should I put the config file? [~/.chef/knife.rb] 
+Please enter the chef server URL: [http://localhost:4000] http://chef-server.example.com:4000]]></script>
+</div></div>
+
+<p>Now, enter your client name, exactly as you did when running <tt>knife client create</tt> above:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[Please enter an existing username or clientname for the API: [my-username] my-username]]></script>
+</div></div>
+
+<p>For these next settings, you can accept the defaults for now and update them later by editing your knife.rb file. The validation client name and key are used with knife's cloud computing commands:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[Please enter the validation clientname: [chef-validator] 
+Please enter the location of the validation key: [/etc/chef/validation.pem]]]></script>
+</div></div>
+
+<p>We'll also leave the path to the chef repository blank for now. After you've created a chef repository, you'll want to configure it by editing knife.rb</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[Please enter the path to a chef repository (or leave blank): 
+WARN: *****
+WARN: 
+WARN: You must place your client key in:
+WARN:   /Users/you/.chef/my-username.pem
+WARN: Before running commands with Knife!
+WARN: 
+WARN: *****
+WARN: 
+WARN: You must place your validation key in:
+WARN:   /etc/chef/validation.pem
+WARN: Before generating instance data with Knife!
+WARN: 
+WARN: *****
+WARN: Configuration file written to /Users/you/.chef/knife.rb]]></script>
+</div></div>
+
+<h2><a name="InstallingChefServerusingChefSolo-VerifyYourConfiguration"></a>Verify Your Configuration</h2>
+
+<p>You can run some <tt>list</tt> and <tt>show</tt> commands to verify everything is working:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[your-laptop &gt; knife client list
+  chef-webui
+  my-username
+  bob
+  chef-validator
+
+your-laptop &gt; knife client show chef-validator
+name:       chef-validator
+public_key: 
+admin:      false
+json_class: Chef::ApiClient
+chef_type: client]]></script>
+</div></div>
+
+<p>You're now ready to use <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> to automatically set up systems to become new Chef Clients to the server.</p>
+</p>
+<h1><a name="InstallingChefServerusingChefSolo-CentOS%2FRHELInstallationNotes"></a>CentOS/RHEL Installation Notes</h1>
+
+<ul>
+	<li>SELinux will probably cause things to fail.  Disable this with: <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">lokkit --selinux=disabled</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<ul>
+	<li>You must have the <a href="http://rbel.frameos.org/">RBEL</a> or other similar 3rd party repository installed to run the bootstrap cookbook.</li>
+</ul>
+
+
+<ul>
+	<li>CentOS 5.x users will need to have version 4.2 or better of gcc in order for this to function.  You may install gcc44 and gcc44-c+&#43; via yum to fulfill this requirement. If you do so, make sure you export<br/>
+CXX=`which g++44` and CC=`which gcc44` when running the bootstrap.</li>
+</ul>
+
+
+<ul>
+	<li>If you run into the following error when running the bootstrap:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">FATAL: ArgumentError: directory[/var/lib/couchdb] (couchdb::default line 30) had an error: can't find group for couchdb</pre>
+		</div>
+</div></div>
+<p>Attempt to run the bootstrap again.</p></li>
+</ul>
+
+
+<ul>
+	<li>If you find that chef-server did not start after running the bootstrap, attempt to run the following commands:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">echo "/usr/local/lib" &gt;&gt; /etc/ld.so.conf
+ldconfig</pre>
+		</div>
+</div></div>
+<p>Then attempt to restart the chef services.  The easiest way to restart all the services at once is often to just rerun the bootstrap.</p></li>
+</ul>
+
+
+<ul>
+	<li>The chef-server::apache-proxy recipe will fail on CentOS/RHEL 6 because apache and chef-server::apache-proxy cookbooks included in <a href="http://s3.amazonaws.com/chef-solo/bootstrap-latest.tar.gz">http://s3.amazonaws.com/chef-solo/bootstrap-latest.tar.gz</a> are out-of-date. Try using the attached tarball <a href="bootstrap-2012.06.26-epel-6-7.tar.gz.html" title="bootstrap-2012.06.26-epel-6-7.tar.gz">bootstrap&#45;2012.06.26&#45;epel&#45;6&#45;7.tar.gz</a>. See <a href="http://tickets.opscode.com/browse/COOK-973">COOK-973</a> for details.
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Chef Solo Installs and Configures Chef Server</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">sudo chef-solo -c /etc/chef/solo.rb -j ~/chef.json -r https://s3.amazonaws.com/chef-solo/bootstrap-latest.tar.gz</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<ul>
+	<li>If you find the error message
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">/usr/lib/ruby/1.8/openssl/cipher.rb:22: Cipher is not a module (TypeError)</pre>
+		</div>
+</div></div>
+<p>then download the ruby source files (for your version&#33;) from e.g., <a href="ftp://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.7-p352.tar.bz2">ftp://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.7-p352.tar.bz2</a>, untar it and change dir to <tt>ruby-XXXXX/ext/openssl</tt>. There, run <tt>ruby extconf.rb</tt>, <tt>make</tt>, and <tt>make install</tt>. Afterwards, the bootstrap should overcome this error.</p></li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/18645206/21463090.png" hspace="4" style="border: 0px solid black"/></span><br/>
+<a href="Installation.html" title="Installation">Installation</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/18645206/21463089.png" hspace="4" style="border: 0px solid black"/></span><br/>
+<a href="Installing Chef Client and Chef Solo.html" title="Installing Chef Client and Chef Solo">Installing Chef Client and Chef Solo</a></p>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645206/19005526.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645206/21463089.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645206/21463090.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645206/21463091.jpg">Bootstrapping.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645206/25002026.gz">bootstrap-2012.06.26-epel-6-7.tar.gz</a> (application/x-gzip)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

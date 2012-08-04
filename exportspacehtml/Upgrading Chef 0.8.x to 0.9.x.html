@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Upgrading Chef 0.8.x to 0.9.x</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Upgrading Chef 0.8.x to 0.9.x
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 30, 2010 by <font color="#0050B2">greenmoss</font>.
+				    </div>
+
+				    <p>This guide is for the installation methods supported by Opscode (RubyGems and Debian packages).</p>
+
+<p>Though it is a smoother transition than from 0.7 to 0.8, upgrading from 0.8 to 0.9 must be done lock-step. That is, 0.8 client and server are incompatible with 0.9 client and server.</p>
+
+<p>New <a href="Chef Configuration Settings.html" title="Chef Configuration Settings">configuration values</a> available:</p>
+
+<ul>
+	<li><tt>sandbox_path</tt> - <tt>/var/chef/sandboxes</tt></li>
+	<li><tt>checksum_path</tt> - <tt>/var/chef/checksums</tt></li>
+</ul>
+
+
+<p>These are for the new cookbook upload process to the Chef Server. You will need to re-upload your cookbooks to the Chef server using Knife.</p>
+
+<p>With that in mind, the basic upgrade process for chef-server is described below. As always, remember to make backups and try the upgrade in a test environment first.</p>
+
+<h2><a name="UpgradingChef0.8.xto0.9.x-StopServerServices"></a>Stop Server Services</h2>
+
+<p>The deb packaging will stop the services for you. If you're using the RubyGems installation, you'll need to stop the services the server runs manually.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">for svc in server server-webui solr-indexer solr
+do
+  sudo /etc/init.d/chef-${svc} stop
+done
+
+# client only:
+sudo /etc/init.d/chef-client stop</pre>
+		</div>
+</div></div>
+
+<p>Make sure the 'merb' processes for the chef-server and chef-server-webui are no longer running. They will look like this when running (port 4000 is the chef-server, port 4040 is the chef-server-webui):</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">root      1035  0.1  0.0 112216  4276 ?        Sl   Jul07   5:44 merb : merb : master
+root      1784  6.5  0.6 146760 51984 ?        S    Jul07 290:40 merb : worker (port 4040)
+root      7547  0.1  0.4 110788 34104 ?        Sl   Jul09   3:00 merb : merb : master                                   
+root      7554  5.8  0.7 149912 57820 ?        S    Jul09 125:16 merb : worker (port 4000)</pre>
+		</div>
+</div></div>
+
+<h2><a name="UpgradingChef0.8.xto0.9.x-UpgradeChefServer"></a>Upgrade Chef Server</h2>
+
+<p>For RubyGems installation:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false"># server:
+sudo gem install chef chef-server</pre>
+		</div>
+</div></div>
+
+<p>Note that the 'chef-server' gem depends on chef-solr, chef-server-api and chef-server-webui. If you do not want the webui:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false"># server only w/ API:
+sudo gem install chef chef-server-api chef-solr</pre>
+		</div>
+</div></div>
+
+<p>For a Debian/Ubuntu installation:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get update
+sudo apt-get install chef chef-server</pre>
+		</div>
+</div></div>
+
+<h2><a name="UpgradingChef0.8.xto0.9.x-Modify%2Fetc%2Fchef%2Fserver.rb"></a>Modify /etc/chef/server.rb</h2>
+
+<p>If you wish to use non-default values for sandbox_path and checksum_path, edit the server configuration file (server.rb). If you are using the Chef cookbook to manage this, update the template.</p>
+
+<p>The Debian packaging already handles this for you.</p>
+
+<h2><a name="UpgradingChef0.8.xto0.9.x-RestarttheServices"></a>Restart the Services</h2>
+
+<p>This is handled by the deb packaging for you.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">for svc in server server-webui solr-indexer solr
+do
+  sudo /etc/init.d/chef-${svc} start
+done
+
+# client only:
+sudo /etc/init.d/chef-client start</pre>
+		</div>
+</div></div>
+
+<h2><a name="UpgradingChef0.8.xto0.9.x-Reuploadallcookbooks."></a>Re-upload all cookbooks.</h2>
+
+<p>You need to upload all the cookbooks. If your chef-repo is on the same system as the chef-server, then simply run:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload -a</pre>
+		</div>
+</div></div>
+
+<p>From the directory where your chef-repo is. If your chef-repo is on a different system such as your local workstation, then upgrade the Chef gem and run the knife command above.</p>
+
+<h2><a name="UpgradingChef0.8.xto0.9.x-UpgradeClients"></a>Upgrade Clients</h2>
+
+<p>Upgrading the clients can now be done. Simply install the new gem and restart the chef-client service.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo gem install chef
+sudo /etc/init.d/chef-client restart</pre>
+		</div>
+</div></div>
+
+<p>Debian packaging; the service will be stopped and started for you.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get update
+sudo apt-install chef</pre>
+		</div>
+</div></div>
+
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-7897226"></a>
+                                    <font class="smallfont"><p>Looks like if you upgrade from 0.8.16 to 0.9.8 you need to do the knife cookbook upload -a twice. The first time does not properly load cookbooks in your site-cookbooks directory that have the same name as a cookbook in the cookbooks directory. (I believe this is CHEF-1571, which is fixed in 0.9.10)</p>
+
+<p>And as far as I can tell, you must also make sure that any cookbook in your site-cookbooks has a version number in its metadata.rb that is greater than the one in the coobooks directory.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Sep 13, 2010 23:05
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

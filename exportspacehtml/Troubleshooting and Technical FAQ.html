@@ -1,0 +1,603 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Troubleshooting and Technical FAQ</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Troubleshooting and Technical FAQ
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on May 30, 2012 by <font color="#0050B2">btm</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<hr />
+<p><span class="image-wrap" style="float: left"><img src="../attachments/2883728/14876693.png" hspace="30" vspace="8" style="border: 0px solid black"/></span></p>
+
+<h3><a name="TroubleshootingandTechnicalFAQ-"></a><font color="#f7681a"><em>This is a general troubleshooting and technical FAQ document.</em></font> </h3>
+
+<h5><a name="TroubleshootingandTechnicalFAQ-CommonErrorshascommonerrormessagesforChefClient%2CKnifeandChefServerandtheirsolutions.Foran%22AboutChef%22FAQ%2CseeChefFAQ"></a><a href="Common Errors.html" title="Common Errors">Common Errors</a> has common error messages for Chef-Client, Knife and Chef-Server - and their solutions. For an "About Chef" FAQ, see <a href="http://wiki.opscode.com/display/chef/FAQ">Chef-FAQ</a></h5>
+<p><br class="atl-forced-newline" /></p>
+<hr />
+
+<p><br class="atl-forced-newline" /></p>
+<h1><a name="TroubleshootingandTechnicalFAQ-WhatisthecurrentversionofChef%3FDoIneedtoupgrade%3F"></a>What is the current version of Chef? Do I need to upgrade?</h1>
+
+<ul>
+	<li>The current version of <a href="Release Notes.html" title="Release Notes">Chef is 10.12.0</a></li>
+	<li>The current version of <a href="http://www.opscode.com/blog/2011/10/23/ohai-0-6-10-released/">Ohai is 6.14.0</a></li>
+</ul>
+
+
+<p><font color="#f7681a"><b>Private Chef</b></font> users will have migrations to new versions addressed through a jointly developed migration plan and upgrade implementation. Please follow up with your Private Chef administrator for additional information.</p>
+
+<p><font color="#f7681a"><b>Hosted Chef</b></font> will always be enabled with the current version, and with functionality sufficient to support use of pre-release versions. When new versions of Chef and the Opscode API are released, they will be immediately available to you on Hosted Chef – data migrations and backwards compatibility taken care of by Opscode. You can upgrade to new release chef-client versions and ohai clients as convenient for you, in order to gain the advantage of new releases functionality.</p>
+
+<p><font color="#f7681a"><b>Open Source Chef</b></font> users should upgrade their chef-server(s) and chef-clients to the newest version that provides the functionality and bug fixes they require. Another driver for upgrades would be availability of support resources from Opscode and the community. <a href="Release Notes.html" title="Release Notes">Release Notes</a> has a listing of all of the current supportable versions of Chef. <em>Versions older than 0.9.0 should be considered obsolete at this point.</em></p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-WhatisanFQDNandwhydoIneedone%3F"></a>What is an FQDN and why do I need one?</h1>
+
+<p>An FQDN is a "Fully Qualified Domain Name." <font color="#f7681a">By default, Chef Client uses the node's FQDN to uniquely identify node names to the server if the node name was not explicitly set.</font></p>
+
+<p>When using <a href="Chef Configuration Settings.html" title="Chef Configuration Settings">Passenger</a> or <a href="How to Proxy Chef Server with Apache.html" title="How to Proxy Chef Server with Apache">Apache Proxy</a> configurations for the Chef Server, the FQDN is used for the SSL certificate CN - canonical name.</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-Doyouhaveavideo%2CoroffertrainingonChef%3F"></a>Do you have a video, or offer training on Chef?</h1>
+
+<p><font color="#f7681a"><em>We have both!</em></font>  At <b><a href="Guides.html" title="Guides">Guides</a></b> you’ll find a number of <a href="Guides.html" title="Guides">“Walkthrough Guides”</a> that take you step by step through the installation of 6 different common server stacks including:</p>
+<ul>
+	<li><a href="Build A Rails Stack.html" title="Build A Rails Stack">Rails</a>,</li>
+	<li><a href="Build A Java Web Stack.html" title="Build A Java Web Stack">Java</a>,</li>
+	<li><a href="Build a LAMP Stack.html" title="Build a LAMP Stack">LAMP</a>,</li>
+	<li>and others.</li>
+</ul>
+
+
+<p>With detailed documentation and an accompanying screencast, you can go at your own pace and learn how to use Chef for your environment – all while setting up multiple server stacks you can put to use.</p>
+
+<p>There are also <a href="Guides.html" title="Guides">“How To Guides”</a> available on:</p>
+
+<ul>
+	<li><a href="Guide to Creating A Cookbook and Writing A Recipe.html" title="Guide to Creating A Cookbook and Writing A Recipe">Writing a Recipe and Creating a Chef Cookbook</a>,</li>
+	<li><a href="Working with Git and Cookbooks.html" title="Working with Git and Cookbooks">Working with Git and Cookbooks</a>,</li>
+	<li><a href="How to Proxy Chef Server with Apache.html" title="How to Proxy Chef Server with Apache">How to Proxy Chef Server with Apache</a>,</li>
+	<li><a href="Deploying OpenStack with Chef.html" title="Deploying OpenStack with Chef">Deploying OpenStack with Chef</a>,</li>
+	<li>and others.</li>
+</ul>
+
+
+<p>For a broader review of Chef, there’s a <a href="http://blip.tv/opscode/why-chef-5680627">Webcast</a> of "Why Chef" which is aimed at users new to Chef. And, if you’d like, following registration, we’ll be happy to send you the <a href="http://www.opscode.com/training/open-training/">Open Training Materials</a> for free.</p>
+</td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="36%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: right"><a class="confluence-thumbnail-link 168x168" href='http://wiki.opscode.com/download../attachments/2883728/9897446-many-sticky-notes-with-questions-like-who-what-when-where-how-and-why-and-a-question-mark-all-posted.jpg'><img src="../attachments/thumbnails/2883728/20840551" hspace="6" vspace="6" style="border: 0px solid black"/></a></span></p>
+
+<style type='text/css'>/*<![CDATA[*/
+div.rbtoc1338415610483 {margin-left: 1.5em;padding: 0px;}
+div.rbtoc1338415610483 ul {list-style: decimal;margin-left: 0px;padding-left: 10px;}
+div.rbtoc1338415610483 li {margin-left: 0px;padding-left: 0px;}
+
+/*]]>*/</style><div class='rbtoc1338415610483'>
+<ul>
+    <li><a href='#TroubleshootingandTechnicalFAQ-WhatisthecurrentversionofChef%3FDoIneedtoupgrade%3F'>What is the current version of Chef? Do I need to upgrade?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-WhatisanFQDNandwhydoIneedone%3F'>What is an FQDN and why do I need one?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-Doyouhaveavideo%2CoroffertrainingonChef%3F'>Do you have a video, or offer training on Chef?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-WhydoIneedRubyGemsinstalledfromsource%3F'>Why do I need RubyGems installed from source?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-WhatifIhavemultipleversionsofthesameGem%3F'>What if I have multiple versions of the same Gem?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-WherecanIfindChef%27slogs%3F'>Where can I find Chef's logs?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-HowcanIgetmoreloginformation%3F'>How can I get more log information?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-Connectionrefusedforlocalhost%3A5984%2Cwhatislisteningon5984%3F'>Connection refused for localhost:5984, what is listening on 5984?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-Whydoesn%27tChefworkonXYZplatform%3F'>Why doesn't Chef work on XYZ platform?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-HowdoIdeleteanodewithanemptyname%3F'>How do I delete a node with an empty name?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-HowdoIdeleteamalformedChefServerclient%28Say%2Conewithspacesinthename%29'>How do I delete a malformed Chef Server client (Say, one with spaces in the name)</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-WhyismyChefruncrashingonarequirestatementforagemthatshouldhavebeeninstalledviaChef%3F'>Why is my Chef run crashing on a require statement for a gem that should have been installed via Chef?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-Istherearecommendedapproachformanagingindividualcredentialsandknife.rbwhenmultipledeveloperswillbeusingthesamechefrepo%3F'>Is there a recommended approach for managing individual credentials and knife.rb when multiple developers will be using the same chef-repo?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-MayIuseRVMtoinstallRubyand%2ForRubyGemsthatthechefclientrunsunder%3F'>May I use RVM to install Ruby and/or RubyGems that the chef-client runs under?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-WhatifanOpscodeserviceappearstobeunavailable%3FForinstance%2CwhatifI%27musingHostedChefandIamunabletoaccesit%3F'>What if an Opscode service appears to be unavailable? For instance, what if I'm using Hosted Chef and I am unable to acces it?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-HowcanIensureanotifiedactionisprocessed%2Cregardlessofthefullchefclientruncompleting%3F'>How can I ensure a notified action is processed, regardless of the full chef-client run completing?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-HowdoIcreatearecipethatwillonlyexecuteanactiononthefirstrunofchefclient%3F'>How do I create a recipe that will only execute an action on the first run of chef-client?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-HowdoIextendabasecookbooktoaccountfortheuseoftheIUSRPMs%3F'>How do I extend a base cookbook to account for the use of the IUS RPMs?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-HowcanIrunthechefclientperiodically%3F'>How can I run the chef-client periodically?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-Whatisthebestwaytomanagesoftwarethatneedsregularupdatesorpatches%3F'>What is the best way to manage software that needs regular updates or patches?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-AnytuningrecommendationsforthosewithalargeLDAPuserbase%3F'>Any tuning recommendations for those with a large LDAP user base?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-Ihaveoneoffnodesinmyenvironmentandneedtomanagethemuniquely.HowdoIdothiswithChef%3F'>I have one-off nodes in my environment and need to manage them uniquely. How do I do this with Chef?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-HowdoIrecreatemyvalidatorclientwhenusingHostedChef%3F'>How do I recreate my validator client when using Hosted Chef?</a></li>
+    <li><a href='#TroubleshootingandTechnicalFAQ-AretherecommonerrorsanderrormessagesthatIshouldbeawareof%3F'>Are there common errors and error messages that I should be aware of?</a></li>
+</ul></div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h1><a name="TroubleshootingandTechnicalFAQ-WhydoIneedRubyGemsinstalledfromsource%3F"></a>Why do I need RubyGems installed from source?</h1>
+
+<p>You don't <em>have</em> to install RubyGems from source. However, Opscode recommends it when installing Chef from RubyGems. <font color="#f7681a">Installing from source ensures consistency across platforms, as we can reasonably expect it to install in the same locations.</font> RubyGems doesn't follow <a href="http://www.pathname.com/fhs/pub/fhs-2.3.html">Filesystem Hierarchy Standard</a> on Linux, to which <a href="http://pkg-ruby-extras.alioth.debian.org/rubygems.html">Debian and Ubuntu adhere</a>, which may cause pathing problems that are sometimes difficult to track down.</p>
+
+<p>For example on Debian and Ubuntu, using the RubyGems distro package doesn't install binary programs to <tt>/usr/bin</tt>, instead they live in <tt>/var/lib/gems/1.8/bin</tt>, which isn't in the default user <tt>$PATH</tt>. This causes confusion for some users, as when they install Chef they can't run <tt>chef-client</tt>, <tt>chef-solo</tt> or even <tt>chef-server</tt>. Thus we recommend installing RubyGems from source when <a href="http://wiki.opscode.com/display/LEG/Installation+with+RubyGems" title="Installation with RubyGems">installing Chef from RubyGems</a> on these distributions.</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-WhatifIhavemultipleversionsofthesameGem%3F"></a>What if I have multiple versions of the same Gem?</h1>
+<p>Having multiple versions of the same gem can prove problematic.  <font color="#f7681a">Ruby can have unpredictable issues and responses in that scenario, which can affect your environment and the success of Chef runs.</font></p>
+
+<p>There are some knife-plugins that require a specific gem version, if that is the case, it will be specified in the plugins gemspec.  To remove a specific gem <tt>sudo gem uninstall GEMNAME -v VERSION#</tt>.  To remove all older versions of any gems, run <tt>sudo gem cleanup</tt>.  It will leave only the newest versions of installed gems. </p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-WherecanIfindChef%27slogs%3F"></a>Where can I find Chef's logs?</h1>
+
+<p><font color="#f7681a">Chef logs to standard out (STDOUT) for all its programs <tt>chef-client</tt>/<tt>chef-solo</tt>, <tt>chef-indexer</tt>, <tt>chef-server</tt>.</font> This can be changed by adjusting the configuration value of "log_location" in the appropriate configuration file. For example,</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/chef/client.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">log_location "/var/log/chef/client.log</pre>
+		</div>
+</div></div>
+
+<h3><a name="TroubleshootingandTechnicalFAQ-runitlogs"></a>runit logs</h3>
+
+<p>When installing Chef via the bootstrap recipe, Chef is configured to use the runit init system. In this case your logs are located in <tt>/etc/sv/PROGRAM/log/main/current</tt></p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-HowcanIgetmoreloginformation%3F"></a>How can I get more log information?</h1>
+
+<p>By default, Chef's programs have <tt>error</tt> level logging. <font color="#f7681a">To get more information, turn on <tt>info</tt> level.</font> This can be done for a single execution of the program with <tt>&#45;l</tt> or by changing the <tt>verbose</tt> value to <tt>:info</tt> (the colon is significant). For example,</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo chef-client -l</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/chef/client.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">verbose :info</pre>
+		</div>
+</div></div>
+
+<p>You can also setup Chef to have <tt>debug</tt> level logging. This can be done with two executions of the program with <tt>&#45;V</tt> or by changing the verbose value to <tt>:debug</tt> (The colon is significant). For example,</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo chef-client -l debug</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/chef/client.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">log_level :debug</pre>
+		</div>
+</div></div>
+
+<p>If you are requesting help on IRC or the Mailing List, you may be asked to provide debug log output.</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-Connectionrefusedforlocalhost%3A5984%2Cwhatislisteningon5984%3F"></a>Connection refused for localhost:5984, what is listening on 5984?</h1>
+
+<p>By default, <font color="#f7681a">CouchDB listens on port 5984.</font> You need to make sure it is installed and running for your <a href="Chef Server.html" title="Chef Server">Chef Server</a>. The best way to make sure it is running is to make an http request:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ curl http://localhost:5984/
+{"couchdb":"Welcome","version":"0.8.0-incubating"}</pre>
+		</div>
+</div></div>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-Whydoesn%27tChefworkonXYZplatform%3F"></a>Why doesn't Chef work on XYZ platform?</h1>
+
+<p>Chef detects the platform with <a href="Ohai.html" title="Ohai">Ohai</a>, and looks up providers to use for various resources in the <a href="http://github.com/opscode/chef/blob/master/chef/lib/chef/platform.rb">platform.rb file</a>. <font color="#f7681a">If a platform is not defined in this file with specific providers, the <tt>:default</tt> values are used for each resource.</font> Not all resources need a platform-specific provider. Chef allows you to easily create <a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">new providers within your cookbooks</a>, but we also appreciate <a href="How to Contribute.html" title="How to Contribute">new contributions to Chef</a>.</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-HowdoIdeleteanodewithanemptyname%3F"></a>How do I delete a node with an empty name?</h1>
+
+<p>In some situations a node might get saved to the Chef Server with an empty name. When viewed in the Node List in the WebUI, the name is completely blank. <font color="#f7681a">This can be fixed by removing the <tt>node&#95;</tt> document from the CouchDB.</font> You can do this in Futon, the CouchDB webui, or by interacting with the CouchDB API with a tool such as <a href="http://curl.haxx.se/">curl</a>.</p>
+
+<h3><a name="TroubleshootingandTechnicalFAQ-FutonCouchDBWebUI"></a>Futon - CouchDB WebUI</h3>
+
+<ul>
+	<li>Navigate to <a href="http://localhost:5984/_utils">http://localhost:5984/_utils</a> on the chef server with your web browser. Set up an SSH tunnel if necessary.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">ssh -L 5984:localhost:5984 chef.example.com</pre>
+		</div>
+</div></div></li>
+	<li>Click on 'chef' in the database list.</li>
+	<li>Click on the document 'node_' with ID: node_.</li>
+	<li>Click 'Delete Document'.</li>
+</ul>
+
+
+<p>Refresh the Chef Server nodes list and the node will be gone.</p>
+
+<h3><a name="TroubleshootingandTechnicalFAQ-CouchDBAPIviaCurl"></a>CouchDB API via Curl</h3>
+
+<p>Removing the node via the CouchDB API with a tool like curl is very straightforward.</p>
+
+<ul>
+	<li>Find the revision of the blank node&#95; document, otherwise CouchDB will display a conflict error.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% curl http://localhost:5984/chef/node_
+{"_id":"node_","_rev":"5-3246d1733ae522bd637ee8f437b99df4","name":"","attributes":{},"json_class":"Chef::Node","run_list":["recipe[]"],"chef_type":"node"}</pre>
+		</div>
+</div></div></li>
+	<li>Delete the node.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% curl -X DELETE http://localhost:5984/chef/node_?rev=5-3246d1733ae522bd637ee8f437b99df4
+{"ok":true,"id":"node_","rev":"6-78b988c185c7b50fe8b74ba5a1b03f68"}</pre>
+		</div>
+</div></div></li>
+	<li>The node will now show as deleted.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% curl http://localhost:5984/chef/node_
+{"error":"not_found","reason":"deleted"}</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<p>Also, if you refresh the Chef Server WebUI nodes list the node will be gone.</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-HowdoIdeleteamalformedChefServerclient%28Say%2Conewithspacesinthename%29"></a>How do I delete a malformed Chef Server client (Say, one with spaces in the name)</h1>
+
+<p>Follow the same procedure as for nodes above to discover the id of the document</p>
+
+<h3><a name="TroubleshootingandTechnicalFAQ-FutonCouchDBWebUI"></a>Futon - CouchDB WebUI</h3>
+
+<ul>
+	<li>Navigate to <a href="http://localhost:5984/_utils">http://localhost:5984/_utils</a> on the chef server with your web browser. Set up an SSH tunnel if necessary.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">ssh -L 5984:localhost:5984 chef.example.com</pre>
+		</div>
+</div></div></li>
+	<li>Click on 'chef' in the database list.</li>
+	<li>Click on the document 'client_XXXX' with ID: client_XXXX</li>
+	<li>Click 'Delete Document'.</li>
+</ul>
+
+
+<h1><a name="TroubleshootingandTechnicalFAQ-WhyismyChefruncrashingonarequirestatementforagemthatshouldhavebeeninstalledviaChef%3F"></a>Why is my Chef run crashing on a require statement for a gem that should have been installed via Chef?</h1>
+
+<p><font color="#f7681a">Recipes are evaluated during the node Convergence phase of the Chef run, which happens in two phases.</font>  The first phase is 'compile' phase where ruby code (like <tt>require 'sys-filesystem'</tt>) is evaluated, and the resources are added to the resource collection.  The second is the 'execute' phase where the actions are taken on the resources in the collection. (See <a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">Anatomy of a Chef Run</a> for more information).</p>
+
+<p><font color="#f7681a">In order to use a gem in the same run that the gem is installed, you have to create that resource in the compile phase.</font>  To install the gem in the compile phase, use this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">r = gem_package "sys-filesystem" do
+  action :nothing
+end
+r.run_action(:install)
+Gem.clear_paths
+require "sys/filesystem"</pre>
+		</div>
+</div></div>
+
+<p>See our <a href="http://www.opscode.com/blog/2009/06/01/cool-chef-tricks-install-and-use-rubygems-in-a-chef-run/">Opscode blog post</a> for additional information.</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-Istherearecommendedapproachformanagingindividualcredentialsandknife.rbwhenmultipledeveloperswillbeusingthesamechefrepo%3F"></a>Is there a recommended approach for managing individual credentials and knife.rb when multiple developers will be using the same chef-repo?</h1>
+
+<p><font color="#f7681a">We recommend checking the knife.rb into your chef-repo (CHEF_REPO/.chef/knife.rb) and then having user specific (or sensitive) values dynamically filled using a series of environment variables.</font>  Since the knife.rb file is just Ruby this is pretty easy to do.  For example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">current_dir = File.dirname(__FILE__)
+    user = ENV['OPSCODE_USER'] || ENV['USER']
+    node_name                user
+    client_key               "#{ENV['HOME']}/.chef/#{user}.pem"
+    validation_client_name   "#{ENV['ORGNAME']}-validator"
+    validation_key           "#{ENV['HOME']}/.chef/#{ENV['ORGNAME']}-validator.pem"
+    chef_server_url          "https://api.opscode.com/organizations/#{ENV['ORGNAME']}"
+    cache_type               'BasicFile'
+    cache_options( :path =&gt; "#{ENV['HOME']}/.chef/checksums" )
+    cookbook_path            ["#{current_dir}/../cookbooks"]
+    cookbook_copyright "Your Company, Inc."
+    cookbook_license "apachev2"
+    cookbook_email "cookbooks@yourcompany.com"
+
+    # all your credentials are belong to us
+
+    # Amazon AWS
+    knife[:aws_access_key_id] = "#{ENV['AWS_ACCESS_KEY_ID']}"
+    knife[:aws_secret_access_key] = "#{ENV['AWS_SECRET_ACCESS_KEY']}"
+
+    # Rackspace Cloud
+    knife[:rackspace_api_username] = "#{ENV['RACKSPACE_USERNAME']}"
+    knife[:rackspace_api_key] = "#{ENV['RACKSPACE_API_KEY']}"</pre>
+		</div>
+</div></div>
+
+<p>This approach allows you to control who has a copy of the org validation.pem but allows you to share your chef code with the company as a whole (yeah devops&#33;).  Some companies even have multiple organizations and switching between them is as easy as cd-ing into a different chef repository&#33;</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-MayIuseRVMtoinstallRubyand%2ForRubyGemsthatthechefclientrunsunder%3F"></a>May I use RVM to install Ruby and/or RubyGems that the chef-client runs under?</h1>
+
+<p><font color="#f7681a">The recommended method to install chef as a client is as a RubyGem </font>with <a href="http://wiki.opscode.com/display/chef/Troubleshooting+and+Technical+FAQ#TroubleshootingandTechnicalFAQ-WhydoIneedRubyGemsinstalledfromsource%3F">RubyGems installed from source</a>, or from our APT repository on Ubuntu and Debian. </p>
+
+<p><b>We don't recommend using RVM to install Ruby/RubyGems that the chef-client runs under, because that can cause system PATH and Ruby loadpath errors.</b> The <a href="Knife Bootstrap.html" title="Knife Bootstrap">knife bootstrap subcommand</a> makes installing Chef much easier with the templates that it ships with. </p>
+
+<p>Many however do use RVM to install Ruby on the workstations where they use knife, but that is a separate matter than running Chef on client nodes. <em><b>Note:</b></em> <font color="#f7681a">If you're installing Chef under RVM on your workstation for using knife and managing the chef repository (chef-repo), you don't need to use sudo, and probably shouldn't as it may result in pathing differences to install the gems.</font>  The problem will be sudo scrubbing the environment variables rvm uses to keep track of which ruby and rubygems installation you're using. For example, Opscode star Dan Deleo's rvm installation is using the following:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rvm_path=/Users/ddeleo/.rvm
+    rvm_selfcontained=1
+    rvm_version=1.1.0
+    RUBY_VERSION=ruby-1.9.2-p0
+    GEM_HOME=/Users/ddeleo/.rvm/gems/ruby-1.9.2-p0
+    GEM_PATH=/Users/ddeleo/.rvm/gems/ruby-1.9.2-p0:/Users/ddeleo/.rvm/gems/***@global 
+    MY_RUBY_HOME=/Users/ddeleo/.rvm/rubies/ruby-1.9.2-p0
+    IRBRC=/Users/ddeleo/.rvm/rubies/ruby-1.9.2-p0/.irbrc
+    rvm_ruby_string=ruby-1.9.2-p0'</pre>
+		</div>
+</div></div>
+<p>If you run <tt>sudo env</tt> you can see that these variables were "scrubbed" by sudo. In order to work around the problem, try running the command as <tt>sudo -E chef-client</tt>. If that doesn't work, you might need to run a shell as root with the rvm environment, by running <tt>sudo -E bash</tt> and then just <tt>chef-client</tt>. Or, you should be able to simply do <tt>gem install chef</tt> as your normal user without sudo and it will install the gems under your default ruby in rvm.</p>
+
+<p>Alternatively, if you'd like to run chef client on a machine who's Rubies are under the control of RVM, you'll need to accept installing the chef gem in the global gemset. It'll be available in all your gemsets. The caveat here is you might find your self with gem version conflicts.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rvm gemset use global
+    gem install chef
+    rvm gemset use &lt;your-other-gemset&gt;
+    sudo -Es 'bash -lc chef-client'</pre>
+		</div>
+</div></div>
+<p>That should work in place of the two step <tt>sudo -E bash</tt> then <tt>chef-client</tt> method put forth above, but again, you may find that you are dealing with gem version conflicts.</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-WhatifanOpscodeserviceappearstobeunavailable%3FForinstance%2CwhatifI%27musingHostedChefandIamunabletoaccesit%3F"></a>What if an Opscode service appears to be unavailable? For instance, what if I'm using Hosted Chef and I am unable to acces it?</h1>
+
+<p>Hosted Chef is built from the ground up by Opscode to be fully multi-tenant, horizontally scalable, and highly available.  Opscode has several external monitors of it, and all Opscode web service functions and services, enabling rapid response to any emergent availability issues.</p>
+
+<p>Occasionally, periodic maintenance is necessary to maintain efficient functionality and performance for all services. Any planned maintenance is <font color="#f7681a">announced in advance via the <a href="http://status.opscode.com/">Opscode Status</a> site</font>. Emergent issues in <a href="http://manage.opscode.com/">Hosted Chef</a> availability, or that of other Opscode services such as <a href="http://community.opscode.com/cookbooks">Cookbooks</a>, <a href="http://tickets.opscode.com/">Open Source Tickets</a> or this <a href="http://wiki.opscode.com/display/chef/Home">Chef Wiki</a> will also be posted at <a href="http://status.opscode.com/">Opscode Status</a>.</p>
+
+<p><font color="#f7681a">Opscode customers who use <b>Twitter</b> can also receive availability status announcements by following <a href="https://twitter.com/opscode_status">Opscode Status on Twitter</a>.</font> Please also follow <a href="https://twitter.com/opscode">Opscode on Twitter</a> for company and product news and information. If you are having issues in accessing any shared Opscode services, and find no announcement at <a href="http://status.opscode.com">Opscode Status</a> or through following <a href="https://twitter.com/opscode_status">Opscode Status on Twitter</a>, please send an email to <a href="mailto:support@opscode.com">support@opscode.com</a> describing the issue you are experiencing.</p>
+
+<p><b><em>Note</em></b>: Help on issues specific to running your own Chef Server environment and use of Chef should be addressed through <a href="Support.html" title="Support">Support Resources</a>.</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-HowcanIensureanotifiedactionisprocessed%2Cregardlessofthefullchefclientruncompleting%3F"></a>How can I ensure a notified action is processed, regardless of the full chef-client run completing?</h1>
+
+<p>Delayed notifications do not run after an error by design. An example supporting this behavior is the case where you are making changes to the web server config but something fails. A restart would bring the service down whereas fixing the problem and re-running chef-client successfully will not.</p>
+
+<p><font color="#f7681a">The general recommendation to alleviate this problem during development is to develop in an environment where you can occasionally as a matter of practice "start from scratch".</font> Much more difficult to detect errors can happen with this same "broken first run" problem.</p>
+
+<p>In particular cases, you may want to ensure the action gets taken immediately, which will ensure the rebuild happens regardless of what happens later in the run.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">notifies :run, "execute[RECIPE]", :immediately</pre>
+		</div>
+</div></div>
+<p>The <a href="http://wiki.opscode.com/display/chef/Resources#Resources-Notifications">Resources Notification Option</a> page has more detail and additional examples.</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-HowdoIcreatearecipethatwillonlyexecuteanactiononthefirstrunofchefclient%3F"></a>How do I create a recipe that will only execute an action on the first run of chef-client? </h1>
+
+<p><a href="15728818.html" title="Creating a "First Run Only" Resource">Creating a "First Run Only" Resource</a> provides information on how to accomplish this - however it is an approach that should be used sparingly. Most resources are idempotent by construction and do not require the methods discussed. Whenever possible, it is best to use an idempotent resource.</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-HowdoIextendabasecookbooktoaccountfortheuseoftheIUSRPMs%3F"></a>How do I extend a base cookbook to account for the use of the IUS RPMs?</h1>
+
+<p><font color="#f7681a">We would suggest just modifying the package names in your copy of the COOKBOOK::package recipe.</font> Our <a href="http://community.opscode.com/cookbooks">cookbooks</a> are meant to be a starting point, and we expect community members to modify then and personalize for their infrastructure. That's why we have build in tools like <tt>knife cookbook site install</tt> which allow easy upstream tracking.</p>
+
+<p>That said, there are approaches to add logic to change the package names based on the YUM sources.  The following examples use the <a href="http://community.opscode.com/cookbooks/php">PHP Cookbook</a>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">pkgs = value_for_platform(
+  [ "centos", "redhat", "fedora" ] =&gt; {
+    "default" =&gt; %w{ php53 php53-devel php53-cli php-pear }
+  },
+  [ "debian", "ubuntu" ] =&gt; {
+    "default" =&gt; %w{ php5-cgi php5 php5-dev php5-cli php-pear }
+  },
+  "default" =&gt; %w{ php5-cgi php5 php5-dev php5-cli php-pear }
+)
+
+pkgs.each do |pkg|
+  pkg += 'u' if ::File.exists?('/etc/yum.repos.d/ius.repo')
+  package pkg do
+    action :install
+  end
+end
+
+template "#{node['php']['conf_dir']}/php.ini" do
+  source "php.ini.erb"
+  owner "root"
+  group "root"
+  mode "0644"
+end</pre>
+		</div>
+</div></div>
+<p>The main thing to take note of in the above example is the new line in the <tt>pkgs.each</tt> block. This basically searches for the existence of the <tt>ius</tt> yum source and then appends the <tt>u</tt> to the package name.</p>
+
+<p>Alternatively:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">packages = %w{ php53-common php53 php53-devel php53-cli php-pear }
+
+if File.exists?("/etc/yum.repos.d/ius.repo")
+    packages = %w{ php53u-common php53u php53u-devel php53u-cli php53u-pear }  
+end
+
+pkgs = value_for_platform(
+  [ "centos", "redhat", "fedora" ] =&gt; {
+    "default" =&gt; packages
+  },
+  [ "debian", "ubuntu" ] =&gt; {
+    "default" =&gt; %w{ php5-cgi php5 php5-dev php5-cli php5-common php-pear }
+  },
+  "default" =&gt; %w{ php5-cgi php5 php5-dev php5-cli php5-common php-pear }
+)
+
+pkgs.each do |pkg|
+  package pkg do
+    action :install
+  end
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-HowcanIrunthechefclientperiodically%3F"></a>How can I run the chef-client periodically?</h1>
+
+<p>If you want, you can run the Chef Client as a persistent daemon. To do this, make your startup script for the chef client execute something like:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ chef-client -i 3600 -s 600</pre>
+		</div>
+</div></div>
+
+<p>The <tt>-i</tt> option provides an <em>Interval</em> - it's how often the Chef client will attempt to wake up and Converge this node. The <tt>-s</tt> option is the <em>Splay</em> - a random piece of time added to the interval, which helps avoid the <a href="http://en.wikipedia.org/wiki/Thundering_herd_problem">thundering herd problem</a>.</p>
+
+<p>The <a href="http://community.opscode.com/cookbooks/chef-client">chef-client cookbook</a> available on the community site provides an easy way to manage the chef-client configuration with chef itself! <em>See <a href="Chef Client.html" title="Chef Client">Chef Client</a> for additional information.</em></p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-Whatisthebestwaytomanagesoftwarethatneedsregularupdatesorpatches%3F"></a>What is the best way to manage software that needs regular updates or patches?</h1>
+
+<p>First, you will want to determine the type of change that needs to be made regularly. </p>
+<ul>
+	<li>If the change is to a behavior, such as a patch, you will want to control this with a <a href="Recipes.html" title="Recipes">recipe</a> or <a href="Roles.html" title="Roles">role</a>.</li>
+	<li>If the change is to data, such as with DNS or the current software version, you will want to control this with a <a href="Data Bags.html" title="Data Bags">data bag</a> or <a href="Attributes.html" title="Attributes">attribute</a>.</li>
+</ul>
+
+
+<p><font color="#f7681a">The best way to apply regular patches is to specify the actual version in the package that is run over time, and change that version to a new one after testing it.</font> If you do this frequently you can data-drive this change by dropping an attribute into the <a href="Roles.html" title="Roles">role</a> that includes this cookbook. When a new version comes out:</p>
+<ol>
+	<li>drop the version string into that role's development environment list and test it, then</li>
+	<li>update the version on the role's production environment <a href="Glossary.html#Glossary-GlossaryRunList">run_list</a>.</li>
+</ol>
+
+
+<p><em>This way you are only changing a role.</em>  It is possible to apply patches with 'action :upgrade' but this will control when it is updated and not necessarily what version it is updated to.</p>
+
+<p><font color="#f7681a">The best way to apply data updates like DNS is to separate that data into a data bag and then render from the data bag into a zone file via the recipe and chef template.</font> </p>
+
+<p>After applying the update you could run something like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ssh "role:nameserver" "sudo chef-client"</pre>
+		</div>
+</div></div> 
+<p>To select the nameservers in your fleet, with <a href="Knife.html#Knife-KnifeContextualHelp">appropriate additional command line args for authentication, parallelism, etc</a>. More information on the knife ssh command can be found in the <a href="Knife.html#Knife-SSHSubcommand">Knife Wiki Article</a>.</p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-AnytuningrecommendationsforthosewithalargeLDAPuserbase%3F"></a>Any tuning recommendations for those with a large LDAP user base?</h1>
+
+<p>As Ohai gathers information about your operating system while it is running, you can make some modifications to the chef client configuration to increase performance when dealing with large installations or large user bases.</p>
+
+<p><b>1. Modify nodes.rb to reduce automatic_attrs size</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false"># Serialize this object as a hash
+     
+        def to_json(*a)
+          result = {
+            "name" =&gt; name,
+            "chef_environment" =&gt; chef_environment,
+            'json_class' =&gt; self.class.name,
+    #        "automatic" =&gt; automatic_attrs,
+         
+            "normal" =&gt; normal_attrs,
+            "chef_type" =&gt; "node",
+            "default" =&gt; default_attrs,
+            "override" =&gt; override_attrs,
+            "run_list" =&gt; run_list.run_list
+          }
+          result["_rev"] = couchdb_rev if couchdb_rev
+          result.to_json(*a)
+    end</pre>
+		</div>
+</div></div>
+<p><b>2&gt; Modify Ohai to read passwords directly</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">This will be addressed with [Ohai-165](http://tickets.opscode.com/browse/OHAI-165).  Pending that, adding the following to the client.rb file would be beneficial.
+
+    Ohai::Config[:disabled_plugins] = [ "passwd" ]</pre>
+		</div>
+</div></div>
+<p><b>3&gt; Update standard bootstrap template</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">This speeds up chef-client execution, because LDAP servers can return a huge number of passwords.
+
+    ( 
+    cat &lt;&lt;'EOP'
+    &lt;%= config_content %&gt; 
+    EOP 
+    ) &gt; /etc/chef/client.rb
+ 
+    echo "&lt;%= 'Ohai::Config[:disabled_plugins] = [ \"passwd\" ]' %&gt;" &gt;&gt; 
+    /etc/chef/client.rb</pre>
+		</div>
+</div></div>
+<p><b>4&gt; Disable undesirable Ohai plugins</b></p>
+
+<p>If you do not want some Ohai plugins to run, you can disable them by doing something like the following within /etc/chef/client.rb:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">Ohai::Config[:disabled_plugins] &lt;&lt; 'darwin::system_profiler' &lt;&lt; 'darwin::kernel' &lt;&lt; 'darwin::ssh_host_key' &lt;&lt; 'network_listeners'</pre>
+		</div>
+</div></div>
+<p>(You may desire to choose other plugins that the ones in the above example.) See <a href="Disabling Ohai Plugins.html" title="Disabling Ohai Plugins">Disabling Ohai Plugins</a> for additional information. </p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-Ihaveoneoffnodesinmyenvironmentandneedtomanagethemuniquely.HowdoIdothiswithChef%3F"></a>I have one-off nodes in my environment and need to manage them uniquely. How do I do this with Chef?</h1>
+
+<p>This is a common question from people that follow a pattern of naming schemes for hostnames and/or fully-qualified domain names. <font color="#f7681a">Because the Chef Server API provides a search interface to rich metadata about Chef nodes, we do not recommend treating anything as a "Unique and Beautiful Snowflake."</font> Instead, we recommend that nodes be treated as ephemeral, and that the discovered attributes (by Ohai) and roles (assigned in the run-list) describe the node.</p>
+
+<p><b>If a node is truly unique, give it a role that describes its functionality, and use node attributes set in the role as required to be used in its recipes that affect the required "one-off" configuration.</b> <em>That way if the node goes away for some reason (deleted by accident, hardware fails, etc), its functionality can be replaced easily by applying the role to another node.</em></p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-HowdoIrecreatemyvalidatorclientwhenusingHostedChef%3F"></a>How do I recreate my validator client when using Hosted Chef?</h1>
+
+<p>If you accidentally delete your validator client, you will get a 403 error when trying to create new clients. </p>
+
+<p><p>You will need to create the validator key again and fix it's permissions by using the following directions. In these directions, ORGANIZATION should be replaced by your organizations short name.</p>
+
+<p>1. Click on the 'clients' tab at <a href="http://manage.opscode.com">http://manage.opscode.com</a><br/>
+2. Click on the 'create' sub-tab<br/>
+3. Enter "ORGANIZATION-validator" as the name, substituting your organization's name, and click on the 'create' button<br/>
+4. Click on the 'Download API Key' link to get a copy of the new ORGANIZATION-validator.pem. Save a copy of this private key in a save place, this will be your organization's new validator key.<br/>
+5. Now we will need to fix the permissions on the validator client. Click on the 'list' sub-tab.<br/>
+6. Click on the 'edit permissions' sub-tab <br/>
+7. Check the 'create' and 'list' checkboxes for the ORGANIZATION-validator client and click on the 'update permissions' button</p> </p>
+
+<h1><a name="TroubleshootingandTechnicalFAQ-AretherecommonerrorsanderrormessagesthatIshouldbeawareof%3F"></a>Are there common errors and error messages that I should be aware of?</h1>
+
+<p><b><a href="Common Errors.html" title="Common Errors">Common Errors</a></b> contains errors that arise with Chef Client and Knife and their suggested fixes. If your issue is neither on this page, nor on <a href="Common Errors.html" title="Common Errors">Common Errors</a>, please return to <a href="Support.html" title="Support">Support</a> to seek assistance.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883728/11075591.jpg">chef.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883728/14876693.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2883728/20840551.jpg">9897446-many-sticky-notes-with-questions-like-who-what-when-where-how-and-why-and-a-question-mark-all-posted.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

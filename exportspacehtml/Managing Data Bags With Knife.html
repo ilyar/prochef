@@ -1,0 +1,279 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Data Bags With Knife</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Data Bags With Knife
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 19, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/21397994/21463229.jpg" hspace="24" vspace="10" style="border: 0px solid black"/></span></p>
+
+<h2><a name="ManagingDataBagsWithKnife-Overview"></a>Overview</h2>
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/21397994/21463232.png" hspace="8" style="border: 0px solid black"/></span></p>
+
+<h3><a name="ManagingDataBagsWithKnife-"></a><font color="#f7681a">Knife is a command-line tool that comes with Chef.</font> </h3>
+<h3><a name="ManagingDataBagsWithKnife-"></a><font color="#f7681a">It is used by administrators to interact with the Chef <a href="Server API.html" title="Server API">Server API</a>, the local Chef repository and and can be used to manage the arbitrary stores of globally available JSON data known as <a href="Data Bags.html" title="Data Bags">Data Bags</a>.</font> </h3>
+
+<h4><a name="ManagingDataBagsWithKnife-Knife%27s%7B%7Bdatabag%7D%7Dsubcommandprovidesthiscapability."></a>Knife's <tt>data bag</tt> sub-command provides this capability.  </h4>
+
+<ul>
+	<li>For more information about Knife, refer to the <b><a href="Knife.html" title="Knife">Knife</a></b> documentation.</li>
+	<li>See <b><a href="Data Bags.html" title="Data Bags">Data Bags</a></b> for more information on Data Bags, and <b><a href="Encrypted Data Bags.html" title="Encrypted Data Bags">Encrypted Data Bags</a></b> if the data stored in the data bags is sensitive and shouldn't be stored in plain text or viewable when checked into version control systems.</li>
+</ul>
+
+
+<h2><a name="ManagingDataBagsWithKnife-ManagingDataBagswithKnife"></a>Managing Data Bags with Knife</h2>
+
+<p><font color="#f7681a">Data bags can be managed with the <a href="Knife.html" title="Knife">knife command line client</a>. Make sure you have correctly <a href="Knife.html#Knife-Configuration">configured knife</a> before trying the examples here.</font></p>
+
+<h3><a name="ManagingDataBagsWithKnife-CreatingDataBagsandItems"></a>Creating Data Bags and Items</h3>
+
+<p>To create a data bag with knife, use</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag create BAG</pre>
+		</div>
+</div></div>
+
+<p>For example, to create a data bag to store data about admins,  run this command:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$ knife data bag create admins
+Created data_bag[admins]</pre>
+		</div>
+</div></div>
+
+<p>Now that the data bag is created, you can put data items in it with <tt>knife data bag create BAG[ITEM]</tt>. This command will create a skeleton of the JSON for the data bag and drop you into your <tt>$EDITOR</tt> to edit it. </p>
+
+<p>To add an administrator to our admins data bag, we'd do the following:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$ knife data bag create admins charlie</pre>
+		</div>
+</div></div>
+<p>Now, in your editor, you'll see this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+ "id": "charlie"
+}</pre>
+		</div>
+</div></div>
+
+<p>To follow along with the example, edit the data bag item as follows:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+ "id": "charlie", 
+ "uid": 1005, 
+ "gid":"ops", 
+ "shell":"/bin/zsh",
+ "comment":"Crazy Charlie"
+}</pre>
+		</div>
+</div></div>
+
+<p>When you exit your editor, knife will save this data to the server.</p>
+
+<h3><a name="ManagingDataBagsWithKnife-ShowingDataBagsandItems"></a>Showing Data Bags and Items</h3>
+<p>To list all of the data bags on the server, use <tt>knife data bag list</tt>. If you created the admins data bag above, running the command will produce the following result:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$ knife data bag list
+  admins</pre>
+		</div>
+</div></div>
+
+<p>To view the contents of a data bag, use <tt>knife data bag show BAG</tt>, for example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$ knife data bag show admins
+  charlie</pre>
+		</div>
+</div></div>
+
+<p>To view the contents of a data bag item, use <tt>knife data bag show BAG ITEM</tt>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$ knife data bag show admins charlie
+comment:  Crazy Charlie
+gid:      ops
+id:       charlie
+shell:    /bin/zsh
+uid:      1005</pre>
+		</div>
+</div></div>
+
+<h4><a name="ManagingDataBagsWithKnife-CreateorUpdateDataBagItemsfromJSON"></a>Create or Update Data Bag Items from JSON</h4>
+
+<p>To create or update a data bag item using a JSON file, use</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag from file BAG_NAME /path/to/file</pre>
+		</div>
+</div></div>
+
+<p>If file is a relative or absolute path to the file, that file will be used. Otherwise, the file parameter is treated as the base name of a data bag file in a Chef repository, and knife will search for the file in ./data_bags/bag_name/file. For example knife data bag from file users dan.json would attempt to load the file ./data_bags/users/dan.json.  The JSON file in question should be a Hash that contains at least an "id" key.  The "id" key will be the item name.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+   "id": "item_name"
+}</pre>
+		</div>
+</div></div>
+<p>Other keys can be added to this file just as they can when using <tt>knife data bag BAG_NAME ITEM_NAME create</tt>.</p>
+
+<h3><a name="ManagingDataBagsWithKnife-EditingDataBagItems"></a>Editing Data Bag Items</h3>
+<p>Data bags are edited via knife with <tt>knife data bag edit BAG ITEM</tt>. This works similarly to creating data bag items, loading your <tt>$EDITOR</tt> with the data from the server, and saving it back to the server when you exit the editor.</p>
+
+<h3><a name="ManagingDataBagsWithKnife-DeletingDataBagsandItems"></a>Deleting Data Bags and Items</h3>
+<p>To delete a data bag with knife, use <tt>knife data bag delete BAG</tt>. Individual data bag items are deleted with <tt>knife data bag delete BAG ITEM</tt>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Deleting a Data Bag Item</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife data bag delete admins charlie
+Do you really want to delete charlie? (Y/N) Y
+Deleted data_bag_item[charlie]</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Deleting a Data Bag</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife data bag delete admins
+Do you really want to delete admins? (Y/N) Y
+Deleted data_bag[admins]</pre>
+		</div>
+</div></div>
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/21397994/23199777.jpg" hspace="20" vspace="16" style="border: 0px solid black"/></span></p>
+
+<p><h2><a name="ManagingDataBagsWithKnife-Encrypteddatabagsandknife"></a>Encrypted data bags and knife</h2>
+
+<p><font color="#f7681a">The encrypted data bag features of the <tt>knife data bag *</tt> subcommands are activated by specifying either a <tt>&#45;&#45;secret</tt> or <tt>--secret-file</tt> option.</font></p>
+
+<ul>
+	<li><tt>&#45;&#45;secret SECRET</tt> is used to specify the key used for encryption and decryption on the command line.</li>
+	<li><tt>--secret-file FILE</tt> is used to specify the path to a file that contains the encryption/decryption key.</li>
+</ul>
+
+
+<h3><a name="ManagingDataBagsWithKnife-Createanewencrypteddatabagitem"></a>Create a new encrypted data bag item</h3>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[openssl rand -base64 512 | tr -d '\r\n' &gt; /tmp/my_data_bag_key
+knife data bag create --secret-file /tmp/my_data_bag_key passwords mysql
+# Enter user and password credentials in the editor and save]]></script>
+</div></div>
+
+<p>Verify that the data bag has been created and encrypted</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife data bag show passwords mysql
+
+## example output:
+{
+  "id": "mysql",
+  "pass": "trywgFA6R70NO28PNhMpGhEvKBZuxouemnbnAUQsUyo=\n",
+  "user": "e/p+8WJYVHY9fHcEgAAReg==\n"
+}]]></script>
+</div></div>
+
+<h3><a name="ManagingDataBagsWithKnife-Decryptanencrypteddatabagitem"></a>Decrypt an encrypted data bag item</h3>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife data bag show --secret-file /tmp/my_data_bag_key passwords mysql
+## example output:
+{
+  "id": "mysql",
+  "pass": "thesecret123",
+  "user": "fred"
+}]]></script>
+</div></div>
+
+<h3><a name="ManagingDataBagsWithKnife-Otherknifeencrypteddatabagcommands"></a>Other knife encrypted data bag commands</h3>
+
+<p>When given a <tt>&#45;&#45;secret</tt>  or <tt>--secret-file</tt> option,</p>
+
+<ul>
+	<li><tt>knife data bag from file</tt> will <b>encrypt</b> the data bag item contained in the specified JSON file;</li>
+	<li><tt>knife data bag edit</tt> will <b>decrypt</b> an existing data bag item, allow you to edit it, and then encrypt it before saving it to Chef</li>
+</ul>
+</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/21397994/21463231.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Cookbooks With Knife.html" title="Managing Cookbooks With Knife">Managing Cookbooks With Knife</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/21397994/21463230.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Environments With Knife.html" title="Managing Environments With Knife">Managing Environments With Knife</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397994/21463229.jpg">9401037-angry-male-cook-in-white-uniform-and-hat-with-two-knifes-black-bckground.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397994/21463230.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397994/21463231.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397994/21463232.png">big_data_nerd_bag-p1496631464820063122wl62_125.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397994/23199777.jpg">best-apple-iphone-password-application.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

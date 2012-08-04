@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : FAQ</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : FAQ
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="55%">
+<p><br class="atl-forced-newline" /></p>
+
+
+<p><span class="image-wrap" style=""><img src="../attachments/1179961/14876689.png" style="border: 0px solid black"/></span></p>
+
+
+<h4><a name="FAQ-Thisisan%22AboutChef%22FAQ."></a><em>This is an "About Chef" FAQ.</em></h4>
+
+<h5><a name="FAQ-"></a><font color="#f7681a">For common troubleshooting tips and a Technical FAQ, see <a href="Troubleshooting and Technical FAQ.html" title="Troubleshooting and Technical FAQ">Troubleshooting and Technical FAQ</a></font></h5></td>
+<td class="confluenceTd" valign="top" width="35%">
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#FAQ-WhydidwecreateChef%3F'>Why did we create Chef?</a></li>
+    <li><a href='#FAQ-HowcanIhelp%3F'>How can I help?</a></li>
+    <li><a href='#FAQ-WhoisusingChef%3F'>Who is using Chef?</a></li>
+    <li><a href='#FAQ-CanItrustChef%3F'>Can I trust Chef?</a></li>
+    <li><a href='#FAQ-DoIneedtoknowRubytouseChef%3F'>Do I need to know Ruby to use Chef?</a></li>
+    <li><a href='#FAQ-WhydidyoucreateChefratherthanadaptanexistingOpenSourcetool%3F'>Why did you create Chef rather than adapt an existing Open Source tool?</a></li>
+    <li><a href='#FAQ-WhydidyouchoosetheApacheLicense%3F'>Why did you choose the Apache License?</a></li>
+    <li><a href='#FAQ-HowisChefdifferentthanPuppet%3F'>How is Chef different than Puppet?</a></li>
+    <li><a href='#FAQ-HowisitdifferentthanCfengine%3F'>How is it different than Cfengine?</a></li>
+</ul></div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="7%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<p><span class="image-wrap" style="float: right"><img src="../attachments/1179961/20840538.jpg" hspace="8" vspace="8" style="border: 0px solid black"/></span></p>
+<h2><a name="FAQ-WhydidwecreateChef%3F"></a>Why did we create Chef?</h2>
+
+<p><a href="http://www.opscode.com">Opscode</a> began as a consulting company called <a href="http://www.hjksolutions.com">HJK Solutions</a>.  We built fully automated infrastructure for startups - everything from OS installation to Application Deployment, fully integrated and ready to rock.  (<a href="http://www.slideshare.net/adamhjk/why-startups-need-automated-infrastructures">You can see a presentation on our approach on Slideshare</a>)</p>
+
+<p>Over the course of building a dozen or so different startups on the same infrastructure baseline over a year, we realized that we just were never going to get to a place where <b>everyone</b> could have a fully automated infrastructure, regardless of their Systems Administration expertise.  A few things were in the way:</p>
+
+<ul>
+	<li>A fully automated infrastructure is a fully integrated infrastructure - the different components need to be able to communicate with each other. (Your application informs your infrastructure, just like your infrastructure informs your application.)</li>
+	<li>Configuration Management is the fundamental bedrock of infrastructure automation - for the infrastructure to be fully automated, you need to be able to expose Configuration Management as a Service.</li>
+	<li>It was too difficult to share the code that builds the infrastructure - the tools at hand all required a level of specificity that made sharing difficult.</li>
+</ul>
+
+
+<p>We solve these problems by:</p>
+
+<ul>
+	<li>Building a systems integration framework on top of a configuration management system.  That framework is powered by Ruby, but has a very simple DSL - making it very approachable for beginners.</li>
+	<li>Making it possible to extend the capabilities of Chef easily, and by making Chef's <a href="Resources.html" title="Resources">Resources</a> capable of taking action from ad-hoc sources. (This isn't released yet, but it will be soon - and trust us, it is awesome.)</li>
+	<li>Every decision about Chef was made with an eye to keeping as much as possible inside of <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> &#45; sharable chunks of automation that are easily re-used and extended.</li>
+</ul>
+
+
+<p>The goal is to remove ourselves from the process of building automated infrastructure entirely - Chef is the first part of a framework that allows us to do that.</p>
+
+<h2><a name="FAQ-HowcanIhelp%3F"></a>How can I help?</h2>
+
+<p>Join us on <a href="IRC.html" title="IRC">IRC</a>, sign up for the <a href="Support.html#Support-MailingLists">Chef Mailing Lists</a>, and read the <a href="How to Contribute.html" title="How to Contribute">instructions on how to contribute to an Opscode Open Source project</a>.</p>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/1179961/20840540.jpg" hspace="20" vspace="8" style="border: 0px solid black"/></span></p>
+<h2><a name="FAQ-WhoisusingChef%3F"></a>Who is using Chef?</h2>
+
+<p>See a sample of the <a href="http://www.opscode.com/adoption">companies &amp; organizations already using Chef</a>.</p>
+
+<h2><a name="FAQ-CanItrustChef%3F"></a>Can I trust Chef?</h2>
+
+<p>Yes.  Chef won't do anything to your system that isn't in a <a href="Recipes.html" title="Recipes">Recipe</a>. Since Chef is an Open Source project, you have full access to the source code.</p>
+
+<h2><a name="FAQ-DoIneedtoknowRubytouseChef%3F"></a>Do I need to know Ruby to use Chef?</h2>
+
+<p>It helps, but its not required. You can learn <a href="Just Enough Ruby for Chef.html" title="Just Enough Ruby for Chef">Just Enough Ruby for Chef</a>.</p>
+
+<h2><a name="FAQ-WhydidyoucreateChefratherthanadaptanexistingOpenSourcetool%3F"></a>Why did you create Chef rather than adapt an existing Open Source tool?</h2>
+
+<p>Chef was born out of our experience building fully automated production infrastructures with a variety of tools.  That experience helped us define clear requirements for tool that went far beyond traditional configuration management.  After surveying many different Open Source tools, we found that none met our needs.   </p>
+
+<p>Developers need a tool they can safely integrate into their code.  Chef and Ohai are licensed under the <a href="http://www.apache.org/licenses">Apache License Version 2.0</a> - a liberal, non-copyleft free software license.  We maintain Contributor License Agreements, which allows anyone who uses Chef or Ohai to know they are free from any copyright or patent entanglements.</p>
+
+<h2><a name="FAQ-WhydidyouchoosetheApacheLicense%3F"></a>Why did you choose the Apache License?</h2>
+
+<p>We've written extensively about <a href="http://blog.opscode.com/blog/2009/08/11/why-we-chose-the-apache-license/">why we chose the Apache License on our blog</a>.</p>
+
+<h2><a name="FAQ-HowisChefdifferentthanPuppet%3F"></a>How is Chef different than Puppet?</h2>
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/1179961/20840541.jpg" hspace="20" vspace="8" style="border: 0px solid black"/></span></p>
+
+<p><a href="http://reductivelabs.com/trac/puppet/wiki/CfengineVsPuppet">Puppet evolved from Cfengine</a> and showed the potential of a new kind of configuration management.  </p>
+
+<p>The original design of Chef was strongly influenced by our own experiences working with and contributing to the Puppet project.  However, Chef does not share any code from Puppet, and is not a "fork" of the Puppet project.  </p>
+
+<h4><a name="FAQ-ChefisdifferentfromPuppetinanumberofimportantways%3A"></a>Chef is different from Puppet in a number of important ways:</h4>
+
+<ul>
+	<li>Chef uses Ruby as the configuration language, rather than a custom DSL.</li>
+	<li>Chef is designed from the ground up to integrate with other tools, or to make that integration as simple as possible.  Chef is not the canonical representation of your infrastructure. It is a service that exposes data about the state of your infrastructure.</li>
+	<li>Chef applies resources in the order they are specified in your <a href="Recipes.html" title="Recipes">Recipes</a> &#45; there is no dependency management.  This means multiple Chef runs will always apply the <a href="Resources.html" title="Resources">Resources</a> under management in the same order, every time.</li>
+	<li>Chef <a href="Resources.html" title="Resources">Resources</a> have Actions, which can be signaled.</li>
+	<li><a href="Resources.html" title="Resources">Resources</a> can appear more than once in Chef, and they inherit the attributes of the earlier resource. (ie: you can tell Apache to start and stop in a recipe by specifying the resource twice, with the second one only changing the action attribute).</li>
+</ul>
+
+
+<p>As Chef grows, the services we expose will likely be integrated with Puppet as well.  There is more than one way to do it.</p>
+
+<h2><a name="FAQ-HowisitdifferentthanCfengine%3F"></a>How is it different than Cfengine?</h2>
+
+<p>It bears very little in common with Cfengine, other than embracing Single Copy Nirvana.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="The Different Flavors of Chef.html" title="The Different Flavors of Chef"><span class="image-wrap" style="float: left"><img src="../attachments/1179961/19005457.png" hspace="4" style="border: 0px solid black"/></span> The Different Flavors of Chef </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Chef Basics.html" title="Chef Basics"><span class="image-wrap" style="float: right"><img src="../attachments/1179961/19005456.png" hspace="4" style="border: 0px solid black"/></span> Chef Basics </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179961/11075590.jpg">chef.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179961/14876689.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179961/19005456.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179961/19005457.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179961/20840469.png">OC_chef_tiny.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179961/20840538.jpg">tim-group-color.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179961/20840540.jpg">sethC-explaining.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179961/20840541.jpg">sethF-2645.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

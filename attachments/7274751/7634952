@@ -1,0 +1,12 @@
+projects = %w[chef cookbooks ohai]
+opscode = "#{ENV['HOME']}/projects/opscode"
+
+desc "Update local repositories from upstream"
+task :update do
+  projects.each do |p|
+    Dir.chdir("#{opscode}/#{p}") do
+      sh "git fetch opscode"
+      sh "git rebase opscode/master master"
+    end
+  end
+end

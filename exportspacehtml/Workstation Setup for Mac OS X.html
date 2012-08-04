@@ -1,0 +1,284 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Workstation Setup for Mac OS X</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Workstation Setup for Mac OS X
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on May 08, 2012 by <font color="#0050B2">michelgalibert</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 1440x900" href='http://wiki.opscode.com/download../attachments/11666202/apple-logo.jpg'><img src="../attachments/thumbnails/11666202/19005520" hspace="20" vspace="4" style="border: 0px solid black"/></a></span>
+<br class="atl-forced-newline" /></p>
+<h4><a name="WorkstationSetupforMacOSX-"></a><font color="#f7681a">This article explains how to setup a Chef Workstation on OS X.</font></h4>
+
+<h5><a name="WorkstationSetupforMacOSX-AChefworkstationiswhereyoudevelopcookbooks%2Cinteractwithyourchefserver%2Candinteractwithnodes."></a>A Chef workstation is where you develop cookbooks, interact with your chef-server, and interact with nodes.  </h5>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<b>Such a workstation typically includes:</b></p>
+
+<ul class="alternate" type="square">
+	<li>A local repository of your cookbooks and possibly other data.</li>
+	<li>A well-configured knife client</li>
+</ul>
+
+
+<p><b>To create such a workstation, this article explains how to:</b></p>
+
+<ol>
+	<li>Install Ruby and other Chef dependencies</li>
+	<li>Install Chef</li>
+	<li>Install Git</li>
+	<li>Create a bare-bones chef repository</li>
+	<li>Configure Knife</li>
+</ol>
+
+</td>
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><tr><td><span class="image-wrap" style="display: block; text-align: center"><img src="../attachments/11666202/21463076.png" style="border: 0px solid black"/></span>
+
+<p>This has been tested and verified on the following versions of Mac OS X:</p>
+
+<ul>
+	<li>Mac OS X 10.6.7 (Snow Leopard)</li>
+</ul>
+</td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h2><a name="WorkstationSetupforMacOSX-DeveloperToolChain"></a>Developer Tool Chain</h2>
+
+<p>You need to install Xcode, available from the Mac App Store. Once downloaded and installed, you'll need to install the Command Line Tools component. Launch Xcode and go to Xcode &gt;&gt; Preferences &gt;&gt; Downloads &gt;&gt; Command Line Tools. A copy of Xcode may also be present on the DVDs that shipped with your Mac.</p>
+
+<p>Xcode provides the required development tools and headers (GCC and friends) that are used when compiling Rubies in RVM and native extensions in Ruby gems.</p>
+
+<p><h2><a name="WorkstationSetupforMacOSX-InstallRubyGemsfromSource"></a>Install RubyGems from Source</h2>
+
+<p><font color="#f7681a">We prefer to install RubyGems from source rather than use the OS-provided version (if any), as it is cross platform, so we know what to expect.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install RubyGems</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[cd /tmp
+curl -O http://production.cf.rubygems.org/rubygems/rubygems-1.8.10.tgz
+tar zxf rubygems-1.8.10.tgz
+cd rubygems-1.8.10
+sudo ruby setup.rb --no-format-executable]]></script>
+</div></div>
+
+<h2><a name="WorkstationSetupforMacOSX-InstallChefGem"></a>Install Chef Gem</h2>
+
+<p><font color="#f7681a">To install Chef and its dependencies, run the following code:</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Chef</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[sudo gem install chef --no-ri --no-rdoc]]></script>
+</div></div>
+</p>
+
+<h2><a name="WorkstationSetupforMacOSX-Git%28optional%29"></a>Git (optional)</h2>
+
+<p><a href="http://code.google.com/p/git-osx-installer/downloads/list?can=3">Download</a> and install the latest version of the Git for OS X installer.</p>
+
+<p><b>Note</b> Don’t worry that you don’t see an icon when it’s done. It’s not that kind of application.</p>
+
+<p>For more in depth Git information please refer to the <a href="http://help.github.com/mac-set-up-git/">help guide on github.com</a>.</p>
+
+<p><h2><a name="WorkstationSetupforMacOSX-CreateaChefRepositoryonyourWorkstation"></a>Create a Chef Repository on your Workstation</h2>
+<p><font color="#f7681a">The following directions will create a Chef repository--a folder on your local workstation from which you can manage your infrastructure.</font>  (Advanced users may find is productive to deviate from the basic setup outlined in these directions.)</p>
+
+<h3><a name="WorkstationSetupforMacOSX-CopytheskeletonChefRepositoryavailableonGithub"></a>Copy the skeleton Chef Repository available on Github</h3>
+
+<h4><a name="WorkstationSetupforMacOSX-UsingGit"></a>Using Git</h4>
+<p>Using git, we can create a chef repository by cloning a skeleton repository provided by Opscode:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[cd ~
+git clone git://github.com/opscode/chef-repo.git]]></script>
+</div></div>
+
+<p>This command will create a folder called <tt>chef-repo</tt> in your home directory.  You can clone the repository to a different directory using a command such as:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[git clone git://github.com/opscode/chef-repo.git /path/to/alternate/directory]]></script>
+</div></div>
+
+<h4><a name="WorkstationSetupforMacOSX-WithoutGit"></a>Without Git</h4>
+<p>If you do not have git, you can copy the skeleton repository using standard unix tools:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[cd ~
+curl https://nodeload.github.com/opscode/chef-repo/tarball/master &gt; chef-repo.tgz
+tar xvf chef-repo.tgz 
+mv -i opscode-chef-repo-a3bec38/ chef-repo]]></script>
+</div></div>
+
+<h3><a name="WorkstationSetupforMacOSX-CreateaConfigurationFolder"></a>Create a Configuration Folder</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[mkdir -p ~/chef-repo/.chef]]></script>
+</div></div>
+
+<p>Now, we need to copy the necessary keys and knife configuration into this directory.  </p>
+
+<p><font color="#f7681a"><b>For Hosted and Private Chef customers</b></font>, USERNAME.pem can be generated from your <a href="http://community.opscode.com/">Opscode Community profile</a>; ORGANIZATION-validator.pem and knife.rb can be generated from the organizations picker in <a href="http://manage.opscode.com/">Management Console</a>. Generate and download these files and then install them as follows:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[cp USERNAME.pem ~/chef-repo/.chef
+cp ORGANIZATION-validator.pem ~/chef-repo/.chef
+cp knife.rb ~/chef-repo/.chef]]></script>
+</div></div>
+
+<p>where ORGANIZATION should be replaced with your organizations short name and USERNAME should be replaced by your Hosted Chef username. Note, that the paths to <tt>USERNAME.pem</tt>, <tt>ORGANIZATION-validator.pem</tt>, and <tt>knife.rb</tt> should be change to the path to which they were downloaded.  </p>
+
+<p><font color="#f7681a"><b>For those using the Open Source Chef Server</b></font>, you first need to create an admin client for use with knife.<br/>
+Directions for creating an admin client can be found in <a href="http://wiki.opscode.com/display/chef/Installing+Chef+Server+Manually#InstallingChefServerManually-ConfiguretheCommandLineClient">the post-install section of the server configuration</a>.  The validator client key used in that step can be copied to the workstation system from /etc/chef or after it is copied to ~/.chef on the Chef Server system.  Once you have an admin client, copy the user's private key and the validator's private key into your chef repository:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[cp USERNAME.pem ~/chef-repo/.chef
+cp validation.pem ~/chef-repo/.chef]]></script>
+</div></div>
+
+<p>Now, you can then create a knife configuration file using the following command:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife configure]]></script>
+</div></div>
+
+<p><tt>knife configure</tt> will prompt you for information regarding your admin client as well as your chef server.</p>
+
+<h3><a name="WorkstationSetupforMacOSX-Confirmyourconfigurationisworking"></a>Confirm your configuration is working</h3>
+<p>To confirm that your configuration is working, attempt to run a simple knife command</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife client list]]></script>
+</div></div><br/>
+<h2><a name="WorkstationSetupforMacOSX-Installotherknifeplugins%28optional%29"></a>Install other knife plugins (optional)</h2>
+
+<p>Additional <a href="Knife.html" title="Knife">Knife</a> commands are shipped as additional gems, and would be installed separately if desired. These include Opscode <a href="Knife Plugins.html" title="Knife Plugins">Knife Plugins</a> to <a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a> on popular cloud services such as ec2 and rackspace. There are also <a href="Community Plugins.html" title="Community Plugins">Community Plugins</a> for knife, chef and ohai - developed and made available by the <a href="Developers.html" title="Developers">open source community</a> to perform a number of different functions.</p>
+
+<p>These plugins can be install using Rubygems:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[sudo gem install PLUGIN_NAME]]></script>
+</div></div></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/11666202/21463074.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installation.html" title="Installation">Installation</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/11666202/21463073.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installing Chef Server.html" title="Installing Chef Server">Installing Chef Server</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666202/21463075.jpg">apple-logo.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666202/21463073.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666202/21463074.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666202/19005520.jpg">apple-logo.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666202/21463076.png">apple_logo_by_tyrroche-d3hg9bd.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-24019274"></a>
+                                    <font class="smallfont"><p>For those of you running OS X Server Lion 10.7.3, you can download Xcode 4 directly from the app store for free. However to follow the instructions you will need to install the command line tools compile gems. This is found under Xcode preferences &gt;&gt; downloads &gt;&gt; command line tools.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by james.t.ford@gmail.com at Feb 25, 2012 19:41
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24773110"></a>
+                                    <font class="smallfont"><p>Should this doc get switched to reference <a href="http://www.opscode.com/chef/install/?">http://www.opscode.com/chef/install/?</a> Getting a solid ruby built from source on OS X is kind of pain at the moment. The omnibus installer would probably be a good starting point for people who want to use Chef but aren't interested in ruby development.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by mat@schaffer.me at Jul 09, 2012 13:16
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24773159"></a>
+                                    <font class="smallfont"><p>We actually just published the Omnibus directions in the wiki today. We're keeping these operating specific directions for people who don't want to use the Omnibus installer or an embedded version of Ruby. </p>
+
+<p>You can find information on the Omnibus installer on these pages: </p>
+
+<p><a href="http://wiki.opscode.com/display/chef/Omnibus+Workstation+Setup+for+Linux+and+Mac">http://wiki.opscode.com/display/chef/Omnibus+Workstation+Setup+for+Linux+and+Mac</a>
+<a href="http://wiki.opscode.com/display/chef/Installing+Omnibus+Chef+Client+on+Linux+and+Mac">http://wiki.opscode.com/display/chef/Installing+Omnibus+Chef+Client+on+Linux+and+Mac</a></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jessica at Jul 09, 2012 22:01
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

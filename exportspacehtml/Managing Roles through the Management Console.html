@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Roles through the Management Console</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Roles through the Management Console
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Nov 27, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<h3><a name="ManagingRolesthroughtheManagementConsole-"></a><font color="#f7681a">The Management Console allows users to create, read, update, and delete roles.</font></h3>
+
+<h2><a name="ManagingRolesthroughtheManagementConsole-ListingRoles"></a>Listing Roles</h2>
+
+<p>To list roles:</p>
+
+<p>1. Log on to the Management Console.</p>
+
+<p>2. Click <tt>Roles</tt> on the main navigation menu.</p>
+
+<h2><a name="ManagingRolesthroughtheManagementConsole-ViewingaRole"></a>Viewing a Role</h2>
+
+<p>Viewing a role shows the recipes and roles included in the role, as well as a tree view of the attributes associated with the role.</p>
+
+<p>In order to view a specific role, on the roles page, click the link of the specific role you want to view.</p>
+
+<h2><a name="ManagingRolesthroughtheManagementConsole-CreatingaRole"></a>Creating a Role</h2>
+
+<p>The role creation page allows you to add recipes and roles to the role you are editing. There is also a JSON editor for editing, adding and removing JSON attributes associated with the role.</p>
+
+<p>In order to create a role:</p>
+
+<p>1. Login to the Management Console and navigate to the <tt>Roles</tt> tab.</p>
+
+<p>2. Click <tt>Create</tt> on the sub navigation bar.</p>
+
+<p>3. Give the role a name and an optional description.</p>
+
+<p>4. Continue onto editing the role, as described in the next section. Continue with your normal edit steps and click "Create Role" to save the new role.</p>
+
+<h2><a name="ManagingRolesthroughtheManagementConsole-EditingaRole"></a>Editing a Role</h2>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275159/7634960.png" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<p><b>NOTE: In any of the following actions where a drag is involved, you must drag the item to the lighter grey area of the target list.</b></p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275159/7634961.png" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<p>1. To add a role to the role being edited, drag it from "Available Roles" to "Run List".</p>
+
+<p>2. To add a recipe to the role being edited, drag it from "Available Recipes" to "Run List".</p>
+
+<p>3. To remove a role or recipe from the role being edited, drag it from the "Run List" back to the respective "Available" section.</p>
+
+<p>4. Click <tt>Save Role</tt> to save.</p>
+
+<h3><a name="ManagingRolesthroughtheManagementConsole-ModifyingRoleDefaultandOverrideAttributes"></a>Modifying Role Default and Override Attributes</h3>
+
+<p>You can edit the override attributes of a role, to override the values of an included recipe or role, and you can edit the default attributes of a role to specify attributes that do not exist in included recipes and roles. To do this, click "json" from the "Default and Override Attributes" tree on the bottom left. Then, click the Editor tab on the right, click the green add button under the Editor tab, enter a name as the key and a body as the value and click "Add Attribute". The following figures show the Default and Override Attributes tree and the JSON editor.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275159/7634962.png" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<h4><a name="ManagingRolesthroughtheManagementConsole-UsingtheSourcetab"></a>Using the Source tab</h4>
+
+<p>1. Enter the JSON body of your role in the editor, and click the "Load JSON from source" button.</p>
+
+<p>2. Click the Create Role or Save Role button to save the role. The following figure shows an example.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275159/7634963.png" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<h2><a name="ManagingRolesthroughtheManagementConsole-DeletingaRole"></a>Deleting a Role</h2>
+
+<p>In order to delete a role:</p>
+
+<p>1. Login to the Management Console and navigate to the Roles tab.</p>
+
+<p>2. Click the <tt>Delete</tt> link next to the name of the role you want to delete, and click <tt>OK</tt> on the confirmation message box. Or, click the role to view its details, and click <tt>Delete</tt> on the sub navigation menu.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/7275159/21463201.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Nodes through the Management Console.html" title="Managing Nodes through the Management Console">Managing Nodes through the Management Console</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/7275159/21463200.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Search on the Management Console.html" title="Search on the Management Console">Search on the Management Console</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275159/7634960.png">Opscode-1_normal_roles.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275159/7634961.png">Opscode-4_normal-runlist.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275159/7634962.png">Opscode-2_normal-jsonedit.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275159/7634963.png">Opscode-3_normal-jsonsource.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275159/21463200.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275159/21463201.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

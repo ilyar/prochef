@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Anatomy of a Chef Run</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Anatomy of a Chef Run
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: right"><img src="../attachments/1179915/14057476.png" hspace="16" vspace="4" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+<h4><a name="AnatomyofaChefRun-ChefClient."></a><b><font color="#f7681a">As you work with Chef, it will be important to understand the path we take during execution of the</font> <a href="Chef Client.html" title="Chef Client">Chef Client</a>.</b></h4>
+
+<h2><a name="AnatomyofaChefRun-Convergence"></a>Convergence</h2>
+<p>We call the process of running the <a href="Chef Client.html" title="Chef Client">Chef Client</a> or <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a> and taking any needed actions on <a href="Resources.html" title="Resources">Resources</a> "Convergence".  In a nutshell, Convergence in systems automation speak means "bringing the system closer to correct with each action you take".  Ideally, a single run of the <a href="Chef Client.html" title="Chef Client">Chef Client</a> should always bring the system into the fully expected state - not just half-way.  But if it doesn't work out, trying again should continue to bring the system closer to correct.  </p>
+
+<div class="panel" style="border-width: 1px;"><div class="panelContent">
+<h3><a name="AnatomyofaChefRun-Build%2CRegister%2CandAuthenticatetheNode"></a>Build, Register, and Authenticate the Node</h3>
+</div></div>
+<h4><a name="AnatomyofaChefRun-"></a><font color="#f7681a">Build the Node</font></h4>
+<p>The first thing <a href="Chef Client.html" title="Chef Client">Chef Client</a> or <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a> does is build a new <a href="Nodes.html" title="Nodes">Node</a>.  The node is constructed from:</p>
+<ol>
+	<li>
+	<ol>
+		<li><a href="Ohai.html" title="Ohai">Ohai</a> - Ohai discovers the data about the Operating System first.</li>
+		<li>The previous data for the node is fetched from the <a href="Chef Server.html" title="Chef Server">Chef Server</a> (unless we are running under <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a>).</li>
+		<li>Any JSON <a href="Attributes.html" title="Attributes">Attributes</a> or <a href="Recipes.html" title="Recipes">Recipes</a> are added.</li>
+		<li>All the Ohai attributes are added.</li>
+	</ol>
+	</li>
+</ol>
+
+
+<h4><a name="AnatomyofaChefRun-"></a><font color="#f7681a">Registering With The Chef Server</font></h4>
+<p>Once the initial <a href="Nodes.html" title="Nodes">node</a> is constructed, the <a href="Chef Client.html" title="Chef Client">Chef Client</a> checks for the existence of its private key file, usually located in <tt>/etc/chef/client.pem</tt>.  If the private key does not exist, the client will attempt to register itself. To register itself, the client temporarily assumes the identity of the <em>chef-validator</em> client. <em>chef-validator</em> is a special purpose client used exclusively for registering new clients. By default, the private key for <em>chef-validator</em> is stored in <tt>/etc/chef/validation.pem</tt>. Using the identity of the <em>chef-validator</em> chef-client (the application) will register a new client identity with the server and store its private key in <tt>/etc/chef/client.pem</tt>. From this point forward, chef-client will authenticate with the server using its own identity.</p>
+
+<div class="panel" style="border-width: 1px;"><div class="panelContent">
+<h3><a name="AnatomyofaChefRun-SynchronizeCookbooks"></a>Synchronize Cookbooks</h3>
+</div></div>
+
+<h4><a name="AnatomyofaChefRun-"></a><font color="#f7681a">Synchronize Libraries, Attributes, Definitions and Recipes</font></h4>
+<p>The <a href="Chef Client.html" title="Chef Client">Chef Client</a> then queries the <a href="Chef Server.html" title="Chef Server">Chef Server</a> for a list of all the <a href="Libraries.html" title="Libraries">Libraries</a>, <a href="Attributes.html" title="Attributes">Attributes</a>, <a href="Definitions.html" title="Definitions">Definitions</a> and <a href="Recipes.html" title="Recipes">Recipes</a> in all <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a>, and transfers them to the local file cache.</p>
+
+<h2><a name="AnatomyofaChefRun-CompileResourceCollection"></a>Compile - Resource Collection</h2>
+<p>Now that we have all information from the Cookbooks, it's time to assemble the specific collection of resources needed to converge this node. </p>
+
+<h4><a name="AnatomyofaChefRun-"></a><font color="#f7681a">Load Libraries</font></h4>
+<p>We first load all the <a href="Libraries.html" title="Libraries">Libraries</a> from every cookbook, making any language extensions or ruby classes available.</p>
+
+<h4><a name="AnatomyofaChefRun-"></a><font color="#f7681a">Load Attributes</font></h4>
+<p>Then we load all the <a href="Attributes.html" title="Attributes">Attribute</a> files, which update the <a href="Nodes.html" title="Nodes">Node</a> attributes and <a href="Recipes.html" title="Recipes">Recipes</a>.</p>
+
+<h4><a name="AnatomyofaChefRun-"></a><font color="#f7681a">Load Definitions</font></h4>
+<p><a href="Definitions.html" title="Definitions">Definitions</a> must be loaded before <a href="Recipes.html" title="Recipes">Recipes</a>, since they create new pseudo-<a href="Resources.html" title="Resources">Resources</a>. </p>
+
+<h4><a name="AnatomyofaChefRun-"></a><font color="#f7681a">Load Recipes</font></h4>
+<p>At this point, the <a href="Recipes.html" title="Recipes">Recipes</a> themselves are evaluated.  We are not taking any action on the resources in the recipes at this stage - we are taking each evaluated <a href="Resources.html" title="Resources">resource</a> and putting it in the <b>Resource Collection</b>.  </p>
+<ul>
+	<li>This is essentially an Array of each evaluated <a href="Resources.html" title="Resources">resource</a>, along with some helpful functions.</li>
+	<li>Plain Ruby code outside of resources is evaluated, however.</li>
+	<li>If you would like Ruby code executed with other resources, use a <a href="Resources.html#Resources-RubyBlock">Ruby Block Resource</a>.</li>
+	<li><b><font color="#f7681a">You can have Chef <a href="Evaluate and Run Resources at Compile Time.html" title="Evaluate and Run Resources at Compile Time">Evaluate and Run Resources at Compile Time</a>, too.</font></b></li>
+</ul>
+
+
+<h2><a name="AnatomyofaChefRun-ExecuteConfigureNode"></a>Execute - Configure Node</h2>
+<p>Now Chef is ready to configure the system.</p>
+
+<h4><a name="AnatomyofaChefRun-"></a><font color="#f7681a">Converge</font></h4>
+<p>This is the actual convergence step.  Each <a href="Resources.html" title="Resources">Resource</a> in the Resource Collection is mapped to a <a href="Providers.html" title="Providers">Provider</a>, which then takes Action on it.  The system is configured.</p>
+
+<h4><a name="AnatomyofaChefRun-"></a><font color="#f7681a">Save Node</font></h4>
+<p>After converging, Chef saves the state of the node to persist its node data and make it available for <a href="Search.html" title="Search">search</a>.</p>
+
+<h4><a name="AnatomyofaChefRun-"></a><font color="#f7681a">Run Notifications</font></h4>
+<p>Finally, any <a href="Exception and Report Handlers.html" title="Exception and Report Handlers">notification handlers</a> you've configured will be run.</p>
+
+<h2><a name="AnatomyofaChefRun-IfSomethingWentWrong..."></a>If Something Went Wrong...</h2>
+<p>When chef-client fails, it finishes the run by executing any <a href="Exception and Report Handlers.html" title="Exception and Report Handlers">exception handlers</a> you've configured.</p>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="API Clients.html" title="API Clients"><span class="image-wrap" style="float: left"><img src="../attachments/1179915/19005481.png" hspace="4" style="border: 0px solid black"/></span> API Clients </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Evaluate and Run Resources at Compile Time.html" title="Evaluate and Run Resources at Compile Time"><span class="image-wrap" style="float: right"><img src="../attachments/1179915/19005482.png" hspace="4" style="border: 0px solid black"/></span> Evaluate and Run Resources at Compile Time </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179915/1310740.png">chef-run-anatomy.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179915/10321921.png">chef-run-anatomy2.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179915/14057476.png">Anatomy-of-Chef-Run-0.10.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179915/19005480.png">arrowdown.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179915/19005479.png">arrowdown.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179915/19005481.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179915/19005482.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-24773760"></a>
+                                    <font class="smallfont"><p>Just wondering if there is a specific reason why templates are not synchronized alongside the cookbook libraries, attributes, definitions and recipes? I think it would be a nice feature if these were synced as well.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by kostbot at Jul 27, 2012 02:53
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

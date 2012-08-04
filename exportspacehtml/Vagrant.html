@@ -1,0 +1,370 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Vagrant</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Vagrant
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Mar 05, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<h3><a name="Vagrant-"></a><font color="#f7681a"><a href="http://vagrantup.com/">Vagrant</a> is a tool for building and distributing virtualized development environments.</font></h3>
+<p><span class="image-wrap" style="float: left"><img src="../attachments/8257905/21463238.png" hspace="10" vspace="6" style="border: 0px solid black"/></span></p>
+
+<h5><a name="Vagrant-VagrantcanbeagreatwaytoleverageproductionChefcookbooksindevelopmentandtest%2Fqa.Itcanalsobeagreatwaytodevelopandtestnewcookbooksonalocalworkstation."></a>Vagrant can be a great way to leverage production Chef cookbooks in development and test/qa. It can also be a great way to develop and test new cookbooks on a local workstation.</h5>
+
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Warning</b><br />This page assumes you are using <a href="http://vagrantup.com/docs/changes/changes_06x_07x.html">Vagrant 0.7+</a> and <a href="http://www.virtualbox.org/wiki/Downloads">VirtualBox 4+</a>.  Please be sure to update both before proceeding.  The Vagrantfile Provisioner syntax has undergone massive changes so be sure to not use the following Vagrantfile with older versions of Vagrant.</td></tr></table></div>
+
+<p><br class="atl-forced-newline" /></p>
+<h1><a name="Vagrant-UsingVagrantwithHostedChef"></a>Using Vagrant with Hosted Chef</h1>
+<p><em>(formerly the Opscode Platform)</em></p>
+
+<p>The following Vagrantfile can be used to connect a Vagrant instance to Hosted Chef:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Before running vagrant, export the shell variable for the organization on Hosted Chef and
+# make sure the validator certificate is in ~/.chef.
+#
+# export ORGNAME=your_platform_organization
+#
+# Also be sure to export the shell variable for the vagrant box (linux flavor) you will be using
+#
+# export VAGRANT_BOX=ubuntu10.04-gems
+#
+# You can optionally export a shell variable for your Chef server username if it is different
+# from your OS user export OPSCODE_USER=bofh
+
+user = ENV['OPSCODE_USER'] || ENV['USER']
+base_box = ENV['VAGRANT_BOX'] || 'lucid32'
+
+Vagrant::Config.run do |config|
+  config.vm.box = base_box
+
+  config.vm.provision :chef_client do |chef|
+
+    # Set up some organization specific values based on environment variable above.
+    chef.chef_server_url = "https://api.opscode.com/organizations/#{ENV['ORGNAME']}"
+    chef.validation_key_path = "#{ENV['HOME']}/.chef/#{ENV['ORGNAME']}-validator.pem"
+    chef.validation_client_name = "#{ENV['ORGNAME']}-validator"
+
+    # Change the node/client name for the Chef Server
+    chef.node_name = "#{user}-vagrant"
+
+    # Put the client.rb in /etc/chef so chef-client can be run w/o specifying
+    chef.provisioning_path = "/etc/chef"
+
+    # logging
+    chef.log_level = :info
+
+    # adjust the run list to suit your testing needs
+    chef.run_list = [
+      "recipe[some_cookbook::some_recipe]"
+      "role[some_role]"
+    ]
+  end
+end</pre>
+		</div>
+</div></div>
+
+<p>This Vagrantfile requires the export of the following environment variables before using it:</p>
+
+<ul>
+	<li><b>ORGNAME</b> = your Hosted Chef organization name.</li>
+	<li><b>VAGRANT_BOX</b> = the vagrant box you will be using.  More information about Vagrant Boxes can be found in the <a href="http://vagrantup.com/docs/boxes.html">Vagrant documentation</a>.</li>
+</ul>
+
+</td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="420px">
+<p><br class="atl-forced-newline" /></p>
+
+<object id="myFlashContent" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+        width="400" height="300">
+    <param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=21312930&amp;amp;server=vimeo.com&amp;amp;show_title=1&amp;amp;show_byline=1&amp;amp;show_portrait=0&amp;amp;color=&amp;amp;fullscreen=1">
+    <param name="allowFullScreen" value="true">
+    <param name="allowscriptaccess" value="always">
+        <!--[if !IE]>-->
+    <object type="application/x-shockwave-flash" data="http://vimeo.com/moogaloop.swf?clip_id=21312930&amp;amp;server=vimeo.com&amp;amp;show_title=1&amp;amp;show_byline=1&amp;amp;show_portrait=0&amp;amp;color=&amp;amp;fullscreen=1" width="400" height="300">
+        <param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=21312930&amp;amp;server=vimeo.com&amp;amp;show_title=1&amp;amp;show_byline=1&amp;amp;show_portrait=0&amp;amp;color=&amp;amp;fullscreen=1">
+        <param name="allowFullScreen" value="true">
+        <param name="allowscriptaccess" value="always">
+            <!--<![endif]-->
+        <a href="http://get.adobe.com/flashplayer/">
+           <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />
+        </a>
+    <!--[if !IE]>-->
+    </object>
+    <!--<![endif]-->
+</object>
+<p><a href="http://vimeo.com/21312930">Setting up development environments with Vagrant and Hosted Chef</a> ~ <b>from <a href="http://www.cloudspace.com/">Cloudspace</a></b></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<hr />
+<h3><a name="Vagrant-"></a><font color="#f7681a">More Information</font></h3>
+<hr />
+<ul>
+	<li>Our friends at <a href="http://blog.frameos.org/">Automation Inc.</a> put together a blog post on <b><a href="http://blog.frameos.org/2011/05/12/three-easy-steps-to-testinstall-a-chef-server-0-10/">Three easy steps to test/install a Chef Server 0.10</a></b></li>
+</ul>
+
+
+<ul>
+	<li>Our friends at <a href="http://www.carbonfive.com/">Carbon Five</a> put together a blog post on <b><a href="http://blog.carbonfive.com/2011/06/22/virtual-environments-with-vagrant/">provisioning VMs with Vagrant and Chef Solo</a></b>.</li>
+</ul>
+
+
+<ul>
+	<li>Community member Fadhli Rahim <b><a href="https://github.com/fadhlirahim/vagrant_veewee">tutorial on use of Vagrant, Veewee, Chef Solo and knife-solo</a></b> for creating servers to deploy code that simulate servers in a production environment.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://vagrantup.com/docs/getting-started/why.html">Getting Started With Vagrant</a></b><br/>
+Vagrant uses Oracle’s VirtualBox to create its virtual machines and then uses Chef to provision them. 
+<br class="atl-forced-newline" /> </li>
+</ul>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="4%"></td></tr></tbody></table>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h1><a name="Vagrant-CreatingNewVagrantBoxeswithVeewee"></a>Creating New Vagrant Boxes with Veewee</h1>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Opscode Vagrant Boxes</b><br />Opscode is no longer maintaining Vagrant boxes. While we use Vagrant for internal development, the kinds of base boxes we need may not match the assumptions you need.
+
+<p> You can use the following instructions to build your own Vagrant boxes with the latest version of Chef installed using Veewee. It only takes about 30 minutes.</p></td></tr></table></div>
+
+<p><a href="https://github.com/jedi4ever/veewee">Veewee</a> by Patrick Debois is a great tool for automating Vagrant base box creation. Follow the instructions below to create base boxes that function similarly to the <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> templates that bear the same name.</p>
+
+<p>Use <tt>vagrant basebox templates</tt> to generate a list of available base box templates for Veewee. We're going to use Ubuntu 10.04 server 64bit.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% vagrant basebox templates
+...
+vagrant basebox define '&lt;boxname&gt;' 'ubuntu-10.04.2-server-amd64'
+...</pre>
+		</div>
+</div></div>
+
+<p>Define a basebox that will be built similar to <tt>ubuntu10.04-gems</tt> bootstrap template.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">vagrant basebox define ubuntu10.04-gems ubuntu-10.04.2-server-amd64</pre>
+		</div>
+</div></div>
+
+<p>We're going to leave the generated definition.rb and preseed.cfg alone and only customize the postinstall.sh. By default, this installs Ruby Enterprise Edition from source, but we're going to use the Ruby provided by Ubuntu instead.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>postinstall.sh</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; collapse: true; gutter: false"># postinstall.sh created from Mitchell's official lucid32/64 baseboxes
+
+# Apt-install various things necessary for Ruby, guest additions,
+# etc., and remove optional things to trim down the machine.
+apt-get -y update
+apt-get -y upgrade
+apt-get -y install linux-headers-$(uname -r) build-essential
+apt-get -y install zlib1g-dev libssl-dev libreadline5-dev
+
+# Setup sudo to allow no-password sudo for "admin"
+cp /etc/sudoers /etc/sudoers.orig
+sed -i -e '/Defaults\s\+env_reset/a Defaults\texempt_group=admin' /etc/sudoers
+sed -i -e 's/%admin ALL=(ALL) ALL/%admin ALL=NOPASSWD:ALL/g' /etc/sudoers
+
+# Install NFS client
+apt-get -y install nfs-common
+
+apt-get install -y ruby ruby1.8-dev build-essential wget libruby-extras libruby1.8-extras
+apt-get clean
+
+cd /tmp
+wget http://production.cf.rubygems.org/rubygems/rubygems-1.7.2.tgz
+tar zxf rubygems-1.7.2.tgz
+cd rubygems-1.7.2
+ruby setup.rb --no-format-executable
+cd ..
+rm -rf rubygems-1.7.2
+
+gem install chef --no-rdoc --no-ri --verbose
+
+# Installing vagrant keys
+mkdir /home/vagrant/.ssh
+chmod 700 /home/vagrant/.ssh
+cd /home/vagrant/.ssh
+wget --no-check-certificate 'http://github.com/mitchellh/vagrant/raw/master/keys/vagrant.pub' -O authorized_keys
+chmod 600 /home/vagrant/.ssh/authorized_keys
+chown -R vagrant /home/vagrant/.ssh
+
+# Installing the virtualbox guest additions
+VBOX_VERSION=$(cat /home/vagrant/.vbox_version)
+cd /tmp
+wget http://download.virtualbox.org/virtualbox/$VBOX_VERSION/VBoxGuestAdditions_$VBOX_VERSION.iso
+mount -o loop VBoxGuestAdditions_$VBOX_VERSION.iso /mnt
+sh /mnt/VBoxLinuxAdditions.run
+umount /mnt
+
+rm VBoxGuestAdditions_$VBOX_VERSION.iso
+
+# Remove items used for building, since they aren't needed anymore
+apt-get -y remove linux-headers-$(uname -r) build-essential
+apt-get -y autoremove
+
+# Zero out the free space to save space in the final image:
+dd if=/dev/zero of=/EMPTY bs=1M
+rm -f /EMPTY
+
+# Removing leftover leases and persistent rules
+echo "cleaning up dhcp leases"
+rm /var/lib/dhcp3/*
+
+# Make sure Udev doesn't block our network
+# http://6.ptmc.org/?p=164
+echo "cleaning up udev rules"
+rm /etc/udev/rules.d/70-persistent-net.rules
+mkdir /etc/udev/rules.d/70-persistent-net.rules
+rm -rf /dev/.udev/
+rm /lib/udev/rules.d/75-persistent-net-generator.rules
+
+echo "Adding a 2 sec delay to the interface up, to make the dhclient happy"
+echo "pre-up sleep 2" &gt;&gt; /etc/network/interfaces
+exit</pre>
+		</div>
+</div></div>
+
+<p>Build the base box. It will prompt you to download the ISO for the installation. If you already have an ISO for the target, put it in <tt>iso/</tt> in the current directory.</p>
+
+<p>During this process, VirtualBox will open a console session. Veewee will interactively enter all the configuration for you, so best to leave it alone and let it work.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">vagrant basebox build 'ubuntu10.04-gems'</pre>
+		</div>
+</div></div>
+
+<p>Next, export the VM to a .box file.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">vagrant basebox export 'ubuntu10.04-gems'</pre>
+		</div>
+</div></div>
+
+<p>Import the box into Vagrant.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">vagrant box add 'ubuntu10.04-gems' 'ubuntu10.04-gems.box'</pre>
+		</div>
+</div></div>
+
+<p>Now you're ready to use it in Vagrant!</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">vagrant init 'ubuntu10.04-gems'</pre>
+		</div>
+</div></div>
+
+<p>Modify the Vagrantfile as desired, then launch the box with vagrant.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: shell; gutter: false">vagrant up
+vagrant ssh</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Ubuntu 10.10 NFS Bug</b><br />If you run into errors using Vagrant mount the /etc/chef folder, and if you have NFS installed on your Vagrant base box, you'll need to do one of two things to overcome a <a href="https://bugs.launchpad.net/ubuntu/+source/nfs-utils/+bug/662711">known ubuntu/nfs bug</a>:
+<ol>
+	<li>remove it and vagrant will mount another less performant way</li>
+	<li>Tell Vagrant not to use nfs mounting, e.g.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">csc.vm.share_folder("chef-server-etc", "/etc/chef",
+"#{@cs_kitchen}/mnt/etc", :nfs =&gt; false)</pre>
+		</div>
+</div></div></li>
+</ol>
+</td></tr></table></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="4%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/8257905/21463114.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installation.html" title="Installation">Installation</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/8257905/21463113.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Chef.html" title="Managing Chef">Managing Chef</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257905/11993099.png">vagrant_chilling.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257905/11993100.jpg">vagrant.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257905/21463113.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257905/21463114.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257905/21463238.png">vagrant.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

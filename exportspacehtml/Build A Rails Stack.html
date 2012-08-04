@@ -1,0 +1,426 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Build A Rails Stack</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Build A Rails Stack
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on May 18, 2012 by <font color="#0050B2">jackr</font>.
+				    </div>
+
+				    <p><br class="atl-forced-newline" /></p>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="48%">
+
+<p><div class="panel" style="background-color: #d7d4c3;border-color: #f7681a;border-width: 3px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: right"><a class="confluence-thumbnail-link 220x220" href='http://wiki.opscode.com/download../attachments/19071218/img_rails.png'><img src="../attachments/thumbnails/19071218/19005504" hspace="14" vspace="4" style="border: 0px solid black"/></a></span></p>
+<h4><a name="BuildARailsStack-"></a><font color="#f7681a">Build a Rails application stack using Chef cookbooks available from the <a href="http://cookbooks.opscode.com">Cookbooks Community Site</a> and Hosted Chef.</font> </h4>
+
+<p><b>At the end of this guide, you'll have four total Ubuntu 10.04 systems running in Amazon EC2.</b></p>
+<ul class="alternate" type="square">
+	<li>1 haproxy load balancer.</li>
+	<li>2 Ruby on Rails application servers.</li>
+	<li>1 MySQL database server.</li>
+</ul>
+
+
+<p>If you don't already have an account with Amazon AWS, go to <a href="http://aws.amazon.com/">Amazon Web Sevices</a> and click "Sign up". You'll need the access and secret access key credentials from the sign-up later.</p>
+</div></div><br class="atl-forced-newline" />
+The Ruby on Rails application used in this guide is <a href="http://radiantcms.org/">Radiant CMS</a>.</p>
+
+<p>We're going to reuse a number of cookbooks from the <a href="http://cookbooks.opscode.com">Cookbooks Community Site</a> to build the environment. For example:</p>
+<ul>
+	<li>The source code lives in <b>git</b>, so that cookbook will ensure Git is available.</li>
+	<li>The load balancer is <b>haproxy</b> because it is very simple to deploy and configure, and we use a recipe that automatically discovers the Rails application systems.</li>
+	<li>The heavy lifting is handled by recipes in the <b>application</b> and <b>database</b> cookbooks.</li>
+	<li>Finally, as we're deploying Radiant, we'll get some help from the <b>radiant</b> cookbook.</li>
+</ul>
+</td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="35%">
+<hr />
+<h5><a name="BuildARailsStack-GuideBasedUponUbuntu10.04onAmazonAWSEC2withChef0.10.0."></a>Guide Based Upon Ubuntu 10.04 on Amazon AWS EC2 with Chef 0.10.0.</h5>
+<hr />
+<p><em><b>Note:</b> At this time, the steps described above have only been tested on the identified platform(s).  Opscode has not researched and does not support alternative steps that may lead to successful completion on other platforms.  Platform(s) supported by this guide may change over time, so please do check back for updates.  If you'd like to undertake this guide on an alternate platform, you may desire to turn to open source community resources for support assistance.</em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> <object id="myFlashContent" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+        width="600" height="480">
+    <param name="movie" value="http://blip.tv/play/AYKglh8C&quot;,&quot;thirdpartyid&quot;:null,&quot;playlists&quot;:null,&quot;thumbnailFilename&quot;:&quot;Opscode-BuildARadiantCMSRailsStackWithChef245-587.jpg&quot;,&quot;embedLookup&quot;:&quot;AYKglh8C&quot;,&quot;adsEnabled&quot;:null,&quot;nextHiddenDate&quot;:null,&quot;languageCode&quot;:&quot;en&quot;,&quot;numMidrolls&quot;:null,&quot;adminTitle&quot;:&quot;Build a Radiant CMS Rails Stack with Chef&quot;,&quot;postsId&quot;:4721339,&quot;thumbnailUrl&quot;:&quot;http://a.images.blip.tv/Opscode-BuildARadiantCMSRailsStackWithChef245-587.jpg&quot;,&quot;midrollStart&quot;:null,&quot;userId&quot;:&quot;371369&quot;,&quot;adOptOut&quot;:&quot;1&quot;,&quot;midrollDuration&quot;:null,&quot;display_name&quot;:&quot;Opscode&quot;,&quot;tags&quot;:[{&quot;name&quot;:&quot;opscode&quot;},{&quot;name&quot;:&quot;chef&quot;},{&quot;name&quot;:&quot;opschef&quot;},{&quot;name&quot;:&quot;automation&quot;},{&quot;name&quot;:&quot;configuration&quot;},{&quot;name&quot;:&quot;management&quot;},{&quot;name&quot;:&quot;ruby on rails&quot;},{&quot;name&quot;:&quot;rails&quot;},{&quot;name&quot;:&quot;radiant cms&quot;},{&quot;name&quot;:&quot;rails stack&quot;}],&quot;categoryName&quot;:&quot;Technology&quot;,&quot;itemType&quot;:&quot;file&quot;,&quot;hidden&quot;:&quot;0&quot;,&quot;youtube_description&quot;:null},&quot;User&quot;:&quot;opscode&quot;}">
+    <param name="allowFullScreen" value="true">
+    <param name="allowscriptaccess" value="always">
+        <!--[if !IE]>-->
+    <object type="application/x-shockwave-flash" data="http://blip.tv/play/AYKglh8C&quot;,&quot;thirdpartyid&quot;:null,&quot;playlists&quot;:null,&quot;thumbnailFilename&quot;:&quot;Opscode-BuildARadiantCMSRailsStackWithChef245-587.jpg&quot;,&quot;embedLookup&quot;:&quot;AYKglh8C&quot;,&quot;adsEnabled&quot;:null,&quot;nextHiddenDate&quot;:null,&quot;languageCode&quot;:&quot;en&quot;,&quot;numMidrolls&quot;:null,&quot;adminTitle&quot;:&quot;Build a Radiant CMS Rails Stack with Chef&quot;,&quot;postsId&quot;:4721339,&quot;thumbnailUrl&quot;:&quot;http://a.images.blip.tv/Opscode-BuildARadiantCMSRailsStackWithChef245-587.jpg&quot;,&quot;midrollStart&quot;:null,&quot;userId&quot;:&quot;371369&quot;,&quot;adOptOut&quot;:&quot;1&quot;,&quot;midrollDuration&quot;:null,&quot;display_name&quot;:&quot;Opscode&quot;,&quot;tags&quot;:[{&quot;name&quot;:&quot;opscode&quot;},{&quot;name&quot;:&quot;chef&quot;},{&quot;name&quot;:&quot;opschef&quot;},{&quot;name&quot;:&quot;automation&quot;},{&quot;name&quot;:&quot;configuration&quot;},{&quot;name&quot;:&quot;management&quot;},{&quot;name&quot;:&quot;ruby on rails&quot;},{&quot;name&quot;:&quot;rails&quot;},{&quot;name&quot;:&quot;radiant cms&quot;},{&quot;name&quot;:&quot;rails stack&quot;}],&quot;categoryName&quot;:&quot;Technology&quot;,&quot;itemType&quot;:&quot;file&quot;,&quot;hidden&quot;:&quot;0&quot;,&quot;youtube_description&quot;:null},&quot;User&quot;:&quot;opscode&quot;}" width="600" height="480">
+        <param name="movie" value="http://blip.tv/play/AYKglh8C&quot;,&quot;thirdpartyid&quot;:null,&quot;playlists&quot;:null,&quot;thumbnailFilename&quot;:&quot;Opscode-BuildARadiantCMSRailsStackWithChef245-587.jpg&quot;,&quot;embedLookup&quot;:&quot;AYKglh8C&quot;,&quot;adsEnabled&quot;:null,&quot;nextHiddenDate&quot;:null,&quot;languageCode&quot;:&quot;en&quot;,&quot;numMidrolls&quot;:null,&quot;adminTitle&quot;:&quot;Build a Radiant CMS Rails Stack with Chef&quot;,&quot;postsId&quot;:4721339,&quot;thumbnailUrl&quot;:&quot;http://a.images.blip.tv/Opscode-BuildARadiantCMSRailsStackWithChef245-587.jpg&quot;,&quot;midrollStart&quot;:null,&quot;userId&quot;:&quot;371369&quot;,&quot;adOptOut&quot;:&quot;1&quot;,&quot;midrollDuration&quot;:null,&quot;display_name&quot;:&quot;Opscode&quot;,&quot;tags&quot;:[{&quot;name&quot;:&quot;opscode&quot;},{&quot;name&quot;:&quot;chef&quot;},{&quot;name&quot;:&quot;opschef&quot;},{&quot;name&quot;:&quot;automation&quot;},{&quot;name&quot;:&quot;configuration&quot;},{&quot;name&quot;:&quot;management&quot;},{&quot;name&quot;:&quot;ruby on rails&quot;},{&quot;name&quot;:&quot;rails&quot;},{&quot;name&quot;:&quot;radiant cms&quot;},{&quot;name&quot;:&quot;rails stack&quot;}],&quot;categoryName&quot;:&quot;Technology&quot;,&quot;itemType&quot;:&quot;file&quot;,&quot;hidden&quot;:&quot;0&quot;,&quot;youtube_description&quot;:null},&quot;User&quot;:&quot;opscode&quot;}">
+        <param name="allowFullScreen" value="true">
+        <param name="allowscriptaccess" value="always">
+            <!--<![endif]-->
+        <a href="http://get.adobe.com/flashplayer/">
+           <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />
+        </a>
+    <!--[if !IE]>-->
+    </object>
+    <!--<![endif]-->
+</object> </th>
+</tr>
+<tr>
+<td class='confluenceTd'> If there are issues with the screencast above, it is also available at <a href="http://blip.tv/opscode/build-a-radiant-cms-rails-stack-with-chef-4721339">blip.tv</a>. </td>
+</tr>
+</tbody></table>
+</div>
+
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h2><a name="BuildARailsStack-EnvironmentSetup"></a>Environment Setup</h2>
+<p>First, let's configure the local workstation.</p>
+
+<h5><a name="BuildARailsStack-ShellEnvironment"></a>Shell Environment</h5>
+<p>Obtain the repository used for this guide. It contains all the components required. Use git:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">git clone git://github.com/opscode/rails-quick-start.git</pre>
+		</div>
+</div></div>
+
+<h5><a name="BuildARailsStack-ChefandKnife"></a>Chef and Knife</h5>
+
+<p><b>Ubuntu/Debian users</b>: Install XML2 and XLST development headers on your system:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get install libxml2-dev libxslt-dev</pre>
+		</div>
+</div></div>
+<p><b>All Users</b>: You'll need some additional gems for Knife to launch instances in Amazon EC2:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo gem install knife-ec2</pre>
+		</div>
+</div></div>
+
+<p>As part of the <a href="Fast Start Guide.html" title="Fast Start Guide">Fast Start Guide</a>, you cloned a chef-repo and copied the Knife configuration file (knife.rb), validation certificate (ORGNAME-validator.pem) and user certificate (USERNAME.pem) to <tt>~/chef-repo/.chef/</tt>. Copy these files to the new rails-quick-start repository. You can also re-download the Knife configuration file for your organization with the <a href="http://wiki.opscode.com/display/chef/Managing+Organizations+with+the+Hosted+Chef+Management+Console#ManagingOrganizationswiththeHostedChefManagementConsole-RegeneratingthePrivateKeyandtheKnifeConfig">Hosted Chef Management Console</a>.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mkdir ~/rails-quick-start/.chef
+    cp ~/chef-repo/.chef/knife.rb ~/rails-quick-start/.chef
+    cp ~/chef-repo/.chef/USERNAME.pem ~/rails-quick-start/.chef
+    cp ~/chef-repo/.chef/ORGNAME-validator.pem ~/rails-quick-start/.chef</pre>
+		</div>
+</div></div>
+<p>Add the Amazon AWS credentials to the Knife configuration file.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">vi ~/rails-quick-start/.chef/knife.rb</pre>
+		</div>
+</div></div>
+<p>Add the following two lines to the end:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife[:aws_access_key_id] = "replace with the Amazon Access Key ID"
+    knife[:aws_secret_access_key] =  "replace with the Amazon Secret Access Key ID"</pre>
+		</div>
+</div></div>
+<p>Once the rails-quick-start and knife configuration is in place, we'll work from this directory.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cd rails-quick-start</pre>
+		</div>
+</div></div>
+
+<h5><a name="BuildARailsStack-AmazonAWSEC2"></a>Amazon AWS EC2</h5>
+<p>In addition to the credentials, two additional things need to be configured in the AWS account.</p>
+
+<p>Configure the default <a href="http://docs.amazonwebservices.com/AWSEC2/latest/DeveloperGuide/index.html?using-network-security.html">security group</a> to allow incoming connections for the following ports.</p>
+
+<ul>
+	<li>22 - ssh</li>
+	<li>80 - haproxy load balancer</li>
+	<li>22002 - haproxy administrative interface</li>
+	<li>8080 - unicorn Rails application</li>
+</ul>
+
+
+<p>Add these to the default security group for the account using the AWS Console.</p>
+
+<p>1. Sign into the <a href="https://console.aws.amazon.com/s3/home">Amazon AWS Console</a>.<br/>
+2. Click on the "Amazon EC2" tab at the top.<br/>
+3. Click on "Security Groups" in the left sidebar of the AWS Console.<br/>
+4. Select the "Default" group in the main pane.<br/>
+5. Enter the values shown for each of the ports required. Use "Custom" in the drop-down for 22002 and 8080.<br/>
+<span class="image-wrap" style=""><img src="../attachments/19071218/24183057.png" style="border: 0px solid black"/></span></p>
+
+
+<p>Create an <a href="http://docs.amazonwebservices.com/AWSEC2/latest/DeveloperGuide/index.html?using-credentials.html#using-credentials-keypair">SSH Key Pair</a> and save the private key in <tt>~/.ssh</tt>.</p>
+
+<p>1. In the AWS Console, click on "Key Pairs" in the left sidebar.<br/>
+2. Click on "Create Keypair" at the top of the main pane.<br/>
+3. Give the keypair a name like "rails-quick-start".<br/>
+4. The keypair will be downloaded automatically by the browser and saved to the default Downloads location.<br/>
+5. Move the rails-quick-start.pem file from the default Downloads location to *<b>~/.ssh</b>* and change permissions so that only you can read the file.  For example,</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mv ~/Downloads/rails-quick-start.pem ~/.ssh  
+    chmod 600 ~/.ssh/rails-quick-start.pem</pre>
+		</div>
+</div></div>
+
+<h2><a name="BuildARailsStack-AcquireCookbooks"></a>Acquire Cookbooks</h2>
+<p>The rails-quick-start has all the cookbooks we need for this guide. They were downloaded along with their dependencies from the cookbooks site using Knife. These are in the <tt>cookbooks/</tt> directory.</p>
+
+<ul>
+	<li>apt</li>
+	<li>git</li>
+	<li>application</li>
+	<li>database</li>
+	<li>radiant</li>
+	<li>haproxy</li>
+</ul>
+
+
+<p>Upload all the cookbooks to Hosted Chef.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload -a</pre>
+		</div>
+</div></div>
+
+<h2><a name="BuildARailsStack-ServerRoles"></a>Server Roles</h2>
+
+<p>All the required roles have been created in the rails-quick-start repository. They are in the <tt>roles/</tt> directory.</p>
+
+<p>    base.rb<br/>
+    radiant_database_master.rb<br/>
+    radiant.rb<br/>
+    radiant_run_migrations.rb<br/>
+    radiant_load_balancer.rb</p>
+
+<p>Upload all the roles to Hosted Chef.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rake roles</pre>
+		</div>
+</div></div>
+
+<h2><a name="BuildARailsStack-DataBagItem"></a>Data Bag Item</h2>
+<p>The rails-quick-start repository contains a data bag item that has all the information required to deploy and configure the Radiant application from source using the recipes in the <b>application</b> and <b>database</b> cookbooks.</p>
+
+<p>The data bag name is <b>apps</b> and the item name is <b>radiant</b>. Upload this to Hosted Chef.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag create apps
+    knife data bag from file apps radiant.json</pre>
+		</div>
+</div></div>
+
+<h2><a name="BuildARailsStack-DecisionTime"></a>Decision Time</h2>
+<p>It is time for you to decide whether you want a single instance running Radiant, or a few instances as a small infrastructure.</p>
+
+<p>In either case, we're going to use m1.small instances with the 32 bit Ubuntu 10.04 image provided [by Canonical|http://uec-images.ubuntu.com/releases/10.04/release-20101228/. The identifier is <b>ami-88f504e1</b> for the AMI in us-east-1 with instance storage that we will use in this guide.  We'll show you the <b>knife ec2 server create</b> sub-command to launch instances.</p>
+
+<p>This command will:</p>
+<ul>
+	<li>Launch a server on EC2.</li>
+	<li>Connect it to Hosted Chef.</li>
+	<li>Configure the system with Chef.</li>
+</ul>
+
+
+<p>See the appropriate section below for instruction on launching a single instance, or launching the multi-system infrastructure.</p>
+
+<h2><a name="BuildARailsStack-LaunchSingleInstance"></a>Launch Single Instance</h2>
+
+<p>Launch the entire stack on a single instance.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -G default -I ami-7000f019 -f m1.small \
+      -S rails-quick-start -i ~/.ssh/rails-quick-start.pem -x ubuntu -d ubuntu10.04-gems-qs \
+      -r 'role[base],role[radiant_database_master],role[radiant],role[radiant_run_migrations],recipe[radiant::db_bootstrap],role[radiant_load_balancer]'</pre>
+		</div>
+</div></div>
+<p>Once complete, the instance will be running MySQL and Radiant under Unicorn. With only one system, a load balancer is unnecessary.</p>
+
+<h2><a name="BuildARailsStack-LaunchMultiinstanceInfrastructure"></a>Launch Multi-instance Infrastructure</h2>
+
+<p>We will launch one database server, two application servers and one load balancer. One of the application server instances will include the role for running migrations as discussed before.</p>
+
+<p>First, launch the database instance.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -G default -I ami-7000f019 -f m1.small \
+      -S rails-quick-start -i ~/.ssh/rails-quick-start.pem -x ubuntu -d ubuntu10.04-gems-qs \
+      -r 'role[base],role[radiant_database_master]'</pre>
+		</div>
+</div></div>
+<p>Once the database master is up, launch one node that will run database migration and set up the database with default data.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -G default -I ami-7000f019 -f m1.small \
+      -S rails-quick-start -i ~/.ssh/rails-quick-start.pem -x ubuntu -d ubuntu10.04-gems-qs \
+      -r 'role[base],role[radiant],role[radiant_run_migrations],recipe[radiant::db_bootstrap]'</pre>
+		</div>
+</div></div>
+<p>Launch the second application instance w/o the *<b>radiant_run_migrations</b>* role or *<b>radiant::db_bootstrap</b>* recipe.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -G default -I ami-7000f019 -f m1.small \
+      -S rails-quick-start -i ~/.ssh/rails-quick-start.pem -x ubuntu -d ubuntu10.04-gems-qs \
+      -r 'role[base],role[radiant]'</pre>
+		</div>
+</div></div>
+<p>Once the second application instance is up, launch the load balancer.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -G default -I ami-7000f019 -f m1.small \
+      -S rails-quick-start -i ~/.ssh/rails-quick-start.pem -x ubuntu -d ubuntu10.04-gems-qs \
+      -r 'role[base],role[radiant_load_balancer]'</pre>
+		</div>
+</div></div>
+<p>Once complete, we'll have four instances running in EC2 with MySQL, Radiant and haproxy up and available to serve traffic.</p>
+
+<h2><a name="BuildARailsStack-Verification"></a>Verification</h2>
+
+<p>Knife will output the fully qualified domain name of the instance when the commands complete. Navigate to the public fully qualified domain name on port 80:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">http://ec2-xx-xxx-xx-xxx.compute-1.amazonaws.com/</pre>
+		</div>
+</div></div>
+<p>The login is admin and the password is radiant.</p>
+
+<p>You can access the haproxy admin interface at:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">http://ec2-xx-xxx-xx-xxx.compute-1.amazonaws.com:22002/</pre>
+		</div>
+</div></div>
+
+<h2><a name="BuildARailsStack-Appendix"></a>Appendix</h2>
+
+<h5><a name="BuildARailsStack-DatabasePasswords"></a>Database Passwords</h5>
+<p>The data bag item for Radiant contains default passwords that should certainly be changed to something stronger.</p>
+
+<p>The passwords in the Radiant Data Bag Item are set to the values show below:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">"mysql_root_password": {
+      "_default": "mysql_root"
+    },
+    "mysql_debian_password": {
+      "_default": "mysql_debian"
+    },
+    "mysql_repl_password": {
+      "_default": "mysql_repl"
+    },</pre>
+		</div>
+</div></div>    
+<p>To change the password to something stronger, modify <b>mysql_root</b>, <b>mysql_debian</b>, <b>mysql_repl</b> values. Something like the following secure passwords:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">vi data_bags/apps/radiant.json
+    "mysql_root_password": {
+      "_default": "super_s3cur3_r00t_pw"
+    },
+    "mysql_debian_password": {
+      "_default": "super_s3cur3_d3b1@n_pw"
+    },
+    "mysql_repl_password": {
+      "_default": "super_s3cur3_r3pl_pw"
+    },</pre>
+		</div>
+</div></div>
+<p>Once the entries are modified, simply load the data bag item from the json file:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag from file apps radiant.json</pre>
+		</div>
+</div></div>
+
+<h5><a name="BuildARailsStack-NonEC2Systems"></a>Non-EC2 Systems</h5>
+
+<p>For people not using Amazon EC2, other Cloud computing providers can be used. Supported by knife and fog as of this revision:</p>
+
+<ul>
+	<li>Rackspace Cloud</li>
+</ul>
+
+
+<p>See <a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a> for more information about using Knife to launch these instance types.</p>
+
+<p>For people not using cloud at all, but have their own infrastructure and hardware, use the <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> knife command. Note that the run-list specification is slightly different. For the first example of the single instance:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap IPADDRESS \
+    -r 'role[base],role[radiant_database_master],role[radiant],role[radiant_run_migrations],recipe[radiant::db_bootstrap],role[radiant_load_balancer]'</pre>
+		</div>
+</div></div>
+<p>See the contextual help for knife bootstrap on the additional options to set for SSH.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap --help</pre>
+		</div>
+</div></div>
+
+<h5><a name="BuildARailsStack-ANoteaboutEC2Instances"></a>A Note about EC2 Instances</h5>
+
+<p>We used m1.small instances. This is a low performance instance size in EC2 and just fine for testing. Visit the Amazon AWS documentation to <a href="http://aws.amazon.com/ec2/instance-types/">learn more about instance sizes</a>.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071218/19005485.jpg">20101104-qyy612rgcrr9k24ca29qarehc9.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071218/19005504.png">img_rails.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071218/24183057.png">AWS-Security-Group-Edit.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071218/24183058.pages">RailsNames.pages</a> (application/octet-stream)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

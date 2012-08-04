@@ -1,0 +1,702 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Recipes</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Recipes
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 122x168" href='http://wiki.opscode.com/download../attachments/1179819/10968873-vegetables-still-life-with-recipes-blank-on-checkered-background.jpg'><img src="../attachments/thumbnails/1179819/21463209" hspace="20" vspace="8" style="border: 0px solid black"/></a></span></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h5><a name="Recipes-"></a><font color="#f7681a">Recipes are the fundamental configuration in Chef. Recipes encapsulate collections of <a href="Resources.html" title="Resources">resources</a> which are executed in the order defined to configure the <a href="Nodes.html" title="Nodes">system</a><br/>
+<br/>
+Recipes are an internal Ruby domain-specific language (DSL), but you do not need to have experience with Ruby to write recipes. <br/>
+<br/>
+Most things in Chef recipes will be resources to configure. Some things in recipes will be Ruby syntax and helper code.</font></h5>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<h1><a name="Recipes-BasicRecipeRules"></a>Basic Recipe Rules</h1>
+
+<p>When writing recipes, keep a few things in mind.</p>
+
+<p>1. Recipes are stored in <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a>.<br/>
+2. Resources are executed in the order they appear.<br/>
+3. Recipes are evaluated as Ruby code on the node to find resources to execute. See <a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">Anatomy of a Chef Run</a> for more information.<br/>
+4. Recipes from other <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> can be included with <tt>include_recipe</tt>.<br/>
+5. All the attributes of the current <a href="Nodes.html" title="Nodes">Node</a> are available via the <tt>node</tt> object.</p>
+
+<h3><a name="Recipes-UsingRecipes"></a>Using Recipes</h3>
+
+<p><font color="#f7681a">Recipes are used by assigning them to a node or role run list.</font> They are assigned using the appropriate name. <font color="#f7681a">Recipes are stored in cookbook directories, and namespaced by the cookbook.</font> The namespacing is used when assigning recipes to be run by a node. For example for a directory structure like:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbooks/
+cookbooks/apache2/
+cookbooks/apache2/recipes/
+cookbooks/apache2/recipes/default.rb
+cookbooks/apache2/recipes/mod_ssl.rb</pre>
+		</div>
+</div></div>
+
+<p>There are two recipes: <tt>apache2</tt> and <tt>apache2::mod_ssl</tt>. On a node, these are assigned to the node's <tt>run_list</tt>. For example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+  "run_list": [
+    "recipe[apache2]",
+    "recipe[apache2::mod_ssl]"
+  ]
+}</pre>
+		</div>
+</div></div>
+
+<p>(See <a href="Guide to Creating A Cookbook and Writing A Recipe.html" title="Guide to Creating A Cookbook and Writing A Recipe">Guide to Creating A Cookbook and Writing A Recipe</a> for a simple example.)</p>
+</td> 
+<td class="confluenceTd" valign="top" width="25%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#Recipes-BasicRecipeRules'>Basic Recipe Rules</a></li>
+<ul>
+    <li><a href='#Recipes-UsingRecipes'>Using Recipes</a></li>
+    <li><a href='#Recipes-ApplyingRecipestoNodes'>Applying Recipes to Nodes</a></li>
+</ul>
+    <li><a href='#Recipes-Resources'>Resources</a></li>
+<ul>
+    <li><a href='#Recipes-Composition'>Composition</a></li>
+    <li><a href='#Recipes-MetaParameters'>Meta Parameters</a></li>
+    <li><a href='#Recipes-CustomLightweightResourceProviders%28LWRPs%29'>Custom Lightweight Resource Providers (LWRPs)</a></li>
+</ul>
+    <li><a href='#Recipes-NodeObject'>Node Object</a></li>
+<ul>
+    <li><a href='#Recipes-AccessingNodeAttributes'>Accessing Node Attributes</a></li>
+    <li><a href='#Recipes-CommonAutomaticAttributes'>Common Automatic Attributes</a></li>
+    <li><a href='#Recipes-SettingNodeAttributes'>Setting Node Attributes</a></li>
+</ul>
+    <li><a href='#Recipes-IncludingRecipes'>Including Recipes</a></li>
+<ul>
+    <li><a href='#Recipes-Dependencies'>Dependencies</a></li>
+</ul>
+    <li><a href='#Recipes-OtherDataSources'>Other Data Sources</a></li>
+<ul>
+    <li><a href='#Recipes-Search'>Search</a></li>
+    <li><a href='#Recipes-DataBags'>Data Bags</a></li>
+</ul>
+    <li><a href='#Recipes-OtherRecipeDSLMethods'>Other Recipe DSL Methods</a></li>
+<ul>
+    <li><a href='#Recipes-platform%3F'>platform?</a></li>
+    <li><a href='#Recipes-attribute%3F'>attribute?</a></li>
+    <li><a href='#Recipes-valueforplatform'>value_for_platform</a></li>
+</ul>
+    <li><a href='#Recipes-Tags'>Tags</a></li>
+    <li><a href='#Recipes-RubyinRecipes'>Ruby in Recipes</a></li>
+<ul>
+    <li><a href='#Recipes-Variables'>Variables</a></li>
+    <li><a href='#Recipes-Conditionals'>Conditionals</a></li>
+    <li><a href='#Recipes-Loops'>Loops</a></li>
+</ul>
+    <li><a href='#Recipes-ExceptionsandLogging'>Exceptions and Logging</a></li>
+    <li><a href='#Recipes-FurtherReading'>Further Reading</a></li>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b><a href="Just Enough Ruby for Chef.html" title="Just Enough Ruby for Chef">Just Enough Ruby for Chef</a></b><br /><br class="atl-forced-newline" />
+Ruby is a language designed to be easy to read and to behave exactly as you'd expect, so it shouldn't take you too long to get up to speed.  See <a href="Just Enough Ruby for Chef.html" title="Just Enough Ruby for Chef">Just Enough Ruby for Chef</a> for a starting point.
+<br class="atl-forced-newline" />
+<span class="image-wrap" style="display: block; text-align: center"><a class="confluence-thumbnail-link 331x119" href='http://wiki.opscode.com/download../attachments/1179819/ruby logo.gif'><img src="../attachments/thumbnails/1179819/12222581" vspace="4" style="border: 0px solid black"/></a></span></td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h3><a name="Recipes-ApplyingRecipestoNodes"></a>Applying Recipes to Nodes</h3>
+
+<p><font color="#f7681a">If you are using Chef with client/server, use knife to add the recipe to the node's run list, then run Chef client on the node.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife node run list add NODENAME "recipe[apache2]"</pre>
+		</div>
+</div></div>
+
+<p>You can also specify multiple recipes/roles at once. For example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife node run list add NODENAME "recipe[apache2],recipe[mysql],role[ssh]"
+run_list:
+    recipe[apache2]
+    recipe[mysql]
+    role[ssh]</pre>
+		</div>
+</div></div>
+
+<p>If you are using Chef Solo, use a JSON file passed to <tt>chef-solo -j</tt>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/chef/dna.json</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+  "run_list": ["recipe[apache2]"]
+}</pre>
+		</div>
+</div></div>
+
+<p>Then run chef-solo:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% sudo chef-solo -j /etc/chef/dna.json</pre>
+		</div>
+</div></div>
+
+<p>The cookbooks must be available in the <tt>cookbook_path</tt> on the system running <tt>chef-solo</tt>. See the <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a> page for more information.</p>
+
+<h1><a name="Recipes-Resources"></a>Resources</h1>
+
+<p><font color="#f7681a">Chef manages <a href="Resources.html" title="Resources">Resources</a> on the node.</font> Resources can be many things:</p>
+
+<ul>
+	<li>packages</li>
+	<li>services</li>
+	<li>users</li>
+	<li>files</li>
+	<li>directories</li>
+</ul>
+
+
+<p>And <a href="Resources.html" title="Resources">more</a>. <font color="#f7681a">They are the bread and butter of recipes. Chef's <a href="Providers.html" title="Providers">Providers</a> do the heavy lifting that configure resources, based on the platform of the node.</font> Chef's providers take idempotent actions to configure the resource as it is declared in the recipe.</p>
+
+<h3><a name="Recipes-Composition"></a>Composition</h3>
+
+<p>Resources have four components:</p>
+
+<ul>
+	<li>type</li>
+	<li>name</li>
+	<li>parameter "attributes"</li>
+	<li>action(s)</li>
+</ul>
+
+
+<p>For example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">package "tar" do
+  version "1.16.1-1"
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<p>This resource is a Ruby block. Its type is "package". Its name is "tar". It has a single parameter attribute "version". It defines a single action, ":install".</p>
+
+<p>Parameter attributes are not the same as node <a href="Attributes.html" title="Attributes">Attributes</a>. Context is important. These parameters specify various ways the resource should be configured. Each kind of resource in Chef has different parameters, and some have default values. If you want the default, you do not need to specify that parameter. Likewise, each type of resource has a default action. You do not need to specify the action if you want the default. </p>
+
+<p><font color="#f7681a">See the <a href="Resources.html" title="Resources">Resources</a> page for documentation on each resource that comes with Chef and the default parameters and actions.</font></p>
+
+<h3><a name="Recipes-MetaParameters"></a>Meta Parameters</h3>
+
+<p><font color="#f7681a">A variety of "meta" parameters are available to all resources.</font> These are most commonly used to send notifications to other resources or set up conditional execution rules.</p>
+
+<p>Meta parameters are documented in detail in the <a href="Resources.html#Resources-ResourcesMeta">Meta</a> section of the <a href="Resources.html" title="Resources">Resources</a> page.</p>
+
+<h3><a name="Recipes-CustomLightweightResourceProviders%28LWRPs%29"></a>Custom Lightweight Resource Providers (LWRPs)</h3>
+
+<p>As discussed above, <a href="Resources.html" title="Resources">Resources</a> represent a piece of system state and <a href="Providers.html" title="Providers">Providers</a> are the underlying implementation which brings them into that state. For example, all database vendors support the abstract concept of database creation, but the underlying implementation is different for each. While typical Resources and Providers are implemented in Chef's core using Ruby classes, creating custom <a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers &#40;LWRP&#41;</a> requires less Ruby knowledge than their heavier counterparts.</p>
+
+<p>For the Light-weight Resources and Providers (LWRPs) that are used in Opscode's public open source cookbooks, see <a href="Opscode LWRP Resources.html" title="Opscode LWRP Resources">Opscode LWRP Resources</a>.</p>
+
+<h1><a name="Recipes-NodeObject"></a>Node Object</h1>
+
+<p><font color="#f7681a">Recipes are executed in the context of the Chef node object, called <tt>node</tt>. A feature of Chef is using data about the Node, called <a href="Attributes.html" title="Attributes">Attributes</a> in recipes to configure the system in particular ways based on that data.</font></p>
+
+<h3><a name="Recipes-AccessingNodeAttributes"></a>Accessing Node Attributes</h3>
+
+<p>The node's attributes are like a Ruby hash. They are accessed with:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">node['some_attribute']</pre>
+		</div>
+</div></div>
+
+<p>This will use the value of 'some_attribute'. A number of attributes are detected automatically by <a href="Ohai.html" title="Ohai">ohai</a> when the node runs Chef. Node attributes are a nested key/value store, so there can be sub-keys too:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">node['some_attribute']['sub_attribute']</pre>
+		</div>
+</div></div>
+
+<p>New custom attributes can be created in <a href="Attributes.html#Attributes-AttributesCookbookAttributes">Cookbook Attributes</a> and <a href="Roles.html" title="Roles">Roles</a>. See below for creating new attributes in Recipes.</p>
+
+<h3><a name="Recipes-CommonAutomaticAttributes"></a>Common Automatic Attributes</h3>
+
+<p>Ohai detects attributes on the node based on its own plugin system. The most commonly accessed attributes are:</p>
+
+<ul>
+	<li><tt>node['platform']</tt> - The node's platform. This determines what <a href="Providers.html" title="Providers">Providers</a> are used by <a href="Resources.html" title="Resources">Resources</a>.</li>
+	<li><tt>node['platform_version']</tt> - The node's platform version. This may be used in determining <a href="Providers.html" title="Providers">Providers</a> as well.</li>
+	<li><tt>node['ipaddress']</tt> - The node's ipaddress is IPV4 address of the interface that has the default route. If the node does not have a default route, this attribute will be nil. Using the IP of the interface with the default route is deemed the most sane default.</li>
+	<li><tt>node['macaddress']</tt> - The node's macaddress, from the interface detected for ipaddress above.</li>
+	<li><tt>node['fqdn']</tt> - The fully qualified domain name, for example from <tt>hostname -f</tt> on Unix/Linux systems. This is also used as the node name unless otherwise set.</li>
+	<li><tt>node['hostname']</tt> - The hostname is the first field from splitting the FQDN on "." (dot).</li>
+	<li><tt>node['domain']</tt> - The domain is the rest of the FQDN after splitting on "." (dot).</li>
+	<li><tt>node['recipes']</tt> - The node's Run List is expanded for roles and recipes, and recipes are stored in this attribute.</li>
+	<li><tt>node['roles']</tt> - The node's Run List is expanded for roles and recipes, and roles are stored in this attribute.</li>
+	<li><tt>node['ohai_time']</tt> - Not commonly used in recipes, but this value is the time epoch of the node when ohai was run, and gets saved to the <a href="Chef Server.html" title="Chef Server">Chef Server</a>. It is also used in the <a href="Knife.html" title="Knife">Knife</a> "status" sub command.</li>
+</ul>
+
+
+<p><a href="Automatic Attributes.html" title="Automatic Attributes">Automatic Attributes</a> lists all the <tt>automatic</tt> node attributes detected by Ohai.  Additional attributes and sub-attributes can be viewed on a particular node by running <tt>ohai</tt>. This returns data as JSON.</p>
+
+<h3><a name="Recipes-SettingNodeAttributes"></a>Setting Node Attributes</h3>
+
+<p><font color="#f7681a">Node attributes can be set in recipes.</font> <a href="Attributes.html#Attributes-HowtoUseAttributes">This use of node attributes</a> should be done when you want to calculate a derived value, or store some data on the node that should be persisted the next time Chef runs. Use the "set" method on the node.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">node.set['some_attribute'] = "Some Value" + "Some other value"
+node.set['some_attribute']['sub_attribute'] = "Sub attribute Value"</pre>
+		</div>
+</div></div>
+
+<p><a href="Attributes.html" title="Attributes">Attributes</a> are applied in <a href="Attributes.html#Attributes-AttributeTypeandPrecedence">precedence order</a>; node attributes are <tt>automatic</tt> and have the highest precedence.  As these <tt>automatic</tt> attributes will be re-written with each <a href="Ohai.html" title="Ohai">Ohai</a> run - Chef doesn't provide any way to modify them.  See <a href="Attributes.html#Attributes-SettingAttributes">Setting Attributes</a> for more detail on the attribute types and precedences. </p>
+
+<h1><a name="Recipes-IncludingRecipes"></a>Including Recipes</h1>
+<p><font color="#f7681a">Recipes from other cookbooks can be included in a recipe with the <tt>include_recipe</tt> keyword.</font> The included recipe's resources will be inserted in order, at the point where <tt>include_recipe</tt> was called. For example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">include_recipe "apache2::mod_ssl"</pre>
+		</div>
+</div></div>
+
+<p>Will include the resources defined in recipe <tt>apache2::mod_ssl</tt>.  Note, however, that subsequent calls to <tt>include_recipe</tt> for the same recipe will have no effect.</p>
+
+<p>You can also <a href="Definitions.html" title="Definitions">pass data from various recipes to one definition</a>.  This would be useful if you'd like to update your /etc/aliases, /etc/sudoers, or something similar, with entries from multiple recipes in a single chef run.</p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="53%">
+<h3><a name="Recipes-Dependencies"></a>Dependencies</h3>
+
+<p><font color="#f7681a">When using Chef client/server, you must use cookbook <a href="Metadata.html" title="Metadata">Metadata</a> to declare dependencies on cookbooks' recipes included with <tt>include_recipe</tt>.</font>  <b>This is specified with the "depends" keyword in the metadata.rb of the cookbook.</b>  </p>
+
+<p>For example, if the above inclusion of <tt>apache2::mod_ssl</tt> was in a recipe in the "my_app" cookbook then <tt>cookbooks/my_app/metadata.rb</tt> would have:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">depends "apache2"</pre>
+		</div>
+</div></div>
+
+<p>This is not required in Chef Solo because <b>all</b> the cookbooks the node will use must be available since Solo doesn't use a Chef Server to distribute cookbooks.</p></td>
+<td class="confluenceTd" valign="top" width="37%">
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Command-line Cookbook Dependency Solving with Knife Exec</b><br /><br class="atl-forced-newline" />
+Need to replicate a node setup elsewhere, and aren't sure of all the cookbook dependencies?  Or, just want to validate that you've uploaded all the cookbooks that are stated as being required?  
+
+<p>Community member <a href="http://agilesysadmin.net/">Stephen Nelson-Smith</a> has a blog post on <b><a href="http://agilesysadmin.net/chef-dependencies">Dependency Solving</a></b> using <a href="Knife Exec.html" title="Knife Exec">Knife Exec</a>.</p></td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="7%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<h1><a name="Recipes-OtherDataSources"></a>Other Data Sources</h1>
+
+<p>The Chef Server has core features that are useful in Recipes to build fully automated dynamic infrastructure.<br/>
+<font color="#f7681a"><br/>
+* <a href="Search.html" title="Search">Search</a> Indexes<br/>
+* <a href="Data Bags.html" title="Data Bags">Data Bags</a><br/>
+* <a href="Encrypted Data Bags.html" title="Encrypted Data Bags">Encrypted Data Bags</a></font></p>
+
+<p>The Chef Recipe DSL has keywords for using each of these features.</p>
+
+<h3><a name="Recipes-Search"></a>Search</h3>
+
+<p>A basic search query in a recipe looks like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">search(:node, "attribute:value")</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">Searches can be assigned to variables and then used elsewhere in a recipe.</font> For example, we could search for all nodes with the role "webserver" assigned, then render a template with them.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">webservers = search(:node, "role:webserver")
+
+template "/tmp/list_of_webservers" do
+  source "list_of_webservers.erb"
+  variables(:webservers =&gt; webservers)
+end</pre>
+		</div>
+</div></div>
+
+<p>For more information on <a href="Search.html#Search-UsingSearchInRecipes">using search in recipes</a>, and search queries in general, see the <a href="Search.html" title="Search">Search</a> documentation. For more information on the Template resource, see its section on the <a href="Resources.html#Resources-Template">Resources#Template</a> page.</p>
+
+<h3><a name="Recipes-DataBags"></a>Data Bags</h3>
+
+<p><font color="#f7681a">The Chef Server can have arbitrary stores of JSON data called <a href="Data Bags.html" title="Data Bags">Data Bags</a>, which can also be <a href="Encrypted Data Bags.html" title="Encrypted Data Bags">Encrypted Data Bags</a>.</font> Each bag is a container of one or more items. These items can be loaded in recipes. Given the bag "apps", and the following item "my_app":</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+  "id": "my_app",
+  "repository": "git://github.com/company/my_app.git"
+}</pre>
+		</div>
+</div></div>
+
+<p>We can access the item in a recipe:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">my_bag = data_bag_item("apps", "my_app")</pre>
+		</div>
+</div></div>
+
+<p>The item's keys and values can be accessed like a Ruby Hash.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">my_bag["repository"] #=&gt; "git://github.com/company/my_app.git"</pre>
+		</div>
+</div></div>
+
+
+<h1><a name="Recipes-OtherRecipeDSLMethods"></a>Other Recipe DSL Methods</h1>
+
+<p><font color="#f7681a">There are other methods available in the Recipe DSL.</font></p>
+
+<h3><a name="Recipes-platform%3F"></a>platform?</h3>
+
+<p>The <tt>platform?</tt> method will return true if one of the parameters matches the <tt>node 'platform'</tt>. This method takes a comma separated list of platforms.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">if platform?("redhat", "centos", "fedora")
+  # code for only redhat family systems.
+end
+
+if platform?("ubuntu")
+  # code for only ubuntu systems
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="Recipes-attribute%3F"></a>attribute?</h3>
+
+<p>The <tt>node.attribute?</tt> method will return true if the specified node attribute is defined.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">if node.attribute?('ipaddress')
+  # the node has an ipaddress
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="Recipes-valueforplatform"></a>value_for_platform</h3>
+
+<p>The <tt>value_for_platform</tt> method uses a hash to select a particular value based on the <tt>node 'platform'</tt> and <tt>node 'platform_version'</tt>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>value_for_platform syntax</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">value_for_platform(platform =&gt; { platform_version =&gt; value })</pre>
+		</div>
+</div></div>
+
+<p>For example, the following will set the <tt>package_name</tt> Ruby variable to "httpd" on Red Hat family distributions, or "apache2" on Debian family distributions.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>value_for_platform example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">package_name = value_for_platform(
+  ["centos", "redhat", "suse", "fedora" ] =&gt; {
+    "default" =&gt; "httpd"
+  },
+  ["ubuntu", "debian"] =&gt; {
+    "default" =&gt; "apache2"
+  }
+)</pre>
+		</div>
+</div></div>
+
+<h1><a name="Recipes-Tags"></a>Tags</h1>
+
+<p>To <font color="#f7681a">use tags in your recipe</font> simply </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">tag('mytag')</pre>
+		</div>
+</div></div> 
+
+<p>If you want to test if a machine is tagged </p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">tagged?('mytag')</pre>
+		</div>
+</div></div> 
+<p>will return true or false. tagged? Takes an array as an argument. </p>
+
+<p>To remove a tag </p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">untag('mytag')</pre>
+		</div>
+</div></div> 
+
+<p>So all in all </p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">tag("machine") 
+
+if tagged?("machine") 
+Chef::Log.info("Hey I'm #{node[:tags]}") 
+end 
+
+untag("machine") 
+
+if not tagged?("machine") 
+Chef::Log.info("I has no tagz") 
+end</pre>
+		</div>
+</div></div> 
+
+<p>Will output </p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[Thu, 22 Jul 2010 18:01:45 +0000] INFO: Hey I'm machine 
+[Thu, 22 Jul 2010 18:01:45 +0000] INFO: I has no tagz</pre>
+		</div>
+</div></div>
+
+<h1><a name="Recipes-RubyinRecipes"></a>Ruby in Recipes</h1>
+
+<p><font color="#f7681a">Regular Ruby code can also be used in Chef Recipes.</font></p>
+
+<h3><a name="Recipes-Variables"></a>Variables</h3>
+
+<p>Assign values to variables in recipes using the assignment operator, "="</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">package_name = "apache2"
+local_dir = node["apache"]["conf_dir"]</pre>
+		</div>
+</div></div>
+
+<h3><a name="Recipes-Conditionals"></a>Conditionals</h3>
+
+<p>Common conditionals can be used to check for true/false. Note that in Ruby, only <tt>nil</tt> and <tt>false</tt> are false, <b>everything</b> else is true.</p>
+
+<h4><a name="Recipes-Case"></a>Case</h4>
+
+<p>Select a particular package name for a resource based on the platform. This is similar to the example above.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">package "apache2" do
+  case node[:platform]
+  when "centos","redhat","fedora","suse"
+    package_name "httpd"
+  when "debian","ubuntu"
+    package_name "apache2"
+  when "arch"
+    package_name "apache"
+  end 
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<h4><a name="Recipes-If%2FUnless"></a>If/Unless</h4>
+
+<p>If statements check for true or false values.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">if platform?(“debian”, “ubuntu”)
+  # do something if node[‘platform’] is debian or ubuntu
+else
+  # do other stuff
+end</pre>
+		</div>
+</div></div>
+
+<p>Unless is the opposite of if.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">unless node[:platform_version] == "5.0"
+  # do stuff on everything but 5.0
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="Recipes-Loops"></a>Loops</h3>
+
+<p>Use the .each method to an Enumerable object (typically an Array or Hash)</p>
+
+<h4><a name="Recipes-Array"></a>Array</h4>
+
+<p>Iterate over an array of package names and install them.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">["apache2", "apache2-mpm"].each do |p|
+  package p
+end</pre>
+		</div>
+</div></div>
+
+<h4><a name="Recipes-Hash"></a>Hash</h4>
+
+<p>Iterate over a hash of gem package names with specific versions.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{"fog" =&gt; "0.6.0", "highline" =&gt; "1.6.0"}.each do |g,v|
+  gem_package g do
+    version v
+  end
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="Recipes-ExceptionsandLogging"></a>Exceptions and Logging</h1>
+
+<p>To write to the chef log, optionally causing an exception use Chef::Log<br/>
+You can write with a level of debug, info, warn, error, fatal</p>
+
+<p>For example:</p>
+
+<ul>
+	<li>Info only, no exception
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">Chef::Log.info('Some useful information')</pre>
+		</div>
+</div></div></li>
+	<li>Fatal, raising exception
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">Chef::Log.fatal('Something bad happened and I want to stop')</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+
+<h1><a name="Recipes-FurtherReading"></a>Further Reading</h1>
+
+<ul>
+	<li><a href="Just Enough Ruby for Chef.html" title="Just Enough Ruby for Chef">Just Enough Ruby for Chef</a></li>
+	<li><a href="http://www.ruby-lang.org/en/documentation/">Ruby Programming Language</a></li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Metadata.html" title="Metadata"><span class="image-wrap" style="float: left"><img src="../attachments/1179819/20840593.png" hspace="4" style="border: 0px solid black"/></span> Metadata </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="15728818.html" title="Creating a "First Run Only" Resource"><span class="image-wrap" style="float: right"><img src="../attachments/1179819/20840592.png" hspace="4" style="border: 0px solid black"/></span> Creating a "First Run Only" Resource </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179819/12222581.gif">ruby logo.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179819/12222582.jpg">free_300_secret_recipes.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179819/20840592.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179819/20840593.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179819/21463209.jpg">10968873-vegetables-still-life-with-recipes-blank-on-checkered-background.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-23429399"></a>
+                                    <font class="smallfont"><p>It would be nice to add something about how to handle errors and logging. Like whats the appropriate way to generate an error exception or exit if the recipe test decides that something is bad and should immediately exit the chef-client run. </p>
+
+<p>Another case that I always forget how to do in Chef is to stop processing a recipe but not be an error. Just short-circuit that recipe to return/exit and allow the chef-client run to continue.</p>
+
+<p>And it might be good to put in this recipes page how to do logging with Chef::Log as well as any other normal non-resource but Chef specific things like logging and exception generation...</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Jan 23, 2012 22:06
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

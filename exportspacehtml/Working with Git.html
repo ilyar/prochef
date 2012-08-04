@@ -1,0 +1,274 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Working with Git</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Working with Git
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Feb 06, 2012 by <font color="#0050B2">btm</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<p><br class="atl-forced-newline" /></p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef Project Development</b><br />This page describes the workflow used for working on the Chef and related projects (<a href="Ohai.html" title="Ohai">Ohai</a>, mixlibs, etc) source code. To learn more about Git itself:
+
+<ul>
+	<li><a href="http://git-scm.com/documentation">Git Documentation</a></li>
+	<li><a href="http://learn.github.com/">Learn Git</a></li>
+	<li><a href="http://progit.org/book/">Pro Git</a></li>
+</ul>
+
+
+<p>To learn about working with git and cookbooks:</p>
+
+<ul>
+	<li><a href="Working with Git and Cookbooks.html" title="Working with Git and Cookbooks">Working with Git and Cookbooks</a></li>
+</ul>
+</td></tr></table></div>
+
+<h1><a name="WorkingwithGit-Initialsetupofdevelopmentrepository"></a>Initial setup of development repository</h1>
+<ol>
+	<li>Setup a github account</li>
+	<li>Fork the repositories<br/>
+<span class="image-wrap" style=""><img src="../attachments/7274751/7634953.png" style="border: 0px solid black"/></span></li>
+	<li>Clone the repositories locally
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git clone git@github.com:yourgithubusername/chef.git</pre>
+		</div>
+</div></div></li>
+	<li>Enter the chef directory and add an opscode remote
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ cd chef/
+$ git remote add opscode git://github.com/opscode/chef.git</pre>
+		</div>
+</div></div>
+<p>You'll be able to see if this is successful with git config:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git config --get-regexp "^remote\.opscode"
+remote.opscode.url git://github.com/opscode/chef.git
+remote.opscode.fetch +refs/heads/*:refs/remotes/opscode/*</pre>
+		</div>
+</div></div></li>
+	<li>Adjust your branch to track the opscode master remote branch, by default it'll track your origin remote's master:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git config --get-regexp "^branch\.master"
+branch.master.remote origin
+branch.master.merge refs/heads/master</pre>
+		</div>
+</div></div>
+<p>Change it with the following:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git config branch.master.remote opscode</pre>
+		</div>
+</div></div></li>
+</ol>
+
+
+<h2><a name="WorkingwithGit-Keepingyour%27master%27uptodate%21"></a>Keeping your 'master' up-to-date!</h2>
+<p>Once all this is done, you'll be able to keep your local master up to date with the simple command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git checkout master
+$ git pull --rebase</pre>
+		</div>
+</div></div>
+<p>Alternatively, you can synchronise your master from any branch with the full fetch/rebase syntax:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git fetch opscode
+$ git rebase opscode/master master</pre>
+		</div>
+</div></div>
+
+<p>Using rebase pull will do a rebase instead of a merge, which will keep a linear history with no unecessary merge commits. It'll also rewind, apply and then reapply your commits at the HEAD.</p>
+
+<p>Use <a href="../attachments/7274751/7634952">this Rakefile</a> to update chef, ohai and cookbooks repos (edit as needed).</p>
+
+<h2><a name="WorkingwithGit-Workingontopicbranches"></a>Working on topic branches</h2>
+
+<p>So you want to do some work? <em>Don't put your commits directly in your master branch!</em> It is important to use a 'topic branch' when working on a large project like Chef. The key to this concept is that each topic branch solves a single and unique problem and should usually be logically organized in the same was as a ticket on the issue tracker. A good example is a branch that adds support for a new init system, or resolves a bug when running under a specific version of CentOS. We prefer that topic branches be named after the bug that they solve so that someone with the same issue can easily find your commits in the 'git log'. </p>
+
+<p>If your topic branch solves multiple bugs, reconsider if your branch is perhaps too broad. What if the person merging the contribution finds an issue with part of the branch but not another? Sometimes when you refactor a large piece of the code-base, you resolve multiple bugs and it is better to put individual issue numbers in the commit messages. One solution doesn't fit all, so use your best judgement. </p>
+
+<ol>
+	<li>Create an appropriately named tracking branch!
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git checkout --track -b CHEF-XX opscode/master</pre>
+		</div>
+</div></div>
+<p>Setting a topic branch up to track opscode/master allows you to easily rebase your commits in preperation for merge.</p></li>
+	<li>Do work
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">hack
+hack</pre>
+		</div>
+</div></div></li>
+	<li>Commit (see step two if more work remains)
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git status
+$ git commit &lt;filespec&gt;</pre>
+		</div>
+</div></div></li>
+	<li>Rebase your commits against opscode/master<br/>
+After your work is finished in the local topic branch, you should rebase you commits against the upstream master. This will temporarily remove your local commits, update the branch from upstream, and then reapply your local commits. You can either do this manually with 'fetch' then 'rebase', or use the 'pull --rebase' shortcut.<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+If there are any problems doing so, git will let you know and stop. This is important because it ensures that those that will merge your contribution into the upstream master won't have to resolve differences between your changes and the current branch to include your contribution. If you encounter merge conflicts, you should fix the files as directed and then mark as fixed with 'git add', and then continue rebasing with 'git rebase --continue'. At any stage, you can abort the rebase with 'git rebase --abort'. <br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<b>Rebase your commits with fetch + rebase</b>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git fetch opscode
+$ git rebase opscode/master CHEF-XX</pre>
+		</div>
+</div></div>
+<p><b>Rebase your commits with the tracking-branch shortcuts</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git pull --rebase</pre>
+		</div>
+</div></div></li>
+	<li>Push a remote branch
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git push origin CHEF-XX</pre>
+		</div>
+</div></div></li>
+</ol>
+
+
+<h2><a name="WorkingwithGit-Job%27sdone%21"></a>Job's done!</h2>
+<p>Don't forget to send a pull request and update the ticket. Once your work has been merged by the branch maintainer, it will no longer be necessary to keep the local branch or remote branch, so you can remove them!</p>
+
+<ol>
+	<li>Sync your local master up:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git checkout master
+$ git pull --rebase</pre>
+		</div>
+</div></div>
+<p>Remove your local branch using -d to ensure that it has been merged by upstream. Branch -d will not delete a branch that is not an ancestor of your current head. From the git man page:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">-d
+
+    Delete a branch. The branch must be fully merged in HEAD.
+-D
+
+    Delete a branch irrespective of its merged status.</pre>
+		</div>
+</div></div></li>
+	<li>Remove your local branch
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git branch -d CHEF-XX</pre>
+		</div>
+</div></div></li>
+	<li>Remove your remote branch by using the full syntax to 'push', and omitting a source branch.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git push origin :CHEF-XX</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></li>
+</ol>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7274751/7634952">Rakefile</a> (application/octet-stream)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7274751/7634953.png">Picture 1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7274751/7634954.png">Opscode_Logo_white.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-8257722"></a>
+                                    <font class="smallfont"><p>I tried removing the master branch from my forked repo (the optional step in the above process), but it always fails on me:</p>
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>remote: error: refusing to delete the current branch: refs/heads/master</pre>
+</div></div>
+<p>What am I doing wrong?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ringods at Nov 25, 2010 16:06
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-23429311"></a>
+                                    <font class="smallfont"><p>I'm also seeing the same error. It does say it's optional though, so not a show stopper <img class="emoticon" src="images/icons/emoticons/wink.gif" height="20" width="20" align="absmiddle" alt="" border="0"/></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by maruq at Jan 18, 2012 10:10
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-23429644"></a>
+                                    <font class="smallfont"><p>You would normally get this error if you tried to delete your local master branch and you currently were on it. Most likely it is the only branch up there at github. I've removed this optional step because there are too many caveats for an introduction level guide to Git.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by btm at Feb 06, 2012 18:59
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

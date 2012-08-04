@@ -1,0 +1,314 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Yum Package Resource</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Yum Package Resource
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jun 14, 2012 by <font color="#0050B2">ketanpadegaonkar@gmail.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/16089624/17072134.png" hspace="16" vspace="32" style="border: 0px solid black"/></span></p>
+
+<h1><a name="YumPackageResource-YumPackageResource"></a>Yum Package Resource</h1>
+<p><font color="#f7681a">Manage packages.</font></p>
+
+<p><br class="atl-forced-newline" /></p>
+<h5><a name="YumPackageResource-Inadditiontosupportingthetypicalpackageresourceoptionsforinstallation%2CupgradeandremovaltheYumPackageResourcehasseveraladditionalattributesandhiddenoptionsthatEnterpriseLinuxusersmayfinduseful."></a>In addition to supporting the typical package resource options for installation, upgrade and removal the Yum Package Resource has several additional attributes and hidden options that Enterprise Linux users may find useful.</h5>
+
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>This document is only valid for Chef &gt;= 0.10.4</td></tr></table></div>
+
+<p>The most notable difference with the yum package provider is being able to resolve <a href="http://rpm5.org/docs/api/dependencies.html">Provides data</a> for packages much like yum on the command line. This enables a variety of interesting options for installing packages by minimum versions, virtual provides and library names. The only portion the provider doesn't support at the moment is installing via file names, eg: yum_package "/bin/sh", like yum can. The volume of data to parse for this is excessive.</p>
+
+<h2><a name="YumPackageResource-Actions"></a>Actions</h2>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>install</b> </th>
+<td class='confluenceTd'> Install a package - if version is provided, install that specific version (see allow_downgrade) </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>upgrade</b> </th>
+<td class='confluenceTd'> Upgrade a package to the latest available version </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>remove</b> </th>
+<td class='confluenceTd'> Remove a package - if version is provided, remove that specific version </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h2><a name="YumPackageResource-Attributes"></a>Attributes</h2>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+<th class='confluenceTh'> yum_package only </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>package_name</b> </th>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: Either package name, package name + architecture or dependency name (Provides) to install </td>
+<td class='confluenceTd'> name </td>
+<td class='confluenceTd'> No</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>version</b> </th>
+<td class='confluenceTd'> The version of the package to install/upgrade/remove. Must be a complete version-release </td>
+<td class='confluenceTd'> nil </td>
+<td class='confluenceTd'> No </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>source</b> </th>
+<td class='confluenceTd'> Can be used to yum localinstall a file, yum will use repositories to satisfy remote dependencies  </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> No </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>options</b> </th>
+<td class='confluenceTd'> Add additional options to yum (eg: enable/disable repos, disable gpg checks) </td>
+<td class='confluenceTd'> nil </td>
+<td class='confluenceTd'> No </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>arch</b> </th>
+<td class='confluenceTd'> The architecture of the package to install/upgrade (can also be passed in package name) </td>
+<td class='confluenceTd'> nil </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>flush_cache</b> </th>
+<td class='confluenceTd'> An array indicating if the yum cache should be flushed <tt>:before</tt> or <tt>:after</tt> a yum operation(install/upgrade/remove) </td>
+<td class='confluenceTd'> nil </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>allow_downgrade</b> </th>
+<td class='confluenceTd'> Allow yum to downgrade a package to satisfy a requested version </td>
+<td class='confluenceTd'> false </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Some attributes are unique to the Yum provider and require the use of the 'yum_package' resource instead of the 'package' resource.</td></tr></table></div>
+
+<h2><a name="YumPackageResource-Examples"></a>Examples</h2>
+
+<p>These are in addition to the standard <a href="Resources.html#Resources-Package">Resources - Package</a> examples.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install package</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">yum_package "netpbm" do
+  action :install
+end
+
+# or with the default action
+yum_package "netpbm"
+
+# or via Provides data (at least 2x slower for intial install/upgrade to gather
+# remote Provides data)
+yum_package "libnetpbm.so.10"</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install a specific version</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">yum_package "netpbm" do
+  # must be a complete version-release
+  version "10.35.58-8.el5"
+end
+
+# or via Provides data with an exact version
+yum_package "netpbm = 10.35.58-8.el5"
+
+# or via Provides data with a minimum version
+yum_package "netpbm &gt;= 10.35.58-8.el5"
+
+# or via Provides data with a partial minimum version
+yum_package "netpbm &gt;= 10"</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install a specific version, even if older than the installed one</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># To see what packages are available for this, add showdupesfromrepos=1 to /etc/yum.conf
+yum_package "tzdata" do
+  version "2011b-1.el5"
+  allow_downgrade true
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install a specific arch</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">yum_package "netpbm" do
+  arch "i386"
+end
+
+# or via package name
+yum_package "netpbm.x86_64"</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install new Yum repositories from package</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># This package contains /etc/yum.repos.d/ repository configs. Some of these repos have
+# newer packages and possibly a higher priority than what's in the cache, so we dump it.
+yum_package "foo-release" do
+  action :install
+  flush_cache [ :after ]
+end
+
+# This package will now be picked up immediately instead of first looking at Provides
+# data for a match which is slower. Also you are sure to get the correct version based
+# on the repository configs.
+yum_package "only-in-new-repo" do
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install new Yum repositories from file</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cookbook_file "/etc/yum.repos.d/custom.repo" do
+  source "custom"
+  mode "0644"
+end
+
+# Ensure the cache is dumped and the new repository is used immediately to ensure we
+# find the correct package to install.
+yum_package "only-in-custom-repo" do
+  action :install
+  flush_cache [ :before ]
+end
+
+# Unfortunately this is only useful if cookbook_file and yum_package are called within
+# the same recipe with the correct order - a pretty narrow use case.</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install new Yum repositories from file - improved</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Thanks to gaffneyc @ https://gist.github.com/918711 this is much nicer general 
+# solution that doesn't rely on the provider at all: we have the install of the
+# repository trigger a creation of the yum cache and force the internal Chef cache
+# to reload as well.
+execute "create-yum-cache" do
+  command "yum -q makecache"
+  action :nothing
+end
+
+ruby_block "reload-internal-yum-cache" do
+  block do
+    Chef::Provider::Package::Yum::YumCache.instance.reload
+  end
+  action :nothing
+end
+
+cookbook_file "/etc/yum.repos.d/custom.repo" do
+  source "custom"
+  mode "0644"
+  notifies :run, resources(:execute =&gt; "create-yum-cache"), :immediately
+  notifies :create, resources(:ruby_block =&gt; "reload-internal-yum-cache"), :immediately
+end
+
+# Deleting a repo is similar but we have yum scrub it's cache to avoid any issues
+execute "clean-yum-cache" do
+  command "yum clean all"
+  action :nothing
+end
+
+file "/etc/yum.repos.d/bad.repo" do
+  action :delete
+  notifies :run, resources(:execute =&gt; "clean-yum-cache"), :immediately
+  notifies :create, resources(:ruby_block =&gt; "reload-internal-yum-cache"), :immediately
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/16089624/20840712.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Deploy Resource.html" title="Deploy Resource">Deploy Resource</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/16089624/20840711.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Providers.html" title="Providers">Providers</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089624/17072134.png">yum.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089624/20840711.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089624/20840712.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

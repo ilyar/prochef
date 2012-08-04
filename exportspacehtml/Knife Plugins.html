@@ -1,0 +1,572 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Knife Plugins</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Knife Plugins
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Feb 17, 2012 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h1><a name="KnifePlugins-KnifePlugins"></a>Knife Plugins</h1>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Opscode Knife Plugins</b><br /><br class="atl-forced-newline" />
+See <b><a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a></b> for detail on how to launch API-driven "Cloud" servers with Opscode Knife Plugins and automatically run Chef on the launched  servers.</td></tr></table></div>
+
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 200x200" href='http://wiki.opscode.com/download../attachments/9011205/swiss_army_knife-300x300.png'><img src="../attachments/thumbnails/9011205/21463221" hspace="28" vspace="4" style="border: 0px solid black"/></a></span></p>
+
+<h2><a name="KnifePlugins-InstallingPlugins"></a>Installing Plugins</h2>
+
+<p><b><font color="#f7681a">With Chef 0.10</font></b>, knife will load commands from the following locations:</p>
+
+<ul>
+	<li>The core set of knife commands shipped with Chef</li>
+	<li>Commands in your home chef directory: ~/.chef/plugins/knife/</li>
+	<li>Commands in a .chef/plugins/knife/ directory in your cookbook repo</li>
+	<li>Commands located in a chef/knife/ directory in a Ruby Gem you have installed.</li>
+</ul>
+
+
+<p>This allows you to conveniently keep a set of knife plugins that you reuse across projects in your home directory, share plugins with your team by including them in your cookbook repo, and share plugins with the whole Chef community by distributing them as Ruby gems.</p>
+
+<p><font color="#f7681a">To install a knife plugin from a file, such as a gist on github or email attachment, simply copy the file to your <em>~/.chef/plugins/knife/</em> directory.</font> If you share a chef repo with your team and would like to share the plugin, copy the file to CHEF_REPO/.chef/plugins/knife/.</p>
+
+<p>You can name the file anything you'd like as long as it's in this directory and has a <tt>.rb</tt> extension. You can also have multiple classes in one plugin file.</p>
+
+<p><font color="#f7681a">To use a plugin distributed as a rubygem, just install the gem.</font></p>
+
+<h2><a name="KnifePlugins-CreatingPlugins"></a>Creating Plugins</h2>
+
+<p>Knife commands are Ruby classes that inherit from the Chef::Knife class. Knife will load your command regardless of how it is namespaced, so it is recommended that you put your commands in your own namespace. <font color="#f7681a">Knife commands are run by calling the `#run` method on an instance of your command class.</font> For example, here is a "hello, world" knife command:</p></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="28%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#KnifePlugins-KnifePlugins'>Knife Plugins</a></li>
+<ul>
+    <li><a href='#KnifePlugins-InstallingPlugins'>Installing Plugins</a></li>
+    <li><a href='#KnifePlugins-CreatingPlugins'>Creating Plugins</a></li>
+<ul>
+    <li><a href='#KnifePlugins-CommandLineOptionsAndBanners'>Command Line Options And Banners</a></li>
+    <li><a href='#KnifePlugins-CommandLineArguments'>Command Line Arguments</a></li>
+    <li><a href='#KnifePlugins-UserInteraction'>User Interaction</a></li>
+    <li><a href='#KnifePlugins-HandlingExceptions'>Handling Exceptions</a></li>
+    <li><a href='#KnifePlugins-HandlingDependencies'>Handling Dependencies</a></li>
+    <li><a href='#KnifePlugins-InteractingWiththeChefAPIusingshef%27sDSL'>Interacting With the Chef API using shef's DSL</a></li>
+    <li><a href='#KnifePlugins-UsingSearch'>Using Search</a></li>
+    <li><a href='#KnifePlugins-UsingPluginswithinOtherPlugins'>Using Plugins within Other Plugins</a></li>
+</ul>
+    <li><a href='#KnifePlugins-ExistingPlugins'>Existing Plugins</a></li>
+</ul>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h5><a name="KnifePlugins-ChefCommunityPlugins"></a>Chef Community Plugins</h5>
+<p>Review (or contribute to) a collection of <b><a href="Community Plugins.html" title="Community Plugins">Community Plugins Found In The Wild</a></b>.<font color=""></font>  </p>
+
+<p><em><b>Knife, Chef, and Ohai plugins are available.</b></em></p>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Notifying and Logging Resources with Knife Plugins</b><br /><br class="atl-forced-newline" />
+<a href="http://dev.nuclearrooster.com/">Nuclear Rooster</a> did a nice blog post on using <b><a href="http://dev.nuclearrooster.com/2011/05/10/chef-notifying-and-logging-updated-resources/">Chef's flexible reporting handlers and knife plugins</a></b> for logging node updates, for easy debugging.</td></tr></table></div>
+<p><br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># You can namespace however you like, but it's a good idea to use your own
+    # instead of the Chef::Knife namespace.
+    module MyKnifePlugins
+      # Make sure you subclass from Chef::Knife
+      class HelloWorld &lt; Chef::Knife
+
+        # This method will be executed when you run this knife command.
+        def run
+          puts "Hello, World!"
+        end
+
+      end
+    end</pre>
+		</div>
+</div></div>
+
+<p>You should now be able to run this command using `knife hello world`. If you wanted the command to be `knife helloworld` instead, you would want to use `class Helloworld` with just the first letter capitalized.</p>
+
+<p>You can also "override" current knife subcommands by using the class as the name of the subcommand, for example you could override the current functions of <tt>knife cookbook upload</tt> by using <tt>class CookbookUpload &lt; Chef::Knife</tt>.</p>
+
+<h3><a name="KnifePlugins-CommandLineOptionsAndBanners"></a>Command Line Options And Banners</h3>
+<p>If you run <tt>knife --help</tt> after creating the hello world plugin, you'll see this usage message:</p>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>    ** HELLO COMMANDS **
+    Usage: /Users/ddeleo/opscode/chef/chef/bin/knife (options)
+</pre>
+</div></div>
+
+<p>This isn't very helpful. Let's add a usage banner to match the other knife commands. You can add a banner by calling the <tt>banner</tt> method in the class body of your knife command class, like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">class HelloWorld &lt; Chef::Knife
+
+      banner "knife hello world"
+
+      def run
+        puts "Hello, World!"
+      end
+
+    end</pre>
+		</div>
+</div></div>
+
+<p>Now the help for this command will look like this:</p>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>    ** HELLO COMMANDS **
+    knife hello world
+</pre>
+</div></div>
+
+<p>Command line options are added to your command using the Mixlib::CLI library. Let's add a flag to give our plugin more emotion. As with the banner, we define new command line options by calling the `option` method inside the class body, like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">option :omg,
+      :short =&gt; '-O',
+      :long =&gt; '--omg',
+      :boolean =&gt; true,
+      :description =&gt; "I'm so excited!"</pre>
+		</div>
+</div></div>
+
+<p>If we look at the help for our command, by running <tt>knife hello world --help</tt>, we can see that this option was added to the list:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">knife hello world
+        -s, --server-url URL             Chef Server URL
+        ...snipped...
+        -O, --omg                        I'm so excited!
+        ...snipped...
+        -h, --help                       Show this message</pre>
+		</div>
+</div></div>
+
+<p>When knife runs our command, it will parse the options from the command line and make the settings available to us as a Hash that we can access using the <tt>config</tt> method. We can update the run method of our class to change its behavior based on the config flag like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Update the +run+ method to use our config setting
+    def run
+      if config[:omg]
+        # Oh yeah, we are pumped.
+        puts "OMG HELLO WORLD!!!1!!11"
+      else
+        # meh
+        puts "Hello, World!"
+      end
+    end</pre>
+		</div>
+</div></div>
+
+<p>You can now run <tt>knife hello world --omg</tt> and you should see 'OMG HELLO WORLD!!!1!!11' in the output.</p>
+
+<h3><a name="KnifePlugins-CommandLineArguments"></a>Command Line Arguments</h3>
+<p><font color="#f7681a">Knife commands also take command line arguments that are not specified via an option flag (for example, <tt>knife node show NODE</tt>).</font> You don't need to add any code to your knife command class to configure it to accept command line arguments; arguments are automatically made available via the <tt>name_args</tt> method. To illustrate, lets make our hello world command say hello to anyone:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">banner "knife hello world WHO"
+
+    def run
+      # knife does not automatically check the number of arguments given:
+      unless name_args.size == 1
+        puts "You need to say hello to someone!"
+        show_usage
+        exit 1
+      end
+
+      # Access arguments via +name_args+
+      who = name_args.first
+
+      if config[:omg]
+        puts "OMG HELLO #{who.upcase}!!!1!!11"
+      else
+        puts "Hello, #{who.capitalize}!"
+      end
+    end</pre>
+		</div>
+</div></div>
+
+<p>Now that our command requires additional user input, we need to check the number of arguments and fail if the input doesn't make sense. Here we used the <tt>show_usage</tt> method to display the correct usage before exiting. Notice also that we updated the banner with the new usage for the command. With this update to our command, we have the following behaviors:</p>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>    shell &gt; knife hello world
+    You need to say hello to someone!
+    USAGE: knife hello world WHO
+      # options snipped...
+
+    shell &gt; knife hello world chefs
+    Hello, Chefs!
+
+    shell &gt; knife hello world chefs --omg
+    OMG HELLO CHEFS!!!1!!11
+</pre>
+</div></div>
+
+<h3><a name="KnifePlugins-UserInteraction"></a>User Interaction</h3>
+<p><font color="#f7681a">The <tt>ui</tt> object provides methods for user interaction that ensure a consistent user experience across knife plugins.</font>  Use these methods in favor of manually handling user interaction whenever possible. The following table summarizes the most useful methods:</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Method</th>
+<th class='confluenceTh'>Description</th>
+</tr>
+<tr>
+<th class='confluenceTh'><tt>ui.msg(message)</tt></th>
+<td class='confluenceTd'>Presents a message to the user</td>
+</tr>
+<tr>
+<th class='confluenceTh'><tt>ui.warn(message)</tt></th>
+<td class='confluenceTd'>Presents a warning to the user.</td>
+</tr>
+<tr>
+<th class='confluenceTh'><tt>ui.error(message)</tt></th>
+<td class='confluenceTd'>Presents an error to the user.</td>
+</tr>
+<tr>
+<th class='confluenceTh'><tt>ui.fatal(message)</tt></th>
+<td class='confluenceTd'>Presents a fatal error to the user.</td>
+</tr>
+<tr>
+<th class='confluenceTh'><tt>ui.output(data)</tt> </th>
+<td class='confluenceTd'> Present a data structure to the user.  This function will respect the output the user requested with the <tt>-F</tt> command-line option.  The generic presenter used by default is suitable for most data that will be passed to it in a knife plugin; however, a custom presenter can be provided using <tt>ui.use_presenter</tt></td>
+</tr>
+<tr>
+<th class='confluenceTh'><tt>ui.ask_question(question, opts={})</tt></th>
+<td class='confluenceTd'>Asks the user the question contained in the string <tt>question</tt>.  If <tt>:default =&gt; default_value</tt> is passed as the second argument, <tt>default_value</tt> will be used if the user does not provide an answer.  This respects Knife's <tt>--default</tt> command line option.</td>
+</tr>
+<tr>
+<th class='confluenceTh'><tt>ui.confirm(question)</tt></th>
+<td class='confluenceTd'>Ask a Y/N question.  Immediately exit with status code 3 if user responds with N.</td>
+</tr>
+<tr>
+<th class='confluenceTh'><tt>ui.highline</tt></th>
+<td class='confluenceTd'> Provides direct access to the HighLine object used by many <tt>ui</tt> methods. See 
+<a href="http://highline.rubyforge.org/doc/">http://highline.rubyforge.org/doc/</a>
+<p> for more information.</p></td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>Using these classes we can improve the error messaging in our example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">unless name_args.size == 1
+    ui.fatal "You need to say hello to someone!"
+    show_usage
+    exit 1
+end</pre>
+		</div>
+</div></div>
+
+<p>This ensures that our fatal error is shown in the same way as all other fatal errors in knife.</p>
+
+<h3><a name="KnifePlugins-HandlingExceptions"></a>Handling Exceptions</h3>
+
+<p><font color="#f7681a">Exceptions can be handled within your Knife plugin just as they can be handled in any Ruby program.</font>  However, in many cases the exception handling that Knife provides will be enough and ensure that your plugin's exception handling is consistent with the rest of Knife.</p>
+
+<h3><a name="KnifePlugins-HandlingDependencies"></a>Handling Dependencies</h3>
+
+<p>You can declare all of your dependencies at the top of the file, but this will make knife load slower for all commands. <font color="#f7681a">It's recommended that you use knife's lazy loader within the plugin for any dependencies, so they are only used when you use the plugin command.</font></p>
+
+<p>You can do this by adding this command below the `class` command for each plugin:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">class HelloWorld &lt; Chef::Knife
+  deps do
+    require 'chef/search/query'
+  end
+
+  [...SNIP...]
+end</pre>
+		</div>
+</div></div>
+
+<p>This would use the chef/server/query library, only whenever the `knife hello world` command is used.</p>
+
+<h3><a name="KnifePlugins-InteractingWiththeChefAPIusingshef%27sDSL"></a>Interacting With the Chef API using shef's DSL</h3>
+<p>Our example knife command is friendly, but it isn't very useful. <font color="#f7681a">In order to write useful knife commands, you will most likely want to interact with the Chef <a href="Server API.html" title="Server API">Server API</a> in some way.</font> There are two ways to do this. One way is to extend your knife command with shef's DSL for the API. This is an attractive way to go if you are looking to extend any existing `knife exec` scripts you already have. To do this, just require <tt>chef/shef/ext</tt> at the top of your file and then activate the <a href="Shef.html" title="Shef">Shef</a> DSL by calling <tt>Shef::Extensions.extend_context_object(self)</tt> inside your <tt>run</tt> method. For example, we could write a knife command to search nodes like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">module MyKnifePlugins
+      class NodeSearch &lt; Chef::Knife
+
+        banner "node search QUERY"
+
+        deps do
+          require 'chef/shef/ext'
+        end
+
+        def run
+          unless name_args.size == 1
+            ui.fatal "You need to supply a query"
+            show_usage
+            exit 1
+          end
+
+          query = name_args.first
+
+          Shef::Extensions.extend_context_object(self)
+          ui.output(ui.format_for_display(nodes.find(query)))
+        end
+
+      end
+    end</pre>
+		</div>
+</div></div>
+
+<p>You can also interact with the Chef API by using the model classes directly. Consult the chef source code and existing knife commands for examples.</p>
+
+<h3><a name="KnifePlugins-UsingSearch"></a>Using Search</h3>
+
+<p><font color="#f7681a">You can also use search within a plugin, to return information about your infrastructure and run knife commands.</font> To do this you will need to add these lines to the top, so Ruby knows it'll need additional libraries for search:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">require 'chef/search/query'</pre>
+		</div>
+</div></div>
+<p>Then you will want to create a Chef::Search::Query object and assign it to a variable:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">query_nodes = Chef::Search::Query.new</pre>
+		</div>
+</div></div>
+<p>Afterwards you can use the search method on this object to search, in this example it is searching for nodes with the webserver role and then prints the name of each of the nodes it finds:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">query = "role:webserver"
+
+query_nodes.search('node', query) do |node_item|
+  puts "Node Name: #{node_item.name}"
+end</pre>
+		</div>
+</div></div>
+<p>You can also then use this to edit nodes, in this example it searches for any nodes with the webserver role and changes the runlist to a role named apache2:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">query = "role:webserver"
+
+query_nodes.search('node', query) do |node_item|
+  ui.msg "Changing the run_list to role[apache2] for #{node_item.name}"
+  node_item.run_list("role[apache2]")
+  node_item.save
+  ui.msg "New run_list: #{node_item.run_list}"
+end</pre>
+		</div>
+</div></div>
+<p>This will overwrite any existing data on the attribute you edit. It's also possible to specify multiple items to add to the run_list:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">node_item.run_list("role[apache2]", "recipe[mysql]")</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">You can also use the arguments you've sent with the plugin command to search.</font> For instance in this example, if you used the command "knife envchange "web*" it would search for any nodes in roles beginning with "web" and change their environment to "web":</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">module MyKnifePlugins
+
+  class Envchange &lt; Chef::Knife
+    banner "knife envchange ROLE"
+    
+    deps do
+      require 'chef/search/query'
+    end
+
+    def run
+      if name_args.size == 1
+        role = name_args.first
+      else
+        ui.fatal "Please provide a role name to search for"
+        exit 1
+      end
+
+      query = "role:#{role}"
+      query_nodes = Chef::Search::Query.new
+
+      query_nodes.search('node', query) do |node_item|
+        ui.msg "Moving #{node_item.name} to the web environment"
+        node_item.chef_environment("web")
+        node_item.save
+      end
+
+    end
+  end</pre>
+		</div>
+</div></div>
+
+<h3><a name="KnifePlugins-UsingPluginswithinOtherPlugins"></a>Using Plugins within Other Plugins</h3>
+
+<p><font color="#f7681a">You can access the functionality of other knife plugins from within your own plugin.</font>  For instance, suppose that you write a plugin that needs to run a custom bootstrap command on a node.  Rather than executing a knife command using the ` (backtick) operator, you can directly run the plugin from inside your own plugin.  To do this, you need to do three things:</p>
+
+<ol>
+	<li><tt>require</tt> the necessary files to use the plugin's classes.  The necessary files will change for each plugin.  However, in most cases the library you want to include is in the form of <tt>chef/knife/name_of_command</tt>.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">require 'chef/knife/bootstrap'</pre>
+		</div>
+</div></div></li>
+	<li>Create a new object of the Class of the plugin you want to use.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">bootstrap = Chef::Knife::Bootstrap.new</pre>
+		</div>
+</div></div></li>
+	<li>Pass any arguments or options to the object.  You do this by altering the object's config and name_arg variables.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false"># Set some options. Currently, you will typically need
+# too look up the option name in the source file of the plugin
+bootstrap.config[:ssh_user] = "myuser"
+bootstrap.config[:distro] = "ubuntu10.04-gems"
+bootstrap.config[:use_sudo] = true
+# Set the arguments
+bootstrap.name_args = "some_host_name"</pre>
+		</div>
+</div></div></li>
+	<li>Call the object's run method.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">bootstrap.run</pre>
+		</div>
+</div></div></li>
+</ol>
+
+
+<h2><a name="KnifePlugins-ExistingPlugins"></a>Existing Plugins</h2>
+<p>See <b><a href="Community Plugins.html" title="Community Plugins">Community Plugins</a></b> for the <font color="#f7681a">Opscode Knife Plugins</font>, in addition to plugins that have been developed and shared by the Chef Community.  See <b><a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a></b> for information on use of the Opscode Knife Plugins for launching cloud servers, including configuration and sub-command options.</p>
+
+<p>Knife and Chef plugins can be distributed as gems. So an alternate way to find them is to just do a quick gem search.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">gem search -r knife-
+gem search -r chef-</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/9011205/21987338.png" hspace="4" style="border: 0px solid black"/></span><br/>
+<a href="Managing Roles With Knife.html" title="Managing Roles With Knife">Managing Roles With Knife</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/9011205/21987337.png" hspace="4" style="border: 0px solid black"/></span><br/>
+<a href="Community Plugins.html" title="Community Plugins">Community Plugins</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/9011205/15892489.jpg">swiss_army_knife-300x300.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/9011205/21987336.png">swiss_army_knife-300x300.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/9011205/21463221.png">swiss_army_knife-300x300.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/9011205/21987337.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/9011205/21987338.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-24019893"></a>
+                                    <font class="smallfont"><blockquote>
+<p>With Chef 0.10, knife will load commands from the following locations:</p>
+
+<ul class="alternate" type="square">
+	<li>The core set of knife commands shipped with Chef</li>
+	<li>Commands in your home chef directory: ~/.chef/plugins/knife/</li>
+	<li><b>Commands in a .chef/plugins/knife/ directory in your cookbook repo</b></li>
+	<li>Commands located in a chef/knife/ directory in a Ruby Gem you have installed.</li>
+</ul>
+
+
+<p>This allows you to conveniently keep a set of knife plugins that you reuse across projects in your home directory, share plugins with your team by including them in your cookbook repo, and share plugins with the whole Chef community by distributing them as Ruby gems.</p></blockquote>
+
+<p>Is anyone reading this able to get that feature to work? I don't see this implemented in the source anywhere...</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ryan@rtlong.com at May 05, 2012 01:38
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

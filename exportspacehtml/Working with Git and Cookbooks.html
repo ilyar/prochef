@@ -1,0 +1,563 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Working with Git and Cookbooks</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Working with Git and Cookbooks
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Feb 11, 2012 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/10125489/12222580.png" hspace="30" vspace="10" style="border: 0px solid black"/></span>  
+<br class="atl-forced-newline" /></p>
+<h4><a name="WorkingwithGitandCookbooks-"></a><font color="#f7681a">Cookbook Development Workflow for Chef Cookbooks</font></h4>
+
+<h5><a name="WorkingwithGitandCookbooks-ThispagedescribesdevelopmentworkflowforChefcookbooksusingGit"></a>This page describes development workflow for Chef cookbooks using <a href="http://git-scm.com/">Git</a> as the version control system.</h5>
+
+<p><br class="atl-forced-newline" />
+<em>It is not a comprehensive guide to Git</em>, to learn more about Git itself:</p>
+<ul>
+	<li><a href="http://git-scm.com/documentation">Git Documentation</a></li>
+	<li><a href="http://learn.github.com/">Learn Git</a></li>
+	<li><a href="http://progit.org/book/">Pro Git</a></li>
+</ul>
+
+
+<p><b>This page will walk through five examples:</b></p>
+
+<ul>
+	<li>Building a new cookbook and saving it to the <a href="Chef Repository.html" title="Chef Repository">local repository</a>.</li>
+	<li>Downloading an existing cookbook from the <a href="http://community.opscode.com">Chef Community Site</a>.</li>
+	<li>Modifying an existing cookbook in the local repository for new updates.</li>
+	<li>Using Version Control to check the last change made to the <a href="Chef Repository.html" title="Chef Repository">local repository</a>.</li>
+	<li>Adding a <a href="#WorkingwithGitandCookbooks-RemoteRepositories">remote repository</a> url to the git directory so you can push the commits to your own remote git repo.
+<br class="atl-forced-newline" /></li>
+</ul>
+</div></div>
+<h1><a name="WorkingwithGitandCookbooks-Prerequisites"></a>Pre-requisites</h1>
+
+<p><font color="#f7681a">The user should already have cloned the skeleton <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a> from Opscode's GitHub repository.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>git clone Opscode's chef-repo skeleton</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git clone git://github.com/opscode/chef-repo.git
+Cloning into chef-repo...
+remote: Counting objects: 173, done.
+remote: Compressing objects: 100% (106/106), done.
+remote: Total 173 (delta 62), reused 138 (delta 40)
+Receiving objects: 100% (173/173), 27.25 KiB, done.
+Resolving deltas: 100% (62/62), done.</pre>
+		</div>
+</div></div>
+
+<p>The remaining examples will be done from the chef-repo directory.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Work from chef-repo</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% cd chef-repo
+% git status 
+# On branch master
+nothing to commit (working directory clean)</pre>
+		</div>
+</div></div>
+
+<p>As this is already a git repository, it's already set up for you to use with Git. However, the remote origin is still Opscode's repository. See the <a href="#WorkingwithGitandCookbooks-RemoteRepositories">remote repositories</a> section of this article for information on remote repositories in Git.</p></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="24%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#WorkingwithGitandCookbooks-Prerequisites'>Pre-requisites</a></li>
+    <li><a href='#WorkingwithGitandCookbooks-NewCookbook'>New Cookbook</a></li>
+<ul>
+    <li><a href='#WorkingwithGitandCookbooks-Whatismetadata.json%3F'>What is metadata.json?</a></li>
+</ul>
+    <li><a href='#WorkingwithGitandCookbooks-DownloadCookbook'>Download Cookbook</a></li>
+    <li><a href='#WorkingwithGitandCookbooks-ModifyCookbook'>Modify Cookbook</a></li>
+<ul>
+    <li><a href='#WorkingwithGitandCookbooks-TrackingUpstreamChanges'>Tracking Upstream Changes</a></li>
+</ul>
+    <li><a href='#WorkingwithGitandCookbooks-VersionTracking'>Version Tracking</a></li>
+    <li><a href='#WorkingwithGitandCookbooks-TestingCookbooks'>Testing Cookbooks</a></li>
+<ul>
+    <li><a href='#WorkingwithGitandCookbooks-Ifyou%27reusingChefSolo'>If you're using Chef Solo</a></li>
+    <li><a href='#WorkingwithGitandCookbooks-Ifyou%27reusingChefClient%2FServer'>If you're using Chef Client/Server</a></li>
+</ul>
+    <li><a href='#WorkingwithGitandCookbooks-RemoteRepositories'>Remote Repositories</a></li>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-color: #5d5b52;border-width: 2px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div class="" align="center"><b><a href="http://book.git-scm.com/index.html">Git Community Book</a></b></div>
+
+<p><a href="http://book.git-scm.com/index.html"><span class="image-wrap" style="float: right"><img src="../attachments/10125489/24182829.jpg" hspace="10" vspace="12" style="border: 0px solid black"/></span></a><br/>
+<a href="http://book.git-scm.com/index.html">This book</a> has been built by dozens of people in the Git community, and is meant to help you learn how to use Git as quickly and easily as possible.</p>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h1><a name="WorkingwithGitandCookbooks-NewCookbook"></a>New Cookbook</h1>
+
+<p><font color="#f7681a">A cookbook is a directory which contains the recipes and supporting code and assets.</font> Create a new cookbook with knife.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>knife cookbook create working_with_git</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook create working_with_git
+** Creating cookbook working_with_git
+** Creating README for cookbook: working_with_git
+** Creating metadata for cookbook: working_with_git</pre>
+		</div>
+</div></div>
+
+<p>This will create a predefined directory structure of all the various components of a <a href="Cookbooks.html" title="Cookbooks">Cookbook</a>.</p>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Pre-filled contents are configurable</b><br />The contents of the README and metadata are configurable. See <tt>knife cookbook create --help</tt>.</td></tr></table></div>
+
+<p>As it has created files, the git working copy will have uncommitted changes.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Show that we have uncommitted changes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git status
+# On branch master
+# Untracked files:
+#   (use "git add &lt;file&gt;..." to include in what will be committed)
+#
+#       cookbooks/working_with_git/
+nothing added to commit but untracked files present (use "git add" to track)</pre>
+		</div>
+</div></div>
+
+<p>Here's what the cookbook directory contains:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Contents of the cookbook's directory</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% ls -l cookbooks/working_with_git 
+total 16
+-rw-r--r--  1 jtimberman  staff   58 Mar 24 11:30 README.rdoc
+drwxr-xr-x  2 jtimberman  staff   68 Mar 24 11:30 attributes/
+drwxr-xr-x  2 jtimberman  staff   68 Mar 24 11:30 definitions/
+drwxr-xr-x  3 jtimberman  staff  102 Mar 24 11:30 files/
+drwxr-xr-x  2 jtimberman  staff   68 Mar 24 11:30 libraries/
+-rw-r--r--  1 jtimberman  staff  262 Mar 24 11:30 metadata.rb
+drwxr-xr-x  2 jtimberman  staff   68 Mar 24 11:30 providers/
+drwxr-xr-x  3 jtimberman  staff  102 Mar 24 11:30 recipes/
+drwxr-xr-x  2 jtimberman  staff   68 Mar 24 11:30 resources/
+drwxr-xr-x  3 jtimberman  staff  102 Mar 24 11:30 templates/</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Why all those directories?</b><br />Are all those directories required? No, they are not.
+
+<p>Why do we create all those directories? Simply because we don't know what you want in your cookbook. It is safe to leave them there, or delete the ones you don't need.</p>
+
+<p>For this example, we'll just leave them there.</p></td></tr></table></div>
+
+<p>Next, let's edit the default recipe to do something.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>vi cookbooks/working_with_git/recipes/default.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file "/tmp/working_with_git" do
+  content "I'm working with git."
+end</pre>
+		</div>
+</div></div>
+
+<p>Now write the changes to the git repository. This is done in two steps. First, we add a list of files with <a href="http://www.kernel.org/pub/software/scm/git/docs/git-add.html">git-add</a>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Tell git what files will be committed</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git add cookbooks/working_with_git</pre>
+		</div>
+</div></div>
+
+<p>We can view the changes that will be written with <a href="http://www.kernel.org/pub/software/scm/git/docs/git-status.html">git-status</a>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Show what will be committed</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git status
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD &lt;file&gt;..." to unstage)
+#
+#       new file:   cookbooks/working_with_git/README.rdoc
+#       new file:   cookbooks/working_with_git/metadata.rb
+#       new file:   cookbooks/working_with_git/recipes/default.rb
+#</pre>
+		</div>
+</div></div>
+
+<p>Next use <a href="http://www.kernel.org/pub/software/scm/git/docs/git-commit.html">git-commit</a> to write the changes to the repository.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Write the commit (changes) to the repository</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git commit -m 'create working with git cookbook'
+[master 3a63b1e] create working with git cookbook
+ 3 files changed, 26 insertions(+), 0 deletions(-)
+ create mode 100644 cookbooks/working_with_git/README.rdoc
+ create mode 100644 cookbooks/working_with_git/metadata.rb
+ create mode 100644 cookbooks/working_with_git/recipes/default.rb</pre>
+		</div>
+</div></div>
+
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/10125489/24182830.png" hspace="4" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" />
+<em><b>Congratulations!</b></em> </p>
+
+<p>You've created a cookbook and written the changes to the local git repository. <br/>
+To use the cookbook depends on whether you're using <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a> or <a href="Chef Server.html" title="Chef Server">Chef client with a server</a>.</p>
+
+<h3><a name="WorkingwithGitandCookbooks-Whatismetadata.json%3F"></a>What is metadata.json?</h3>
+
+<p><font color="#f7681a">If you are using a Chef Server, after doing the knife cookbook upload, you might notice there's a new file, metadata.json, in the cookbook.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Show generated metadata.json file</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 1 commit.
+#
+# Untracked files:
+#   (use "git add &lt;file&gt;..." to include in what will be committed)
+#
+#       cookbooks/working_with_git/metadata.json
+nothing added to commit but untracked files present (use "git add" to track)</pre>
+		</div>
+</div></div>
+
+<p>This is the generated JSON file from the upload. This is dynamically generated, and if you modify the metadata.rb, it will change every time the cookbook is uploaded. You can add <tt>metadata.json</tt> to the <tt>.gitignore</tt> file to ignore these generated files, but make sure to always use the metadata.rb file for modifying the cookbook's metadata.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Use .gitignore to ignore metadata.json files</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% vi .gitignore
+metadata.json
+% git add .gitignore
+% git commit -m 'ignore generated metadata.json files'
+[master 8d7d2b3] ignore generated metadata.json files
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+% git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+nothing to commit (working directory clean)</pre>
+		</div>
+</div></div>
+
+<p>Notice that we only added the <tt>.gitignore</tt> file, the metadata.json file is still there, Git just won't show it as uncommitted anymore.</p>
+
+<p>Read more about <a href="Metadata.html" title="Metadata">cookbook Metadata</a>. Read more about <a href="http://www.kernel.org/pub/software/scm/git/docs/gitignore.html">gitignore(5)</a></p>
+
+<h1><a name="WorkingwithGitandCookbooks-DownloadCookbook"></a>Download Cookbook</h1>
+
+<p><font color="#f7681a">Opscode provides a centralized location for the <a href="http://community.opscode.com">Chef Community</a> to share and download cookbooks.</font> Knife can be used to retrieve cookbooks from the Community site and automatically integrate them into the local Git repository.</p>
+
+<p>Make sure that the local repository has all changes committed:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Use Git Status to show clean repository</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+nothing to commit (working directory clean)</pre>
+		</div>
+</div></div>
+
+<p>For this example we're going to download the <tt>chef-client</tt> cookbook and integrate it into the local repository using the "vendor branch" pattern. Output of filenames in the cookbook are truncated; you can view the full output by running the same command.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>knife cookbook site install chef-client</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook site install chef-client
+INFO: Downloading chef-client from the cookbooks site at version 0.99.3
+INFO: Cookbook saved: /Users/jtimberman/Development/sandbox/chef-repo/cookbooks/chef-client.tar.gz
+INFO: Checking out the master branch.
+INFO: Checking the status of the vendor branch.
+INFO: Creating vendor branch.
+INFO: Removing pre-existing version.
+INFO: Uncompressing chef-client version 0.99.3.
+INFO: Adding changes.
+INFO: Committing changes.
+INFO: Creating tag chef-vendor-chef-client-0.99.3.
+INFO: Checking out the master branch.
+INFO: Merging changes from chef-client version 0.99.3.
+Updating 8d7d2b3..28cdd4e
+Fast-forward
+ cookbooks/chef-client/README.md                    |  232 ++++++++++++++++++++
+...TRUNCATED ...
+ 13 files changed, 658 insertions(+), 0 deletions(-)
+ create mode 100644 cookbooks/chef-client/README.md
+... TRUNCATED ...
+INFO: Cookbook chef-client version 0.99.3 successfully vendored!</pre>
+		</div>
+</div></div>
+
+<p>This command does the following:</p>
+
+<ul>
+	<li>Download the cookbook tarball from cookbooks.opscode.com.</li>
+	<li>Ensure its on the git master branch.</li>
+	<li>Checks for an existing vendor branch, and creates if it doesn't.</li>
+	<li>Checks out the vendor branch (chef-vendor-COOKBOOK).</li>
+	<li>Removes the existing (old) version.</li>
+	<li>Untars the cookbook tarball it downloaded in the first step.</li>
+	<li>Adds the cookbook files to the git index and commits.</li>
+	<li>Creates a tag for the version downloaded.</li>
+	<li>Checks out the master branch again.</li>
+	<li>Merges the cookbook into master.</li>
+</ul>
+
+
+<p>By default, the cookbook's dependencies are also downloaded. The <tt>-D</tt> option can be used to prohibit dependency download. Learn more about <a href="Metadata.html#Metadata-Metadatadepends">cookbook dependencies</a>.</p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Specify an "Integration" branch</b><br />An integration branch is the one that the cookbook gets merged into to integrate it into the repository. By default, this command uses "master" as the integration branch. If you have Chef 0.9.14 or higher, you can specify a different branch with <tt><del>B BRANCH</tt> or <tt></del>-branch BRANCH</tt>.</td></tr></table></div>
+
+<p>We can now view some changes from this command in the repository. First, a new <a href="http://www.kernel.org/pub/software/scm/git/docs/git-tag.html">git-branch(1)</a> is created:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>git branch</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git branch
+  chef-vendor-chef-client
+* master</pre>
+		</div>
+</div></div>
+
+<p>The "*" in front of master indicates it is the currently <a href="http://www.kernel.org/pub/software/scm/git/docs/git-checkout.html">checked out</a> branch.</p>
+
+<p>Also, a <a href="http://www.kernel.org/pub/software/scm/git/docs/git-tag.html">git-tag(1)</a> is created:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>git tag</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git tag
+chef-vendor-chef-client-0.99.3</pre>
+		</div>
+</div></div>
+
+
+<h1><a name="WorkingwithGitandCookbooks-ModifyCookbook"></a>Modify Cookbook</h1>
+
+<p><font color="#f7681a">After you have created a new cookbook, or installed a cookbook in the repository with the install command, you may want to make modifications.</font> Edit the files as desired and commit your changes to the Git repository. The filenames and contents changed are not important. Assuming we've editted a recipe and saved changes to the file:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Edit files and save changes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% vi cookbooks/working_with_git/recipes/default.rb</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>git status to show uncommitted changes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 3 commits.
+#
+# Changes not staged for commit:
+#   (use "git add &lt;file&gt;..." to update what will be committed)
+#   (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+#
+#       modified:   cookbooks/working_with_git/recipes/default.rb
+#
+no changes added to commit (use "git add" and/or "git commit -a")</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>git diff to see file content changes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git diff cookbooks/working_with_git/recipes/default.rb
+diff --git a/cookbooks/working_with_git/recipes/default.rb b/cookbooks/working_with_git/recipes/default.rb
+index f7ed0a0..534ce13 100644
+--- a/cookbooks/working_with_git/recipes/default.rb
++++ b/cookbooks/working_with_git/recipes/default.rb
+@@ -10,3 +10,7 @@
+ file "/tmp/working_with_git" do
+   content "I'm working with git."
+ end
++
++file "/tmp/working_with_git_changes" do
++  mode 0755
++end</pre>
+		</div>
+</div></div>
+
+<p>Add the file to the commit and create the commit.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>git add, git commit</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git add cookbooks/working_with_git/recipes/default.rb
+% git commit -m 'Add another file to the working_with_git recipe.'
+[master 7a9aedd] Add another file to the working_with_git recipe.
+ 1 files changed, 4 insertions(+), 0 deletions(-)</pre>
+		</div>
+</div></div>
+
+<h3><a name="WorkingwithGitandCookbooks-TrackingUpstreamChanges"></a>Tracking Upstream Changes</h3>
+
+<p><font color="#f7681a">One advantage of using the vendor branch pattern described above is it becomes easy to make local changes to a cookbook, and still be able to retrieve upstream improvements and other changes.</font> Once your local changes are committed, you can download a new version again with the same command.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>knife cookbook site install</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook site install chef-client
+INFO: Downloading chef-client from the cookbooks site at version 0.99.3
+INFO: Cookbook saved: /Users/jtimberman/Development/sandbox/chef-repo/cookbooks/chef-client.tar.gz
+INFO: Checking out the master branch.
+INFO: Checking the status of the vendor branch.
+INFO: Vendor branch found.
+INFO: Removing pre-existing version.
+INFO: Uncompressing chef-client version 0.99.3.
+INFO: Adding changes.
+INFO: Committing changes.
+WARN: Checking out the master branch.
+WARN: No changes from current vendor chef-client</pre>
+		</div>
+</div></div>
+
+<p>Note: there weren't any updates, since we had just downloaded the cookbook of the same version already. If we did make changes <b>and</b> there were updates on the <a href="http://community.opscode.com">Community Site</a>, then they would be merged in.</p>
+
+<p>If there are any conflicts between local changes and the upstream's update, then we would handle those by editing the files, or modifying the local copy in the repository. Read more about <a href="http://book.git-scm.com/3_basic_branching_and_merging.html">branching and merging, "Resolving a Merge"</a> section of the online <a href="http://book.git-scm.com/index.html">Git Community Book</a>.</p>
+
+<h1><a name="WorkingwithGitandCookbooks-VersionTracking"></a>Version Tracking</h1>
+
+<p><font color="#f7681a">All git repos have version tracking, so even if you are just committing changes locally you can still go back and see what was changed.</font> </p>
+
+<p>You can use <tt>git log</tt> to see the log of commits. This command would show you the last 3 commits for example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>git log</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% git log -n3
+commit 319af2c1d14252dda94b3d02259cd8b61c09d435
+Author: user &lt;user@email.com&gt;
+Date:   Tue Aug 23 14:02:27 2011 -0700
+
+    adding another cookbook
+
+commit 9adb6722384f71f043000ef60147e78c92260cd8
+Author: user &lt;user@email.com&gt;
+Date:   Mon Aug 22 16:17:13 2011 -0700
+
+    adding in a test cookbook
+
+commit b9c9306d90c394dda3198af7851fe4999bd79e70
+Author: user &lt;user@email.com&gt;
+Date:   Thu Jul 21 12:25:59 2011 -0700
+
+    new repo testing</pre>
+		</div>
+</div></div>
+<p>You could then see more information on a specific commit with <tt>git show</tt>. For example, to see more information on the last commit you could take the commit id and use it in this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>git show</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">git show 319af2c1d14252dda94b3d02259cd8b61c09d435</pre>
+		</div>
+</div></div>
+<p>For more information on the show and log commands, reference the <a href="http://www.kernel.org/pub/software/scm/git/docs/git-show.html">git-show</a> and <a href="http://www.kernel.org/pub/software/scm/git/docs/git-log.html">git-log manual pages</a>. The command `man gittutorial` can also give you further information on how these can be used.</p>
+
+<h1><a name="WorkingwithGitandCookbooks-TestingCookbooks"></a>Testing Cookbooks</h1>
+
+<p><font color="#f7681a">Testing cookbooks is not directly related to Git, but depending on how you're using Chef determines what you need to do to test changes you've made to cookbooks.</font></p>
+
+<h3><a name="WorkingwithGitandCookbooks-Ifyou%27reusingChefSolo"></a>If you're using Chef Solo</h3>
+
+<p>You'll need to copy the cookbooks you want to use to a system with Chef Solo, configured to use the cookbooks directory. You'll also need to pass a JSON file to <tt>chef-solo</tt> with the run_list of recipes to use. See the <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a> page for information about how to set up a system to run chef-solo.</p>
+
+<h3><a name="WorkingwithGitandCookbooks-Ifyou%27reusingChefClient%2FServer"></a>If you're using Chef Client/Server</h3>
+
+<p>Upload the cookbook to the <a href="Chef Server.html" title="Chef Server">Chef Server</a> with <a href="Knife.html" title="Knife">Knife</a>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>knife cookbook upload</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload &lt;cookbookname&gt;</pre>
+		</div>
+</div></div>
+<p> Then apply the recipe to a node or role and run Chef on the desired system.</p>
+
+<h1><a name="WorkingwithGitandCookbooks-RemoteRepositories"></a>Remote Repositories</h1>
+
+<p>By default, the remote origin is Opscode's repository. This means that you can make commits to the local repo for <a href="#WorkingwithGitandCookbooks-VersionTracking">version tracking</a> and other features, but not the remote repo so you can access externally.</p>
+
+<p>If you would like to add a remote origin for your personal git, you will first want to add a new repo to your git server. Once that is done you can add the remote origin with a command like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>git remote</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cd ~/chef-repo
+git remote add github http://github.com/&lt;username&gt;/&lt;reponame&gt;.git</pre>
+		</div>
+</div></div>
+<p>Then, whenever you want to push commits to your remote git you can do it with this command, after using <tt>git add</tt> and <tt>git commit</tt>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>git push to remote</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">git push github master</pre>
+		</div>
+</div></div>
+<p>You can use any name in place of <tt>github</tt> in these examples, it is just a name for the remote connection. For more information on remote, read the <a href="http://www.kernel.org/pub/software/scm/git/docs/git-remote.html">git-remote manual page</a>.</p>
+
+
+<p><font color="#f7681a"><b>Here's an example of how your workflow may look, once this is all setup:</b></font></p>
+
+<p>1. <a href="#WorkingwithGitandCookbooks-NewCookbook">Create the cookbook directory</a> skeleton with <tt>knife cookbook create</tt>.<br/>
+2. Edit the files you want to modify in the new cookbook or an existing cookbook.<br/>
+3. <a href="#WorkingwithGitandCookbooks-TestingCookbooks">Upload the cookbook to the Chef Server</a> with <tt>knife cookbook upload</tt>.<br/>
+4. Test that the cookbook changes you made work by running chef-client.<br/>
+5. <a href="#WorkingwithGitandCookbooks-NewCookbook">Stage the files to commit</a> to your local repository with <tt>git add &lt;filepattern&gt;</tt>.<br/>
+6. <a href="#WorkingwithGitandCookbooks-NewCookbook">Commit changes to the repository</a> with <tt>git commit</tt>.<br/>
+7. Push commits to the central git server repository with `git push &lt;remotename&gt; &lt;branchname&gt;`.</p>
+
+<p>Keep in mind that due to how git actually works, we can't predict what the proper behavior for #5 and #6 will be.  </p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/10125489/12222580.png">git-logo-small-100x85.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/10125489/20840611.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/10125489/20840612.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/10125489/24182829.jpg">gitcomm.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/10125489/24182830.png">thumbs-up-popover.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

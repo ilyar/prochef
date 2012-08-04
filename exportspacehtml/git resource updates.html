@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : git resource updates</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : git resource updates
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jun 15, 2011 by <font color="#0050B2">jkeiser</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="70%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-width: 1px;"><div class="panelContent">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/13762672/14057495.png" hspace="14" style="border: 0px solid black"/></span></p>
+<h4><a name="gitresourceupdates-"></a><font color="#f7681a"><em>This is a grouping of three related proposals</em><br/>
+<br/>
+(1) Creating a common codepath for the git resource <br/>
+(2) Adding developer_mode <br/>
+(3) Adding a local_changes parameter.</font></h4>
+</div></div>
+<h2><a name="gitresourceupdates-GitResourceChange1%3ARobustification"></a>Git Resource Change 1: Robustification</h2>
+
+<p><font color="#f7681a">The idea here is to put checkout and update onto a common codepath, ensuring that anything that checkout sets up, sync updates (and vice versa).</font>  This gives us greater confidence that the code works in both cases, and reduces the test burden.  It also makes it easier to add features like developer_mode which would have to be put into both codepaths.</p>
+
+<p>Presently, the git resource works like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">if &lt;destination&gt;/.git exists
+  if there is something to sync
+    &lt;set remote tracking branch&gt; unless remote = origin
+    git fetch &lt;remote&gt;
+    git fetch &lt;remote&gt; --tags
+    git reset --hard &lt;target revision&gt;
+    git submodule init
+    git submodule update
+  end
+  foreach additional_remote
+    git remote add &lt;remote&gt; &lt;url&gt;
+  
+else
+  git clone [-o remote] [--depth depth] repository destination
+  git checkout -b deploy &lt;target revision&gt;
+  git submodule init
+  git submodule update
+  foreach additional_remote
+    git remote add &lt;remote&gt; &lt;url&gt;
+end</pre>
+		</div>
+</div></div>
+
+<p>This model puts setup in the else branch, and maintenance in the if branch.  What may not be obvious is that some things that get set in the else branch, don’t get updated in the if branch.  For example, the branch doesn’t get updated (if it gets out of sync, it won’t get fixed).</p>
+
+<h5><a name="gitresourceupdates-Proposal%3AOneThingAtATime"></a>Proposal: One Thing At A Time</h5>
+<p>The way to think about the resource is, it declares the state it wants to move to.  It should be in branch X, it should be at revision Y, it should come from repository Z ...</p>
+
+<p>The proposed flow takes it one piece at a time, first cloning from the repository, then getting on the right branch, then getting on the right revision, then getting the right remotes ...</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Ensure we have a working git clone
+if &lt;destination&gt;/.git does not exist
+  git clone [-o remote] [--depth depth] repository destination
+end
+
+# Create branch
+if "deploy" branch does not exist
+  git branch deploy &lt;target revision&gt;
+end
+
+# Check out branch
+if current_branch != “deploy”
+  git checkout deploy
+end
+
+# Update branch to proper revision
+if branch is out of sync with target
+  git fetch &lt;remote&gt;
+  git fetch &lt;remote&gt; --tags
+  git reset --hard &lt;target revision&gt;
+end
+
+# Set remotes
+&lt;set primary remote tracking branch name and url&gt; unless remote = origin
+foreach additional_remote
+  &lt;set remote tracking branch name and url&gt;</pre>
+		</div>
+</div></div>
+<p>This model has the general pattern: if &lt;thing is not what it should be&gt; &lt;make it so&gt;.  By breaking it up into fine-grained increments, any individual thing that goes wrong gets fixed, even if other things are in their proper state.  (i.e. if the branch changes but nothing else, the branch gets smacked back into shape without changing anything else.)</p>
+
+<p>This model also allows us to have exactly one codepath, so that checkout and sync are both (largely) tested simultaneously.</p>
+
+<h2><a name="gitresourceupdates-GitResourceChange2%3A%7B%7Bdevelopermode%7D%7D"></a>Git Resource Change 2: <tt>developer_mode</tt></h2>
+
+<p>When setting up git repositories for use by a developer, the current detached “deploy” branch is less than ideal.  <font color="#f7681a">This proposal adds “developer_mode” to the git resource, which does not create “deploy” branch and instead leaves the user in whatever branch they wanted to use.</font>  This would change the above process like so:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Create branch
+if &lt;target branch or "deploy"&gt; does not exist
+  git branch &lt;target branch or "deploy"&gt; &lt;target revision&gt;
+end
+
+# Set upstream
+if developer_mode
+  git branch --set-upstream &lt;target branch&gt; &lt;remote&gt;/&lt;target branch&gt;
+end
+
+# Checkout
+git checkout &lt;target branch or "deploy"&gt;</pre>
+		</div>
+</div></div>
+<p>This is still suboptimal due to the “git reset --hard”, but it gets us a little closer to where we want to be.  We address that issue in the third change.</p>
+
+<h2><a name="gitresourceupdates-GitResourceChange3%3A%7B%7Bupdatemethod%7D%7D"></a>Git Resource Change 3: <tt>update_method</tt></h2>
+
+<p>One issue with the git resource at present is that the policy regarding files that get modified in-place is inflexible, and does not work well for developer mode because the default policy is to overwrite changes.  <font color="#f7681a">This proposal adds an <tt>update_method</tt> attribute to the git resource, which allows you to specify what should happen with any modified files on your drive.</font>  The possible values are:</p>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Value</th>
+<th class='confluenceTh'>Git command</th>
+<th class='confluenceTh'>Local Modifications</th>
+<th class='confluenceTh'>New Untracked Files</th>
+<th class='confluenceTh'>Local Commits</th>
+<th class='confluenceTh'>In Case Of Conflict</th>
+<th class='confluenceTh'>Notes</th>
+</tr>
+<tr>
+<td class='confluenceTd'><tt>:reset_merge</tt></td>
+<td class='confluenceTd'><tt>git reset --merge</tt></td>
+<td class='confluenceTd'>Keeps changes</td>
+<td class='confluenceTd'>Keeps new files</td>
+<td class='confluenceTd'>Loses commits</td>
+<td class='confluenceTd'>Fails update</td>
+</tr>
+<tr>
+<td class='confluenceTd'><tt>:reset_hard</tt></td>
+<td class='confluenceTd'><tt>git reset --hard</tt></td>
+<td class='confluenceTd'>Overwrites changes</td>
+<td class='confluenceTd'>Keeps new files</td>
+<td class='confluenceTd'>Loses commits</td>
+<td class='confluenceTd'>Overwrites local changes</td>
+<td class='confluenceTd'>Default</td>
+</tr>
+<tr>
+<td class='confluenceTd'><tt>:reset_clean</tt></td>
+<td class='confluenceTd'><tt>git reset --hard</tt><br/>
+<tt>git clean -d</tt></td>
+<td class='confluenceTd'>Overwrites changes</td>
+<td class='confluenceTd'>Deletes new files</td>
+<td class='confluenceTd'>Loses commits</td>
+<td class='confluenceTd'>Overwrites local changes</td>
+</tr>
+<tr>
+<td class='confluenceTd'><tt>:rebase</tt></td>
+<td class='confluenceTd'><tt>git rebase</tt></td>
+<td class='confluenceTd'>Keeps changes</td>
+<td class='confluenceTd'>Keeps new files</td>
+<td class='confluenceTd'>Keeps (rebases) commits</td>
+<td class='confluenceTd'>Fails update</td>
+<td class='confluenceTd'>Default for <tt>developer_mode</tt>.  Does not work with revision or tag.</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h2><a name="gitresourceupdates-Unresolved"></a>Unresolved</h2>
+
+<p><font color="#f7681a">When do local_changes get updated?</font><br/>
+If you have chosen git reset --hard (the default), there is another policy decision that needs to be made.  If a file gets modified in-place, when should it get overwritten?  Currently we wait until a revision happens on the server.  One can imagine people who want their state to converge to the server’s state sooner than that.  Perhaps a value like local_changes_update=:immediate or :on_version_change
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/13762672/14057495.png">git-logo-small-100x85.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

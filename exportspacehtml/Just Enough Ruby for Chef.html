@@ -1,0 +1,232 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Just Enough Ruby for Chef</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Just Enough Ruby for Chef
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jan 25, 2012 by <font color="#0050B2">haridsv</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div class="" align="center"><h4><a name="JustEnoughRubyforChef-"></a><font color="#f7681a">If you're new to Ruby, don't worry too much. <br/>
+<br/>
+It's a language designed to be easy to read and to behave exactly as you'd expect, so it shouldn't take you too long to get up to speed.</font></h4></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+
+<p><b>First, it's useful to know how to check the syntax of a ruby file (like a cookbook):</b></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ ruby -c my_cookbook_file.rb
+Syntax OK</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<b>If you're using the Chef Repository, you can just run 'rake test', which will remember which files have been tested based on mtime:</b></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ rake test</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<b>Now for a few basics:</b></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Ruby Quick Reference for Clever Sysadmins</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># anything after # is a comment.
+
+# assigning a local variable:
+x = 1
+
+# some basic arithmetic:
+1 + 2           # =&gt; 3
+2 * 7           # =&gt; 14
+5 / 2           # =&gt; 2   (because both arguments are whole numbers)
+5 / 2.0         # =&gt; 2.5 (because one of the numbers had a decimal place)
+1 + (2 * 3)     # =&gt; 7   (you can use parens to group expressions)
+
+# strings
+'single quoted' # =&gt; "single quoted"
+"double quoted" # =&gt; "double quoted"
+'It\'s alive'   # =&gt; "It's alive!"
+"1 + 2 = 5"     # =&gt; "1 + 2 = 5" (numbers surrounded by quotes may exhibit string-like behavior)
+
+# a string with embedded ruby
+x = "Bob"
+"Hi, #{x}"      # =&gt; "Hi, Bob"
+'Hello, #{x}'   # =&gt; "Hello, \#{x}" Notice that single quotes don't work with #{}
+
+# some basic truths
+true            # =&gt; true
+false           # =&gt; false
+nil             # =&gt; nil
+1 == 1          # =&gt; true ( == tests for equality )
+1 == true       # =&gt; false ( == tests for equality )
+
+# ! means not
+!true           # =&gt; false
+!false          # =&gt; true
+!nil            # =&gt; true
+1 != 2          # =&gt; true (1 is not equal to 2)
+1 != 1          # =&gt; false (1 is not not equal to itself)
+
+# !! (not not) converts something to either true or false
+!!true          # =&gt; true
+!!false         # =&gt; false
+!!nil           # =&gt; false (when pressed, nil is false)
+!!0             # =&gt; true (zero is NOT false).
+
+# arrays are lists
+x = ["a", "b", "c"] # =&gt; ["a", "b", "c"]
+x[0]                # =&gt; "a" (zero is the first index)
+x.first             # =&gt; "a" (see?)
+x.last              # =&gt; "c"
+x + ["d"]           # =&gt; ["a", "b", "c", "d"]
+x                   # =&gt; ["a", "b", "c"] ( x is unchanged)
+x = x + ["d"]       # =&gt; ["a", "b", "c", "d"]
+x                   # =&gt; ["a", "b", "c", "d"]
+
+# a hash is a list with keys and values
+# - but no set order (!)
+h = {
+  "first_name" =&gt; "Bob",
+  "last_name"  =&gt; "Jones"
+}
+# =&gt; { "first_name =&gt; "Bob", "last_name" =&gt; "Jones" }
+h.keys              # =&gt; ["first_name", "last_name"]
+h["first_name"]     # =&gt; "Bob"
+h["last_name"]      # =&gt; "Jones"
+h["age"] = 23
+h.keys              # =&gt; ["first_name", "age", "last_name"]
+h.values            # =&gt; ["Jones", "Bob", 23]
+
+# perl-style regular expressions
+"I believe"  =~ /I/                       # =&gt; 0 (matches at the first character)
+"I believe"  =~ /lie/                     # =&gt; 4 (matches at the 5th character)
+"I am human" =~ /bacon/                   # =&gt; nil (no match - bacon comes from pigs)
+"I am human" !~ /bacon/                   # =&gt; true (correct, no bacon here)
+/give me a ([0-9]+)/ =~ "give me a 7"     # =&gt; 0 (matched)
+
+# you can do things conditionally
+
+# with an if statement
+if false
+  # this won't happen
+elsif nil
+  # this won't either
+else
+  # code here will run though
+end
+
+# or a case statement
+x = "dog"
+case x
+when "fish"
+  # this won't happen
+when "dog", "cat", "monkey"
+  # this will run
+else
+  # the else is an optional catch-all
+end
+
+# def defines a method (functions, if you like)
+
+def do_something_useless( first_argument, second_argument)
+  puts "You gave me #{first_argument} and #{second_argument}"
+end
+
+do_something_useless( "apple", "banana")
+# =&gt; "You gave me apple and banana"
+do_something_useless 1, 2
+# =&gt; "You gave me 1 and 2"
+# see how the parens are optional if there's no confusion about what to do
+
+# call a method on something with .method_name()
+x = "My String"
+x.split(" ")            # =&gt; ["My", "String"]
+x.split(" ").join(", ") # =&gt; "My, String"</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td> 
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" /></p>
+<hr />
+<div class="" align="center"><h5><a name="JustEnoughRubyforChef-"></a><font color="#f7681a">More Information</font></h5></div>
+
+<hr />
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><tr><td><h4><a name="JustEnoughRubyforChef-"></a><div class="" align="center"><a href="http://www.ruby-lang.org/en/documentation/quickstart/">Ruby In Twenty Minutes</a></div>
+</h4>
+<p><span class="image-wrap" style="display: block; text-align: center"><a class="confluence-thumbnail-link 331x119" href='http://wiki.opscode.com/download../attachments/1180323/ruby logo.gif'><img src="../attachments/thumbnails/1180323/12222579" vspace="4" style="border: 0px solid black"/></a></span><br/>
+A small Ruby tutorial that should take no more than 20 minutes to complete.
+<br class="atl-forced-newline" /></p></td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>The Power of Chef and Ruby</b><br /><br class="atl-forced-newline" />
+Opcode team member <a href="http://bryanmclellan.org/">Bryan McLellan</a> has a great personal blog post on <b><a href="http://blog.loftninjas.org/2011/02/16/the-power-of-chef-and-ruby/">The Power of Chef and Ruby</a></b>
+<br class="atl-forced-newline" /></td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-width: 1px;"><div class="panelContent">
+<p><b>More in depth reading:</b><br/>
+<a href="http://mislav.uniqpath.com/poignant-guide/">http://mislav.uniqpath.com/poignant-guide/</a><br/>
+<a href="http://www.rubycentral.com/book/">http://www.rubycentral.com/book/</a><br/>
+<a href="http://www.ruby-doc.org/stdlib/">http://www.ruby-doc.org/stdlib/</a></p>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<hr /></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table> 
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1180323/12222579.gif">ruby logo.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1180323/21463281.png">9779736-smiling-young-guy-using-notebook-computer-all-on-white-background.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1180323/21463280.png">9779736-smiling-young-guy-using-notebook-computer-all-on-white-background.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1180323/21463282.png">9311968-young-attractive-happy-man-works-lying-with-computer-on-floor-isolated-on-white-background.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

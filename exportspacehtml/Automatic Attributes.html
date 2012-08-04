@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Automatic Attributes</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Automatic Attributes
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jul 09, 2012 by <font color="#0050B2">gyre007</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="70%">
+
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 200x150" href='http://wiki.opscode.com/download../attachments/16089153/attributes.jpg'><img src="../attachments/thumbnails/16089153/16187399" hspace="18" vspace="10" style="border: 0px solid black"/></a></span></p>
+
+<h2><a name="AutomaticAttributes-Review"></a>Review</h2>
+<h5><a name="AutomaticAttributes-"></a><font color="#f7681a"><a href="Attributes.html" title="Attributes">Attributes</a> are <a href="Nodes.html" title="Nodes">Node</a> data such as the IP address, hostname, loaded kernel modules, version of programming languages available on the system and more. <br/>
+<br/>
+During the <a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">Chef run</a>, the <a href="Chef Client.html" title="Chef Client">Chef Client</a> saves node attributes on the <a href="Chef Server.html" title="Chef Server">Chef Server</a> where they are indexed for <a href="Search.html" title="Search">Search</a>.</font></h5>
+
+<p><br class="atl-forced-newline" /></p>
+<h2><a name="AutomaticAttributes-UseofAutomaticAttributesinRecipes"></a>Use of Automatic Attributes in Recipes</h2>
+<p><font color="#f7681a">Node attributes can be set in recipes.</font> <a href="Attributes.html#Attributes-HowtoUseAttributes">This use of node attributes</a> should be done when you want to calculate a derived value, or store some data on the node that should be persisted the next time Chef runs. For more information on the use within recipes, see <b><a href="Recipes.html#Recipes-NodeAttributes">Node Attributes</a></b> within <a href="Recipes.html" title="Recipes">Recipes</a>.</p>
+
+<h2><a name="AutomaticAttributes-AutomaticAttributePrecedence"></a>Automatic Attribute Precedence</h2>
+<p><a href="Attributes.html" title="Attributes">Attributes</a> are applied in <a href="Attributes.html#Attributes-AttributeTypeandPrecedence">precedence order</a> - with the fourth attribute type, <tt>automatic</tt>, containing <a href="Ohai.html" title="Ohai">Ohai</a> data and having the highest precedence.  <em><b>As these <tt>automatic</tt> attributes will be re-written with each Ohai run - Chef doesn't provide any way to modify them.</b></em></p>
+
+<p><font color="#f7681a">The following attributes are those which are re-written with each Ohai run, so they should be recognized as being unmodifiable when considering the <a href="Attributes.html#Attributes-HowtoUseAttributes">use of attributes</a>.</font></p>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>ohai | grep -R "provides" -h lib/ohai/plugins|sed 's/^\s*//g'|sed "s/\\\"/\'/g"|sort|uniq|grep ^provides
+provides 'block_device'
+provides 'chef'
+provides 'cloud'
+provides 'command'
+provides 'command/ps'
+provides 'cpu'
+provides 'dmi'
+provides 'ec2'
+provides 'etc', 'current_user'
+provides 'eucalyptus'
+provides 'filesystem'
+provides 'fqdn', 'domain'
+provides 'fqdn', 'hostname'
+provides 'hostname', 'fqdn'
+provides 'kernel'
+provides 'kernel/os'
+provides 'keys'
+provides 'keys/ssh'
+provides 'languages'
+provides 'languages/c'
+provides 'languages/erlang'
+provides 'languages/groovy'
+provides 'languages/java'
+provides 'languages/lua'
+provides 'languages/mono'
+provides 'languages/perl'
+provides 'languages/php'
+provides 'languages/python'
+provides 'languages/ruby'
+provides 'lsb'
+provides 'memory'
+provides 'network'
+provides 'network', 'counters/network'
+provides 'network_ip_scope', 'privateaddress'
+provides 'network/listeners'
+provides 'ohai'
+provides 'ohai_time'
+provides 'os', 'os_version'
+provides 'platform', 'platform_version'
+provides 'platform', 'platform_version', 'platform_build'
+provides 'rackspace'
+provides 'system_profile'
+provides 'uptime', 'idletime', 'uptime_seconds', 'idletime_seconds'
+provides 'uptime', 'uptime_seconds'
+provides 'virtualization'
+</pre>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+
+<p>You'll note that you can get this list directly yourself by running the command that produced it.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">ohai | grep -R "provides" -h lib/ohai/plugins|sed 's/^\s*//g'|sed "s/\\\"/\'/g"|sort|uniq|grep ^provides</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+
+<p><b>Additional attributes and sub-attributes can be viewed on a particular node by running <tt>ohai</tt>. This returns data as JSON.</b>
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/16089153/20840573.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Attributes.html" title="Attributes">Attributes</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/16089153/20840572.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Deep Merge.html" title="Deep Merge">Deep Merge</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089153/16187399.jpg">attributes.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089153/20840572.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089153/20840573.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Installing Chef Server</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Installing Chef Server
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on May 03, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<hr />
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/18645041/19005522.png" hspace="30" vspace="8" style="border: 0px solid black"/></span></p>
+
+<p><br class="atl-forced-newline" /></p>
+<h3><a name="InstallingChefServer-"></a><font color="#f7681a">This guide explains how to install Chef Server on your own hardware.</font>  </h3>
+
+<h5><a name="InstallingChefServer-TheChefServerprovidesacentralpointforthedistributionofCookbooks%2CmanagementandauthenticationofNodes%2CandtheuseofSearch."></a>The Chef Server provides a central point for the distribution of <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a>, management and authentication of <a href="Nodes.html" title="Nodes">Nodes</a>, and the use of <a href="Search.html" title="Search">Search</a>. </h5>
+
+<p><br class="atl-forced-newline" /></p>
+<hr />
+
+<h1><a name="InstallingChefServer-InstallationMethods"></a>Installation Methods</h1>
+<p>Choose one of the following methods to install chef-server based on the operating system of the host</p>
+
+<h5><a name="InstallingChefServer-InstallationviaUbuntuorDebianPackageInstallingChefServeronDebianorUbuntuusingPackages"></a><a href="Installing Chef Server on Debian or Ubuntu using Packages.html" title="Installing Chef Server on Debian or Ubuntu using Packages">Installation via Ubuntu or Debian Package</a></h5>
+<p>On Debian or Ubuntu, install Chef from Opscode's apt repository with apt-get.  This method works with the following operating systems:</p>
+<ul>
+	<li>Ubuntu 11.04</li>
+	<li>Ubuntu 10.10</li>
+	<li>Ubuntu 10.04</li>
+	<li>Debian (unstable)</li>
+	<li>Debian (testing)</li>
+	<li>Debian 6 (stable)</li>
+</ul>
+
+
+<h5><a name="InstallingChefServer-InstallationviaBootstrapInstallingChefServerusingChefSolo"></a><a href="Installing Chef Server using Chef Solo.html" title="Installing Chef Server using Chef Solo">Installation via Bootstrap</a></h5>
+<p>Using the bootstrap method, you install ruby with your system's package manager, install Chef with rubygems, and then install chef-server using a chef-solo cookbook. This method works on the following operating system and possibly others:</p>
+<ul>
+	<li>Ubuntu 10.04-11.04</li>
+	<li>Debian 6.0 (stable, testing, unstable)</li>
+	<li>CentOS 5.6+ and 6.x (should work on RHEL, too)</li>
+</ul>
+
+
+<h5><a name="InstallingChefServer-ManualInstallationInstallingChefServerManually"></a><a href="Installing Chef Server Manually.html" title="Installing Chef Server Manually">Manual Installation</a></h5>
+<p>If packages are not available for your operating system, or you simply enjoy staying close to the metal, you can install the Chef server manually.  </p>
+</td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" />
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><a name="InstallingChefServer-SystemRequirements"></a></p>
+<h3><a name="InstallingChefServer-"></a><font color="#f7681a">System Requirements</font></h3>
+<hr />
+<p><font color="navy"><b>Chef-client is supported on the following platforms</b></font></p>
+
+<ul>
+	<li>Ubuntu (10.04+)</li>
+	<li>Debian (5.0, 6.0)</li>
+	<li>RHEL &amp; CentOS (5.x, 6.x)</li>
+	<li>Fedora 10&#43;</li>
+	<li>Solaris 9,10,11 Sparc</li>
+	<li>Solaris 10,11 (x86 and x64)</li>
+	<li>Mac OS X (10.4, 10.5, 10.6, 10.7)</li>
+	<li>Windows 7</li>
+	<li>Windows Server 2003 R2, 2008 R2</li>
+</ul>
+
+
+<p>Additionally, chef-client is known to run on the following platforms</p>
+
+<ul>
+	<li>Ubuntu (6.06, 8.04-9.10)</li>
+	<li>RHEL &amp; CentOS (5.x)</li>
+	<li>Gentoo (11.1,11.2)</li>
+	<li>FreeBSD (7.1)</li>
+	<li>OpenBSD (4.4)</li>
+	<li>OpenSolaris (2008.11)</li>
+	<li>Solaris 5.10 (u6)</li>
+	<li>SuSE (11.x)</li>
+	<li>Windows Vista</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+<br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><tr><td><span class="image-wrap" style="display: block; text-align: center"><img src="../attachments/18645041/19005523.jpg" style="border: 0px solid black"/></span>
+
+<p><b>Hosted Chef</b> is a a highly available, scalable Chef Server in the cloud offered by Opscode. <b><font color="#f7681a">To use Hosted Chef as your Chef Server, follow the instructions for <a href="Installation.html" title="Installation">"Hosted Chef + Chef Clients"</a></font>.</b></p></td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+
+<h1><a name="InstallingChefServer-Dependencies"></a>Dependencies</h1>
+
+<p><a href="Chef Indexer.html#ChefIndexer-ChefIndexerChefSolr">Chef Solr</a>, which manages denormalizing and indexing data, and is usually run on the same host as <a href="Chef Server.html" title="Chef Server">Chef Server</a> in smaller installations, requires the following additional gems:</p>
+<ul>
+	<li>libxml-ruby</li>
+</ul>
+
+
+<p>In addition to the client dependencies above, <a href="Chef Server.html" title="Chef Server">Chef Server</a> requires:</p>
+<ul>
+	<li>merb-assets</li>
+	<li>merb-core</li>
+	<li>merb-helpers</li>
+	<li>merb-param-protection</li>
+	<li>merb-slices</li>
+	<li>thin</li>
+</ul>
+
+
+<p>Additionally for the webui:</p>
+<ul>
+	<li>merb-haml</li>
+	<li>haml</li>
+	<li>coderay</li>
+</ul>
+
+
+<p>Non-Ruby dependencies:</p>
+<ul>
+	<li><a href="http://couchdb.apache.org/">CouchDB</a> (0.9.1-0.10+)</li>
+	<li><a href="http://java.sun.com">Java</a></li>
+	<li><a href="http://www.rabbitmq.com/">RabbitMQ</a></li>
+</ul>
+
+
+<p><b><font color="#f7681a">For ease of installation, we recommend using an OS platform for the <a href="Chef Server.html" title="Chef Server">Chef Server</a> that has these available as native packages.</font></b>
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/18645041/21463080.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installation.html" title="Installation">Installation</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/18645041/21463079.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installing Chef Client and Chef Solo.html" title="Installing Chef Client and Chef Solo">Installing Chef Client and Chef Solo</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645041/19005522.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645041/19005523.jpg">10164738-a-virtual-machine-moves-from-a-cloud-server-rack-to-the-other.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645041/21463079.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645041/21463080.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

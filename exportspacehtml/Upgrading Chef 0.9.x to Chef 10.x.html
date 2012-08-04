@@ -1,0 +1,435 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Upgrading Chef 0.9.x to Chef 10.x</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Upgrading Chef 0.9.x to Chef 10.x
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jun 20, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h1><a name="UpgradingChef0.9.xtoChef10.x-BeforeUpgrading"></a>Before Upgrading</h1>
+<p>Before upgrading, make sure you have backups that you can recover from. When you're ready to proceed, stop the chef-server, chef-server-webui, chef-solr, and chef-solr-indexer on the server, and chef-client on the clients.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">for svc in server server-webui solr solr-indexer
+do
+  sudo /etc/init.d/chef-${svc} stop
+done
+
+# client only:
+sudo /etc/init.d/chef-client stop</pre>
+		</div>
+</div></div>
+
+<p>Make sure the 'merb' processes for the chef-server and chef-server-webui are no longer running. They will look like this when running (port 4000 is the chef-server, port 4040 is the chef-server-webui):</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">root      1035  0.1  0.0 112216  4276 ?        Sl   Jul07   5:44 merb : merb : master
+root      1784  6.5  0.6 146760 51984 ?        S    Jul07 290:40 merb : worker (port 4040)
+root      7547  0.1  0.4 110788 34104 ?        Sl   Jul09   3:00 merb : merb : master
+root      7554  5.8  0.7 149912 57820 ?        S    Jul09 125:16 merb : worker (port 4000)</pre>
+		</div>
+</div></div>
+
+<h1><a name="UpgradingChef0.9.xtoChef10.x-InstallgecodeontheServers"></a>Install gecode on the Servers</h1>
+
+<p>Gecode is a pre-requisite of dep_selector gem, which Chef Server depends on. It's only needed on the server side.</p>
+</td> 
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-BeforeUpgrading'>Before Upgrading</a></li>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-InstallgecodeontheServers'>Install gecode on the Servers</a></li>
+<ul>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-InstallUsingDebPackage'>Install Using Deb Package</a></li>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-AddtheOpscodeAPTRepository'>Add the Opscode APT Repository</a></li>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-AddtheGPGKeyandUpdateIndex'>Add the GPG Key and Update Index</a></li>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-UpgradeExistingPackages'>Upgrade Existing Packages</a></li>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-BuildandInstallfromSource'>Build and Install from Source</a></li>
+</ul>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-UpgradeChefServer'>Upgrade Chef Server</a></li>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-UpgradeChefSolrandInstallChefExpander'>Upgrade Chef Solr and Install Chef Expander</a></li>
+<ul>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-UpgradeSolr'>Upgrade Solr</a></li>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-ReplaceChefSolrIndexerwithChefExpander'>Replace Chef Solr Indexer with Chef Expander</a></li>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-MakeChefExpanderarunitService'>Make Chef Expander a runit Service</a></li>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-RemoveChefSolrIndexerService'>Remove Chef-Solr-Indexer Service</a></li>
+</ul>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-StarttheServices'>Start the Services</a></li>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-UpgradeClients'>Upgrade Clients</a></li>
+    <li><a href='#UpgradingChef0.9.xtoChef10.x-RebuildYourIndex'>Rebuild Your Index</a></li>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="3%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top">
+
+<h2><a name="UpgradingChef0.9.xtoChef10.x-InstallUsingDebPackage"></a>Install Using Deb Package</h2>
+
+<p>On Ubuntu lucid, maverick, or Debian lenny release, you can install gecode deb package from the Opscode APT repository.</p>
+
+<p>
+<h2><a name="UpgradingChef0.9.xtoChef10.x-AddtheOpscodeAPTRepository"></a>Add the Opscode APT Repository</h2>
+
+<p><font color="#f7681a">Create <tt>/etc/apt/sources.list.d/opscode.list</tt>.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/apt/sources.list.d/opscode.list</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[deb http://apt.opscode.com/ &lt;codename&gt; main]]></script>
+</div></div>
+
+<ul>
+	<li>For Chef 0.9.x, replace codename with the supported distribution codename, such as "lucid".</li>
+	<li>For Chef 0.10.x, replace codename with the codename, suffixed with "-0.10", for example, "lucid-0.10".</li>
+</ul>
+
+
+<p>If you would like to be able to download source packages, add an additional identical line, but change <tt>deb</tt> to <tt>deb-src</tt> line.</p>
+
+<p>You can copy and paste these examples to create the necessary sources.list entry:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Ubuntu for Chef 0.9.x</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[echo "deb http://apt.opscode.com/ `lsb_release -cs` main" | sudo tee /etc/apt/sources.list.d/opscode.list]]></script>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Ubuntu for Chef 0.10.x</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | sudo tee /etc/apt/sources.list.d/opscode.list]]></script>
+</div></div>
+<p>Debian users will likely need to run 'apt-get install sudo wget lsb-release' as root before pasting the examples.</p>
+
+<h2><a name="UpgradingChef0.9.xtoChef10.x-AddtheGPGKeyandUpdateIndex"></a>Add the GPG Key and Update Index</h2>
+
+<p><font color="#f7681a">Before you install the packages, make sure you add the Opscode GPG key to apt.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo mkdir -p /etc/apt/trusted.gpg.d
+gpg --keyserver keys.gnupg.net --recv-keys 83EF826A
+gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg &gt; /dev/null]]></script>
+</div></div>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Issues downloading from gnupg.net?</b><br />If you get an error when trying to download the key that states that the "keyserver timed out", try downloading the key directly from our apt repository instead:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[gpg --fetch-key http://apt.opscode.com/packages@opscode.com.gpg.key]]></script>
+</div></div>
+<p>Afterwards you'll also want to run this command again:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg &gt; /dev/null]]></script>
+</div></div></td></tr></table></div>
+
+<p>Now, we update apt-get with the newly added Opscode repository:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo apt-get update]]></script>
+</div></div>
+
+<p>Installing the opscode-keyring package will keep the key up-to-date:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo apt-get install opscode-keyring # permanent upgradeable keyring]]></script>
+</div></div>
+
+<h2><a name="UpgradingChef0.9.xtoChef10.x-UpgradeExistingPackages"></a>Upgrade Existing Packages</h2>
+
+<p>To ensure you are using the latest versions of libraries that chef depends on, you may wish to update your existing packages:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo apt-get upgrade]]></script>
+</div></div>
+</p>
+
+<h3><a name="UpgradingChef0.9.xtoChef10.x-Installdebpackage"></a>Install deb package</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get install libgecode-dev</pre>
+		</div>
+</div></div>
+
+
+<h2><a name="UpgradingChef0.9.xtoChef10.x-BuildandInstallfromSource"></a>Build and Install from Source</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cd /tmp
+curl -C - -O  http://www.gecode.org/download/gecode-3.5.0.tar.gz
+tar zxvf gecode-3.5.0.tar.gz
+cd gecode-3.5.0 &amp;&amp; ./configure
+make &amp;&amp; make install</pre>
+		</div>
+</div></div>
+
+<h1><a name="UpgradingChef0.9.xtoChef10.x-UpgradeChefServer"></a>Upgrade Chef Server</h1>
+
+<p>For RubyGems installation:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false"># server:
+sudo gem install chef chef-server</pre>
+		</div>
+</div></div>
+
+<p>For a Debian/Ubuntu installation:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get update
+sudo apt-get install chef chef-server</pre>
+		</div>
+</div></div>
+
+<h1><a name="UpgradingChef0.9.xtoChef10.x-UpgradeChefSolrandInstallChefExpander"></a>Upgrade Chef Solr and Install Chef Expander</h1>
+<p>Chef 10.X includes an upgraded version of Solr and uses a different schema with Solr, so you will need to upgrade Solr and then rebuild the index. Before doing anything, make sure to back up your Solr Data directory. By default the data directory is located at <tt>/var/chef/solr/data</tt>, though it may be located elsewhere if you've installed from packages or customized the installation. You can backup your Solr data by stopping Solr and making a copy of the data directory and its contents.</p>
+
+<h2><a name="UpgradingChef0.9.xtoChef10.x-UpgradeSolr"></a>Upgrade Solr</h2>
+
+<p>For a Debian/Ubuntu installation:</p>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Skip chef-solr-installer on Ubuntu/Debian</b><br />Skip this section on upgrading Solr if you're upgrading using debs on Ubuntu/Debian. The deb packages automatically install this for you. If you get complaints about "start.config" not being found when launching chef-solr after the upgrade, try running:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rm /etc/chef/solr.rb
+apt-get install -f chef-solr</pre>
+		</div>
+</div></div>
+
+<p>You will need to rebuild your indexes after the upgrade. To do so, run:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife index rebuild</pre>
+		</div>
+</div></div></td></tr></table></div>
+
+<p>Once your data is backed up, run <tt>chef-solr-installer</tt> to upgrade your Chef Solr installation. Answer "yes" when prompted for confirmation. The process should look like this:</p>
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>yourshell&gt; chef-solr-installer 
+Configuration setting solr_heap_size is unknown and will be ignored
+
+Chef Solr is already installed in /var/chef/solr
+Do you want to overwrite the current install? All existing Solr data will be lost. [y/n] y
+Removing the existing Chef Solr installation
+  rm -rf /var/chef/solr
+  rm -rf /var/chef/solr-jetty
+  rm -rf /var/chef/solr/data
+Creating Solr Home Directory
+  mkdir -p /var/chef/solr
+  entering /var/chef/solr
+  tar zxvf /Users/ddeleo/opscode/chef/chef-solr/solr/solr-home.tar.gz
+Creating Solr Data Directory
+  mkdir -p /var/chef/solr/data
+Unpacking Solr Jetty
+  mkdir -p /var/chef/solr-jetty
+  entering /var/chef/solr-jetty
+  tar zxvf /Users/ddeleo/opscode/chef/chef-solr/solr/solr-jetty.tar.gz
+
+Successfully installed Chef Solr.
+You can restore your search index using `knife index rebuild`
+</pre>
+</div></div>
+
+<h2><a name="UpgradingChef0.9.xtoChef10.x-ReplaceChefSolrIndexerwithChefExpander"></a>Replace Chef Solr Indexer with Chef Expander</h2>
+<p>In Chef 10.0+, chef-solr-indexer is replaced by Chef Expander. Complete documentation for Chef Expander is provided on the <a href="Chef Indexer.html#ChefIndexer-ChefExpander">Chef Indexer architecture page.</a>. To start Chef Expander using your existing solr.rb configuration:</p>
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>shell&gt; chef-expander -n 1
+</pre>
+</div></div>
+<p>If you wish to use a configuration file other than <tt>/etc/chef/solr.rb</tt>, pass the config file with <tt>-c</tt>:</p>
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>shell&gt; chef-expander -n 1 -c /etc/custom-location/config-file.rb
+</pre>
+</div></div>
+
+<h2><a name="UpgradingChef0.9.xtoChef10.x-MakeChefExpanderarunitService"></a>Make Chef Expander a runit Service</h2>
+<p>If you manage the Chef-Server with chef-solo, you can use the update your cookbook that manages the server to add Chef Expander as a runit service. </p>
+
+<p>For example:</p>
+
+<p>In the recipe you use through chef-solo to manage your server</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">runit_service "chef-expander"</pre>
+		</div>
+</div></div>
+
+<p>Add templates sv-chef-expander-run.erb</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">#!/bin/sh
+PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin&lt;% if 
+@node[:languages][:ruby][:gems_dir] %&gt;:&lt;%= @node[:languages][:ruby][:gems_dir] %&gt;/bin&lt;% end -%&gt;
+exec 2&gt;&amp;1
+exec /usr/bin/env chef-expander -n 1</pre>
+		</div>
+</div></div>
+
+<p>Add template sv-chef-expander-log-run.erb</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">#!/bin/sh
+exec svlogd -tt ./main</pre>
+		</div>
+</div></div>
+
+<p>Make sure you remove chef-server-indexer from your recipe before running chef-solo.</p>
+
+<h2><a name="UpgradingChef0.9.xtoChef10.x-RemoveChefSolrIndexerService"></a>Remove Chef-Solr-Indexer Service</h2>
+<p>Delete chef-solr-indexer in <tt>/etc/sv</tt>, <tt>/etc/service/</tt> and <tt>/etc/init.d</tt>.</p>
+
+<h1><a name="UpgradingChef0.9.xtoChef10.x-StarttheServices"></a>Start the Services</h1>
+
+<p>This is handled by the deb packaging for you.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">for svc in server-webui solr expander server
+do
+  sudo /etc/init.d/chef-${svc} start
+done</pre>
+		</div>
+</div></div>
+
+<h1><a name="UpgradingChef0.9.xtoChef10.x-UpgradeClients"></a>Upgrade Clients</h1>
+<p>Upgrading the clients can now be done. Simply install the new gem or package and restart the chef-client service.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo gem install chef
+sudo /etc/init.d/chef-client restart</pre>
+		</div>
+</div></div>
+
+<p>Debian packaging; the service will be stopped and started for you.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get update
+sudo apt-install chef</pre>
+		</div>
+</div></div>
+
+<h1><a name="UpgradingChef0.9.xtoChef10.x-RebuildYourIndex"></a>Rebuild Your Index</h1>
+<p>Once Solr has been upgraded and you have chef-expander and all other chef-server services running, you can rebuild your index by running <tt>knife index rebuild</tt> from whatever machine you normally run knife from.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="3%"></td></tr></tbody></table>
+
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-11666261"></a>
+                                    <font class="smallfont"><p>chef-expander-cluster is no longer there apparently. May I replace it with chef-expander -n1 to launch it?</p>
+
+<p>Running chef-expander-0.10.0.rc1</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rubiojr at Apr 29, 2011 10:19
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-11666266"></a>
+                                    <font class="smallfont"><p>Yes, we changed the names to be less confusing and missed a few spots when we updated the documentation. Now <tt>chef-expander</tt> is the recommended way to run it, and <tt>chef-expander-vnode</tt> is there for very advanced use cases.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by dan@kallistec.com at Apr 29, 2011 14:26
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-12353543"></a>
+                                    <font class="smallfont"><p>Additionally, the --pre flag passed to 'gem install chef chef-server' is also unnecessary now <img class="emoticon" src="images/icons/emoticons/smile.gif" height="20" width="20" align="absmiddle" alt="" border="0"/></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by dahlgren at May 04, 2011 22:48
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-12910598"></a>
+                                    <font class="smallfont"><p>Impatient as I was I wanted to upgrade before the Ubuntu deb's were released.  So I wiped the deb install and did the ruby gem install.</p>
+
+<p>Once the chef-solo bootstrap was complete I started up all the services and tried things out.  Didn't work.  Couldn't do the <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife index rebuild</pre>
+		</div>
+</div></div><br/>
+Additionally rabbitmq started filling up the disk quickly.</p>
+
+<p>The solution was to simply update the rabbitmq password: <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rabbitmqctl change_password chef testing</pre>
+		</div>
+</div></div>.  After that all seems to be okay.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jinnko at May 19, 2011 13:10
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728798"></a>
+                                    <font class="smallfont"><p>Before i did my upgrade I put an iptables rule in place to stop connections.  We have recipes that depend on search and they would have failed while the index was being rebuilt.  It also allowed the index to rebuild faster as it wasn't competing with the clients for cpu time.</p>
+
+<p>Blocks connections (You may need to adjust your interface to match)<br/>
+iptables -A INPUT -p tcp -i eth0 --dport 4000 -j DROP</p>
+
+<p>Re-enables connections<br/>
+iptables -D INPUT -p tcp -i eth0 --dport 4000 -j DROP</p>
+
+
+<p>I also found I needed to restart couchdb and the rabbitmq-server for it to work.  Not sure if that is normal but it was my experience, ymmv</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by asg1290 at Jul 13, 2011 17:01
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24772656"></a>
+                                    <font class="smallfont"><p>What about a porting guide for the <b>Cookbooks</b>? I understand many coding style changes took place there. not only node:foo is now node"foo", but also the way I code sending action signals to services and such. Is this summed up in a Wiki page anywhere? could not find it.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ira at May 29, 2012 10:08
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

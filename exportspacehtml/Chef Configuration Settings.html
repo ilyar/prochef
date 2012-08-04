@@ -1,0 +1,819 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Chef Configuration Settings</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Chef Configuration Settings
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jamescott</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="70%">
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/2457698/16187414.png" hspace="20" vspace="4" style="border: 0px solid black"/></span></p>
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h4><a name="ChefConfigurationSettings-"></a><font color="#f7681a">This document describes all the configuration settings available for the Chef executables.</font></h4>
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+
+<h1><a name="ChefConfigurationSettings-ChefExecutables"></a>Chef Executables</h1>
+<p><font color="#f7681a">Each Chef executable is configured through the <a href="http://github.com/opscode/chef/tree/master/chef/lib/chef/config.rb">Chef::Config</a> object.</font> When the executables are run, they load the default config file. Some settings are applicable only when the executable is run as a daemon, so whether daemonizing is possible is noted here.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Executable </th>
+<th class='confluenceTh'> Config File </th>
+<th class='confluenceTh'> Daemon? </th>
+</tr>
+<tr>
+<th class='confluenceTh'> chef-solo </th>
+<td class='confluenceTd'> <tt>/etc/chef/solo.rb</tt> </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> chef-client </th>
+<td class='confluenceTd'> <tt>/etc/chef/client.rb</tt> </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> chef-server </th>
+<td class='confluenceTd'> <tt>/etc/chef/server.rb</tt> </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> chef-server-webui </th>
+<td class='confluenceTd'> <tt>/etc/chef/server.rb</tt> </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> chef-solr </th>
+<td class='confluenceTd'> <tt>/etc/chef/solr.rb</tt> </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> chef-solr-indexer </th>
+<td class='confluenceTd'> <tt>/etc/chef/solr.rb</tt> </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> chef-solr-rebuild </th>
+<td class='confluenceTd'> <tt>/etc/chef/solr.rb</tt> </td>
+<td class='confluenceTd'> No </td>
+</tr>
+<tr>
+<th class='confluenceTh'> knife </th>
+<td class='confluenceTd'> <tt>&#126;/.chef/knife.rb</tt> </td>
+<td class='confluenceTd'> No </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><b>If the file is not found, default values are used from <a href="http://github.com/opscode/chef/blob/master/chef/lib/chef/config.rb#L104-L216">Chef::Config</a>.</b></p>
+
+<p>In this page, settings are first listed in the Ruby DSL context, followed by a description of the setting and applicable executable context. Similar settings, such as those used only in the webui, are grouped together.</p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Ruby DSL</b><br />These files are written using a Ruby DSL that specifies the setting and its value. Some values will be specified as strings, others as Integers, Floats or Arrays.</td></tr></table></div>
+</td>
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ChefConfigurationSettings-ChefExecutables'>Chef Executables</a></li>
+    <li><a href='#ChefConfigurationSettings-Configurationvalues'>Configuration values</a></li>
+<ul>
+    <li><a href='#ChefConfigurationSettings-amqpsettings'>amqp settings</a></li>
+    <li><a href='#ChefConfigurationSettings-cachesettings'>cache settings</a></li>
+    <li><a href='#ChefConfigurationSettings-certificatesettings'>certificate settings</a></li>
+    <li><a href='#ChefConfigurationSettings-chefserverurl'>chef_server_url</a></li>
+    <li><a href='#ChefConfigurationSettings-clienturl'>client_url</a></li>
+    <li><a href='#ChefConfigurationSettings-clientregistrationretries'>client_registration_retries</a></li>
+    <li><a href='#ChefConfigurationSettings-cookbookpath'>cookbook_path</a></li>
+    <li><a href='#ChefConfigurationSettings-cookbooktarballpath'>cookbook_tarball_path</a></li>
+    <li><a href='#ChefConfigurationSettings-couchdb'>couchdb_*</a></li>
+    <li><a href='#ChefConfigurationSettings-databagpath'>data_bag_path</a></li>
+    <li><a href='#ChefConfigurationSettings-environment'>environment</a></li>
+    <li><a href='#ChefConfigurationSettings-filecachepath'>file_cache_path</a></li>
+    <li><a href='#ChefConfigurationSettings-filebackuppath'>file_backup_path</a></li>
+    <li><a href='#ChefConfigurationSettings-userandgroup'>user and group</a></li>
+    <li><a href='#ChefConfigurationSettings-httpproxy%2Chttpsproxy%2Cnoproxy'>http_proxy*, https_proxy, no_proxy</a></li>
+    <li><a href='#ChefConfigurationSettings-httpretry'>http_retry_*</a></li>
+    <li><a href='#ChefConfigurationSettings-intervalandsplay'>interval and splay</a></li>
+    <li><a href='#ChefConfigurationSettings-jsonattribs'>json_attribs</a></li>
+    <li><a href='#ChefConfigurationSettings-logoutput'>log output</a></li>
+    <li><a href='#ChefConfigurationSettings-nodename'>node_name</a></li>
+    <li><a href='#ChefConfigurationSettings-nodepath'>node_path</a></li>
+    <li><a href='#ChefConfigurationSettings-pidfile'>pid_file</a></li>
+    <li><a href='#ChefConfigurationSettings-recipeurl'>recipe_url</a></li>
+    <li><a href='#ChefConfigurationSettings-resttimeout'>rest_timeout</a></li>
+    <li><a href='#ChefConfigurationSettings-rolepath'>role_path</a></li>
+    <li><a href='#ChefConfigurationSettings-solo'>solo</a></li>
+    <li><a href='#ChefConfigurationSettings-solrsettings'>solr settings</a></li>
+    <li><a href='#ChefConfigurationSettings-sslsettings'>ssl settings</a></li>
+    <li><a href='#ChefConfigurationSettings-uploadsettings'>upload settings</a></li>
+    <li><a href='#ChefConfigurationSettings-umask'>umask</a></li>
+    <li><a href='#ChefConfigurationSettings-webuioptions'>webui options</a></li>
+    <li><a href='#ChefConfigurationSettings-signingcasettings'>signing_ca settings</a></li>
+</ul>
+    <li><a href='#ChefConfigurationSettings-UnusedSettings'>Unused Settings</a></li>
+    <li><a href='#ChefConfigurationSettings-DeprecatedSettings'>Deprecated Settings</a></li>
+</ul></div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="7%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<h1><a name="ChefConfigurationSettings-Configurationvalues"></a>Configuration values</h1>
+<h2><a name="ChefConfigurationSettings-amqpsettings"></a>amqp settings</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">amqp_host '0.0.0.0'
+amqp_port '5672'
+amqp_user 'chef'
+amqp_pass 'testing'
+amqp_vhost '/chef'
+amqp_consumer_id "default"</pre>
+		</div>
+</div></div>
+
+<p>These are for the AMQP host and vhost connection. For the consumer_id, <tt>chef-indexer</tt> is prepended automatically.</p>
+
+<p><font color="#f7681a">Context: chef-server, chef-solr, chef-solr-indexer</font></p>
+
+<h2><a name="ChefConfigurationSettings-cachesettings"></a>cache settings</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cache_type "BasicFile"
+cache_options({ :path =&gt; "/var/chef/cache/checksums", :skip_expires =&gt; true })</pre>
+		</div>
+</div></div>
+
+<p>Checksums of files used in remote_file and template <a href="Resources.html" title="Resources">Resources</a> are stored in a cache using Moneta, which can be configured using these options.</p>
+
+<p><font color="#f7681a">Context: chef-solo, chef-client</font></p>
+
+<h2><a name="ChefConfigurationSettings-certificatesettings"></a>certificate settings</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">client_key "/etc/chef/client.pem"
+validation_key "/etc/chef/validation.pem"
+validation_client_name "chef-validator"</pre>
+		</div>
+</div></div>
+
+<p>Authenticate the client using the file named in client_key. Use the valdiation_key to automatically register a new client with the server. The validation_key is signed using the validation_client_name for authentication. The validation_client_name located in the server and client configuration files must match.</p>
+
+<p><font color="#f7681a">Context: chef-client, chef-server</font></p>
+
+<h2><a name="ChefConfigurationSettings-chefserverurl"></a>chef_server_url</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">chef_server_url "http://localhost:4000"</pre>
+		</div>
+</div></div>
+
+<p>Specifies the Chef Server to connect to. Can be any valid HTTP URL, including HTTPS. Learn more about the <a href="Chef Server.html" title="Chef Server">Chef Server</a>.</p>
+
+<p>When using the Opscode Platform, this will be <tt><a href="https://api.opscode.com/organizations/ORGNAME">https://api.opscode.com/organizations/ORGNAME</a></tt>, where ORGNAME is your organization short name that you created when signing up for the service.</p>
+
+<p><font color="#f7681a">Context: chef-client, chef-server, chef-server-webui, <a href="Knife.html" title="Knife">Knife</a></font></p>
+
+<h2><a name="ChefConfigurationSettings-clienturl"></a>client_url</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">client_url "http://localhost:4042"</pre>
+		</div>
+</div></div>
+
+<p>Specify the URL clients should use to connect to for registering with the server.</p>
+
+<p><font color="#f7681a">Context: chef-client</font></p>
+
+<h2><a name="ChefConfigurationSettings-clientregistrationretries"></a>client_registration_retries</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">client_registration_retries 5</pre>
+		</div>
+</div></div>
+
+<p>The number of times the client should attempt to register with the server.</p>
+
+<p><font color="#f7681a">Context: chef-client</font>
+<br class="atl-forced-newline" /></p>
+<h2><a name="ChefConfigurationSettings-cookbookpath"></a>cookbook_path</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cookbook_path [ "/var/chef/cookbooks", "/var/chef/site-cookbooks" ]</pre>
+		</div>
+</div></div>
+
+<p>A string or array of filesystem locations to search for cookbooks. Processed in the order specified so that the first is considered "upstream" and the last is considered overriding local modifications.</p>
+
+<p><font color="#f7681a">Context:<br/>
+<br/>
+* chef-solo - Loads cookbooks from the specified directory.<br/>
+* chef-client - Set to the 'cookbooks' subdirectory under <tt>Chef::Config:file_cache_path</tt> at runtime.<br/>
+* chef-server - Used for storing cookbook tarball artifacts.<br/>
+* knife - used for uploading, see <a href="Knife.html" title="Knife">Knife</a>'s documentation.</font></p>
+
+<h2><a name="ChefConfigurationSettings-cookbooktarballpath"></a>cookbook_tarball_path</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cookbook_tarball_path "/var/chef/cookbook-tarballs"</pre>
+		</div>
+</div></div>
+
+<p>Location where the Chef Server stores cookbook tarballs for distribution to clients.</p>
+
+<p><font color="#f7681a">Context: chef-server</font>
+<br class="atl-forced-newline" /></p>
+<h2><a name="ChefConfigurationSettings-couchdb"></a>couchdb_*</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">couchdb_database "chef"
+couchdb_url "http://localhost:5984"
+couchdb_version nil</pre>
+		</div>
+</div></div>
+
+<p>Configure CouchDB settings for the Chef Server. These specify the database and URL to use, as well as the version. Chef attempts to determine the CouchDB version at runtime, and this setting is used to determine what API capability can be used.</p>
+
+<p><font color="#f7681a">Context: chef-server</font></p>
+
+<h2><a name="ChefConfigurationSettings-databagpath"></a>data_bag_path</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">data_bag_path "/var/chef/databags"</pre>
+		</div>
+</div></div>
+
+<p>Location where chef-solo can load data bag json files from.</p>
+
+<p><font color="#f7681a">Context: chef-solo</font></p>
+
+<h2><a name="ChefConfigurationSettings-environment"></a>environment</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">environment "production"</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">Context:<br/>
+<br/>
+* chef-client - with -E or in the client.rb config file sets the environment for the node running chef.<br/>
+* knife - with -E or in knife.rb sets the environment for relevant knife commands such as knife bootstrap, cloud creation, and more. See <a href="Knife.html" title="Knife">Knife's</a> documentation.</font></p>
+
+<h2><a name="ChefConfigurationSettings-filecachepath"></a>file_cache_path</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file_cache_path "/var/chef/cache"</pre>
+		</div>
+</div></div>
+
+<p>Where to locally store cache files like cookbooks and other transient data.</p>
+
+<p><font color="#f7681a">Context:<br/>
+<br/>
+* chef-solo - When downloading cookbooks from a remote URL, store them in this location.<br/>
+* chef-client - Where synchronized cookbooks are stored.</font></p>
+
+<p>This value can also be used in <a href="Recipes.html" title="Recipes">Recipes</a> to download files with the <a href="Resources.html#Resources-RemoteFile">remote_file</a> resource.</p>
+
+<h2><a name="ChefConfigurationSettings-filebackuppath"></a>file_backup_path</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file_backup_path "/var/chef/backup"</pre>
+		</div>
+</div></div>
+
+<p>Configurable location to store backups of files instead of the directory of the target file, for template, remote_file and file <a href="Resources.html" title="Resources">Resources</a>.</p>
+
+<p><font color="#f7681a">Context: chef-solo, chef-client</font></p>
+
+<h2><a name="ChefConfigurationSettings-userandgroup"></a>user and group</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">user nil
+group nil</pre>
+		</div>
+</div></div>
+
+<p>System user and group to own the process. Applicable when starting any of the executables as a daemon.</p>
+
+<p><font color="#f7681a">Context: chef-client, chef-server, chef-server-webui, chef-solr, chef-solr-indexer</font></p>
+
+<h2><a name="ChefConfigurationSettings-httpproxy%2Chttpsproxy%2Cnoproxy"></a>http_proxy*, https_proxy, no_proxy</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">http_proxy nil
+https_proxy nil
+http_proxy_user nil
+http_proxy_pass nil
+no_proxy nil</pre>
+		</div>
+</div></div>
+
+<p>Specify the proxy server for HTTP/HTTPS with the <tt>http_proxy</tt> and <tt>https_proxy</tt> settings respectively. If the proxy server requires a username and password, use <tt>http_proxy_user</tt> and <tt>http_proxy_pass</tt>. For URLs that don't need a proxy, specify a comma separated list of URLs to exclude from proxying with <tt>no_proxy</tt>.</p>
+
+<p>For example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">http_proxy "http://proxy.vmware.com:3128"
+https_proxy "http://proxy.vmware.com:3128"
+http_proxy_user "my_username"
+http_proxy_pass "Awe_some_Pass_Word!"
+no_proxy "*.vmware.com,10.*"</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">Context: chef-client</font></p>
+
+<h2><a name="ChefConfigurationSettings-httpretry"></a>http_retry_*</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">http_retry_count 5
+http_retry_delay 5</pre>
+		</div>
+</div></div>
+
+<p>Number of times to retry HTTP connections, and the delay between each retry, respectively.</p>
+
+<p><font color="#f7681a">Context: chef-client</font></p>
+
+<h2><a name="ChefConfigurationSettings-intervalandsplay"></a>interval and splay</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">interval nil
+splay nil</pre>
+		</div>
+</div></div>
+
+<p>Run the client on the specified interval, in seconds. The default value is 1800, configured in the chef-client application run time, rather than in the <tt>Chef::Config</tt>. The splay value is a random number of seconds to add to the interval to reduce potential server load of many clients running at the same time.</p>
+
+<p><font color="#f7681a">Context: chef-client</font></p>
+
+<h2><a name="ChefConfigurationSettings-jsonattribs"></a>json_attribs</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">json_attribs nil</pre>
+		</div>
+</div></div>
+
+<p>Specify JSON attributes, including a default run_list, for the node. Overrides whatever other attributes are set from other places like <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> and <a href="Roles.html" title="Roles">Roles</a>.</p>
+
+<p><font color="#f7681a">Context: chef-solo, chef-client</font></p>
+
+<h2><a name="ChefConfigurationSettings-logoutput"></a>log output</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">log_level :info
+log_location STDOUT
+verbose_logging nil</pre>
+		</div>
+</div></div>
+
+<p>Settings for log output. When Chef runs, it will display messages of the log_level or higher, to the specified log_location. If the log_location is set to another location than STDOUT, verbose_logging will tell Chef to also log to STDOUT, otherwise there would be no output other than to the file.</p>
+
+<p>Chef uses Opscode <a href="http://github.com/opscode/mixlib-log">mixlib-log</a> library to handle logging. See <a href="Advanced Configuration Settings with Ruby.html" title="Advanced Configuration Settings with Ruby">Advanced Configuration Settings with Ruby</a> for information on how to log Chef executable output to Unix syslog.</p>
+
+<p>Valid log_levels are, in order of priority:</p>
+
+<ul>
+	<li>:debug</li>
+	<li>:info</li>
+	<li>:warn</li>
+	<li>:error</li>
+	<li>:fatal</li>
+</ul>
+
+
+<p>In Chef 0.10.6+, setting <tt>verbose_logging</tt> to <tt>false</tt> will suppress notifications about individual resources being processed.  These notifications are output at the <tt>:info</tt> log level.  Setting <tt>verbose_logging</tt> to <tt>false</tt> can be useful for running chef-client as a daemon.  Below is an example of the difference in output when verbose_logging is set to <tt>false</tt>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>verbose_logging set to true or nil</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[Mon, 21 Nov 2011 09:36:50 -0800] INFO: *** Chef 0.10.6.rc.1 ***
+[Mon, 21 Nov 2011 09:36:52 -0800] INFO: Setting the run_list to ["recipe[test-verbose-logging]"] from JSON
+[Mon, 21 Nov 2011 09:36:52 -0800] INFO: Run List is [recipe[test-verbose-logging]]
+[Mon, 21 Nov 2011 09:36:52 -0800] INFO: Run List expands to [test-verbose-logging]
+[Mon, 21 Nov 2011 09:36:52 -0800] INFO: Starting Chef Run for some_node
+[Mon, 21 Nov 2011 09:36:52 -0800] INFO: Running start handlers
+[Mon, 21 Nov 2011 09:36:52 -0800] INFO: Start handlers complete.
+[Mon, 21 Nov 2011 09:36:53 -0800] INFO: Loading cookbooks [test-verbose-logging]
+[Mon, 21 Nov 2011 09:36:53 -0800] INFO: Processing file[/tmp/test1] action create (test-verbose-logging::default line 20)
+[Mon, 21 Nov 2011 09:36:53 -0800] INFO: Processing file[/tmp/test2] action create (test-verbose-logging::default line 21)
+[Mon, 21 Nov 2011 09:36:53 -0800] INFO: Processing file[/tmp/test3] action create (test-verbose-logging::default line 22)
+[Mon, 21 Nov 2011 09:36:53 -0800] INFO: Processing file[/tmp/test4] action create (test-verbose-logging::default line 23)
+[Mon, 21 Nov 2011 09:36:54 -0800] INFO: Chef Run complete in 1.802127 seconds
+[Mon, 21 Nov 2011 09:36:54 -0800] INFO: Running report handlers
+[Mon, 21 Nov 2011 09:36:54 -0800] INFO: Report handlers complete</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>verbose_logging set to false</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[Mon, 21 Nov 2011 09:37:38 -0800] INFO: *** Chef 0.10.6.rc.1 ***
+[Mon, 21 Nov 2011 09:37:39 -0800] INFO: Setting the run_list to ["recipe[test-verbose-logging]"] from JSON
+[Mon, 21 Nov 2011 09:37:39 -0800] INFO: Run List is [recipe[test-verbose-logging]]
+[Mon, 21 Nov 2011 09:37:39 -0800] INFO: Run List expands to [test-verbose-logging]
+[Mon, 21 Nov 2011 09:37:39 -0800] INFO: Starting Chef Run for some_node
+[Mon, 21 Nov 2011 09:37:39 -0800] INFO: Running start handlers
+[Mon, 21 Nov 2011 09:37:39 -0800] INFO: Start handlers complete.
+[Mon, 21 Nov 2011 09:37:40 -0800] INFO: Loading cookbooks [test-verbose-logging]
+[Mon, 21 Nov 2011 09:37:41 -0800] INFO: Chef Run complete in 1.565369 seconds
+[Mon, 21 Nov 2011 09:37:41 -0800] INFO: Running report handlers
+[Mon, 21 Nov 2011 09:37:41 -0800] INFO: Report handlers complete</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">Context: All executables</font></p>
+
+<h2><a name="ChefConfigurationSettings-nodename"></a>node_name</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">node_name nil</pre>
+		</div>
+</div></div>
+
+<p>Sets the name of this node, which determines what configuration to apply. Learn more about <a href="Nodes.html" title="Nodes">Nodes</a>. Also sets the client_name, which is used as the name to use when authenticating with a Chef Server. Learn more about <a href="http://wiki.opscode.com/display/LEG/Authentication" title="Authentication">Authentication</a>. The default value is set automatically to the fully qualified domain name (fqdn) as detected by <a href="Ohai.html" title="Ohai">Ohai</a>.</p>
+
+<p><font color="#f7681a">Context: chef-solo, chef-client</font></p>
+
+<h2><a name="ChefConfigurationSettings-nodepath"></a>node_path</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">node_path "/var/chef/node"</pre>
+		</div>
+</div></div>
+
+<p>Location to look for node-specific recipes.</p>
+
+<p><font color="#f7681a">Context: chef-solo, chef-client</font></p>
+
+<h2><a name="ChefConfigurationSettings-pidfile"></a>pid_file</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">pid_file nil</pre>
+		</div>
+</div></div>
+
+<p>When started as a daemon, the executable will write the PID to the specified file. Otherwise, it will use <tt>/tmp/executable.pid</tt>.</p>
+
+<p><font color="#f7681a">Context: chef-client, chef-server, chef-solr, chef-solr-indexer</font></p>
+
+<h2><a name="ChefConfigurationSettings-recipeurl"></a>recipe_url</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">recipe_url nil</pre>
+		</div>
+</div></div>
+
+<p>URL location of remote cookbook tarball to download with <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a>.</p>
+
+<p><font color="#f7681a">Context: chef-solo</font></p>
+
+<h2><a name="ChefConfigurationSettings-resttimeout"></a>rest_timeout</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">rest_timeout 300</pre>
+		</div>
+</div></div>
+
+<p>Timeout for HTTP REST requests</p>
+
+<p><font color="#f7681a">Context: All executables.</font></p>
+
+<h2><a name="ChefConfigurationSettings-rolepath"></a>role_path</h2>
+
+<p>Where <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a> should look for role files.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">role_path "/var/chef/roles"</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">Context: chef-solo.</font></p>
+
+<h2><a name="ChefConfigurationSettings-solo"></a>solo</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">solo  false</pre>
+		</div>
+</div></div>
+
+<p>Whether Chef is being run in "solo" mode or not. Determines if it should attempt to communicate with a <a href="Chef Server.html" title="Chef Server">Chef Server</a>. It gets set automatically when running chef-solo and if running <a href="Shef.html" title="Shef">Shef</a> in solo mode.</p>
+
+<p><font color="#f7681a">Context: chef-solo, <a href="Shef.html" title="Shef">Shef</a>.</font></p>
+
+<h2><a name="ChefConfigurationSettings-solrsettings"></a>solr settings</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">solr_url "http://localhost:8983"</pre>
+		</div>
+</div></div>
+
+<p>URL of the Solr search engine server.</p>
+
+<p><font color="#f7681a">Context: chef-server, chef-solr, chef-solr-indexer</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">solr_jetty_path "/var/chef/solr-jetty"
+solr_data_path "/var/chef/solr/data"
+solr_home_path "/var/chef/solr"
+solr_heap_size "256M"
+solr_java_opts nil</pre>
+		</div>
+</div></div>
+
+<p>Settings that control the Solr jetty environment. Points to the jetty environment, the Solr indexes, Solr's home directory, the amount of memory for the JVM running Solr and additional options to pass to Solr's Java, respectively.</p>
+
+<p><font color="#f7681a">Context: chef-solr, chef-solr-indexer</font></p>
+
+<h2><a name="ChefConfigurationSettings-sslsettings"></a>ssl settings</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">ssl_client_cert ""
+ssl_client_key ""
+ssl_ca_path nil
+ssl_ca_file nil</pre>
+		</div>
+</div></div>
+
+<p>Settings used to create certificate files used for client/server <a href="http://wiki.opscode.com/display/LEG/Authentication" title="Authentication">Authentication</a>. These are OpenSSL X509 certificate, key and the CA.</p>
+
+<p>These values are generated automatically and used internally. Most users won't need to modify these settings.</p>
+
+<p><font color="#f7681a">Context: chef-client, chef-server, chef-server-webui</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">ssl_verify_mode :verify_none</pre>
+		</div>
+</div></div>
+
+<p>Controls HTTP verify mode, can be none or peer, for HTTPS requests.</p>
+
+<p>Opscode Hosted Chef customers can use <tt>:verify_peer</tt> as the <tt>ssl_verify_mode</tt>. Depending on how OpenSSL was installed, the CA path may need to be specified. For example, on an Ubuntu system:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">ssl_verify_mode :verify_peer
+ssl_ca_path     '/etc/ssl/certs'</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">Context: All executables.</font></p>
+
+
+<h2><a name="ChefConfigurationSettings-uploadsettings"></a>upload settings</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">checksum_path "path_to_folder"
+sandbox_path "path_to_folder"</pre>
+		</div>
+</div></div>
+
+<p>The checksum_path is the location in which checksums for individual cookbook files (such as recipes) are stored. The checksum itself is stored in CouchDB and is used to reference a file with a filename that is identical to the checksum.</p>
+
+<p>The sandbox_path is the location in which cookbook files are stored (temporarily) during upload.</p>
+
+<p><font color="#f7681a">Context: chef-solo</font></p>
+
+
+<h2><a name="ChefConfigurationSettings-umask"></a>umask</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">umask 0022</pre>
+		</div>
+</div></div>
+
+<p>Default file creation umask.</p>
+
+<p><font color="#f7681a">Context: All executables.</font></p>
+
+<h2><a name="ChefConfigurationSettings-webuioptions"></a>webui options</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">web_ui_client_name "chef-webui"
+web_ui_key "/etc/chef/webui.pem"
+web_ui_admin_user_name  "admin"
+web_ui_admin_default_password "p@ssw0rd1"</pre>
+		</div>
+</div></div>
+
+<p>The Chef Server WebUI is a client to the Chef Server API. It must have a corresponding client name and a client key, specified here. The WebUI default login user for humans is specified with the default password here. The password should be changed immediately when logging in.</p>
+
+<p>With <a href="Knife.html" title="Knife">Knife</a>, the chef-webui client and certificate are used to create the initial API client with Knife's <tt>&#45;i</tt> option.</p>
+
+<p><font color="#f7681a">Context: chef-server-webui, <a href="Knife.html" title="Knife">Knife</a></font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">openid_cstore_couchdb false
+openid_cstore_path "/var/chef/openid/cstore"
+authorized_openid_identifiers nil
+authorized_openid_providers nil</pre>
+		</div>
+</div></div>
+
+<p>OpenID is now only used in the Chef Server WebUI. It is optional. WebUI login users can have an OpenID associated. The OpenIDs are not by default stored in CouchDB, instead in the specified location on the filesystem. The difference between identifiers and providers is:</p>
+
+<ul>
+	<li>identifiers are the actual OpenID like username.myopenid.com or <a href="http://username.myopenid.com">http://username.myopenid.com</a>.</li>
+	<li>providers are the OpenID provider like myopenid.com.</li>
+</ul>
+
+
+<p><font color="#f7681a">Context: chef-server-webui</font></p>
+
+<h2><a name="ChefConfigurationSettings-signingcasettings"></a>signing_ca settings</h2>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">signing_ca_cert "/var/chef/ca/cert.pem"
+signing_ca_key "/var/chef/ca/key.pem"
+signing_ca_user nil
+signing_ca_group nil
+signing_ca_country "US"
+signing_ca_state "Washington"
+signing_ca_location "Seattle"
+signing_ca_org "Chef User"
+signing_ca_domain "opensource.opscode.com"
+signing_ca_email "opensource-cert@opscode.com"</pre>
+		</div>
+</div></div>
+
+<p>Chef automatically generates the CA certificate and key for the <a href="http://wiki.opscode.com/display/LEG/Authentication" title="Authentication">Authentication</a> keys it uses. These settings are passed to OpenSSL.</p>
+
+<p><font color="#f7681a">Context: chef-server</font></p>
+
+<h1><a name="ChefConfigurationSettings-UnusedSettings"></a>Unused Settings</h1>
+<hr />
+
+<p>The following unused settings never had their potential fulfilled and may be used in the future.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">executable_path ENV['PATH'] ? ENV['PATH'].split(File::PATH_SEPARATOR) : []
+run_command_stderr_timeout 120
+run_command_stdout_timeout 120</pre>
+		</div>
+</div></div>
+
+<h1><a name="ChefConfigurationSettings-DeprecatedSettings"></a>Deprecated Settings</h1>
+<hr />
+
+<p>The following settings are deprecated and no longer used in Chef. They are kept here for historical purposes.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search_url "http://localhost:4000"
+template_url "http://localhost:4000"
+role_url "http://localhost:4000"
+registration_url "http://localhost:4000"
+remotefile_url "http://localhost:4000"</pre>
+		</div>
+</div></div>
+
+<p>Specifies alternate URLs for various services provided by the <a href="Chef Server.html" title="Chef Server">Chef Server</a>. "Deprecated" in favor of <tt>chef_server_url</tt>. These URLs can still be used to split out Chef Server API functionality, but that is an undocumented capability of the Chef Server.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">delay 0</pre>
+		</div>
+</div></div>
+
+<p>Use <tt>http_retry_delay</tt> instead.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">validation_token nil</pre>
+		</div>
+</div></div>
+
+<p>Originally used to automatically validate new clients. Deprecated for <tt>validation_key</tt> and <tt>validation_client_name</tt>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">openid_store_path "/var/chef/openid/db"
+openid_store_couchdb false
+openid_providers nil
+openid_url "http://localhost:4001"</pre>
+		</div>
+</div></div>
+
+<p>These settings are deprecated in Chef 0.8&#43; due to the OpenID authentication scheme for nodes changing to the new pre-shared key based <a href="http://wiki.opscode.com/display/LEG/Authentication" title="Authentication">Authentication</a>. OpenID is still used as an <b>optional</b> authentication method for users to the WebUI.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">queue_host "localhost"
+queue_password ""
+queue_port 61613
+queue_retry_count 5
+queue_retry_delay 5
+queue_user ""</pre>
+		</div>
+</div></div>
+
+<p>These settings were used for configuring the STOMP queue, which has been deprecated for AMQP (RabbitMQ).
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2457698/16187414.png">Settings.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-24773874"></a>
+                                    <font class="smallfont"><h3><a name="ChefConfigurationSettings-http%28s%29proxysetting"></a>http(s)_proxy setting</h3>
+
+<p>Be sure to test that your proxy server (squid for example) is not caching API replies too aggressively.<br/>
+In squid3 I disabled caching of the Chef API using a 'cache deny' ACL</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by obrientimothya at Jul 31, 2012 05:19
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

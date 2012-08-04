@@ -1,0 +1,98 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>GridLAB-D Simulation Software</title>
+	<!--[if lt IE 8]><script src="/shared/IE8.js" type="text/javascript"></script><![endif]-->
+	<link rel="stylesheet" type="text/css" href="/shared/gridlabd.css" />
+</head>
+
+<body id="home">
+
+<div id="container">    	     
+<div id="wrapper">  
+<img src="/images/header.jpg" id="header_top" alt="" />
+<div id="header">
+  <div id="skipNav"><a href="#content">Skip to Main Content</a></div>  
+<img src="/images/gdlogo.jpg" id="logo" alt="Gridlab-D" /></div>
+<div id="navigation">
+	<ul id="navlist">
+
+
+
+		<li><a href="/" class="home">home</a></li>
+
+		<li><a href="/resources.stm" class="resources">resources</a></li>
+
+		<li><a href="/models/" class="models">models</a></li>
+		
+		<li><a href="http://www.gridlabd.org/documents/troubleshooting.html" target=_blank""class="trouble">troubleshooting</a></li>
+		
+<!--HOLD		<li><a href="/opportunities.stm" class="opportunities">opportunities</a></li> -->
+
+		<li><a href="https://sourceforge.net/news/?group_id=233096" target="_blank" class="news">news</a></li>
+
+		<li><a href="/contact/" class="contact">contacts</a></li>
+	
+
+<!-- removed 5/18/10
+<li><a href="http://sourceforge.net/projects/gridlab-d/files/" target="_blank" class="downloads">downloads</a></li>
+<li><a href="http://sourceforge.net/apps/mediawiki/gridlab-d/index.php?title=Main_Page" target=_blank""class="documents">manuals</a></li>
+<li><a href="https://sourceforge.net/projects/gridlab-d/forums" target="_blank" class="forum">forum</a></li>
+<li><a href="http://sourceforge.net/apps/trac/gridlab-d/" target=_blank""class="support">support</a></li>
+<li><a href="http://gridlab-d.svn.sourceforge.net/viewvc/gridlab-d/" target="_blank" class="source">source</a></li>
+<li><a href="http://sourceforge.net/apps/trac/gridlab-d/timeline" target=_blank""class="history">history</a></li>
+-->	
+	
+	
+	
+	
+	</ul>
+</div>  
+<div id="content">  
+
+<br/>
+<h2>What is RSS?</h2>
+
+<p>RSS, Really Simple Syndication or Rich Site Summary, is an easy way for Web Site owners to post news related items to their site, using such scripting languages as JavaScript, Perl, and PHP. Newshounds can also use an RSS reader to track news automatically.</p>
+
+<h2>How do I use RSS?</h2>
+
+<p>First, you need a feed aggregator also known as a "RSS reader." This displays RSS feeds from your chosen Web sites on your computer. RSS aggregators automatically check RSS feeds that you have subscribed to for new items. Once found, they present them all together for you in an easy to use format. If the title and description of an item are of interest, you can click on the link for a related page on the site. Learn more about <a href="http://www.newsonfeeds.com/faq/aggregators" target="_blank">free and commercial aggregators</a>.</p>
+
+<h2>How do I subscribe to the GridLAB-D RSS feed?</h2>
+
+<p>Once you have an aggregator, click on the orange XML or blue RSS button below to open up the feed. If your news reader is configured to open feeds automatically, the news should pop up in the reader. If all you see is a bunch of code in your browser, you may need to add the feed manually by copying the following URL into the reader's subscription area: <br /> http://www.gridlabd.org/rss/gridlabd.xml</p>
+
+<p>
+<a href="../rss/gridlabd.xml" target="_blank"><img src="../images/xmlicon.gif" alt="XML icon" border="0" /></a><a href="../rss/gridlabd.xml" target="_blank"><img src="../images/rss.gif" alt="RSS icon" border="0" /></a> <br />
+<a href="../rss/gridlabd.xml" target="_blank">Subscribe</a> to GridLAB-D RSS feed.</p>
+
+
+</div>
+ <div id="footer">
+	<!--img src="/images/dots.jpg" id="footer_dots" alt="" /-->
+	<div id="footer_dots">
+		<img src="/images/blue_dot.jpg" class="dot" alt="" />
+		<img src="/images/orange_dot.jpg" class="dot" alt="" />
+		<img src="/images/green_dot.jpg" class="dot" alt="" />
+		<img src="/images/purple_dot.jpg" class="dot" alt="" />
+	</div>
+<p>
+<a href="/contact/">Contact</a> | 
+<a href="/terms.stm">Terms &amp; Conditions</a> |
+<a href="http://www.pnl.gov/disclaimer.asp">Security &amp; Privacy</a> |
+<a href="/rss/rss.stm">RSS Feed</a>
+</p>
+
+  <p class="date">Webmaster:<a href="mailto:teresa.carlon@pnl.gov?subject=GridLAB-D Inquiry">Teresa Carlon</a> &nbsp;&nbsp; Last Updated: May 2010</p>
+
+</div>
+<img src="/images/footer.jpg" id="footer_bottom" alt="" />
+</div>               
+</div>
+
+</body>
+</html>

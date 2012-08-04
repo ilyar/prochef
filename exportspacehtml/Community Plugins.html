@@ -1,0 +1,591 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Community Plugins</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Community Plugins
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />  <span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 1024x768" href='http://wiki.opscode.com/download../attachments/12354019/wildhorses.jpg'><img src="../attachments/thumbnails/12354019/12222577" hspace="12" vspace="40" style="border: 0px solid black"/></a></span></p>
+
+<h1><a name="CommunityPlugins-"></a><font color="#f7681a">Knife, Chef and Ohai Plugins Found in the Wild</font></h1>
+
+<p><b>Knife and Chef plugins can be distributed as gems. Those that are can be found with a gem search.</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">gem search -r knife-
+gem search -r chef-</pre>
+		</div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="21%">
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Found One, Write One, Share One</b><br /><br class="atl-forced-newline" />
+You can help the Chef community by expanding this page, and adding useful plugins that you created or "found in the wild".</td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="45%">
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h3><a name="CommunityPlugins-Chef"></a>Chef</h3>
+</div></div>
+
+<ul>
+	<li><b><a href="https://github.com/ezmobius/chef-deploy">chef-deploy</a></b><br/>
+A gem that provides resources and providers for deploying ruby web apps from chef recipes</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/jellybob/chef-gelf">chef-gelf</a></b><br/>
+Provides a Chef handler which can report run status, including any changes that were made, to a Graylog2 server.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/dje/chef-handler-twitter">chef-handler-twitter</a></b><br/>
+A Chef handler that Tweets</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/xdissent/chef-hatch-repo">chef-hatch-repo</a></b><br/>
+Contains a Knife plugin and a Vagrant provisioner to launch a self-managed Chef server in VM or EC2</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://rubygems.org/gems/chef-irc-snitch">chef-irc-snitch</a></b><br/>
+An exception handler for Opscode Chef runs (github gists &amp; IRC)</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/adamhjk/chef-jenkins">chef-jenkins</a></b><br/>
+Use Jenkins to drive continuous deployment and synchronization of your Chef Environments from a git repository</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://rubygems.org/gems/chef-rundeck">chef-rundeck</a></b><br/>
+Provides a resource endpoint for <a href="http://rundeck.org/">RunDeck</a> from a Chef Server</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/edelight/chef-solo-search">chef-solo-search</a></b><br/>
+A cookbook library that adds data bag search powers to Chef Solo. (Requires Chef 10.04 or later)</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://trac-hacks.org/wiki/CloudPlugin">chef-trac-hacks</a></b><br/>
+This plugin is meant to fill the coordination gap between AWS and Chef</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://www.vim.org/scripts/script.php?script_id=3623">chef-vim</a></b><br/>
+Vim plugin to make cookbook navigation quick and easy</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/rackspace/chef_vpc_toolkit">chef-vpc-toolkit</a></b><br/>
+The Chef VPC Toolkit is a set of Rake tasks that provide a framework to help automate the creation and configuration of “identical” VPC server groups in the cloud.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/infochimps-labs/ironfan">Ironfan</a></b><br/>
+Orchestrate complete clusters of machines. Ironfan is an expressive toolset for constructing scalable, resilient architectures. It works in the cloud, in the data center, and on your laptop, and it makes your system diagram visible and inevitable. Inevitable systems coordinate automatically to interconnect, removing the hassle of manual configuration of connection points (and the associated danger of human error). Replaces cluster_chef and metachef.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://rubygems.org/gems/cucumber-chef">cucumber-chef</a></b><br/>
+Framework for behaviour-drive infrastructure development.  Uses knife.rb for credentials with separate namespace in knife.rb</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/jclouds/jclouds-chef">jclouds-chef</a></b><br/>
+java and clojure components to use the Opscode chef rest api</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h3><a name="CommunityPlugins-Ohai"></a><a href="Ohai.html" title="Ohai">Ohai</a></h3>
+</div></div>
+<div class='navmenu' style='float:right; width:260px; background:#f4f2e6; margin:10px; padding:4px'><div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Automate Ohai Plugin Use</b><br /><br class="atl-forced-newline" />
+The <b><a href="http://community.opscode.com/cookbooks/ohai">Opscode Ohai Cookbook</a></b> creates a configured plugin path for distributing custom Ohai plugins, and reloads them via Ohai within the context of a Chef Client run during the compile phase.</td></tr></table></div></div>
+<ul>
+	<li><a href="https://github.com/demonccc/chef-repo/blob/master/plugins/ohai/dell.rb"><b>dell.rb</b></a><br/>
+adds some useful Dell server info to ohai, like service tag, express service code, storage info, RAC info, etc. To use this plugin the server needs to have installed OMSA and SMBIOS applications.</li>
+</ul>
+
+
+<ul>
+	<li><a href="https://github.com/demonccc/chef-repo/blob/master/plugins/ohai/linux/dpkg.rb"><b>dpkg.rb</b></a><br/>
+adds dpkg info to ohai. It collects info about the status of the debian packages and what debian packages are installed in the server.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/albertsj1/ohai-plugins/blob/master/kvm_extensions.rb">kvm_extensions.rb</a></b><br/>
+extends virtualization attributes to give additional KVM host and guest info</li>
+</ul>
+
+
+<ul>
+	<li><a href="https://github.com/demonccc/chef-repo/blob/master/plugins/ohai/linux/ladvd.rb"><b>ladvd.rb</b></a><br/>
+adds <a href="http://code.google.com/p/ladvd/">ladvd</a> (<a href="http://code.google.com/p/ladvd/">LLDP daemon for Unix</a>) info, if it exists, to ohai</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/jespada/ohai-plugins/blob/master/lxc_virtualization.rb">lxc_virtualization.rb</a></b><br/>
+extends virtualization attributes to give host and guest information about linux lxc-containers.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://gist.github.com/1040543">network_addr.rb</a></b><br/>
+extends network attribute with additional ipaddrtype_iface attributes to make semantically easier to retrieve the addresses. e.g., <tt>node['network']['ipaddress_eth0']</tt> vs <tt>node['network']['interfaces']['eth0']['addresses'].guesswhichisfirst</tt>.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/agoddard/ohai-plugins/blob/master/plugins/network_ports.rb">network_ports.rb</a></b><br/>
+extends the network attribute by adding which tcp / udp ports are bound on which interfaces</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/sbates/Chef-odds-n-ends/blob/master/ohai/parse_host_plugin.rb">parse_host_plugin.rb</a></b><br/>
+an oHai plugin that parses a host name, sets 3 top level attributes and 5 nested attributes</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/stevendanna/ohai-plugins/blob/master/r.rb">r.rb</a></b><br/>
+collects some basic information about R</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/spheromak/cookbooks/blob/master/ohai/files/default/sysctl.rb">sysctl.rb</a></b><br/>
+adds systems sysctl info to ohai</li>
+</ul>
+
+
+<ul>
+	<li>Alternate <b><a href="https://github.com/cloudant/ohai_plugins/blob/master/sysctl.rb">sysctl.rb</a></b><br/>
+An alternative sysctl ohai plugin that places values in a hierarchy under the kernel namespace.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/albertsj1/ohai-plugins/blob/master/vserver.rb">vserver.rb</a></b><br/>
+extends virtualization attributes to give <a href="http://linux-vserver.org">Linux VServer</a> host and guest information including cgroup usage information.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/cloudant/ohai_plugins/blob/master/wtf.rb">wtf.rb</a></b><br/>
+Uses the irreverent wtfismyip.com service to determine a machine's external IPv4 address and geographical location.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/spheromak/cookbooks/blob/master/ohai/files/default/xenserver.rb">xenserver.rb</a></b><br/>
+extends virtualization attributes to load up xenserver host and guest info</li>
+</ul>
+
+
+<ul>
+	<li><a href="https://github.com/timops/ohai-plugins/blob/master/win32_software.rb"><b>win32_software.rb</b></a><br/>
+Uses WMI to discover useful information about the software installed on a Windows node.</li>
+</ul>
+
+
+<ul>
+	<li><a href="https://github.com/timops/ohai-plugins/blob/master/win32_svc.rb"><b>win32_svc.rb</b></a><br/>
+Query WMI to get information about all registered services on a Windows node.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h3><a name="CommunityPlugins-CommunityExceptionandReportHandlersExceptionandReportHandlers%23CommunityBasedHandlers"></a><a href="Exception and Report Handlers.html#ExceptionandReportHandlers-CommunityBasedHandlers">Community Exception and Report Handlers</a></h3>
+</div></div>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/12354019/21463224.png" hspace="4" vspace="4" style="border: 0px solid black"/></span><br class="atl-forced-newline" />
+Chef includes <a href="Exception and Report Handlers.html" title="Exception and Report Handlers">Exception and Report Handlers</a> that allow you to run code in response to a Chef run succeeding or failing.  You can also <a href="Exception and Report Handlers.html#ExceptionandReportHandlers-WritingaHandler">write your own</a>.</p>
+
+<p>See <b><a href="Exception and Report Handlers.html#ExceptionandReportHandlers-CommunityBasedHandlers">Community Based Handlers</a></b> for some written and shared by the chef open source community.</p></td>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top">
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h3><a name="CommunityPlugins-Knife"></a><a href="Knife.html" title="Knife">Knife</a></h3>
+</div></div>
+<table cellspacing="8"><tr><td width="49%"><ul>
+	<li><b><a href="https://github.com/jbz/knife-audit">knife-audit</a></b><br/>
+Shows you how many (and which) of your nodes have each of your cookbooks in their runlists</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/opscode/knife-azure">knife-azure</a></b><br/>
+A plugin that adds support for the Microsoft Windows Azure cloud.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/imeyer/knife-batch">knife-batch</a></b><br/>
+A wonderful little plugin for executing commands a la knife ssh, but doing it in groups of n with a sleep between execution iterations.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/greenandsecure/knife-block">knife-block</a></b><br/>
+A plugin for creating and managing multiple knife.rb files for working with many servers</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/rubiojr/knife-brightbox">knife-brightbox</a></b><br/>
+This plugin gives knife the ability to create, bootstrap, and manage instances in <a href="http://beta.brightbox.com/beta/">Brightbox Cloud </a>.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/jonlives/knife-bulkchangeenvironment">knife-bulk-change-environment</a></b><br/>
+A knife plugin to bulk move nodes from one environment to another</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/lnxchk/Canon">knife-canon</a></b><br/>
+Compare command output across hosts to what you want it to be</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/neillturner/knife-cfn">knife-cfn</a></b><br/>
+This is a Knife plugin for AWS Cloud Formation. This plugin gives knife the ability to validate, create, describe, and delete stacks.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/chiragjog/knife-cloudstack">knife-cloudstack</a></b> from <em>Clogeny</em><br/>
+Provides the ability to create, bootstrap, and manage instances in Cloudstack Compute clouds.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/cloudstack/knife-cloudstack">knife-cloudstack</a></b> from <em>CloudStack</em> and <em>Edmunds</em><br/>
+Gives Knife the ability to create, bootstrap and manage CloudStack instances, available as a gem.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/jgoulah/knife-crawl">knife-crawl</a></b><br/>
+Displays the roles that are included recursively within a role and optionally all the roles that include it</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://rubygems.org/gems/ubuntu_ami">knife-ec2-amis-ubuntu</a></b><br/>
+RubyGem that provides an interface to retrieve a list of Canonical's released Ubuntu AMIs, and includes a knife plugin.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/jgoulah/knife-env-diff">knife-env-diff</a></b><br/>
+Diff the cookbook versions of two or more environments.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://github.com/rubiojr/knife-esx">knife-esx</a></b><br/>
+VMware ESX( i ) 4/5 support for knife</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/cparedes/knife-file">knife-file</a></b><br/>
+Utilities for manipulating files in a Chef code repository.  (Right now, supports decrypting/encrypting data bag JSON files.)</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/jonlives/knife-flip">knife-flip</a></b><br/>
+An improved version of knife-set-environment with added functionality and failsafes</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://rubygems.org/gems/knife-gandi">knife-gandi</a></b><br/>
+This plugin gives knife the ability to create, bootstrap, and manage servers on the Gandi Hosting platform.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/lnxchk/Gather">knife-gather</a></b><br/>
+Collate multiline output from parallel knife ssh into one section per host</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://jetpackweb.com/blog/2011/06/12/manage-your-third-party-chef-cookbooks-with-knife-github-cookbooks/">knife-github-cookbooks</a></b><br/>
+Like `knife cookbook site install` <em>git vendor branch technique</em> but instead of only being able to access cookbooks in <em>community.opscode.com</em> you can create vendor branches automatically from any github cookbook.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/opscode/knife-google">knife-google</a></b><br/>
+A plugin that adds support for the <a href="http://cloud.google.com/products/compute-engine.html">Google Compute Engine</a>.</li>
+</ul>
+</td>
+<td><ul>
+	<li><b><a href="http://github.com/rubiojr/knife-kvm">knife-kvm</a></b><br/>
+Linux KVM support for knife</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://github.com/jgoulah/knife-lastrun">knife-lastrun</a></b><br/>
+Display key metrics from last chef run of a given node</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/lnxchk/Ohno">knife-ohno</a></b><br/>
+Show nodes in your environment that haven't checked into the platform for N hours</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/lnxchk/Knife-OneHai">knife-OneHai</a></b><br/>
+Get the last seen time of a single node using knife</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://github.com/rubiojr/knife-playground">knife-playground</a></b><br/>
+Misc tools for Knife</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/danielsdeleo/knife-plugins">knife-plugins</a></b><br/>
+A set of plugins to make managing data bags in versions easier</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/lnxchk/Pocket">knife-pocket</a></b><br/>
+Save off a knife search to use later, either in knife ssh or for other commands you might need it for</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/jonlives/knife-preflight">knife-preflight</a></b><br/>
+To let you easily check which nodes and roles use the cookbook you're about to change</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/benjaminws/knife_role_copy">knife_role_copy</a></b><br/>
+Get data from one role, setup a new role with that data and a new name. This plugin will actively refuse to create a role with a name that already exists.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/dougm/rvc-knife">knife-rvc</a></b><br/>
+Integrates a subset of Chef’s knife functionality with RVC (Ruby vSphere Console).</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/knuckolls/knife-santoku">knife-santoku</a></b><br/>
+A drop in replacement for knife that helps you build out processes around Chef. Send out notifications to hipchat or wherever when you run knife commands.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://gist.github.com/961827">knife-set-environment</a></b><br/>
+A knife plugin to set node environment</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://rubygems.org/gems/knife-solo">knife-solo</a></b><br/>
+To help with bootstrapping and running chef-solo. Supports search and data bags.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/kryptek/knife-slapchop">knife-slapchop</a></b><br/>
+Create and tag clusters of EC2 nodes with this multithreading bootstrap plugin.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/jonlives/knife-spork">knife-spork</a></b><br/>
+Simplifies the environments workflow to make it easier for teams to work on the same cookbooks and environments simultaneously</li>
+</ul>
+
+
+<ul>
+	<li><a href="https://github.com/demonccc/chef-repo/tree/master/plugins/knife/ssh_cheto"><b>knife-ssh cheto</b></a><br/>
+Some extra features to be used with ssh, for example, use ssh with proxy, knife ask you for your password, a new option that launches <a href="http://sourceforge.net/projects/clusterssh">Cluster SSH</a>.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/voxeldotnet/knife-voxel">knife-voxel</a></b><br/>
+To provision <a href="http://www.voxel.net/">Voxel.net</a> cloud instances (physical as well as virtual) and then bootstrap them as chef clients.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://rubygems.org/gems/knife-vsphere">knife-vsphere</a></b><br/>
+VMware vSphere support for knife</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="http://github.com/spheromak/knife-xapi">knife-xapi</a></b><br/>
+Xenserver/XCP/XAPI support for knife</li>
+</ul>
+</td></tr></table>
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h3><a name="CommunityPlugins-OpscodeKnifePluginsKnifePlugins"></a><a href="Knife Plugins.html" title="Knife Plugins">Opscode Knife Plugins</a></h3>
+</div></div>
+<ul>
+	<li><b><a href="https://github.com/opscode/knife-bluebox">knife-bluebox</a></b><br/>
+This plugin gives knife the ability to create, bootstrap, and manage <a href="http://www.bluebox.net">BlueBox</a> servers.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/opscode/knife-ec2">knife-ec2</a></b><br/>
+This plugin gives knife the ability to create, bootstrap, and manage instances in <a href="http://aws.amazon.com/ec2/">Amazon EC2</a>.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/opscode/knife-eucalyptus">knife-eucalyptus</a></b><br/>
+This plugin gives knife the ability to create, bootstrap, and manage instances in <a href="http://www.eucalyptus.com/">Eucalyptus</a> clouds.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/mattray/knife-hp">knife-hp</a></b><br/>
+This plugin gives knife the ability to create, bootstrap, and manage instances in <a href="http://www.hpcloud.com/">HP Cloud Services</a>.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/opscode/knife-openstack">knife-openstack</a></b><br/>
+This plugin gives knife the ability to create, bootstrap, and manage instances in <a href="http://www.openstack.org">OpenStack</a> Compute clouds.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/opscode/knife-rackspace">knife-rackspace</a></b><br/>
+This plugin gives knife the ability to create, bootstrap, and manage instances in the <a href="http://www.rackspace.com/cloud/">Rackspace Cloud</a>.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/opscode/knife-terremark">knife-terremark</a></b><br/>
+This plugin gives knife the ability to create, bootstrap, and manage <a href="http://www.terremark.com/services/cloudcomputing.aspx">Terremark</a> servers.</li>
+</ul>
+
+
+<ul>
+	<li><b><a href="https://github.com/opscode/knife-windows">knife-windows</a></b><br/>
+Plugin that adds functionality to Chef's Knife CLI for configuring/interacting with nodes running Microsoft Windows</li>
+</ul>
+
+
+
+<p><br class="atl-forced-newline" />  <font color="#f7681a"><b>See</b></font> <font color="#f7681a"><b><a href="Knife Plugins.html" title="Knife Plugins">Knife Plugins</a></b></font> <font color="#f7681a"><b>for installation details on the Opscode Knife Plugins, including information on interacting with the Chef API and creating your own plugin.  See</b></font> <font color="#f7681a"><b><a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a></b></font> <font color="#f7681a"><b>for information on their use for launching cloud servers, including configuration and sub-command options.</b></font></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Knife Plugins.html" title="Knife Plugins"><span class="image-wrap" style="float: left"><img src="../attachments/12354019/21463149.png" hspace="4" style="border: 0px solid black"/></span> Knife Plugins </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Management Console.html" title="Management Console"><span class="image-wrap" style="float: right"><img src="../attachments/12354019/21463148.png" hspace="4" style="border: 0px solid black"/></span> Management Console </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/12354019/12222577.jpg">wildhorses.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/12354019/21463148.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/12354019/21463149.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/12354019/21463224.png">9038413-speech-bubbles-vector-sticker-set.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

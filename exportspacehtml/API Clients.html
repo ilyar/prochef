@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : API Clients</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : API Clients
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="63%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/7275151/14876679.jpg" hspace="14" vspace="30" style="border: 0px solid black"/></span></p>
+<h2><a name="APIClients-Overview"></a>Overview</h2>
+
+<h5><a name="APIClients-"></a><font color="#f7681a">This page provides an overview of the identity through which requests to the Chef server are authenticated through the <a href="Server API.html" title="Server API">Server API</a>, how the clients become registered with a valid identity, and how the API clients can be managed.  See <a href="Authentication and Authorization.html" title="Authentication and Authorization">Authentication and Authorization</a> for details on the authentication and validation process itself.</font></h5>
+<p><br class="atl-forced-newline" /></p>
+
+<h2><a name="APIClients-AuthenticationIdentity"></a>Authentication Identity</h2>
+<p><font color="#f7681a">In chef, node data is separate from the identity used to authenticate requests to the Chef server, which is managed by an API client.</font> Each API client has a public/private key pair. The public half of the key is stored in the database on the server, and the private half is kept locally by the client. </p>
+<ul>
+	<li>On a node running the Chef Client, the private key is generally stored in /etc/chef/client.pem</li>
+	<li>For an administrator using knife, the private key is generally stored in ~/.chef/USERNAME.pem</li>
+</ul>
+
+
+<p>Each request to the Chef server includes a request signature in the HTTP headers. The request signature is computed from the hash of the request content and encrypted with the client's private key to verify the identity of the user or machine making the request and prevent attempts to tamper with the content.</p></td> 
+<td class="confluenceTd" valign="top" width="26%">
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#APIClients-Overview'>Overview</a></li>
+    <li><a href='#APIClients-AuthenticationIdentity'>Authentication Identity</a></li>
+    <li><a href='#APIClients-ClientRegistration'>Client Registration</a></li>
+    <li><a href='#APIClients-ManagingAPIClientsWithKnife'> Managing API Clients With Knife</a></li>
+    <li><a href='#APIClients-ManagingAPIClientsthroughtheManagementConsole'>Managing API Clients through the Management Console</a></li>
+    <li><a href='#APIClients-ManagingAPIClientsthroughtheServerAPI'>Managing API Clients through the Server API</a></li>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="7%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<h2><a name="APIClients-ClientRegistration"></a>Client Registration</h2>
+<p><font color="#f7681a">When a node runs chef-client for the first time, it generally does not yet have an API client identity, and so cannot make authenticated requests to the server. This is where the validation client—named "chef-validator" by default comes in.</font></p>
+<ol>
+	<li>When the chef-client runs, it checks if it has a client key.</li>
+	<li>If the client key does not exist, it then attempts to "borrow" the validation client's identity to register itself with the server.</li>
+	<li>In order to do that, the validation client's private key needs to be copied to the host and placed in /etc/chef/validation.pem.</li>
+</ol>
+
+
+<p>Once the client machine has registered itself with the chef server, it no longer uses the validation client for anything. It is recommended that you delete the validation client's private key from the host after the host has registered.</p>
+
+<p>API clients can be managed with <a href="Knife.html" title="Knife">Knife</a>, the <a href="Server API.html" title="Server API">Server API</a> or the <a href="Management Console.html" title="Management Console">Management Console</a>.</p>
+
+<h2><a name="APIClients-ManagingAPIClientsWithKnife"></a><a href="Managing API Clients With Knife.html" title="Managing API Clients With Knife">Managing API Clients With Knife</a></h2>
+
+<p><a href="Knife.html" title="Knife">Knife</a> is Chef's powerful command line tool, and can be used to create, edit, view, list, and delete API clients. Details on this use are at <a href="Managing API Clients With Knife.html" title="Managing API Clients With Knife">Managing API Clients With Knife</a>.</p>
+
+<h2><a name="APIClients-ManagingAPIClientsthroughtheManagementConsole"></a>Managing API Clients through the <a href="Management Console.html" title="Management Console">Management Console</a> </h2>
+
+<ul>
+	<li>Open Source Chef Server users, please refer to the <a href="Managing API Clients through the Management Console.html" title="Managing API Clients through the Management Console">Managing API Clients through the Management Console</a> article for information.</li>
+	<li>Hosted Chef customers please refer to <a href="Managing Clients with the Hosted Chef Management Console.html" title="Managing Clients with the Hosted Chef Management Console">Managing Clients with the Hosted Chef Management Console</a>.</li>
+	<li>Private Chef customers should refer to the separate Private Chef Administration Documentation.</li>
+</ul>
+
+
+<h2><a name="APIClients-ManagingAPIClientsthroughtheServerAPI"></a>Managing API Clients through the <a href="Server API.html" title="Server API">Server API</a></h2>
+
+<p>Please refer to the <a href="Server API.html" title="Server API">Server API</a> article for information about managing API clients through the REST API.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Making Authenticated API Requests.html" title="Making Authenticated API Requests"><span class="image-wrap" style="float: left"><img src="../attachments/7275151/20840484.png" hspace="4" style="border: 0px solid black"/></span> Making Authenticated API Requests </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run"><span class="image-wrap" style="float: right"><img src="../attachments/7275151/20840483.png" hspace="4" style="border: 0px solid black"/></span> Anatomy of a Chef Run </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275151/14876679.jpg">4817473-application-programming-interface-as-a-blue-art.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275151/20840483.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275151/20840484.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

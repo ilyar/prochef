@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Creating a Chef Repository</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Creating a Chef Repository
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on May 04, 2012 by <font color="#0050B2">mantella</font>.
+				    </div>
+
+				    
+<h2><a name="CreatingaChefRepository-CreateaChefRepositoryonyourWorkstation"></a>Create a Chef Repository on your Workstation</h2>
+<p><font color="#f7681a">The following directions will create a Chef repository--a folder on your local workstation from which you can manage your infrastructure.</font>  (Advanced users may find is productive to deviate from the basic setup outlined in these directions.)</p>
+
+<h3><a name="CreatingaChefRepository-CopytheskeletonChefRepositoryavailableonGithub"></a>Copy the skeleton Chef Repository available on Github</h3>
+
+<h4><a name="CreatingaChefRepository-UsingGit"></a>Using Git</h4>
+<p>Using git, we can create a chef repository by cloning a skeleton repository provided by Opscode:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cd ~
+git clone git://github.com/opscode/chef-repo.git</pre>
+		</div>
+</div></div>
+
+<p>This command will create a folder called <tt>chef-repo</tt> in your home directory.  You can clone the repository to a different directory using a command such as:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">git clone git://github.com/opscode/chef-repo.git /path/to/alternate/directory</pre>
+		</div>
+</div></div>
+
+<h4><a name="CreatingaChefRepository-WithoutGit"></a>Without Git</h4>
+<p>If you do not have git, you can copy the skeleton repository using standard unix tools:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cd ~
+curl https://nodeload.github.com/opscode/chef-repo/tarball/master &gt; chef-repo.tgz
+tar xvf chef-repo.tgz 
+mv -i opscode-chef-repo-a3bec38/ chef-repo</pre>
+		</div>
+</div></div>
+
+<h3><a name="CreatingaChefRepository-CreateaConfigurationFolder"></a>Create a Configuration Folder</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mkdir -p ~/chef-repo/.chef</pre>
+		</div>
+</div></div>
+
+<p>Now, we need to copy the necessary keys and knife configuration into this directory.  </p>
+
+<p><font color="#f7681a"><b>For Hosted and Private Chef customers</b></font>, USERNAME.pem can be generated from your <a href="http://community.opscode.com/">Opscode Community profile</a>; ORGANIZATION-validator.pem and knife.rb can be generated from the organizations picker in <a href="http://manage.opscode.com/">Management Console</a>. Generate and download these files and then install them as follows:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">cp USERNAME.pem ~/chef-repo/.chef
+cp ORGANIZATION-validator.pem ~/chef-repo/.chef
+cp knife.rb ~/chef-repo/.chef</pre>
+		</div>
+</div></div>
+
+<p>where ORGANIZATION should be replaced with your organizations short name and USERNAME should be replaced by your Hosted Chef username. Note, that the paths to <tt>USERNAME.pem</tt>, <tt>ORGANIZATION-validator.pem</tt>, and <tt>knife.rb</tt> should be change to the path to which they were downloaded.  </p>
+
+<p><font color="#f7681a"><b>For those using the Open Source Chef Server</b></font>, you first need to create an admin client for use with knife.<br/>
+Directions for creating an admin client can be found in <a href="http://wiki.opscode.com/display/chef/Installing+Chef+Server+Manually#InstallingChefServerManually-ConfiguretheCommandLineClient">the post-install section of the server configuration</a>.  The validator client key used in that step can be copied to the workstation system from /etc/chef or after it is copied to ~/.chef on the Chef Server system.  Once you have an admin client, copy the user's private key and the validator's private key into your chef repository:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">cp USERNAME.pem ~/chef-repo/.chef
+cp validation.pem ~/chef-repo/.chef</pre>
+		</div>
+</div></div>
+
+<p>Now, you can then create a knife configuration file using the following command:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife configure</pre>
+		</div>
+</div></div>
+
+<p><tt>knife configure</tt> will prompt you for information regarding your admin client as well as your chef server.</p>
+
+<h3><a name="CreatingaChefRepository-Confirmyourconfigurationisworking"></a>Confirm your configuration is working</h3>
+<p>To confirm that your configuration is working, attempt to run a simple knife command</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife client list</pre>
+		</div>
+</div></div>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

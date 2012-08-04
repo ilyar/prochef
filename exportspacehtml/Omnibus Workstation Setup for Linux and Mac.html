@@ -1,0 +1,347 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Omnibus Workstation Setup for Linux and Mac</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Omnibus Workstation Setup for Linux and Mac
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<hr />
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 130x103" href='http://wiki.opscode.com/download../attachments/24773133/OC_Chef_Logo_small.png'><img src="../attachments/thumbnails/24773133/25002043" hspace="20" vspace="6" style="border: 0px solid black"/></a></span></p>
+
+<h3><a name="OmnibusWorkstationSetupforLinuxandMac-"></a><font color="#f7681a">This article explains how to setup a Chef Workstation on Linux or OS X using Omnibus.</font> </h3>
+<p><br class="atl-forced-newline" />
+A <b>Chef workstation</b> is where you develop cookbooks, and interact with your chef-server and nodes.<br/>
+<b>Omnibus</b> is a quick install method that installs an embedded version of Ruby, Rubygems and other dependencies.</p>
+</div></div>
+<p><br class="atl-forced-newline" />
+<b>Such a workstation typically includes:</b></p>
+
+<ul class="alternate" type="square">
+	<li>A local repository of your cookbooks and possibly other data.</li>
+	<li>A well-configured knife client</li>
+</ul>
+
+
+<p><b>To create such a workstation, this article explains how to</b></p>
+
+<ul class="alternate" type="square">
+	<li>Install Ruby and other Chef dependencies</li>
+	<li>Install Chef</li>
+	<li>Install Git</li>
+	<li>Create a bare-bones chef repository</li>
+	<li>Configure Knife</li>
+</ul>
+
+
+<h2><a name="OmnibusWorkstationSetupforLinuxandMac-InstallChef"></a>Install Chef</h2>
+
+<p>The <a href="http://www.opscode.com/chef/install">Chef Full Installer</a> has been tested with <font color="#f7681a">Debian, Ubuntu, CentOS, RHEL, Fedora, Oracle Linux, Scientific Linux, and OS X.</font> </p>
+
+<p>You can install it by entering this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo true &amp;&amp; curl -L http://opscode.com/chef/install.sh | sudo bash</pre>
+		</div>
+</div></div>
+<p>Once it is installed there will be no icon for it. If needed, you can confirm it was installed correctly with these commands in a new command prompt window:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% chef-client -v</pre>
+		</div>
+</div></div>
+<p>You should see "10.12.0" returned as the version number.</p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Get the error "Could not find RubyGem chef" instead?</b><br /><br class="atl-forced-newline" />
+If you get an error that looks similar to the one below, you most likely have an issue with how your RVM is setup.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">/opt/opscode/embedded/lib/ruby/1.9.1/rubygems.rb:762:in report_activate_error': Could not find RubyGem chef (&gt;= 0) (Gem::LoadError)</pre>
+		</div>
+</div></div>
+<p>You can work around the environment variables RVM has setup by always using 'sudo -i' with the chef-client command. For instance, this would correctly return the version number:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% sudo -i chef-client -v</pre>
+		</div>
+</div></div></td></tr></table></div>
+
+<p>Upon installation, this script will:</p>
+
+<ul>
+	<li>Install all of the embedded dependencies for Chef</li>
+	<li>Install an embedded version of Ruby and Rubygems</li>
+	<li>Install chef-client and knife version 10.12.0</li>
+</ul>
+
+</td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="32%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+<ul>
+    <li><a href='#OmnibusWorkstationSetupforLinuxandMac-InstallChef'>Install Chef</a></li>
+    <li><a href='#OmnibusWorkstationSetupforLinuxandMac-InstallGit'>Install Git</a></li>
+    <li><a href='#OmnibusWorkstationSetupforLinuxandMac-CreateaChefRepositoryonyourWorkstation'>Create a Chef Repository on your Workstation</a></li>
+    <li><a href='#OmnibusWorkstationSetupforLinuxandMac-Installotherknifeplugins%28optional%29'>Install other knife plugins (optional)</a></li>
+</ul>
+    <li><a href='#OmnibusWorkstationSetupforLinuxandMac-OmnibusInformation'>Omnibus Information</a></li>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Looking for a walkthrough that will also explain how to use cookbooks?</b><br /><br class="atl-forced-newline" />
+You may want to try the <a href="Fast Start Guide.html" title="Fast Start Guide">Fast Start Guide</a> instead or look at the <a href="Client Bootstrap Fast Start Guide.html" title="Client Bootstrap Fast Start Guide">Client Bootstrap Fast Start Guide</a> after finishing your workstation install. They also use the Omnibus method of installation, but end in a short walkthrough on using cookbooks and running them on your nodes.</td></tr></table></div>
+<p><br class="atl-forced-newline" />
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><a name="OmnibusWorkstationSetupforLinuxandMac-SystemRequirements"></a></p>
+<h3><a name="OmnibusWorkstationSetupforLinuxandMac-"></a><font color="#f7681a">System Requirements</font></h3>
+<hr />
+<p><font color="navy"><b>Chef-client is supported on the following platforms</b></font></p>
+
+<ul>
+	<li>Ubuntu (10.04+)</li>
+	<li>Debian (5.0, 6.0)</li>
+	<li>RHEL &amp; CentOS (5.x, 6.x)</li>
+	<li>Fedora 10&#43;</li>
+	<li>Solaris 9,10,11 Sparc</li>
+	<li>Solaris 10,11 (x86 and x64)</li>
+	<li>Mac OS X (10.4, 10.5, 10.6, 10.7)</li>
+	<li>Windows 7</li>
+	<li>Windows Server 2003 R2, 2008 R2</li>
+</ul>
+
+
+<p>Additionally, chef-client is known to run on the following platforms</p>
+
+<ul>
+	<li>Ubuntu (6.06, 8.04-9.10)</li>
+	<li>RHEL &amp; CentOS (5.x)</li>
+	<li>Gentoo (11.1,11.2)</li>
+	<li>FreeBSD (7.1)</li>
+	<li>OpenBSD (4.4)</li>
+	<li>OpenSolaris (2008.11)</li>
+	<li>Solaris 5.10 (u6)</li>
+	<li>SuSE (11.x)</li>
+	<li>Windows Vista</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+</div></div></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h2><a name="OmnibusWorkstationSetupforLinuxandMac-InstallGit"></a>Install Git</h2>
+
+<p>Git is optional, but will be needed for some knife commands.</p>
+
+<p><b>Here are the commands you'll want to use to install Git on the following systems:</b></p>
+
+<ul>
+	<li><b>Ubuntu</b>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get update
+sudo apt-get install git-core</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<ul>
+	<li><b>CentOS 6.X</b>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo rpm -Uvh http://download.fedora.redhat.com/pub/epel/6/i386/epel-release-6-5.noarch.rpm
+sudo yum install -y git</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<ul>
+	<li><b>CentOS 5.X</b>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo rpm -Uvh http://download.fedora.redhat.com/pub/epel/5/i386/epel-release-5-4.noarch.rpm
+sudo yum install -y git</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<p>For more in depth Git information please refer to the <a href="http://help.github.com/linux-set-up-git/">help guide on github.com</a>.</p>
+
+<p><h2><a name="OmnibusWorkstationSetupforLinuxandMac-CreateaChefRepositoryonyourWorkstation"></a>Create a Chef Repository on your Workstation</h2>
+<p><font color="#f7681a">The following directions will create a Chef repository--a folder on your local workstation from which you can manage your infrastructure.</font>  (Advanced users may find is productive to deviate from the basic setup outlined in these directions.)</p>
+
+<h3><a name="OmnibusWorkstationSetupforLinuxandMac-CopytheskeletonChefRepositoryavailableonGithub"></a>Copy the skeleton Chef Repository available on Github</h3>
+
+<h4><a name="OmnibusWorkstationSetupforLinuxandMac-UsingGit"></a>Using Git</h4>
+<p>Using git, we can create a chef repository by cloning a skeleton repository provided by Opscode:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[cd ~
+git clone git://github.com/opscode/chef-repo.git]]></script>
+</div></div>
+
+<p>This command will create a folder called <tt>chef-repo</tt> in your home directory.  You can clone the repository to a different directory using a command such as:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[git clone git://github.com/opscode/chef-repo.git /path/to/alternate/directory]]></script>
+</div></div>
+
+<h4><a name="OmnibusWorkstationSetupforLinuxandMac-WithoutGit"></a>Without Git</h4>
+<p>If you do not have git, you can copy the skeleton repository using standard unix tools:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[cd ~
+curl https://nodeload.github.com/opscode/chef-repo/tarball/master &gt; chef-repo.tgz
+tar xvf chef-repo.tgz 
+mv -i opscode-chef-repo-a3bec38/ chef-repo]]></script>
+</div></div>
+
+<h3><a name="OmnibusWorkstationSetupforLinuxandMac-CreateaConfigurationFolder"></a>Create a Configuration Folder</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[mkdir -p ~/chef-repo/.chef]]></script>
+</div></div>
+
+<p>Now, we need to copy the necessary keys and knife configuration into this directory.  </p>
+
+<p><font color="#f7681a"><b>For Hosted and Private Chef customers</b></font>, USERNAME.pem can be generated from your <a href="http://community.opscode.com/">Opscode Community profile</a>; ORGANIZATION-validator.pem and knife.rb can be generated from the organizations picker in <a href="http://manage.opscode.com/">Management Console</a>. Generate and download these files and then install them as follows:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[cp USERNAME.pem ~/chef-repo/.chef
+cp ORGANIZATION-validator.pem ~/chef-repo/.chef
+cp knife.rb ~/chef-repo/.chef]]></script>
+</div></div>
+
+<p>where ORGANIZATION should be replaced with your organizations short name and USERNAME should be replaced by your Hosted Chef username. Note, that the paths to <tt>USERNAME.pem</tt>, <tt>ORGANIZATION-validator.pem</tt>, and <tt>knife.rb</tt> should be change to the path to which they were downloaded.  </p>
+
+<p><font color="#f7681a"><b>For those using the Open Source Chef Server</b></font>, you first need to create an admin client for use with knife.<br/>
+Directions for creating an admin client can be found in <a href="http://wiki.opscode.com/display/chef/Installing+Chef+Server+Manually#InstallingChefServerManually-ConfiguretheCommandLineClient">the post-install section of the server configuration</a>.  The validator client key used in that step can be copied to the workstation system from /etc/chef or after it is copied to ~/.chef on the Chef Server system.  Once you have an admin client, copy the user's private key and the validator's private key into your chef repository:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[cp USERNAME.pem ~/chef-repo/.chef
+cp validation.pem ~/chef-repo/.chef]]></script>
+</div></div>
+
+<p>Now, you can then create a knife configuration file using the following command:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife configure]]></script>
+</div></div>
+
+<p><tt>knife configure</tt> will prompt you for information regarding your admin client as well as your chef server.</p>
+
+<h3><a name="OmnibusWorkstationSetupforLinuxandMac-Confirmyourconfigurationisworking"></a>Confirm your configuration is working</h3>
+<p>To confirm that your configuration is working, attempt to run a simple knife command</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife client list]]></script>
+</div></div><br/>
+<h2><a name="OmnibusWorkstationSetupforLinuxandMac-Installotherknifeplugins%28optional%29"></a>Install other knife plugins (optional)</h2>
+
+<p>Additional <a href="Knife.html" title="Knife">Knife</a> commands are shipped as additional gems, and would be installed separately if desired. These include Opscode <a href="Knife Plugins.html" title="Knife Plugins">Knife Plugins</a> to <a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a> on popular cloud services such as ec2 and rackspace. There are also <a href="Community Plugins.html" title="Community Plugins">Community Plugins</a> for knife, chef and ohai - developed and made available by the <a href="Developers.html" title="Developers">open source community</a> to perform a number of different functions.</p>
+
+<p>These plugins can be install using Rubygems:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[sudo gem install PLUGIN_NAME]]></script>
+</div></div><br/>
+<p><br class="atl-forced-newline" /></p>
+<h1><a name="OmnibusWorkstationSetupforLinuxandMac-OmnibusInformation"></a>Omnibus Information</h1>
+
+<p>There are a few ways that the Omnibus install is different from installing through rubygems or your OS's packaging system such as 'yum' or 'apt'.</p>
+
+<h3><a name="OmnibusWorkstationSetupforLinuxandMac-TestedOperatingSystems"></a>Tested Operating Systems</h3>
+<p>Omnibus will work to install Chef on many Linux operating systems and OS X. <b><font color="#f7681a">It has been tested with Debian, Ubuntu, CentOS, RHEL, Fedora, Oracle Linux, Scientific Linux, and OS X.</font></b> You can find information on installing the Windows version of Omnibus on the <a href="Installing Chef Client on Windows.html" title="Installing Chef Client on Windows">Installing Chef Client on Windows</a> page.</p>
+
+<h3><a name="OmnibusWorkstationSetupforLinuxandMac-OmnibusPackaging"></a>Omnibus Packaging</h3>
+<p>The Omnibus installers are built using the same Ruby based Open Source project we use for packaging Private Chef. A couple of the installers are built with older build systems, and we plan to migrate them in the coming months. We also expect to add more platforms in the future.</p>
+
+<p>Omnibus wraps itself in a package specific to your distribution where possible, such as a deb or rpm, so you can easily manage it using the tools you’re familiar with. If you prefer regular packages or installing from Rubygems for policy or personal reasons, you can find links to those directions on the <a href="Installing Chef Client and Chef Solo.html" title="Installing Chef Client and Chef Solo">Installing Chef Client and Chef Solo</a> page.</p>
+
+<h3><a name="OmnibusWorkstationSetupforLinuxandMac-EmbeddedRubyandOtherDependencies"></a>Embedded Ruby and Other Dependencies</h3>
+<p>The Omnibus installer includes the Chef client, a stable version of Ruby, and everything else needed for Chef to run, in a single package. The dependencies are all carefully embedded so they won’t conflict with other versions of the same software on your system. Because you are also using an embedded version of rubygems <b><font color="#f7681a">you'll want to use a command like "sudo /opt/chef/embedded/bin/gem install knife-PLUGIN" to install any knife plugins on an Omnibus workstation.</font></b></p>
+
+<h3><a name="OmnibusWorkstationSetupforLinuxandMac-ChefgemandGempackageresources"></a>Chef_gem and Gem_package resources</h3>
+<p>Because Omnibus includes its own version of Rubygems, <b>it is important that you correctly use the gem_package and chef_gem resources.</b> The gem_package resource is for installing a gem package to your system, whereas the chef_gem resource is for install a gem for use inside a chef recipe. Additional information is available on the <a href="http://wiki.opscode.com/display/chef/Resources">Resources</a> wiki page.</p></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/24773133/25002040.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installation.html" title="Installation">Installation</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/24773133/25002041.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installing Chef Server.html" title="Installing Chef Server">Installing Chef Server</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/24773133/25002040.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/24773133/25002041.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/24773133/25002043.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

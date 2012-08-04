@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Cookbook Style Guide Draft</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Cookbook Style Guide Draft
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 06, 2011 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <h1><a name="CookbookStyleGuideDraft-Generalconventions"></a>General conventions</h1>
+
+<p>We follow Ruby community common practices for code formatting.</p>
+
+<ul>
+	<li><a href="http://www.caliban.org/ruby/rubyguide.shtml#style">http://www.caliban.org/ruby/rubyguide.shtml#style</a></li>
+</ul>
+
+
+<p>Highlights:</p>
+
+<ul>
+	<li>2 spaces for code indentation</li>
+	<li>Ruby blocks can be 'do..end' or {..}, use the former for multiline<br/>
+ blocks, the latter for single line</li>
+	<li>Do not omit parenthesis in method calls except when it is clearer to<br/>
+ do so.</li>
+</ul>
+
+
+<h1><a name="CookbookStyleGuideDraft-Rootfiles"></a>Root files</h1>
+
+<h2><a name="CookbookStyleGuideDraft-README.md"></a>README.md</h2>
+
+<ul>
+	<li>Follows the README template</li>
+	<li>Attributes that are set in the attributes files in the cookbook<br/>
+ don't need to indicate default values in the documentation, as the<br/>
+ user can look at the file for the defaults. Do indicate what<br/>
+ calculated values are if in recipes.</li>
+</ul>
+
+
+<h2><a name="CookbookStyleGuideDraft-metadata.rb"></a>metadata.rb</h2>
+
+<ul>
+	<li>Use the Ruby DSL, the JSON will be automatically generated on<br/>
+ cookbook upload.</li>
+	<li>For cookbooks that have several dependencies or support several<br/>
+ platforms, use an each loop on an array of names.</li>
+	<li>Declare dependencies explicitly when used, rather than assuming<br/>
+ dependent cookbooks are available.</li>
+	<li>Use semantic versioning, <a href="http://semver.org/">http://semver.org/</a></li>
+</ul>
+
+
+<h1><a name="CookbookStyleGuideDraft-Recipes"></a>Recipes</h1>
+
+<ul>
+	<li>Follow good Ruby style practices above.</li>
+</ul>
+
+
+<p>Use string expansion instead of concatenation</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># do this:
+"#{ruby_var} is cool"
+
+# instead of:
+ruby_var + " is cool"</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Use <tt>Chef::Config[:file_cache_path]</tt> as a temporary location for<br/>
+ file downloads when necessary as it will always be present.</li>
+	<li>Do not hard code values, it makes cookbooks inflexible and harder to<br/>
+ share. Use attributes instead.</li>
+	<li>Use libraries if recipes contain a lot of helper code.</li>
+</ul>
+
+
+<h2><a name="CookbookStyleGuideDraft-GeneratingData"></a>Generating Data</h2>
+
+<ul>
+	<li>Generate data at the top of the recipe so it can be used later and<br/>
+ doesn't clutter the resources.</li>
+	<li>Setting attributes that require data from sources like other<br/>
+ cookbook's attributes search or data bags should be done in recipes.</li>
+	<li>Generate data for <tt>template</tt> resources in the recipe and pass it in<br/>
+ with the <tt>variables</tt> parameter.</li>
+</ul>
+
+
+<h2><a name="CookbookStyleGuideDraft-Resourcedeclaration"></a>Resource declaration</h2>
+
+<ul>
+	<li>Be explicit for clarity, but leave Chef's defaults if it's obvious<br/>
+ what the values should be, for example default actions.</li>
+</ul>
+
+
+<p><em>Need specific guidelines for core Chef resources.</em></p>
+
+<h1><a name="CookbookStyleGuideDraft-Attributes"></a>Attributes</h1>
+
+<ul>
+	<li>Use 'default' to set attributes.</li>
+	<li>Start with an attribute space named after the cookbook.</li>
+	<li>Do not calculate or derive values in attributes files, use a recipe<br/>
+ instead.</li>
+	<li>Use strings for accessing node attributes.</li>
+</ul>
+
+
+<h1><a name="CookbookStyleGuideDraft-Files"></a>Files</h1>
+
+<ul>
+	<li>Use with <tt>cookbook_file</tt> resources for binary data/files (gems,<br/>
+ .tar.gz, etc).</li>
+	<li>Use with <tt>remote_directory</tt> resources for distributing a set of like<br/>
+ files.</li>
+	<li>Use <tt>files/default</tt> file specificity most of the time.</li>
+	<li>File specificity can be useful here, but we recommend against using<br/>
+ host specific files, and instead use logic in the recipe as it<br/>
+ provides more flexibility.</li>
+	<li>Do not use <tt>files</tt> for distributing configuration files as it is<br/>
+ inflexible.</li>
+</ul>
+
+
+<h1><a name="CookbookStyleGuideDraft-Templates"></a>Templates</h1>
+
+<ul>
+	<li>Use{{template}}resources for rendering configuration files.</li>
+	<li>Use templates like views: contain little logic and do not use search<br/>
+ or other data retrieval - do that in the recipe.</li>
+</ul>
+
+
+<h1><a name="CookbookStyleGuideDraft-Othercomponents"></a>Other components</h1>
+
+<h2><a name="CookbookStyleGuideDraft-Definitions"></a>Definitions</h2>
+
+<ul>
+	<li>Only use definitions for very simple repeated resources that should<br/>
+ be named and do not contain a lot of logic.</li>
+	<li>We recommend against definitions, use LWRP (resources/providers)<br/>
+ instead.</li>
+</ul>
+
+
+<h2><a name="CookbookStyleGuideDraft-Resources%2FProviders"></a>Resources/Providers</h2>
+
+<ul>
+	<li>Explicitly set the name attribute.</li>
+	<li>Create a default action (not currently possible in the DSL yet, must<br/>
+ be a new method)</li>
+	<li>overload{{load_current_resource}}in the provider to make the<br/>
+ provider idempotent</li>
+	<li>Use{{new_resource.updated_by_last_action(true)}}and<br/>
+{{new_resource.updated_by_last_action?}}so notifications work.</li>
+</ul>
+
+
+<h2><a name="CookbookStyleGuideDraft-Libraries"></a>Libraries</h2>
+
+<ul>
+	<li>Use for adding new methods to the Recipe DSL</li>
+	<li>Create other helpers for providers.</li>
+	<li>Create heavyweight resources/providers when LWRP is limiting in<br/>
+ flexibility or namespacing.</li>
+</ul>
+
+
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-24773858"></a>
+                                    <font class="smallfont"><p>I'd very strongly encourage/require 80 character max linelengths in code and README.md / documentation files.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by kmself at Jul 30, 2012 23:05
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

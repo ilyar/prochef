@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Hosted Chef Authorization</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Hosted Chef Authorization
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><br class="atl-forced-newline" /></p>
+<div class="" align="center"><h3><a name="HostedChefAuthorization-"></a><font color="#f7681a">Hosted Chef and Private Chef provide fine-grained control over the actions that Users and API Clients can perform</font></h3>
+<h5><a name="HostedChefAuthorization-UnlikeOpenSourcechef%2Cpermissiontocreate%2Cupdate%2Cdelete%2Corviewobjects%28suchasnodes%29ontheChefServercanbecontrolledonanobjectbyobjectanduserbyuserbasis."></a>Unlike Open Source chef, permission to create, update, delete, or view objects (such as nodes) on the Chef Server can be controlled on an <em>object-by-object</em> and <em>user-by-user</em> basis.  </h5></div>
+
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+<table><tr><td><p><span class="image-wrap" style=""><img src="../attachments/19923323/20611117.jpg" hspace="8" style="border: 0px solid black"/></span></p></td>
+<td>
+<h5><a name="HostedChefAuthorization-"></a><font color="#f7681a">Hosted and Private Chef provide the flexibility to control a user's access to Chef object in a manner that is commensurate with their role in your organization.</font></h5>
+
+<ul>
+	<li>The permissions available for each type of Chef object and what those permissions imply,</li>
+	<li>The method used to determine whether a user is authorized to take a given action, and</li>
+	<li>The permissions users will have on newly created objects within your organization.</li>
+</ul>
+
+
+<p><b>For a description of how to manage a given user's or API client's permission see <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">Managing Permissions with the Hosted Chef Management Console</a>.</b> </p></td></tr></table> 
+
+<h1><a name="HostedChefAuthorization-Definitions"></a>Definitions</h1>
+<div class='navmenu' style='float:right; width:420px; background:#eeeeee; border:4px solid #d7d4c3; margin:12px; padding:8px'><div class="" align="center"><p><font color="navy"><b>Every object on Hosted Chef is secured with fine-grained role-based access control (RBAC)</b></font></p></div>
+
+<p>Each object has an access control list (ACL) composed of up to five access control entries (ACEs): create, read, update, delete, and grant. </p></div>
+<p>This article uses the following definitions:</p>
+
+<ul>
+	<li><b>Actor</b>: An <em>actor</em> is an API Client or Hosted Chef user.  It is often easiest to think of Hosted Chef users simply as API clients.</li>
+	<li><b>Objects</b>: An <em>object</em> is an entity on which an <em>actor</em> can have permission to take action.  For example, a node is an object.</li>
+	<li><b>Object Type:</b> Every object has a <em>type</em> (node, role, cookbook, etc).</li>
+	<li><b>Group</b>: A <em>group</em> is a collection of actors. Hosted Chef defines an <b>admins</b>, <b>users</b>, <b>clients</b>, and <b>billing-admins</b> group for every organization.  Additional groups can be added as a means of grouping users based on their role within your organization.  See <a href="Managing Users and your Private Key with the Hosted Chef Management Console.html" title="Managing Users and your Private Key with the Hosted Chef Management Console">Managing Users and your Private Key with the Hosted Chef Management Console</a> for further details.</li>
+</ul>
+
+
+<p><font color="#f7681a">When an API request is made to Hosted Chef, a check occurs to ensure that the requesting <b>actor</b> has the necessary permission on either the <b>object</b> or <b>object type</b>.</font>  </p>
+
+<h1><a name="HostedChefAuthorization-GlobalPermissions"></a>Global Permissions</h1>
+
+<p><em>Actors</em> and <em>groups</em> can have the following <em>Global Permissions</em> on a given <em>Object Type</em>:</p>
+
+<ul>
+	<li><b>LIST (READ)</b>: An actor with LIST permission on an object type can list all of the objects of the given type. This corresponds to the ability to run commands such as <tt>knife node list</tt>.</li>
+	<li><b>CREATE</b>: An actor with CREATE permission on an object type can create new objects of the given type.  This corresponds to the ability to run commands such as <tt>knife node create</tt>.</li>
+</ul>
+
+
+<div class='navmenu' style='float:right; background:#eeeeee; border:4px solid #d7d4c3; margin:20px; padding:8px'><p>Note that this graph focuses on the case when permission is needed on an <b>Object</b>, <br/>
+but the same process applies to cases where permission is needed on an <b>Object Type</b>.  </p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/19923323/20086868.png" style="border: 0px solid black"/></span></p></div>
+
+<h1><a name="HostedChefAuthorization-ObjectSpecificPermissions"></a>Object Specific Permissions</h1>
+
+<p><em>Actors</em> and <em>groups</em> can have the following permissions on a given <em>object</em>:</p>
+
+<ul>
+	<li><b>READ</b>: An actor with <b>READ</b> permission on an object can read the object's state.  This corresponds to the ability to run commands such as <tt>knife node show NODENAME</tt>.</li>
+</ul>
+
+
+<ul>
+	<li><b>UPDATE</b>: An actor with <b>UPDATE</b> permission on an object can update the object's state.  This corresponds to the ability to run commands such as <tt>knife node edit NODENAME</tt> and the ability for an API client to save node data at the end of a chef-client run.</li>
+</ul>
+
+
+<ul>
+	<li><b>DELETE</b>: An actor with <b>DELETE</b> permission on an object can delete the object.  This corresponds to the ability to run commands such as <tt>knife node delete NODENAME</tt>.</li>
+</ul>
+
+
+<ul>
+	<li><b>GRANT</b>: An actor with <b>GRANT</b> permission on an object can grant or remove other actors' permissions on the object.  This corresponds to the ability to edit permissions on the object's "Permissions" tab within the Management Console. See <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">Managing Permissions with the Hosted Chef Management Console</a> for more details.</li>
+</ul>
+
+
+<h1><a name="HostedChefAuthorization-CheckingifanActorisAuthorized"></a>Checking if an Actor is Authorized</h1>
+
+<p><font color="#f7681a">When an actor makes an authenticated request via the REST API, Hosted Chef determines whether the actor has permission to perform the action using the following process:</font></p>
+
+<ul>
+	<li>If the request requires <b>LIST</b> or <b>CREATE</b> permission, check if the user has <b>LIST</b> or <b>CREATE</b> permission for the object type.
+	<ul>
+		<li>If Yes, perform the action</li>
+		<li>If Not, recursively check whether the user is a member of a group which has <b>LIST</b> or <b>CREATE</b> permission for the object.</li>
+	</ul>
+	</li>
+	<li>If the request requires <b>READ</b>, <b>UPDATE</b>, <b>DELETE</b>, or <b>GRANT</b> permission, check if the user has the <b>READ</b>, <b>UPDATE</b>, <b>DELETE</b>, or <b>GRANT</b> permission for the object.
+	<ul>
+		<li>If Yes, perform the action</li>
+		<li>If Not, recursively check whether the user is a member of a group has the <b>READ</b>, <b>UPDATE</b>, <b>DELETE</b>, or <b>GRANT</b> permission for the object.</li>
+	</ul>
+	</li>
+</ul>
+
+
+<p>For information on how to determine what permissions a given actor has on an object, changing an actors permissions, or on what permissions an actor will have by default, see <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">Managing Permissions with the Hosted Chef Management Console</a></p>
+
+<h1><a name="HostedChefAuthorization-DefaultPermissions"></a>Default Permissions</h1>
+
+<p>In most cases, the required permission for a given option is fairly intuitive.  Actions that retrieve an object's state requires READ, for instance.  Deleting objects require DELETE.  However, what permissions is a given actor likely to have?</p>
+
+<p><font color="#f7681a">Typically, actors will receive permission for a given object or object type via their group memberships.</font> To facilitate easily managing permissions, all Hosted Chef organizations have four groups by default:</p>
+
+<ul>
+	<li><b>Users</b>: This group has the default permissions that make the most sense for non-admin Hosted Chef users.  Hosted Chef users that you add to your organization are automatically added to this group.</li>
+	<li><b>Admins</b>: This group has the default permission for all-powerful admins.</li>
+	<li><b>Clients</b>: This group has the default permissions that make the most sense for non-human API clients.  Newly created clients are put into this group automatically.</li>
+	<li><b>Billing-admins</b>: This group has permission to change billing information.  See <a href="Managing your Account and Billing Information.html" title="Managing your Account and Billing Information">Managing your Account and Billing Information</a>.</li>
+</ul>
+
+
+<p>Placing users into the Users and/or Admins groups provides an easy way to grant permissions to a given user without much hassle. See <a href="Managing Users and your Private Key with the Hosted Chef Management Console.html" title="Managing Users and your Private Key with the Hosted Chef Management Console">Managing Users and your Private Key with the Hosted Chef Management Console</a> to add users to groups.</p>
+
+<h2><a name="HostedChefAuthorization-DefaultGlobalPermissions"></a>Default Global Permissions</h2>
+
+<p>There are two ways an actor can receive LIST or CREATE permission on an object type:</p>
+
+<ul>
+	<li>Manually granting the actor the global permission in the WebUI (see <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">Managing Permissions with the Hosted Chef Management Console</a>)</li>
+	<li>Being a member of a group that has the given permission.</li>
+</ul>
+
+
+<p>The default groups have the following global permissions by default:</p>
+
+<ul>
+	<li>The <b>Admins</b> group has <b>LIST</b> and <b>CREATE</b> on every object type.</li>
+</ul>
+
+
+<ul>
+	<li>The <b>Users</b> group has <b>LIST</b> on
+	<ol>
+		<li>Clients</li>
+		<li>Groups</li>
+		<li>Nodes</li>
+		<li>Roles</li>
+		<li>Cookbook</li>
+		<li>Databags</li>
+		<li>Environments</li>
+	</ol>
+	</li>
+</ul>
+
+
+<ul>
+	<li>The <b>Users</b> group has <b>CREATE</b> on
+	<ol>
+		<li>Nodes</li>
+		<li>Roles</li>
+		<li>Cookbook</li>
+		<li>Databags</li>
+		<li>Environments</li>
+	</ol>
+	</li>
+</ul>
+
+
+<ul>
+	<li>The <b>Clients</b> group has <b>LIST</b> on
+	<ol>
+		<li>Nodes</li>
+		<li>Roles</li>
+		<li>Cookbook</li>
+		<li>Databags</li>
+		<li>Environments</li>
+	</ol>
+	</li>
+</ul>
+
+
+<ul>
+	<li>The <b>Clients</b> group has <b>CREATE</b> on
+	<ol>
+		<li>Nodes</li>
+		<li>Databags</li>
+	</ol>
+	</li>
+</ul>
+
+
+<h2><a name="HostedChefAuthorization-DefaultObjectspecificPermissions"></a>Default Object-specific Permissions</h2>
+<div class='navmenu' style='float:right; width:380px; background:#f4f2e6; margin:16px; padding:8px'><div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Think In Terms Of Group Membership</b><br /><br class="atl-forced-newline" />
+Technically, when you create a new object of a given type, the permissions list from the object type (also called the object container) is copied to the new object.  Thus creating the "inheritance".  
+
+<p>It is therefore possible for an object to have the CREATE, READ(LIST), UPDATE, DELETE, and GRANT permissions on the object type, just as with an object.  </p>
+
+<p>This is how the admin, users, and client groups receive permission on newly created objects.  </p>
+
+<p><em>Since only a subset of these permissions (LIST and CREATE) can be altered via the WebUI</em>, it is typically easier for those managing a Hosted Chef organization to think about the permissions system in terms of group membership.</p></td></tr></table></div></div>
+<p>There are three ways an actor can receive permissions on objects:</p>
+
+<ul>
+	<li>If the actor created the object, she receive all the permissions on the new object.</li>
+</ul>
+
+
+<ul>
+	<li>If the actor is manually granted the actor permissions on the object in the WebUI (see <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">Managing Permissions with the Hosted Chef Management Console</a>).</li>
+</ul>
+
+
+<ul>
+	<li>"Inheriting" the permissions when the object is created, based on a group or actor's Global permission on the Object Type.</li>
+</ul>
+
+
+<p>To determine the permissions an actor will have on a new object, consider the following rules:</p>
+<ol>
+	<li>If the actor is a member of the <b>admins</b> group, she will receive all of the permissions on every new object.</li>
+	<li>If the actor is a member of the <b>users</b> group, she will receive the following permissions on new objects:
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Object Type </th>
+<th class='confluenceTh'> READ </th>
+<th class='confluenceTh'> UPDATE </th>
+<th class='confluenceTh'> DELETE </th>
+<th class='confluenceTh'> GRANT</th>
+</tr>
+<tr>
+<th class='confluenceTh'> Environments</th>
+<td class='confluenceTd'> X </td>
+<td class='confluenceTd'> X </td>
+<td class='confluenceTd'>X </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> Nodes</th>
+<td class='confluenceTd'>X </td>
+<td class='confluenceTd'> X </td>
+<td class='confluenceTd'>X </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> Roles</th>
+<td class='confluenceTd'>X </td>
+<td class='confluenceTd'> X </td>
+<td class='confluenceTd'>X </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> Cookbooks</th>
+<td class='confluenceTd'>X </td>
+<td class='confluenceTd'> X </td>
+<td class='confluenceTd'>X </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> Data Bags</th>
+<td class='confluenceTd'>X </td>
+<td class='confluenceTd'> X </td>
+<td class='confluenceTd'>X </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> Clients</th>
+<td class='confluenceTd'>X </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>X </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+</li>
+	<li>If an actor or a group has the global permission LIST on an Object Type, it will receive READ on any new objects of that type.</li>
+</ol>
+
+
+<h1><a name="HostedChefAuthorization-Summary"></a>Summary</h1>
+<p><font color="#f7681a"><b>Every object on Hosted Chef is secured with fine-grained role-based access control (RBAC).</b></font></p>
+<ul>
+	<li>Each object has an access control list (ACL) composed of up to five access control entries (ACEs): create, read, update, delete, and grant.</li>
+	<li>Before allowing an authenticated user or client to perform an operation on an object, the appropriate ACE is consulted to determine whether the user is either explicitly in the ACE or in a group that is on the ACE (or in a group in a group on the ACE, etc.).</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Authentication and Authorization.html" title="Authentication and Authorization"><span class="image-wrap" style="float: left"><img src="../attachments/19923323/20840480.png" hspace="4" style="border: 0px solid black"/></span> Authentication and Authorization </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Making Authenticated API Requests.html" title="Making Authenticated API Requests"><span class="image-wrap" style="float: right"><img src="../attachments/19923323/20840479.png" hspace="4" style="border: 0px solid black"/></span> Making Authenticated API Requests </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923323/20086869.png">authz-simplified.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923323/20086870.png">authz-simplified.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923323/20086868.png">authz-simplified.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923323/20611117.jpg">10321231-businessman-scanning-of-a-finger-on-a-touch-screen-interface.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923323/20840479.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923323/20840480.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

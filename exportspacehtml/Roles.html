@@ -1,0 +1,551 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Roles</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Roles
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/1835338/20840720.jpg" hspace="20" vspace="20" style="border: 0px solid black"/></span></p>
+
+<h1><a name="Roles-Overview"></a>Overview</h1>
+
+<h4><a name="Roles-"></a><font color="#f7681a">A role provides a means of grouping similar features of similar nodes, providing a mechanism for easily composing sets of functionality.</font></h4>
+
+<h4><a name="Roles-"></a><font color="#f7681a">At web scale, you almost never have just one of something, so you use roles to express the parts of the configuration that are shared by a group of <a href="Nodes.html" title="Nodes">Nodes</a>.</font></h4>
+
+<h5><a name="Roles-%21orangedot.gif%21Rolesconsistofthesamepartsasanode%3AAttributesandaRunList%23runlist."></a><span class="image-wrap" style=""><img src="../attachments/1835338/14057523.gif" style="border: 0px solid black"/></span> Roles consist of the same parts as a node: <a href="Attributes.html" title="Attributes">Attributes</a> and a <a href="#Roles-runlist">Run List</a>. </h5>
+<h5><a name="Roles-%21orangedot.gif%21Nodescanhavemultiplerolesapplied%2Candtheywillbeexpandedinplace%2Cprovidingforacompleterecipelistforthatnode."></a><span class="image-wrap" style=""><img src="../attachments/1835338/14057523.gif" style="border: 0px solid black"/></span> Nodes can have multiple roles applied, and they will be expanded in place, providing for a complete recipe list for that node.  </h5>
+<h5><a name="Roles-%21orangedot.gif%21WhentheChefclientruns%2Citmergesitsownattributesandrunlistwiththoseofanyrolesithasbeenassigned."></a><span class="image-wrap" style=""><img src="../attachments/1835338/14057523.gif" style="border: 0px solid black"/></span> When the Chef client runs, it merges its own attributes and run list with those of any roles it has been assigned.</h5>
+<p><br class="atl-forced-newline" />
+For example, let's say I have a list of <a href="Recipes.html" title="Recipes">Recipes</a> that should be applied on all my Ubuntu servers, and a list that is specific to machines that are Web Servers.  This would map cleanly to two roles: 'ubuntu' and 'web_server'.  </p>
+
+<p>Each role would specify the list of recipes it requires, in the order they should be applied.  Where there is overlap (i.e., a recipe appears twice) it will be run when the first role is expanded (not run twice.)</p>
+
+<p><br class="atl-forced-newline" />
+<font color="navy"><b>You can create roles in Chef in 4 different ways:</b></font></p>
+<ol>
+	<li>through the creation of role files in your chef repository (that utilize a ruby DSL, which gets compiled to JSON,)</li>
+	<li>the creation of the JSON files directly in your chef repository,</li>
+	<li>through <a href="Knife.html" title="Knife">Knife</a> or the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>,</li>
+	<li>or through the REST API.</li>
+</ol>
+
+
+<p>Once you have created a role, you can add it to a node through the <a href="Management Console.html" title="Management Console">Management Console</a> by dragging it from the Roles list to the client's "run list", you can use the Chef command line tool <a href="Knife.html" title="Knife">Knife</a>, or you can <a href="Setting the run_list in JSON during run time.html" title="Setting the run_list in JSON during run time">add it with a JSON file</a>.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Roles work with chef-solo too!</b><br />You can use Roles with Chef Solo as well as the Client/Server. See the <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a> documentation.</td></tr></table></div>
+</td> 
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#Roles-Overview'>Overview</a></li>
+    <li><a href='#Roles-ChooseYourWorkflow'>Choose Your Workflow</a></li>
+    <li><a href='#Roles-TheRubyDSL'>The Ruby DSL</a></li>
+<ul>
+    <li><a href='#Roles-name'>name</a></li>
+    <li><a href='#Roles-description'>description</a></li>
+    <li><a href='#Roles-runlist'>run_list</a></li>
+    <li><a href='#Roles-envrunlists'>env_run_lists</a></li>
+    <li><a href='#Roles-defaultattributes'>default_attributes</a></li>
+    <li><a href='#Roles-overrideattributes'>override_attributes</a></li>
+</ul>
+    <li><a href='#Roles-AsJSON'>As JSON</a></li>
+<ul>
+    <li><a href='#Roles-jsonclass'>json_class</a></li>
+    <li><a href='#Roles-cheftype'>chef_type</a></li>
+</ul>
+    <li><a href='#Roles-ManagingRolesthroughKnife'>Managing Roles through Knife</a></li>
+    <li><a href='#Roles-ManagingRolesthroughtheOpenSourceChefServerManagementConsole'>Managing Roles through the Open Source Chef Server Management Console</a></li>
+    <li><a href='#Roles-TheRESTAPI'>The REST API</a></li>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h1><a name="Roles-ChooseYourWorkflow"></a>Choose Your Workflow</h1>
+
+<p><font color="#f7681a">There are two workflows you can use to manage your roles: you can either write your roles as ruby or JSON files and push them to the server, <b>OR</b> you can create roles with <a href="Knife.html" title="Knife">Knife</a> or the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a> and edit them as you go along.</font></p>
+
+<p><font color="navy"><b>If you create and edit roles by editing files:</b></font></p>
+<ul>
+	<li>You can use the ruby DSL or JSON</li>
+	<li>Your roles will be useable with chef-solo</li>
+	<li>You can dynamically generate role data using the ruby DSL</li>
+	<li>You can keep your roles in your version control system and have a history of who changed what and when.</li>
+	<li>You <b>should not</b> edit roles with the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>, as your edits will be overwritten next time you upload from the file.</li>
+</ul>
+
+
+<p><font color="navy"><b>If you create and edit roles with <a href="Knife.html" title="Knife">Knife</a> and the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>:</b></font></p>
+<ul>
+	<li>You can edit a role's run list visually with the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a></li>
+	<li>You can make changes to a role "on the fly"</li>
+	<li>The canonical source of a role's data will be the Chef Server, which makes it difficult to keep in version control</li>
+	<li>You cannot use the ruby DSL.</li>
+	<li>You cannot use your roles with chef-solo</li>
+</ul>
+
+
+<p><font color="#f7681a"><b>These workflows are mutually exclusive:</b></font> </p>
+<ul>
+	<li><em>If you upload a role to your Chef server from a file, then edit it with the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>, and then edit the file and upload again, the changes you made with the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a> will be lost.</em></li>
+	<li>The same is true with Knife: when managing roles as files, you will generally upload your changes to the chef server with knife; however,</li>
+	<li><em>if you use <tt>knife role edit</tt> to modify a role, your changes will be overwritten when you next upload the role from the file.</em></li>
+</ul>
+
+
+<h1><a name="Roles-TheRubyDSL"></a>The Ruby DSL</h1>
+
+<p><font color="#f7681a">Roles created through this mechanism get compiled to JSON, and then are loaded in to the Chef Server.</font> (We never execute ruby code directly on the chef server!)  Each time you <a href="Chef Repository.html#ChefRepository-InstallthelatestCookbooks">rake install</a> your <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a>, we will re-compile the corresponding JSON and store it in the chef server. </p>
+
+<p><b>You should create these files in the 'roles' subdirectory of your chef repository</b> - if you are using the opscode canonical <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a> as a baseline, the latest version includes this directory and rake tasks to manipulate roles as documented on the repository page. If your repository doesn't have this directory, create it now. Each DSL file should have a .rb suffix.</p>
+
+<p>A complete role file looks like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>A Very Simple Web Server Role</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">name "webserver"
+description "Simple Web App"
+run_list(
+  "recipe[apache2]"
+)</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef 10.x feature</b><br />The env_run_lists feature is only available in Chef 10.0 or above.</td></tr></table></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>The Web Server Role</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">name "webserver"
+description "The base role for systems that serve HTTP traffic"
+run_list "recipe[apache2]", "recipe[apache2::mod_ssl]", "role[monitor]"
+env_run_lists "prod" =&gt; ["recipe[apache2]"], "staging" =&gt; ["recipe[apache2::staging]"], "_default" =&gt; []
+default_attributes "apache2" =&gt; { "listen_ports" =&gt; [ "80", "443" ] }
+override_attributes "apache2" =&gt; { "max_children" =&gt; "50" }</pre>
+		</div>
+</div></div>
+
+<p>We'll go over each section below.</p>
+
+<h3><a name="Roles-name"></a>name</h3>
+<p><font color="#f7681a">Each role must have a unique name, which is made up of [A-Z][a-z][0-9] and [_-].</font> Spaces are not allowed.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>name field</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">name 'webserver'</pre>
+		</div>
+</div></div>
+
+<h3><a name="Roles-description"></a>description</h3>
+<p><font color="#f7681a">A short description of what functionality is covered by this role.</font>  </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>description field</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">description 'The base role for systems that serve HTTP traffic'</pre>
+		</div>
+</div></div>
+
+<h3><a name="Roles-runlist"></a>run_list</h3>
+<p>The recipes attribute is replaced with a run_list, which is identical to the one you specify for <a href="Nodes.html" title="Nodes">Node</a>.  <font color="#f7681a">This is the list of recipes or roles to apply for this role, in the order they should be applied.</font>  </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>recipes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">run_list "recipe[apache2]", "recipe[apache2::mod_ssl]", "role[monitor]"</pre>
+		</div>
+</div></div>
+
+<p>Would apply the "apache2" recipe, the "apache2::mod_ssl" recipe, and then anything required by the role "monitor".</p>
+
+<p><b>Note:</b> You may also see <tt>recipes</tt> used in place of <tt>run_list</tt>. <em>These are equivalent in function, though <tt>recipes</tt> is deprecated</em>, so you should use <tt>run_list</tt> instead.</p>
+
+<h3><a name="Roles-envrunlists"></a>env_run_lists</h3>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef 10.x Feature</b><br />The env_run_lists feature is only available in Chef 10.0 or above.</td></tr></table></div>
+
+<p><font color="#f7681a">In Chef 10.x, per environment run lists in a role allow you to specify a different run list for a role if the role is in the run list of the node in a specific environment.</font> Before the existence of environments, each role has only one run list and it will be expanded and applied to the node when chef-client runs. With environments, in the role you can specify one run list for each environment, such as:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>per environment run lists</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">env_run_lists "prod" =&gt; ["recipe[apache2]"], "staging" =&gt; ["recipe[apache2::staging]"]</pre>
+		</div>
+</div></div>
+
+<p><em>If you do not specify a per environment run list for a certain environment, such as "production" and "preprod" in the above example, chef will use the default run list (like before).</em> If it is the default run list that you desire, there is no need to specify it. </p>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Deleting Environments</b><br />If you delete the environment, it will remain setup on the role's run list. Keep this in mind when creating environments that share names with deleted environments, as they will inherit any old run list settings.</td></tr></table></div>
+
+<p><a href="Environments.html" title="Environments">Environments</a> has an additional example, <a href="Environments.html#Environments-PerEnvironmentRunListsinRoles">based in the JSON format</a> that would be used for interacting directly with the <a href="Server API.html" title="Server API">REST API</a>.</p>
+
+<h3><a name="Roles-defaultattributes"></a>default_attributes</h3>
+<p><font color="#f7681a">An optional set of <a href="Attributes.html" title="Attributes">attributes</a> that should be applied to all nodes with this role, assuming the node does not already have a value for that attribute.</font> Use this to set site-wide defaults that can be overridden on a node-specific basis. <b>The <a href="Deep Merge.html" title="Deep Merge">merge is 'deep'</a>, meaning that we will preserve nested attributes properly.</b></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>default_attributes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">default_attributes "apache2" =&gt; { "listen_ports" =&gt; [ "80", "443" ] }</pre>
+		</div>
+</div></div>
+
+<p>In the above example, all nodes with this role would have <tt>node[:apache2][:listen_ports]</tt> set to '80' and '443', assuming they do not already have a value. <em>If more than one role attempts to set a default value for the same attribute, the last role applied will win.</em></p>
+
+<h3><a name="Roles-overrideattributes"></a>override_attributes</h3>
+<p><font color="#f7681a">An optional set of <a href="Attributes.html" title="Attributes">attributes</a> that should be applied to all nodes with this role, regardless of whether a node already has a value for that attribute.</font>  Useful for setting site-wide values that will always be set.  <b>The <a href="Deep Merge.html" title="Deep Merge">merge is 'deep'</a>, meaning that we will preserve nested attributes properly.</b></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>override_attributes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">override_attributes "apache2" =&gt; { "max_children" =&gt; "50" }</pre>
+		</div>
+</div></div>
+
+<p>In the example above, <tt>node[:apache2][:max_children]</tt> will <b>always</b> be set to '50'.  <em>If more than one role attempts to set an override value for the same attribute, the last role applied will win.</em></p>
+
+<p>The parameters in role <tt>.rb</tt> files are actually Ruby method calls, so you can add parentheses and provide the attribute hashes on separate lines for clarity if specifying numerous or deeply-nested attributes:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Overriding Nested Attributes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">override_attributes(
+  :apache2 =&gt; { 
+    :prefork =&gt; { :min_spareservers =&gt; "5" }
+  }
+)</pre>
+		</div>
+</div></div>
+
+<p>Multiple attributes can be overridden like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Overriding Multiple Attributes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">override_attributes(
+  :apache2 =&gt; {
+    :prefork =&gt; { :min_spareservers =&gt; "5" }
+  },
+  :tomcat =&gt; {
+    :worker_threads =&gt; "100"
+  }
+)</pre>
+		</div>
+</div></div>
+
+<h1><a name="Roles-AsJSON"></a>As JSON</h1>
+<p><font color="#f7681a">The JSON format for roles maps directly to the Ruby DSL above.</font>  For the role we describe in that section, the corresponding JSON is:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "webserver",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+    "apache2": {
+      "listen_ports": [ 
+        "80",
+        "443"
+      ]
+    }
+  },
+  "description": "The base role for systems that serve HTTP traffic",
+  "run_list": [
+    "recipe[apache2]",
+    "recipe[apache2::mod_ssl]",
+    "role[montior]"
+  ],
+  "env_run_lists" : {
+    "production" : [],
+    "preprod" : [],
+    "dev": [
+      "role[base]",
+      "recipe[apache]",
+      "recipe[apache::copy_dev_configs]",
+    ],
+    "test": [
+      "role[base]",
+      "recipe[apache]"
+    ]
+   },
+  "override_attributes": {
+    "apache2": {
+      "max_children": "50"
+    }
+  }
+}</pre>
+		</div>
+</div></div>
+
+<p>The two additional fields are described below.</p>
+
+<h3><a name="Roles-jsonclass"></a>json_class</h3>
+<p><font color="#f7681a">This should always be set to <tt>Chef::Role</tt>.</font>  <br/>
+This is used internally by Chef to auto-inflate this type of object.  It should be ignored if you are re-building objects outside of Ruby, and its value may change in the future.</p>
+
+<h3><a name="Roles-cheftype"></a>chef_type</h3>
+<p><font color="#f7681a">This should always be set to <tt>role</tt>.</font>  <br/>
+This is the field you should rely on if you are building a system to consume Roles outside of Ruby.</p>
+
+<h1><a name="Roles-ManagingRolesthroughKnife"></a>Managing Roles through <a href="Knife.html" title="Knife">Knife</a></h1>
+<p><font color="#f7681a"><a href="Knife.html" title="Knife">Knife</a> is Chef's command line tool.</font> Roles can be managed through Knife. Please refer to <a href="Managing Roles With Knife.html" title="Managing Roles With Knife">Managing Roles With Knife</a> for how this is done.</p>
+
+<h1><a name="Roles-ManagingRolesthroughtheOpenSourceChefServerManagementConsole"></a>Managing Roles through the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a></h1>
+
+<p><font color="#f7681a">You can create and manage roles through the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>.</font> Please refer to the <a href="Managing Roles through the Management Console.html" title="Managing Roles through the Management Console">Managing Roles through the Management Console</a> articles for information about this topic.</p>
+
+<h1><a name="Roles-TheRESTAPI"></a>The REST API</h1>
+
+<p><font color="#f7681a">You can also create and manage roles directly in a running Chef Server via the <a href="Server API.html" title="Server API">REST API</a>.</font> Please refer to the <a href="Server API.html" title="Server API">Server API</a> article for information.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Resources and Providers.html" title="Resources and Providers"><span class="image-wrap" style="float: left"><img src="../attachments/1835338/20840716.png" hspace="4" style="border: 0px solid black"/></span> Resources and Providers </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Search.html" title="Search"><span class="image-wrap" style="float: right"><img src="../attachments/1835338/20840717.png" hspace="4" style="border: 0px solid black"/></span> Search </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1835338/2064398.mov">role_creation_web_ui.mov</a> (video/quicktime)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1835338/20840718.gif">orange_dot.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1835338/20840716.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1835338/20840717.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1835338/14057523.gif">orange_dot.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1835338/20840721.jpg">technology-diagram.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1835338/20840720.jpg">technology-diagram.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-1835359"></a>
+                                    <font class="smallfont"><p>I like the idea of roles, but I can't quite wrap my mind around some of the implementation here. There seems to be a global roles namespace (actually "global" isn't really defined either). Also, why do you put a role spec into a cookbook? I'd expect most roles to straddle cookbooks (else might as well create a recipe). In the end, which roles exist in the role namespace when a node starts? All this seems very ill-defined.</p>
+
+<p>On implementing roles, how would the following differ from what you describe? Create a "roles" cookbook. Create a recipe for each role. The recipe munges the attributes (to implement the default/override) and then includes each recipe used for the role in turn. Is what you propose different? Is is syntactic sugar? Does it have different semantics?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by tve at Jun 08, 2009 21:28
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-1835360"></a>
+                                    <font class="smallfont"><p>Another question your role ruby DSL brought up is what "rake install" does. I haven't looked into it, but it seems to actively push data to a specific chef server. That seems to conteract the ability to publish cookbook libraries on github or similar public access repositories. It seems to me that a chef server should always extract information from files in the cookbook, and if a cookbook is updated, we may want to have ways to ping a chef server (or multiple) but that they should then come back and actively fetch the updated content. At least that's the way we've been planning to operate.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by tve at Jun 08, 2009 21:34
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-1835361"></a>
+                                    <font class="smallfont"><p>The roles are not tied to cookbooks - they are totally separate entities (and have their own namespace entirely.)  Roles definitely straddle cookbooks.  The 'roles' directory we talk about above is a top-level item in the chef-repo:</p>
+
+<p>/roles<br/>
+/cookbooks<br/>
+/site-cookbooks</p>
+
+<p>And so on.</p>
+
+<p>You could get similar functionality from using a 'roles' cookbook, in that you can have a recipe that performs an 'include_recipe' for each, and attribute files that implement something akin to default/override.  The role concept is a higher-level abstraction, in that it exists outside of a given cookbook, can be distributed on it's own, and can be used to reason about the set of included recipes that will be run on the node (we'll still miss things that are dynamically included, but the final recipe list is still easier to grok if you compose it via roles.)</p>
+</font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by adam at Jun 08, 2009 22:31
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-1835362"></a>
+                                    <font class="smallfont"><p>See above for your question about roles/cookbooks.  When you run 'rake install', we create JSON representations of the role, and then load that in to the chef-server (in the same way you would by using the REST API, basically.)  You can absolutely bring in the role data from external sources (eventually, this would be one of the things you can do with a shared community website.)</p>
+</font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by adam at Jun 08, 2009 22:34
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-1835363"></a>
+                                    <font class="smallfont"><p>Ah, I missed that the roles dir is at the top of the repo, not the cookbook. Thanks for clarifying. I'm still not entirely clear on the roles namespace. The cookbook namespace is defined by the search path through repos (or directories). Is the roles namespace similarly defined?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by tve at Jun 08, 2009 22:59
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-5406959"></a>
+                                    <font class="smallfont"><p>This may seem obvious to most, but it just bit me now, and error logs weren't immediately obvious to me, simply returning a "Failed loading ChefServerSlice (409 "Conflict")" error.</p>
+
+<p>When loading in roles from the filesystem, a role's filename (without the filetype extension) and the role name inside the file must be the same, so example_server.json must have the name value listed like so: "name": "example_server".</p>
+
+<p>The first role with a mismatching name/filename combo will stop the subsequent roles being loaded, even if their names do match up as required.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by mrchrisadams at Feb 15, 2010 11:20
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-7274710"></a>
+                                    <font class="smallfont"><p>A syntax comment - It was unclear to me how to override multiple attributes using the Ruby DSL.  After a bit of experimentation, I updated the docs above with an example.  It works but seems a bit weird to me - you're making a hash without the open and close braces where the first key needs to be on the same line as the "override_attributes" method (I assume it's the same with default_attributes).</p>
+
+<p>Has there been any though on changing the syntax to match that in the attributes files?<br/>
+e.g. override:apache2:max&#95;children = "2"</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by mleinart at Jul 29, 2010 02:25
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-8257716"></a>
+                                    <font class="smallfont"><p>I agree with Michael Leinartas. I find that I have to create a superfluous cookbook to go with some roles just so I can use the cookbook style attribute. In many cases I want to have one attribute combine earlier attributes, like building paths, or like:<br/>
+<tt>set:users:sudoers=%w(foo bar)</tt><br/>
+<tt>set:users:login&#95;names = users:sudoers + %w(buz joe)</tt></p>
+
+<p>(Noticed that my markup was wrong and my intent wasn't being shown. Fixed now)</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Nov 23, 2010 19:56
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-8257740"></a>
+                                    <font class="smallfont"><p>This is just plain Ruby, but Ruby's flexibility makes it a little confusing if you're not used to it. <tt>override_attributes</tt> is a method call, and Ruby allows you to omit parentheses and also pass a hash as the final parameter to a method without surrounding it in braces if it's not ambiguous to the parser. In other words, you could add parens and write your example something like this if you find it clearer (I do):</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Default; brush: ruby; gutter: false">override_attributes(
+  :apache2 =&gt; {
+    :prefork =&gt; { :min_spareservers =&gt; "5" }
+  },
+  :tomcat =&gt; {
+    :worker_threads =&gt; "100"
+  }
+)</pre>
+		</div>
+</div></div>
+
+<p>I'll update your example in the wiki, since it seems like the next commenter has a similar question.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ches at Dec 02, 2010 19:17
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-8257743"></a>
+                                    <font class="smallfont"><p>I've just updated the text and examples following my comment to Michael above &#8211; see if that helps for your desired use case <img class="emoticon" src="images/icons/emoticons/smile.gif" height="20" width="20" align="absmiddle" alt="" border="0"/></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by ches at Dec 02, 2010 19:31
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-8257749"></a>
+                                    <font class="smallfont"><p>Ches, that clarifies some things, but not as far as I can tell, my question which is can I avoid having to create a matching cookbook/recipe to be able to build up attributes in a role from elements of other attributes that are also part of the override_attributes method.</p>
+
+<p>I presume I can not say:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">override_attributes(
+  :apache2 =&gt; {
+    :prefork =&gt; { :min_spareservers =&gt; 5 }
+  },
+  :tomcat =&gt; {
+    :worker_threads =&gt; 20 * node[:apache2][:prefork][:min_spareservers]
+  }
+)</pre>
+		</div>
+</div></div>
+
+<p>Is there a way to accomplish something like that (use an attibute tha was defined earlier in the same override_attributes method) within a role file?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Dec 02, 2010 21:18
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

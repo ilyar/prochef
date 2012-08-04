@@ -1,0 +1,465 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Lightweight Resources and Providers (LWRP)</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Lightweight Resources and Providers (LWRP)
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Feb 11, 2012 by <font color="#0050B2">kevin.christen@gmail.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<h1><a name="LightweightResourcesandProviders%28LWRP%29-Overview"></a>Overview</h1>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/7274964/14876684.jpg" hspace="20" vspace="6" style="border: 0px solid black"/></span></p>
+
+<h5><a name="LightweightResourcesandProviders%28LWRP%29-"></a><font color="#f7681a">In Chef, <a href="Resources.html" title="Resources">Resources</a> represent a piece of system state and <a href="Providers.html" title="Providers">Providers</a> are the underlying implementation which brings them into that state. <br/>
+<br/>
+For example, all database vendors support the abstract concept of database creation, but the underlying implementation is different for each.<br/>
+<br/>
+While typical Resources and Providers are implemented in Chef's core using Ruby classes, implementing Lightweight Resources and Providers (LWRP) is quick and easy, requiring less Ruby knowledge than their heavier counterparts. (LWRP's also become Ruby classes, but this is done for you, behind the scenes).</font></h5>
+<p><br class="atl-forced-newline" />
+<b>This document covers the DSL for creating Resources and Providers.</b> It is not meant to be an in-depth description of the implementation, but details are sprinkled throughout for the curious reader.</p>
+
+<p><b>For the Light-weight Resources and Providers (LWRPs) in Opscode's public open source cookbooks, see <a href="Opscode LWRP Resources.html" title="Opscode LWRP Resources">Opscode LWRP Resources</a>.</b></p>
+
+<h1><a name="LightweightResourcesandProviders%28LWRP%29-FileLocations"></a>File Locations</h1>
+
+<p><font color="#f7681a">Lightweight Resources and Providers are loaded from files in a Cookbook's "resources" and "providers" directories.</font> Resource and Provider names combine the cookbook name and the file name with an underscore. The only exception to this convention are files named 'default.rb'. In this case, the Resource or Provider is named according to the cookbook name only.</p>
+
+<h3><a name="LightweightResourcesandProviders%28LWRP%29-Examples"></a>Examples</h3>
+
+<p>Note: there is no default LWRP for the AWS cookbook; they are referenced only for illustrating how names correspond.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Filename </th>
+<th class='confluenceTh'> Resource or Provider Name, as used in the DSL </th>
+<th class='confluenceTh'> Generated Class </th>
+</tr>
+<tr>
+<th class='confluenceTh'> /cookbooks/aws/resources/default.rb </th>
+<td class='confluenceTd'> aws </td>
+<td class='confluenceTd'> Chef::Resource::Aws </td>
+</tr>
+<tr>
+<th class='confluenceTh'> /cookbooks/aws/resources/elastic_ip.rb </th>
+<td class='confluenceTd'> aws_elastic_ip </td>
+<td class='confluenceTd'> Chef::Resource::AwsElasticIp </td>
+</tr>
+<tr>
+<th class='confluenceTh'> /cookbooks/aws/providers/default.rb </th>
+<td class='confluenceTd'> aws </td>
+<td class='confluenceTd'> Chef::Provider::Aws </td>
+</tr>
+<tr>
+<th class='confluenceTh'> /cookbooks/aws/providers/elastic_ip.rb </th>
+<td class='confluenceTd'> aws_elastic_ip </td>
+<td class='confluenceTd'> Chef::Provider::AwsElasticIp </td>
+</tr>
+</tbody></table>
+</div>
+
+</td> 
+<td class="confluenceTd" valign="top" width="29%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-Overview'>Overview</a></li>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-FileLocations'>File Locations</a></li>
+<ul>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-Examples'>Examples</a></li>
+</ul>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-Resources'>Resources</a></li>
+<ul>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-Keyword%3Aactions'>Keyword: actions</a></li>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-Keyword%3Aattribute'>Keyword: attribute</a></li>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-Example%2CcreatingaLightweightResource'>Example, creating a Lightweight Resource</a></li>
+</ul>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-Providers'>Providers</a></li>
+<ul>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-Background'>Background</a></li>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-Keyword%3Aaction'>Keyword: action</a></li>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-DefaultAction'>Default Action</a></li>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-Example%2CcreatingaLightweightProvider'>Example, creating a Lightweight Provider</a></li>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-ExtendingAnExistingProvider'>Extending An Existing Provider</a></li>
+</ul>
+    <li><a href='#LightweightResourcesandProviders%28LWRP%29-FurtherReading'>Further Reading</a></li>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Understanding LWRP Development</b><br /><br class="atl-forced-newline" />
+Want a different way of looking at it?  View presentation slides from a talk on <a href="http://www.slideshare.net/jtimberman/understanding-lwrp-development">Understanding LWRP Development</a>.</td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Custom LWRPs From the Community</b><br /><br class="atl-forced-newline" />
+<b><a href="https://github.com/websterclay/chef-dominodes">Chef-Dominodes</a></b> - A Chef resource for mutual exclusion of blocks of recipe code. Useful for cross-cluster rolling restarts.
+
+<p><b><a href="https://github.com/danzel/chef-cookbooks/tree/master/iis7">iis7</a></b> - A Resource/Provider to create and configure websites in IIS 7 / 7.5.</p>
+
+<p><b><a href="http://community.opscode.com/cookbooks/minitest">minitest</a></b> - Opscode Chef cookbook with lightweight resources and providers to help you functionally test your services during convergence</p></td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h1><a name="LightweightResourcesandProviders%28LWRP%29-Resources"></a>Resources</h1>
+
+<p><font color="#f7681a">A Resource can be thought of as an abstract interface. Each is defined by its attributes and their validation rules, as well as the names of the actions it can take.</font></p>
+
+<h3><a name="LightweightResourcesandProviders%28LWRP%29-Keyword%3Aactions"></a>Keyword: actions</h3>
+
+<p>Actions are specified using the "actions" keyword followed by a comma-separated list of names. For example, the line</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">actions :foo, :bar</pre>
+		</div>
+</div></div>
+<p>specifies that the list of allowed actions for this resource should include foo and bar and ultimately corresponds to the implementing Provider's "action_foo" and "action_bar" methods.</p>
+
+<p>Note: several "actions" declarations will append to, not overwrite, the list of allowed actions.</p>
+
+<h3><a name="LightweightResourcesandProviders%28LWRP%29-Keyword%3Aattribute"></a>Keyword: attribute</h3>
+
+<p>Attributes are specified using the "attribute" keyword followed by the attribute's name and an optional set of validation rules. For example, the line</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">attribute :foo</pre>
+		</div>
+</div></div>
+<p>creates an attribute named foo, accessible to the implementing Provider via the resource's "foo" method, with no validation; whereas, the line</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">attribute :bar, :kind_of =&gt; String</pre>
+		</div>
+</div></div>
+<p>creates an attribute named bar (accessible to the implementing Provider via the resource's "bar" method) that enforces that values specified in recipes must be of type String.</p>
+
+<h4><a name="LightweightResourcesandProviders%28LWRP%29-Validationparameters"></a>Validation parameters</h4>
+
+<p>The full set of options that can be passed to the attribute keyword in order to validate a parameter set on a Resource in a <a href="Recipes.html" title="Recipes">Recipe</a> is:</p>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> <b>:default</b> </th>
+<td class='confluenceTd'> Sets the default value for this parameter. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>:kind_of</b> </th>
+<td class='confluenceTd'> Ensure that the value is a kind_of?(Whatever).  If passed an array, it will ensure that the value is one of those types. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>:required</b> </th>
+<td class='confluenceTd'> Raise an exception if this parameter is missing. Valid values are true or false, by default, options are not required. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>:regex</b> </th>
+<td class='confluenceTd'> Match the value of the parameter against a regular expression. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>:equal_to</b> </th>
+<td class='confluenceTd'> Match the value of the parameter with ==.  An array means it can be equal to any of the values. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>:name_attribute</b> </th>
+<td class='confluenceTd'> Specifies that this is set to the name of the resource when used. Valid value is true or false. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>:callbacks</b> </th>
+<td class='confluenceTd'> Takes a hash of Procs, which should return true if the argument is valid.  The key will be inserted into the error message if the Proc does not return true: "Option #{key}'s value #{value} #{message}&#33;" </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>:respond_to</b> </th>
+<td class='confluenceTd'> Ensure that the value has a given method.  Takes one method name or an array of  method names. </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="LightweightResourcesandProviders%28LWRP%29-DefaultProviderwheninvokinganLWRinaRecipeRecipes"></a>Default Provider when invoking an LWR in a <a href="Recipes.html" title="Recipes">Recipe</a></h4>
+
+<p>If you omit the provider attribute when using an LWR in a recipe, Chef will look for an LWP of the same name in the same cookbook by default.</p>
+
+<p>So, you can write:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>"Example LWR usage without an explicit Provider"</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">aws_elastic_ip :my_ip do
+  ip 1.2.3.4
+end</pre>
+		</div>
+</div></div>
+<p>instead of:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>"Example LWR usage with an explicit Provider"</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">aws_elastic_ip :my_ip do
+  ip 1.2.3.4
+  provider :aws_elastic_ip # unnecessary, as this is the default
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="LightweightResourcesandProviders%28LWRP%29-Example%2CcreatingaLightweightResource"></a>Example, creating a Lightweight Resource</h3>
+
+<p>In order to demonstrate, let's contrast the implementation of the existing (heavyweight) File Resource with a Lightweight Resource of the same functionality:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>"Chef::Resource::File circa Chef 0.7.8"</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">require 'chef/resource'
+
+class Chef
+  class Resource
+    class File &lt; Chef::Resource
+
+      def initialize(name, collection=nil, node=nil)
+        super(name, collection, node)
+        @resource_name = :file
+        @path = name
+        @backup = 5
+        @action = "create"
+        @allowed_actions.push(:create, :delete, :touch, :create_if_missing)
+      end
+
+      def backup(arg=nil)
+        set_or_return(
+          :backup,
+          arg,
+          :kind_of =&gt; [ Integer, FalseClass ]
+        )
+      end
+
+      def checksum(arg=nil)
+        set_or_return(
+          :checksum,
+          arg,
+          :regex =&gt; /^[a-zA-Z0-9]{64}$/
+        )
+      end
+
+      def group(arg=nil)
+        set_or_return(
+          :group,
+          arg,
+          :regex =&gt; [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ]
+        )
+      end
+
+      def mode(arg=nil)
+        set_or_return(
+          :mode,
+          arg,
+          :regex =&gt; /^0?\d{3,4}$/
+        )
+      end
+
+      def owner(arg=nil)
+        set_or_return(
+          :owner,
+          arg,
+          :regex =&gt; [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ]
+        )
+      end
+
+      def path(arg=nil)
+        set_or_return(
+          :path,
+          arg,
+          :kind_of =&gt; String
+        )
+      end
+
+    end
+  end
+end</pre>
+		</div>
+</div></div>
+
+<p>The above code is simple, traditional ruby--no magic at all.  We are creating a number of getter/setter methods and validating that the inputs match some criteria (a regex, a string, true/false, etc.). The lightweight version looks like:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Lightweight File Resource</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">actions :create, :delete, :touch, :create_if_missing
+
+attribute :backup,   :kind_of =&gt; [ Integer, FalseClass ]
+attribute :group,    :regex =&gt; /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/
+attribute :mode,     :regex =&gt; /^0?\d{3,4}$/
+attribute :owner,    :regex =&gt; [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ]
+attribute :path,     :kind_of =&gt; String
+attribute :checksum, :regex =&gt; /^[a-zA-Z0-9]{64}$/</pre>
+		</div>
+</div></div>
+
+<p>Hopefully this is simpler to write and understand.</p>
+
+<h1><a name="LightweightResourcesandProviders%28LWRP%29-Providers"></a>Providers</h1>
+<p><font color="#f7681a">A provider is the underlying implementation which brings the resource into the desired state.</font></p>
+
+<h3><a name="LightweightResourcesandProviders%28LWRP%29-Background"></a>Background</h3>
+
+<p><b><a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">The chef-client runs in two stages</a></b></p>
+<ol>
+	<li><b>The compilation phase</b><br/>
+<em>The client examines each <a href="Recipes.html" title="Recipes">Recipe</a> in order and adds its <a href="Resources.html" title="Resources">Resources</a> to the ResourceCollection</em></li>
+	<li><b>The execution phase</b><br/>
+<em>The client iterates over the ResourceCollection</em>, and performs the following:
+	<ol>
+		<li>Based on the Resource's "provider" attribute, a new instance of the specified Provider is created (if the attribute is not set, one is selected based on the local platform).<br/>
+The originating Resource is stored in the new Provider as the <tt>@new_resource</tt> instance variable and is accessible when writing LWPs as <tt>new_resource.name</tt>, for example.</li>
+		<li>The <tt>load_current_resource</tt> method is then called on the provider instance, giving it an opportunity to populate <tt>@current_resource</tt> with a new resource that represents the current state of the relevant part of the system.</li>
+		<li>For each action specified in <tt>@new_resource.actions</tt>, the <tt>action&#95;</tt> method that corresponds to each action is called (e.g. <tt>action :create</tt> will invoke the <tt>action_create</tt> method of the Provider instance.)</li>
+	</ol>
+	</li>
+</ol>
+
+
+<h3><a name="LightweightResourcesandProviders%28LWRP%29-Keyword%3Aaction"></a>Keyword: action</h3>
+
+<p>Actions are defined using the "action" keyword. Attributes from the originating Resource are accessible through the <tt>@new_resource</tt> instance variable, or, more idiomatically, simply as <tt>new_resource</tt> (see example below). When updating the resource, actions should call <tt>@new_resource.updated_by_last_action(true)</tt> to ensure that notifications are delivered.</p>
+
+<h3><a name="LightweightResourcesandProviders%28LWRP%29-DefaultAction"></a>Default Action</h3>
+
+<p>The DSL doesn't provide a semantic for specifying a default action. If you would like to specify a particular action to be the default for the resource, create an initialize method in the resource's .rb file. For example, to have the <tt>:create</tt> action from the file resource above be the default (as it is in the Chef library itself):</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">def initialize(*args)
+  super
+  @action = :create
+end</pre>
+		</div>
+</div></div>
+
+<h4><a name="LightweightResourcesandProviders%28LWRP%29-InlineResourcesinProviderActions"></a>In-line Resources in Provider Actions</h4>
+
+<p>The Recipe DSL has been extended to Providers, meaning Resources can be constructed and executed in-line in the bodies of Provider actions (see example using the "execute" Resource below.)</p>
+
+<h4><a name="LightweightResourcesandProviders%28LWRP%29-Implementation"></a>Implementation</h4>
+
+<p>For the curious, when a Provider references new Resources in-line, they are inserted into the ResourceCollection in order of appearance after the currently-executing Resource. For example, if after phase 1, the ResourceCollection contains the Resources [A,B] and during phase 2, the action run on A's Provider references Resources C and D in-line, the ResourceCollection (and execution order) will end up as [A,C,D,B].</p>
+
+<h3><a name="LightweightResourcesandProviders%28LWRP%29-Example%2CcreatingaLightweightProvider"></a>Example, creating a Lightweight Provider</h3>
+
+<p>Taking the database example, our Resource might be defined by:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/cookbooks/opscode/resources/database.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">actions :create, :delete
+
+attribute :name, :kind_of =&gt; String, :name_attribute =&gt; true
+attribute :type, :kind_of =&gt; String</pre>
+		</div>
+</div></div>
+
+<p>A mysql Provider might look like:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/cookbooks/opscode/providers/mysql.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">action :create do
+  execute "create database" do
+    not_if "mysql -e 'show databases;' | grep #{new_resource.name}"
+    command "mysqladmin create #{new_resource.name}"
+  end
+end
+
+action :delete do
+  execute "delete database" do
+    only_if "mysql -e 'show databases;' | grep #{new_resource.name}"
+    command "mysqladmin drop #{new_resource.name}"
+  end
+end</pre>
+		</div>
+</div></div>
+
+<p>This would create a new Provider (Chef::Provider::OpscodeMysql) with a load_current_resource that does nothing, along with two methods, action_create and action_delete.  When either of these methods is invoked, the corresponding block is executed, including properly resolving <tt>@new_resource</tt>.</p>
+
+<p>Using our resource in a recipe:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>using the database resource</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">opscode_database "monkeynews" do
+  type "innodb"
+  action :create
+  provider "opscode_mysql"
+end</pre>
+		</div>
+</div></div>
+
+<p>Would create a database called monkeynews.  It would also allow you to trivially switch out the database back-end.</p>
+
+<h3><a name="LightweightResourcesandProviders%28LWRP%29-ExtendingAnExistingProvider"></a>Extending An Existing Provider</h3>
+
+<p>If you'd like to write a LWP that extends another provider class, you can accomplish that as a <a href="http://juixe.com/techknow/index.php/2006/06/15/mixins-in-ruby/">mixin</a>, which you would then place in a <a href="Libraries.html" title="Libraries">library</a> under the library directory of the cookbook using that extended class.  </p>
+
+<p>Your LWRP would then be written to include that library in the provider implementation to get access to the extended core resource.  For an example, see the <a href="http://community.opscode.com/cookbooks/transmission">Transmission Cookbook</a>, which includes a `transmission_torrent_file` LWRP that allows you to download a file via the BitTorrent protocol. This `transmission_torrent_file` LWRP are an extension of the existing file and remote_file resources. </p>
+
+<h1><a name="LightweightResourcesandProviders%28LWRP%29-FurtherReading"></a>Further Reading</h1>
+
+<p>View slides from a talk on <a href="http://www.slideshare.net/jtimberman/understanding-lwrp-development">Understanding LWRP Development</a>
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/7274964/20840638.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Providers.html" title="Providers">Providers</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/7274964/20840637.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Opscode LWRP Resources.html" title="Opscode LWRP Resources">Opscode LWRP Resources</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7274964/14876684.jpg">5059886-close-up-of-white-feather-falling-to-hand.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7274964/20840637.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7274964/20840638.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

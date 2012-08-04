@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Chef Concepts as UML</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Chef Concepts as UML
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="70%">
+<p><br class="atl-forced-newline" /></p>
+<h5><a name="ChefConceptsasUML-"></a><font color="#f7681a">Despite rusty UML, we thought it would be worthwhile to share a diagram of relationships between the various Chef components. Feel free to update it or leave feedback if there appear to be incorrect connections. The original OmniGraffle file is attached.</font></h5>
+<p><br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="display: block; text-align: center"><img src="../attachments/16089244/16187407.png" style="border: 0px solid black"/></span></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%">
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><b>Server</b></p>
+<ul>
+	<li>There is 1 Server.</li>
+</ul>
+
+
+<p><b>Client</b></p>
+<ul>
+	<li>There may be multiple Clients.</li>
+	<li>Each Client has 1 Server.</li>
+	<li>A Client may or may not belong to a Node.</li>
+</ul>
+
+
+<p><b>Environment</b></p>
+<ul>
+	<li>There may be multiple Environments.</li>
+	<li>Each Environment has 0 or more versions of a Cookbook.</li>
+</ul>
+
+
+<p><b>Node</b></p>
+<ul>
+	<li>There may be multiple Nodes.</li>
+	<li>Each Node has 1 Server.</li>
+	<li>Each Node has 1 Client.</li>
+	<li>Each Node has 1 Run List.</li>
+	<li>Each Node has 1 Environment (_default if none is specified)</li>
+	<li>Each Node has 0 or more Attributes.</li>
+</ul>
+
+
+<p><b>Run List</b></p>
+<ul>
+	<li>The Run List may have 0 or more Roles.</li>
+	<li>The Run List may have 0 or more Recipes.</li>
+</ul>
+
+
+<p><b>Role</b></p>
+<ul>
+	<li>There may be multiple Roles.</li>
+	<li>Each Role has 1 Run List per Environment (with a default).</li>
+</ul>
+
+
+<p><b>Recipe</b></p>
+<ul>
+	<li>There may be multiple Recipes.</li>
+	<li>Each Recipe has 1 Cookbook.</li>
+	<li>Each Recipe has 0 or more Resources.</li>
+</ul>
+
+
+<p><b>Resource</b></p>
+<ul>
+	<li>There may be multiple Resources.</li>
+</ul>
+
+
+<p><b>Cookbook</b></p>
+<ul>
+	<li>There may be multiple Cookbooks.</li>
+	<li>Each Cookbook has 0 or more Recipes.</li>
+	<li>Each Cookbook has 1 or more versions.</li>
+</ul>
+
+
+<p><b>Attribute</b></p>
+<ul>
+	<li>There are precedence rules for setting Attributes within a Recipe, Cookbook, Role, Environment or directly on the Node.</li>
+</ul>
+
+
+<p><b>Data Bag</b></p>
+<ul>
+	<li>There may be multiple Data Bags.</li>
+</ul>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Cookbook Site API.html" title="Cookbook Site API"><span class="image-wrap" style="float: left"><img src="../attachments/16089244/20840505.png" hspace="4" style="border: 0px solid black"/></span> Cookbook Site API </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Chef Essentials.html" title="Chef Essentials"><span class="image-wrap" style="float: right"><img src="../attachments/16089244/20840504.png" hspace="4" style="border: 0px solid black"/></span> Chef Essentials </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089244/19693575.png">ChefConcepts.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089244/20840566.png">ChefConcepts.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089244/20840504.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089244/20840505.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089244/16187407.png">ChefConcepts.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089244/20840567.graffle">ChefConcepts-v5.graffle</a> (application/octet-stream)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

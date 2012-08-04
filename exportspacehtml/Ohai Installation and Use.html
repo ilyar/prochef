@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Ohai Installation and Use</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Ohai Installation and Use
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Feb 15, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/2457791/20840688.jpg" hspace="18" vspace="4" style="border: 0px solid black"/></span></p>
+
+<p><br class="atl-forced-newline" /></p>
+<h2><a name="OhaiInstallationandUse-"></a><font color="#f7681a">Opscode distributes Ohai as a Gem, available from <a href="http://rubygems.org/gems/ohai">http://rubygems.org/</a></font></h2>
+<h3><a name="OhaiInstallationandUse-ItisarequirementforChef%2CsoifyouhaveChefinstalled%2CyouhaveOhai."></a><em>It is a requirement for Chef, so if you have Chef installed, you have Ohai.</em> </h3>
+
+<h3><a name="OhaiInstallationandUse-"></a><font color="#f7681a">If you would like to install Ohai separately, for testing or development, read on.</font></h3>
+<p><b>If you're running Windows, see <a href="Installing Ohai on Windows.html" title="Installing Ohai on Windows">Installing Ohai on Windows</a> for more information.</b>
+<br class="atl-forced-newline" /></p>
+</div></div>
+<h1><a name="OhaiInstallationandUse-InstallGem"></a>Install Gem</h1>
+<div class='navmenu' style='float:right; width:220px; background:#eeeeee; border:4px solid #d7d4c3; margin:10px; padding:4px'><div class="" align="center"><font color="navy"><b>Ohai Version Dependencies</b></font></div>
+ 
+<ul>
+	<li>Use of Ohai Version 0.6.x, requires the use of Chef version 0.9.x or greater.</li>
+</ul>
+
+
+<ul>
+	<li>Chef version 0.10 requires Ohai Version 0.6.x or greater, and will not function with earlier versions.</li>
+</ul>
+</div>
+<p>Add Rubygems.org's gem server to your local sources.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Update Gem Sources</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">sudo gem source -a http://rubygems.org</pre>
+		</div>
+</div></div>
+
+<p>Install the Gem.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Ohai</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">sudo gem install ohai</pre>
+		</div>
+</div></div>
+
+<p>This will also install Ohai's dependency gems, json, extlib and systemu.</p>
+
+<h1><a name="OhaiInstallationandUse-InstallfromGit"></a>Install from Git</h1>
+
+<p>We use GitHub for sharing our source code, so to install the source from Git:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>clone git repository</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">git clone git://github.com/opscode/ohai.git</pre>
+		</div>
+</div></div>
+
+<p>Install the gem with rake.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>rake install</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">rake install</pre>
+		</div>
+</div></div>
+
+<p>See the README.rdoc included in the repository (or on the <a href="http://github.com/opscode/ohai/tree/master">GitHub page</a>) for more about Ohai development. Also read <a href="How to Contribute.html" title="How to Contribute">about contributing to Opscode projects</a></p>
+
+<h1><a name="OhaiInstallationandUse-UsingOhai"></a>Using Ohai</h1>
+
+<ul>
+	<li><h5><a name="OhaiInstallationandUse-NodedatafromohaiisprovidedtoChefviaanobjectnamed%7B%7Bnode%7D%7D."></a>Node data from ohai is provided to Chef via an object named <tt>node</tt>.</h5>
+<p>When used with Chef, Ohai JSON output is reported back via <a href="Automatic Attributes.html" title="Automatic Attributes">"automatic" node attributes</a> to update the node object on the chef-server.</p></li>
+</ul>
+
+
+<ul>
+	<li><h5><a name="OhaiInstallationandUse-"></a><font color="#f7681a">Ohai can also be run outside of Chef, so you can query your system for various data.</font></h5>
+<p>When run standalone, Ohai will print out a JSON data blob for all the known data about your system.</p></li>
+</ul>
+
+
+<ul>
+	<li><h5><a name="OhaiInstallationandUse-UseasaLibrary"></a>Use as a Library</h5>
+<p>You can use Ohai as a library within a ruby program or script. 
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></li>
+</ul>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/2457791/20840690.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Ohai.html" title="Ohai">Ohai</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/2457791/20840689.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Writing Ohai Plugins.html" title="Writing Ohai Plugins">Writing Ohai Plugins</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2457791/20840688.jpg">3301830-green-radar-screen-on-a-black-background.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2457791/20840689.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/2457791/20840690.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

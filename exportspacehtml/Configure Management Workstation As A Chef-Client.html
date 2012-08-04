@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Configure Management Workstation As A Chef-Client</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Configure Management Workstation As A Chef-Client
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 02, 2011 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="5%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 200x162" href='http://wiki.opscode.com/download../attachments/13762784/blocks.png'><img src="../attachments/thumbnails/13762784/21463239" hspace="4" style="border: 0px solid black"/></a></span></p>
+
+<hr />
+<h3><a name="ConfigureManagementWorkstationAsAChef-Client-"></a><font color="#f7681a">IF you want to configure your Management Workstation as a Chef-Client, this page will explain how to do so.</font></h3>
+<hr />
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h2><a name="ConfigureManagementWorkstationAsAChef-Client-Nodevs.Clientvs.Uservs.Workstation"></a>Node vs. Client vs. User vs. Workstation</h2>
+
+<p>First, to help avoid any confusion, lets go over terminology. The system where you are doing development and maintaining a cookbook repository we can call a workstation or your management workstation. It is where you run knife commands. A server you want to manage with chef we call a node, and the only command you will run on it should be "sudo chef-client".  </p>
+
+<p>A client allows you to access the server API.  In general, clients map 1:1 to the list of nodes (every node is a client, and every client represents 1 node.) However, it is possible for a single client to manage multiple nodes - this is most often done for programmatic access to the nodes via the API.  A user is an individual: credentialed entities used by humans to connect to the Hosted Platform to manage the organization.  </p>
+
+<p><font color="#f7681a"><ins>The user is the credentialed entity that manages the organization:</ins></font></p>
+<ul>
+	<li>using their management workstation</li>
+	<li>connecting through the Web UI (Management Console),</li>
+	<li>using the knife command line tool</li>
+</ul>
+
+
+<p><font color="#f7681a"><ins>The organization is comprised of nodes</ins></font></p>
+<ul>
+	<li>systems that are configured and managed by chef</li>
+</ul>
+
+
+<p><font color="#f7681a"><ins>Which run the chef-client software</ins></font></p>
+<ul>
+	<li>which has a certificate to authorize its interaction with the server/platform to download cookbooks it needs to run and compile the configuration of the node.</li>
+</ul>
+
+</td>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Must I Have My Workstation Be A Chef-Client?</b><br /><br class="atl-forced-newline" />
+<b>NO</b> You are <em>not</em> required to configure your workstation as a chef-client for interacting with Chef to automate your infrastructure.  
+
+<p>Managing your workstation via Chef is a choice, not a requirement. It would be driven by a desire to expand configuration management to the desktop, not by a need for Chef functionality.</p></td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Terminology Documentation References</b><br /><br class="atl-forced-newline" />
+<ins><a href="http://wiki.opscode.com/display/chef/A+Can+of+Condensed+Chef+Documentation">A Can of Condensed Chef Documentation</a></ins><br/>
+Includes links to pages with more detail on each topic (if desired), and a call-out link to a <b><a href="http://wiki.opscode.com/display/chef/Glossary">glossary</a></b> 
+
+<p><ins><a href="http://wiki.opscode.com/display/chef/Chef+Basics">Chef Basics</a></ins> <br/>
+Includes a call-out link to a nice <b><a href="http://kallistec.com/2010/02/01/the-chef-way-episode-2-chef-speak/">Chef Speak</a></b> overview blog post by team member Dan DeLeo.</p></td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h2><a name="ConfigureManagementWorkstationAsAChef-Client-HavingChefManagetheConfigurationofyourManagementWorkstation"></a>Having Chef Manage the Configuration of your Management Workstation</h2>
+
+<p>To have the Chef Server (or Hosted Chef, as the case may be) manage the configuration of your workstation, you need to configure the client. These directions assume you have already installed knife by following the <a href="Installation.html" title="Installation">Installation</a> Guides.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ cd ~/chef-repo
+$ knife configure client ./client-config
+INFO: Creating client configuration
+INFO: Writing client.rb
+INFO: Writing validation.pem</pre>
+		</div>
+</div></div>
+
+<p>You'll now have a client-config directory in your local repository:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ ls -l client-config
+-rw-r--r--   1 adam  staff   155 Jun 18 16:03 client.rb
+-rw-r--r--@  1 adam  staff  1679 Jun 18 16:03 validation.pem</pre>
+		</div>
+</div></div>
+
+<p>To configure your workstation as a chef client, you just need to copy this directory to /etc/chef:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ sudo mkdir /etc/chef 
+$ sudo cp -r ~/chef-repo/client-config/* /etc/chef</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<hr />
+<p><span class="image-wrap" style="float: left"><img src="../attachments/13762784/21463240.png" style="border: 0px solid black"/></span> </p>
+
+<p><br class="atl-forced-newline" />
+<b>You have now configured your management workstation as a chef client, and can manage its configuration through Chef!</b>  <br/>
+<b><font color="#f7681a"><em>Yea you!</em></font></b>  </p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/13762784/21463082.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installation.html" title="Installation">Installation</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/13762784/21463081.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Chef.html" title="Managing Chef">Managing Chef</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/13762784/14057513.jpg">thumbs-up-popover.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/13762784/14057514.jpg">blocks.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/13762784/21463081.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/13762784/21463082.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/13762784/21463239.png">blocks.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/13762784/21463240.png">thumbs-up-popover.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

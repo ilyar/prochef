@@ -1,0 +1,2706 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Opscode LWRP Resources</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Opscode LWRP Resources
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 168x157" href='http://wiki.opscode.com/download../attachments/8683680/5059886-close-up-of-white-feather-falling-to-hand.jpg'><img src="../attachments/thumbnails/8683680/14057481" hspace="14" vspace="6" style="border: 0px solid black"/></a></span></p>
+<hr />
+<h3><a name="OpscodeLWRPResources-"></a><font color="#f7681a">This page documents the Light-weight Resources and Providers (LWRPs) in Opscode's public open source</font> <font color="#f7681a"><a href="Cookbooks.html" title="Cookbooks">cookbooks</a></font><font color="#f7681a">.</font> <font color="#f7681a">These can be used within</font> <font color="#f7681a"><a href="Recipes.html" title="Recipes">Recipes</a></font> <font color="#f7681a">to increase automation of your environment.</font> <font color="#f7681a"><em>Each document section links off to the Opscode public open source cookbook discussed.</em></font></h3>
+
+<p><br class="atl-forced-newline" /></p>
+<h5><a name="OpscodeLWRPResources-ForadditionalinformationonLWRPs%2CincludingtheDSLforcreatingResourcesandProviders%2CseeLightweightResourcesandProviders%28LWRP%29LightweightResourcesandProviders%28LWRP%29."></a>For additional information on LWRPs, including the DSL for creating Resources and Providers, see <a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers (LWRP)</a>.</h5>
+
+<hr />
+<h1><a name="OpscodeLWRPResources-apt"></a><a href="http://cookbooks.opscode.com/cookbooks/apt">apt</a></h1>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21aptrepository"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> apt_repository</h3>
+
+<p><font color="#f7681a">Manage apt repositories by dropping off a "sources.list" in</font> <font color="#f7681a"><tt>/etc/apt/sources.list.d</tt></font><font color="#f7681a">.</font> Only relevant on distributions that have APT installed, e.g. Debian and Ubuntu. The sources.list filename will be named after the name attribute of the resource (<tt>repo_name</tt>) - see the examples.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>add</b> </th>
+<td class='confluenceTd'> Add a new repository </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>remove</b> </th>
+<td class='confluenceTd'> Delete a repository </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>repo_name</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: Name of the repository </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>uri</b> </th>
+<td class='confluenceTd'> URI for the repository </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>distribution</b> </th>
+<td class='confluenceTd'> Distribution shortname (e.g. "lucid") </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>components</b> </th>
+<td class='confluenceTd'> Array of components (e.g. ["main"]) </td>
+<td class='confluenceTd'> [] </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>deb_src</b> </th>
+<td class='confluenceTd'> Whether to add the deb-src source repository </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>keyserver</b> </th>
+<td class='confluenceTd'> Keyserver to download the PGP key from </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>key</b> </th>
+<td class='confluenceTd'> if a key_server is provided, this is assumed to be the fingerprint, otherwise it is the URI to the PGP key for the repo </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+</tbody></table>
+</div>
+</td>
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" />
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#OpscodeLWRPResources-apt'> apt</a></li>
+    <li><a href='#OpscodeLWRPResources-aws'> aws</a></li>
+    <li><a href='#OpscodeLWRPResources-bluepill'> bluepill</a></li>
+    <li><a href='#OpscodeLWRPResources-chefhandler'> chef_handler</a></li>
+    <li><a href='#OpscodeLWRPResources-daemontools'> daemontools</a></li>
+    <li><a href='#OpscodeLWRPResources-djbdns'> djbdns</a></li>
+    <li><a href='#OpscodeLWRPResources-dmg'> dmg</a></li>
+    <li><a href='#OpscodeLWRPResources-dynect'> dynect</a></li>
+    <li><a href='#OpscodeLWRPResources-firewall'> firewall</a></li>
+    <li><a href='#OpscodeLWRPResources-mysql'> mysql</a></li>
+    <li><a href='#OpscodeLWRPResources-pacman'> pacman</a></li>
+    <li><a href='#OpscodeLWRPResources-php'> php</a></li>
+    <li><a href='#OpscodeLWRPResources-python'> python</a></li>
+    <li><a href='#OpscodeLWRPResources-riak'> riak</a></li>
+    <li><a href='#OpscodeLWRPResources-samba'> samba</a></li>
+    <li><a href='#OpscodeLWRPResources-transmission'> transmission</a></li>
+    <li><a href='#OpscodeLWRPResources-windows'> windows</a></li>
+</ul></div>
+</div></div><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Understanding LWRP Development</b><br /><br class="atl-forced-newline" />
+Opscode team member <a href="http://jtimberman.posterous.com/">Joshua Timberman</a> has a slideshare presentation on <a href="http://www.slideshare.net/jtimberman/understanding-lwrp-development">Understanding LWRP Development</a>, available for your review.</td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/apt/sources.list.d/zenoss.list</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">apt_repository "zenoss" do
+  uri "http://dev.zenoss.org/deb"
+  components ["main","stable"]
+  action :add
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/apt/sources.list.d/opscode.list (signed repository)</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">apt_repository "opscode" do
+  uri "http://apt.opscode.com"
+  distribution node['lsb']['codename'] # or "lucid" if lsb isn't installed :)
+  components ["main"]
+  key "2940ABA983EF826A"
+  keyserver "pgpkeys.mit.edu"
+  action :add
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/apt/sources.list.d/opscode.list (signed repository) v2</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">apt_repository "opscode" do
+  uri "http://apt.opscode.com"
+  distribution node['lsb']['codename'] # or "lucid" if lsb isn't installed :)
+  components ["main"]
+  key "http://apt.opscode.com/packages@opscode.com.gpg.key"
+  action :add
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/apt/sources.list.d/hardy-rsyslog-ppa.list (signed repository)</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">apt_repository "hardy-rsyslog-ppa" do
+  uri "http://ppa.launchpad.net/a.bono/rsyslog/ubuntu"
+  distribution "hardy"
+  components ["main"]
+  keyserver "keyserver.ubuntu.com"
+  key "C0061A4A"
+  action :add
+  notifies :run, "execute[apt-get update]", :immediately
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/apt/sources.list.d/cloudkick.list (signed repository)</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">apt_repository "cloudkick" do
+  uri "http://packages.cloudkick.com/ubuntu"
+  distribution node['lsb']['codename']
+  components ["main"]
+  key "http://packages.cloudkick.com/cloudkick.packages.key"
+  action :add
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Remove /etc/apt/sources.list.d/zenoss.list</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">apt_repository "zenoss" do
+  action :remove
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-aws"></a><a href="http://cookbooks.opscode.com/cookbooks/aws">aws</a></h1>
+
+<p>The AWS cookbook by Opscode provides two LWRPs.</p>
+
+<ul>
+	<li>aws_ebs_volume - manages EBS volumes</li>
+	<li>aws_elastic_ip - manages elastic IPs</li>
+</ul>
+
+
+<p>These LWRPs use the right_aws RubyGem to access the AWS EC2 API.</p>
+
+<p>Both of these LWRPs require passing in the AWS authentication credentials, aws_access_key and aws_secret_access_key. Generally we recommend storing these in a data bag item.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>knife data bag show aws main</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "id": "main",
+  "aws_access_key_id": "YOUR AWS ACCESS KEY",
+  "aws_secret_access_key": "YOUR AWS SECRET ACCESS KEY"
+}</pre>
+		</div>
+</div></div>
+
+<p>This can be loaded in a recipe by using:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Recipe to load a data bag item</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">aws = data_bag_item("aws", "main")</pre>
+		</div>
+</div></div>
+
+<p>Then the elements of the data bag item can be accessed as the hash keys in the <tt>aws</tt> hash:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">aws['aws_access_key_id']
+aws['aws_secret_access_key']</pre>
+		</div>
+</div></div>
+
+<p>The examples below will use these values.</p>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21awsebsvolume"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> aws_ebs_volume</h3>
+
+<p><font color="#f7681a">This LWRP only handles manipulation of the EBS volumes, it does not create filesystems, mount points or other storage management tasks.</font> You'll need to write recipes to do that.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<p>The create action will only make the API call to create a new volume, which will get a random volume ID generated by EC2. It can be attached in the same resource by specifying the actions as an array. See the examples.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>create</b> </th>
+<td class='confluenceTd'> Creates a new EBS volume </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>attach</b> </th>
+<td class='confluenceTd'> Attaches an existing volume to the node </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>detach</b> </th>
+<td class='confluenceTd'> Detaches the specified volume </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>snapshot</b> </th>
+<td class='confluenceTd'> Creates a snapshot of the volume </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>prune</b> </th>
+<td class='confluenceTd'> Prunes older snapshots </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>aws_access_key</b> </th>
+<td class='confluenceTd'> Amazon AWS Access Key (username) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>aws_secret_access_key</b> </th>
+<td class='confluenceTd'> Amazon AWS Secret Access Key (password) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>size</b> </th>
+<td class='confluenceTd'> Size of volume to create in gigabytes </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>snapshot_id</b> </th>
+<td class='confluenceTd'> Snapshot to build a new EBS volume </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>availability_zone</b> </th>
+<td class='confluenceTd'> EC2 availability zone </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>device</b> </th>
+<td class='confluenceTd'> Local block device to attach the volume </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>volume_id</b> </th>
+<td class='confluenceTd'> Use to specify a volume to attach </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>timeout</b> </th>
+<td class='confluenceTd'> Connection timeout to EC2 API </td>
+<td class='confluenceTd'> 3 minutes </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>snapshots_to_keep</b> </th>
+<td class='confluenceTd'> Used with action <b>:prune</b> to specify how many snapshots to maintain </td>
+<td class='confluenceTd'> 2 </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create a new volume and attach it to the node</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">aws_ebs_volume "database_volume" do
+  aws_access_key aws['aws_access_key_id']
+  aws_secret_access_key aws['aws_secret_access_key']
+  size 50
+  device "/dev/sdm"
+  action [:create, :attach]
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create a new volume out of an existing volume's snapshot</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">aws_ebs_volume "db_ebs_volume_from_snapshot" do
+  aws_access_key aws['aws_access_key_id']
+  aws_secret_access_key aws['aws_secret_access_key']
+  size 50
+  device "/dev/sdi"
+  snapshot_id "snap-ABCDEFGH" # creates a new volume based on this snapshot
+  action [ :create, :attach ]
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Prune all but 1 snapshot for the specified volume</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">aws_ebs_volume "prune_snapshots" do
+  aws_access_key aws['aws_access_key_id']
+  aws_secret_access_key aws['aws_secret_access_key']
+  volume_id "vol-ABCDEF12" # must specify the volume ID to prune
+  snapshots_to_keep 1
+  action :prune
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21awselasticip"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> aws_elastic_ip</h3>
+
+<p><font color="#f7681a">This LWRP can only associate or disassociate existing elastic IPs.</font> You'll need to allocate new IPs in your AWS account manually.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<p>Note that when an elastic IP address is associated with the node, network connectivity will be lost.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>associate</b> </th>
+<td class='confluenceTd'> Associate the specified IP with the node </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>disassociate</b> </th>
+<td class='confluenceTd'> Disassociate the specified IP from the node </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>aws_access_key</b> </th>
+<td class='confluenceTd'> Amazon AWS Access Key (username) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>aws_secret_access_key</b> </th>
+<td class='confluenceTd'> Amazon AWS Secret Access Key (password) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>ip</b> </th>
+<td class='confluenceTd'> The allocated IP address to use </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>timeout</b> </th>
+<td class='confluenceTd'> Connection timeout to EC2 API </td>
+<td class='confluenceTd'> 3 minutes </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<p>The IP below is not valid in Amazon EC2, and is used just as an example.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Assocating a new IP address</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">aws_elastic_ip "eip_load_balancer_production" do
+  aws_access_key aws['aws_access_key_id']
+  aws_secret_access_key aws['aws_secret_access_key']
+  ip "192.168.1.42"
+  action :associate
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Disassocating a new IP address</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">aws_elastic_ip "eip_load_balancer_production" do
+  aws_access_key aws['aws_access_key_id']
+  aws_secret_access_key aws['aws_secret_access_key']
+  ip "192.168.1.42"
+  action :disassociate
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-bluepill"></a><a href="http://cookbooks.opscode.com/cookbooks/bluepill">bluepill</a></h1>
+
+<p>Bluepill is a process management tool written in Ruby. More information about bluepill can be found on its <a href="https://github.com/arya/bluepill">project page</a>.</p>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21bluepillservice"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> bluepill_service</h3>
+
+<p><font color="#f7681a">The bluepill_service LWRP can be used with the normal Chef service resource by using the</font> <font color="#f7681a"><tt>provider</tt></font> <font color="#f7681a">parameter attribute.</font></p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>start</b> </th>
+<td class='confluenceTd'> Starts the service </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>stop</b> </th>
+<td class='confluenceTd'> Stops the service </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>enable</b> </th>
+<td class='confluenceTd'> Enable the service by linking the pill </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>disable</b> </th>
+<td class='confluenceTd'> Disable the service by removing the pill link </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>load</b> </th>
+<td class='confluenceTd'> Loads the service's pill into bluepill </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>restart</b> </th>
+<td class='confluenceTd'> Restarts the service </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>service_name</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: Name of the service </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>variables</b> </th>
+<td class='confluenceTd'> A hash of variables to pass into the pill template </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>supports</b> </th>
+<td class='confluenceTd'> Meta-parameter supports can be used like with the service resource </td>
+<td class='confluenceTd'> { :restart =&gt; true, :status =&gt; true } </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<p>The recipe using the bluepill_service LWRP must contain a template resource for the pill and it must be named <tt>NAME.pill.erb</tt> where <tt>NAME</tt> is the service_name or name attribute, above.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>template resource in the example recipe</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/etc/bluepill/my_app" do
+  source "my_app.pill.erb"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>my_app.pill.erb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">Bluepill.application("my_app") do |app|
+  app.process("my_app") do |process|
+    process.pid_file = "/var/run/my_app.pid"
+    process.start_command = "/usr/bin/my_app"
+  end
+end</pre>
+		</div>
+</div></div>
+
+<p>Actual bluepill_service resources:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Using the service resource</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">service "my_app" do
+  provider bluepill_service
+  action [:enable, :load, :start]
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Using the bluepill_service resource directly</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">bluepill_service "my_app" do
+  action [:enable, :load, :start]
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-chefhandler"></a><a href="http://cookbooks.opscode.com/cookbooks/chef_handler">chef_handler</a></h1>
+
+<p>The chef_handler LWRP allows enabling of <a href="http://wiki.opscode.com/display/chef/Exception+and+Report+Handlers">Chef report and exception handlers</a> from within recipe code (as opposed to hard coding in the client.rb file).  This is useful for cookbook authors who may want to ship a product specific handler.</p>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21chefhandler"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> chef_handler</h3>
+
+<p><font color="#f7681a">Requires, configures and enables handlers on the node for the current Chef run.  Also has the ability to pass arguments to the handlers initializer.</font> This allows initialization data to be pulled from a node's attribute data.</p>
+
+<p>It is best to declare `chef_handler` resources early on in the compile phase so they are available to fire for any exceptions during the Chef run.  If you have a base role you would want any recipes that register Chef handlers to come first in the run_list.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>enable</b> </th>
+<td class='confluenceTd'> Enables the Chef handler for the current Chef run on the current node </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>disable</b> </th>
+<td class='confluenceTd'> Disables the Chef handler for the current Chef run on the current node </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>class_name</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: The name of the handler class (can be module name-spaced). </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>source</b> </th>
+<td class='confluenceTd'> full path to the handler file.  can also be a gem path if the handler ships as part of a Ruby gem. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>arguments</b> </th>
+<td class='confluenceTd'> an array of arguments to pass the handler's class initializer </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>supports</b> </th>
+<td class='confluenceTd'> type of Chef Handler to register as, ie :report, :exception or both </td>
+<td class='confluenceTd'> { :report =&gt; true, :exception =&gt; true } </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>register the Chef::Handler::JsonFile handler that ships as part of the Chef gem</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">chef_handler "Chef::Handler::JsonFile" do
+  source "chef/handler/json_file"
+  arguments :path =&gt; '/var/chef/reports'
+  action :enable
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>enable handler during the compile phase</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">chef_handler "Chef::Handler::JsonFile" do
+  source "chef/handler/json_file"
+  arguments :path =&gt; '/var/chef/reports'
+  action :nothing
+end.run_action(:enable)</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>handle exceptions only</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">chef_handler "Chef::Handler::JsonFile" do
+  source "chef/handler/json_file"
+  arguments :path =&gt; '/var/chef/reports'
+  supports :exception =&gt; true
+  action :enable
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>enable the CloudkickHandler which was dropped off in the default handler path. Also passes the oauth key/secret to the handler's initializer</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">chef_handler "CloudkickHandler" do
+  source "#{node['chef_handler']['handler_path']}/cloudkick_handler.rb"
+  arguments [node['cloudkick']['oauth_key'], node['cloudkick']['oauth_secret']]
+  action :enable
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-daemontools"></a><a href="http://cookbooks.opscode.com/cookbooks/daemontools">daemontools</a></h1>
+
+<p>daemontools is a set of utilities for managing Unix services written by Dan J Bernstein. (<a href="http://cr.yp.to/daemontools.html">More information</a>)</p>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21daemontoolsservice"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> daemontools_service</h3>
+
+<p><font color="#f7681a">This LWRP focuses on managing services using the svc command.</font></p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<p>Almost the actions available correspond to command-line parameters to the svc command, which is itself idempotent.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>start</b> </th>
+<td class='confluenceTd'> Starts the service with <tt>svc &#45;u</tt>. If the service stops, restart it </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>stop</b> </th>
+<td class='confluenceTd'> Sends the STOP signal to stop the service with <tt>svc &#45;p</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>restart</b> </th>
+<td class='confluenceTd'> Restarts the service via TERM signal with <tt>svc &#45;t</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>up</b> </th>
+<td class='confluenceTd'> Starts the service with <tt>svc &#45;u</tt>. If the service stops, restart it </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>once</b> </th>
+<td class='confluenceTd'> Starts the service with <tt>svc &#45;o</tt>. Does not restart if it stops </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>pause</b> </th>
+<td class='confluenceTd'> Sends the STOP signal to pause the service with <tt>svc &#45;p</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>cont</b> </th>
+<td class='confluenceTd'> Sends the CONT signal with <tt>svc &#45;c</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>hup</b> </th>
+<td class='confluenceTd'> Sends the HUP signal with <tt>svc &#45;h</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>alrm</b> </th>
+<td class='confluenceTd'> Sends the ALRM signal with <tt>svc &#45;a</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>int</b> </th>
+<td class='confluenceTd'> Sends the INT signal with <tt>svc &#45;i</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>term</b> </th>
+<td class='confluenceTd'> Sends the TERM signal with <tt>svc &#45;t</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>kill</b> </th>
+<td class='confluenceTd'> Sends the KILL signal with <tt>svc &#45;k</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>enable</b> </th>
+<td class='confluenceTd'> Enables the service by setting up the service directory and link </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>disable</b> </th>
+<td class='confluenceTd'> Disables the service by removing the link to the service directory </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>service_name</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: Name of the service </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>directory</b> </th>
+<td class='confluenceTd'> Directory where the service should be set up (required) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>template</b> </th>
+<td class='confluenceTd'> Name given to the template files </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>cookbook</b> </th>
+<td class='confluenceTd'> Cookbook where the templates are located if not the current cookbook </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>variables</b> </th>
+<td class='confluenceTd'> Hash of variables to pass to the templates </td>
+<td class='confluenceTd'> {} </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>owner</b> </th>
+<td class='confluenceTd'> Owner of the service directory and scripts </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>group</b> </th>
+<td class='confluenceTd'> Group of the service directory and scripts </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>finish</b> </th>
+<td class='confluenceTd'> Whether the service has a finish script </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>log</b> </th>
+<td class='confluenceTd'> Whether the service has a custom logging script </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>env</b> </th>
+<td class='confluenceTd'> If the service requires a special environment set up </td>
+<td class='confluenceTd'> {} </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>The run script is set up by a template named <tt>sv-NAME-run.erb</tt>, where NAME is the service name. Similarly, the log/run is <tt>sv-NAME-log-run.erb</tt> and the finish script is <tt>sv-NAME-finish.erb</tt>. These templates should be placed in the templates directory of the cookbook where this LWRP is used.</p>
+
+<p>The env attribute above is used to create an env directory for the service containing files named for each environment variable required, with contents of its value in the hash. For more information on how daemontools uses env with the envdir program:</p>
+
+<ul>
+	<li><a href="http://cr.yp.to/daemontools/envdir.html">http://cr.yp.to/daemontools/envdir.html</a></li>
+</ul>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<p>The following example will set up /etc/sv/chef-client directory, /etc/sv/chef-client/run script from the specified template, and the /etc/sv/chef-client/log/run script.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>chef-client service</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">daemontools_service "chef-client" do
+  directory "/etc/sv/chef-client"
+  template "chef-client"
+  action [:enable,:start]
+  log true
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>sv-chef-client-run.erb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">#!/bin/sh
+PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
+exec 2&gt;&amp;1
+exec /usr/bin/env chef-client -i &lt;%= node["chef_client"]["interval"] %&gt; -s &lt;%= node["chef_client"]["splay"] %&gt;</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>sv-chef-client-log-run.erb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">#!/bin/sh
+exec svlogd -tt ./main</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-djbdns"></a><a href="http://cookbooks.opscode.com/cookbooks/djbdns">djbdns</a></h1>
+
+<p>djbdns is a set of DNS daemons and tools written by Dan J Bernstein. (<a href="http://cr.yp.to/djbdns.html">More information</a>)</p>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21djbdnsrr"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> djbdns_rr</h3>
+
+<p><font color="#f7681a">The djbdns_rr LWRP creates new DNS resource records for tinydns servers (usually internal) using the tinydns-edit command.</font></p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>add</b> </th>
+<td class='confluenceTd'> Adds a new resource record to tinydns </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>fqdn</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: Fully qualified domain name </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>ip</b> </th>
+<td class='confluenceTd'> IP Address (required) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>type</b> </th>
+<td class='confluenceTd'> Type of record, available: ns, childns, host, alias, mx </td>
+<td class='confluenceTd'> host </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>cwd</b> </th>
+<td class='confluenceTd'> Current working directory where the tinydns data file lives </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<p>In the example, the <tt>node</tt><tt>:djbdns</tt><tt>:tinydns_internal_dir</tt> is the djbdns cookbook attribute for the default location where the internal tinydns service is configured.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">djbdns_rr "www.example.com" do
+  cwd "#{node[:djbdns][:tinydns_internal_dir]}/root"
+  ip "192.168.1.10"
+  type "host"
+  action :add
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-dmg"></a><a href="http://cookbooks.opscode.com/cookbooks/dmg">dmg</a></h1>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21dmgpackage"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> dmg_package</h3>
+
+<p><font color="#f7681a">Package provider for installing applications from Mac OS X DMG disk images.</font></p>
+
+<p>This resource will install a DMG "Package". It will retrieve the DMG from a remote URL, mount it using OS X's <tt>hdid</tt>, copy the application (.app directory) to the specified destination (/Applications), and detach the image using <tt>hdiutil</tt>. The dmg file will be stored in the <tt>Chef::Config[:file_cache_path]</tt>. If you want to install an application that has already been downloaded (not using the <tt>source</tt> parameter), copy it to the appropriate location. You can find out what directory this is with the following command on the node to run chef:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife exec -E 'p Chef::Config[:file_cache_path]' -c /etc/chef/client.rb</pre>
+		</div>
+</div></div>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>install</b> </th>
+<td class='confluenceTd'> Installs the application (default) </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>The install action is the only one that makes sense, as uninstalling is as easy as dragging the application to the trash can. It is beyond the scope of this LWRP to do full package management for Mac OS X applications, as they have different installed artifacts.</p>
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>app</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: Name of the application used for the /Volumes directory and .app directory copied to /Applications. </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>source</b> </th>
+<td class='confluenceTd'> Remote URL for the DMG to download, if specified. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>destination</b> </th>
+<td class='confluenceTd'> Directory to copy the .app into. </td>
+<td class='confluenceTd'> /Applications </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>checksum</b> </th>
+<td class='confluenceTd'> SHA256 checksum of the DMG to download. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>volumes_dir</b> </th>
+<td class='confluenceTd'> Directory under /Volumes where the dmg is mounted. </td>
+<td class='confluenceTd'> app </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>dmg_name</b> </th>
+<td class='confluenceTd'> Name of he DMG if it is not the same as <tt>app</tt> or if the name has spaces. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<p>The following examples all use the SHA256 checksum that was current when the application was originally installed, and may not be current for the latest releases.</p>
+
+<p>Install <tt>/Applications/Tunnelblick.app</tt> from the primary download site.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">dmg_package "Tunnelblick" do
+      source "http://tunnelblick.googlecode.com/files/Tunnelblick_3.1.2.dmg"
+      checksum "a3fae60b6833175f32df20c90cd3a3603a"
+      action :install
+    end</pre>
+		</div>
+</div></div>
+
+<p>Install Google Chrome. Uses the <tt>dmg_name</tt> because the application name has spaces. Installs in <tt>/Applications/Google Chrome.app</tt>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">dmg_package "Google Chrome" do
+      dmg_name "googlechrome"
+      source "https://dl-ssl.google.com/chrome/mac/stable/GGRM/googlechrome.dmg"
+      checksum "7daa2dc5c46d9bfb14f1d7ff4b33884325e5e63e694810adc58f14795165c91a"
+      action :install
+    end</pre>
+		</div>
+</div></div>
+
+<p>Install Dropbox. Uses <tt>volumes_dir</tt> because the mounted directory is different than the name of the application directory. Installs in <tt>/Applications/Dropbox.app</tt>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">dmg_package "Dropbox" do
+      volumes_dir "Dropbox Installer"
+      source "http://www.dropbox.com/download?plat=mac"
+      checksum "b4ea620ca22b0517b75753283ceb82326aca8bc3c86212fbf725de6446a96a13"
+      action :install
+    end</pre>
+		</div>
+</div></div>
+
+<p>Install MacIrssi to <tt>&#126;/Applications</tt> from the local file downloaded to the cache path into an Applications directory in the current user's home directory.</p>
+
+<p><em>Chef should run as a non-root user for this.</em></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">directory "#{ENV['HOME']}/Applications"
+
+    dmg_package "MacIrssi" do
+      destination "#{ENV['HOME']}/Applications"
+      action :install
+    end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-dynect"></a><a href="http://cookbooks.opscode.com/cookbooks/dynect">dynect</a></h1>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21dynectrr"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> dynect_rr</h3>
+
+<p><a href="http://dyn.com/enterprise-dns/dynect-platform">Dyn, Inc's dynect service</a> <font color="#f7681a">has a REST API, and this LWRP can be used to create resource records through the API using Adam Jacob's</font> <a href="https://rubygems.org/gems/dynect_rest">dynect_rest rubygem</a>.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>delete</b> </th>
+<td class='confluenceTd'> Delete the record </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>create</b> </th>
+<td class='confluenceTd'> Create a new record </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>update</b> </th>
+<td class='confluenceTd'> Update an existing record </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>replace</b> </th>
+<td class='confluenceTd'> Replace an existing record </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>record_type</b> </th>
+<td class='confluenceTd'> Type of record (A, CNAME, etc) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>rdata</b> </th>
+<td class='confluenceTd'> Record data, see the Dyn API documentation </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>ttl</b> </th>
+<td class='confluenceTd'> Record time to live </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>fqdn</b> </th>
+<td class='confluenceTd'> Fully qualified domain name </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>username</b> </th>
+<td class='confluenceTd'> Dynect username </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>customer</b> </th>
+<td class='confluenceTd'> Dynect customer ID </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>password</b> </th>
+<td class='confluenceTd'> Dynect password </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>zone</b> </th>
+<td class='confluenceTd'> DNS zone </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>A record, with authentication credentials as node attributes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">dynect_rr "webprod" do
+  record_type "A"
+  rdata({"address" =&gt; "10.1.1.10"})
+  fqdn "webprod.example.com"
+  customer node[:dynect][:customer]
+  username node[:dynect][:username]
+  password node[:dynect][:password]
+  zone     node[:dynect][:zone]
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-firewall"></a><a href="http://cookbooks.opscode.com/cookbooks/firewall">firewall</a></h1>
+
+<p>The firewall cookbook currently only has a 'ufw' provider, but additional implementations are under development.</p>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21firewall"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> firewall</h3>
+
+<p>The firewall resource handles the state of the firewall itself (enabled, disabled, reset).</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>enable</b> </th>
+<td class='confluenceTd'> enable the firewall.  this will make any rules that have been defined 'active'. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>disable</b> </th>
+<td class='confluenceTd'> disable the firewall. drop any rules and put the node in an unprotected state. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>reset</b> </th>
+<td class='confluenceTd'> reset the firewall. drop any rules and puts the node in the default state. Does not enable or disable the firewall. </td>
+</tr>
+</tbody></table>
+</div>
+
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>name</b> </th>
+<td class='confluenceTd'> arbitrary name to uniquely identify this resource </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>enable platform default firewall</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">firewall "ufw" do
+  action :enable
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21firewallrule"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> firewall_rule</h3>
+
+<p>Add new rules to the firewall.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>allow</b> </th>
+<td class='confluenceTd'> the rule should allow incoming traffic. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>deny</b> </th>
+<td class='confluenceTd'> the rule should deny incoming traffic. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>reject</b> </th>
+<td class='confluenceTd'> the rule should reject incoming traffic. </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>name</b> </th>
+<td class='confluenceTd'> name attribute. arbitrary name to uniquely identify this firewall rule. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>protocol</b> </th>
+<td class='confluenceTd'> valid values are: :udp, :tcp. defaults to all protocols. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>port</b> </th>
+<td class='confluenceTd'> port number. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>source</b> </th>
+<td class='confluenceTd'> ip address or subnet incoming traffic originates from. default is `0.0.0.0/0` (ie Anywhere). </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>destination</b> </th>
+<td class='confluenceTd'> ip address or subnet traffic routing to. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>position</b> </th>
+<td class='confluenceTd'> position to insert rule at. if not provided rule is inserted at the end of the rule list. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>open standard ssh port, enable firewall</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">firewall_rule "ssh" do
+  port 22
+  action :allow
+  notifies :enable, "firewall[ufw]"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>open standard http port to tcp traffic only; insert as first rule; enable firewall</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">firewall_rule "http" do
+  port 80
+  protocol :tcp
+  position 1
+  action :allow
+  notifies :enable, "firewall[ufw]"
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-mysql"></a><a href="http://cookbooks.opscode.com/cookbooks/mysql">mysql</a></h1>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21mysqldatabase"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> mysql_database</h3>
+
+<p><font color="#f7681a">The mysql cookbook includes a LWRP for interacting with a MySQL database via the Ruby library provided by the</font> <font color="#f7681a"><a href="https://rubygems.org/gems/mysql">mysql gem</a></font><font color="#f7681a">.</font> The various actions available correspond to queries sent to the database.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<p>The flush_tables_with_read_lock and unflush_tables actions are used when performing replication. The create_db action is used to create databases. The query action is used to query databases.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>flush_tables_with_read_lock</b> </th>
+<td class='confluenceTd'> Flush tables with read lock </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>unflush_tables</b> </th>
+<td class='confluenceTd'> Unflush tables </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>create_db</b> </th>
+<td class='confluenceTd'> Create the named database </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>query</b> </th>
+<td class='confluenceTd'> Query the database </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>host</b> </th>
+<td class='confluenceTd'> Host of the database server </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>username</b> </th>
+<td class='confluenceTd'> Username to connect as </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>password</b> </th>
+<td class='confluenceTd'> Password of the specified user </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>database</b> </th>
+<td class='confluenceTd'> Name of the database to create (only with create_db action) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>flush tables with read lock</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mysql_database "locking tables for ebs snapshot" do
+  action :flush_tables_with_read_lock
+  host "localhost"
+  username "root"
+  password "SuperSecret"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>unlock tables</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mysql_database "unlocking tables after ebs snapshot" do
+  action :unflush_tables
+  host "localhost"
+  username "root"
+  password "SuperSecret"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>create an application database</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mysql_database "create my_app database" do
+  host "localhost"
+  username "root"
+  password "SuperSecret"
+  database "my_app_production"
+  action [:create_db]
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>query a database</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mysql_database "flush the privileges" do
+  action :query
+  host "localhost"
+  username "root"
+  password "SuperSecret"
+  sql "flush privileges"
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-pacman"></a><a href="http://cookbooks.opscode.com/cookbooks/pacman">pacman</a></h1>
+
+<p>The pacman cookbook provides LWRPs for working with the pacman packaging system on ArchLinux.</p>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21pacmanaur"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> pacman_aur</h3>
+
+<p><font color="#f7681a">Builds and installs packages from</font> <font color="#f7681a"><a href="http://aur.archlinux.org/">ArchLinux User Repository</a></font><font color="#f7681a">.</font></p>
+
+<p>Through a custom pkgbuild source file, a package can be built without hitting AUR at all.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>build</b> </th>
+<td class='confluenceTd'> Builds the package with the PKGBUILD data </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>install</b> </th>
+<td class='confluenceTd'> Installs the package built with the build action </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>package_name</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: Name of the package </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>version</b> </th>
+<td class='confluenceTd'> Version of the package </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>builddir</b> </th>
+<td class='confluenceTd'> Directory to download and build the package in </td>
+<td class='confluenceTd'> <tt>Chef::Config</tt><tt>:file_cache_path</tt><tt>/builds</tt> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>options</b> </th>
+<td class='confluenceTd'> Options appended to configure command </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>pkgbuild_src</b> </th>
+<td class='confluenceTd'> Whether to use a custom PKGBUILD file </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>patches</b> </th>
+<td class='confluenceTd'> Array of files to use as patches to the package </td>
+<td class='confluenceTd'> [] </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>If pkgbuild_src is true, then the pacman_aur provider will look for a  cookbook_file named <tt>PKGBUILD</tt> to use as package instructions.</p>
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Simple AUR package</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">pacman_aur "djbdns" do
+  action [:build, :install]
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Custom package with PKGBUILD</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">pacman_aur "netatalk" do
+  pkgbuild_src "PKGBUILD"
+  action [:build,:install]
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21pacmangroup"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> pacman_group</h3>
+
+<p><font color="#f7681a">Manages a pacman package group.</font></p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>install</b> </th>
+<td class='confluenceTd'> Installs the group </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>remove</b> </th>
+<td class='confluenceTd'> Removes the group </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>package_name</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: Name of the package group </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>options</b> </th>
+<td class='confluenceTd'> Additional options passed to the pacman command </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">pacman_group "base-devel"</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-php"></a><a href="http://cookbooks.opscode.com/cookbooks/php">php</a></h1>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21phppear"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> php_pear</h3>
+
+<p><a href="http://pear.php.net/">PEAR</a> is a framework and distribution system for reusable PHP components. <a href="http://pecl.php.net/">PECL</a> is a repository for PHP Extensions. PECL contains C extensions for compiling into PHP. As C programs, PECL extensions run more efficiently than PEAR packages. <font color="#f7681a">PEARs and PECLs use the same packaging and distribution system.  As such this LWRP is clever enough to abstract away the small differences and can be used for managing either.  This LWRP also creates the proper module .ini file for each PECL extension at the correct location for each supported platform.</font></p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>install</b> </th>
+<td class='confluenceTd'> Install a pear package - if version is provided, install that specific version </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>upgrade</b> </th>
+<td class='confluenceTd'> Upgrade a pear package - if version is provided, upgrade to that specific version </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>remove</b> </th>
+<td class='confluenceTd'> Remove a pear package </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>purge</b> </th>
+<td class='confluenceTd'> Purge a pear package (this usually entails removing configuration files as well as the package itself).  With pear packages this behaves the same as remove </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>package_name</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: The name of the pear package to install </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>version</b> </th>
+<td class='confluenceTd'> the version of the package to install/upgrade.  If no version is given latest is assumed. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>preferred_state</b> </th>
+<td class='confluenceTd'> PEAR by default installs stable packages only, this allows you to install pear packages in a devel, alpha or beta state </td>
+<td class='confluenceTd'> stable </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>directives</b> </th>
+<td class='confluenceTd'> extra extension directives (settings) for a pecl. on most platforms these usually get rendered into the extension's .ini file </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>options</b> </th>
+<td class='confluenceTd'> Add additional options to the underlying pear package command </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>upgrade a pear</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">php_pear "XML_RPC" do
+  action :upgrade
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>install a specific version</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">php_pear "XML_RPC" do
+  version "1.5.4"
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>install the mongodb pecl</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">php_pear "mongo" do
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>install apc pecl with directives</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">php_pear "apc" do
+  action :install
+  directives(:shm_size =&gt; 128, :enable_cli =&gt; 1)
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>install the YAML pear from the symfony project</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">sc = php_pear_channel "pear.symfony-project.com" do
+  action :discover
+end
+php_pear "YAML" do
+  channel sc.channel_name
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>install the beta version of Horde_Url from the Horde channel</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">hc = php_pear_channel "pear.horde.org" do
+  action :discover
+end
+php_pear "Horde_Url" do
+  preferred_state "beta"
+  channel hc.channel_name
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21phppearchannel"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> php_pear_channel</h3>
+
+<p><a href="http://pear.php.net/manual/en/guide.users.commandline.channels.php">PEAR Channels</a> are alternative sources for PEAR packages. <font color="#f7681a">This LWRP provides and easy way to manage these channels.</font></p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>discover</b> </th>
+<td class='confluenceTd'> Initialize a channel from its server </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>add</b> </th>
+<td class='confluenceTd'> Add a channel to the channel list, usually only used to add private channels.  Public channels are usually added using the <tt>:discover</tt> action </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>update</b> </th>
+<td class='confluenceTd'> Update an existing channel </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>remove</b> </th>
+<td class='confluenceTd'> Remove a channel from the list </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>channel_name</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: The name of the channel to discover </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>channel_xml</b> </th>
+<td class='confluenceTd'> file of the channel you are adding </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>discover the horde channel</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">php_pear_channel "pear.horde.org" do
+  action :discover
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>download xml then add the symfony channel</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">remote_file "#{Chef::Config[:file_cache_path]}/symfony-channel.xml" do
+  source "http://pear.symfony-project.com/channel.xml"
+  mode 0644
+end
+php_pear_channel "symfony" do
+  channel_xml "#{Chef::Config[:file_cache_path]}/symfony-channel.xml"
+  action :add
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>update the main channels</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">php_pear_channel 'pear.php.net' do
+  action :update
+end
+php_pear_channel 'pecl.php.net' do
+  action :update
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-python"></a><a href="http://cookbooks.opscode.com/cookbooks/python">python</a></h1>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21pythonpip"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> python_pip</h3>
+
+<p><font color="#f7681a">Install packages using the new hotness in Python package management...</font><font color="#f7681a"><a href="http://pypi.python.org/pypi/pip">pip</a></font><font color="#f7681a">.</font> Yo dawg...easy_install is so 2009, you better ask your local Pythonista if you don't know&#33; The usage semantics are like that of any normal package provider. python_pip is dependent on python cookbook - so don't forget to include it in your metadata file in your cookbook.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>install</b> </th>
+<td class='confluenceTd'> Install a pip package - if version is provided, install that specific version </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>upgrade</b> </th>
+<td class='confluenceTd'> Upgrade a pip package - if version is provided, upgrade to that specific version </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>remove</b> </th>
+<td class='confluenceTd'> Remove a pip package </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>purge</b> </th>
+<td class='confluenceTd'> Purge a pip package (this usually entails removing configuration files as well as the package itself).  With pip packages this behaves the same as remove </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>package_name</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: The name of the pip package to install </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>version</b> </th>
+<td class='confluenceTd'> the version of the package to install/upgrade.  If no version is given latest is assumed. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>virtualenv</b> </th>
+<td class='confluenceTd'> virtualenv environment to install pip package into </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>options</b> </th>
+<td class='confluenceTd'> Add additional options to the underlying pip package command </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install latest gunicorn into system path</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">python_pip "gunicorn" do
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Target a virtualenv</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">python_pip "gunicorn" do
+  virtualenv "/home/ubunut/virtualenvs/myapp"
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install a specific pip version</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">python_pip "django" do
+  version "1.1.4"
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Use this provider with the core package resource</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">package "django" do
+  provider Chef::Provider::PythonPip
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21pythonvirtualenv"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> python_virtualenv</h3>
+
+<p><a href="http://pypi.python.org/pypi/virtualenv">virtualenv</a> <font color="#f7681a">is a great tool that creates isolated python environments.</font> Think of it as RVM without all those hipsters and tight jeans.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>create</b> </th>
+<td class='confluenceTd'> Creates a new virtualenv </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>delete</b> </th>
+<td class='confluenceTd'> Deletes an existing virtualenv </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>path</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: The path where the virtualenv will be created </td>
+<td class='confluenceTd'> \</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>interpreter</b> </th>
+<td class='confluenceTd'> The Python interpreter to use. </td>
+<td class='confluenceTd'> python2.6 </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>owner</b> </th>
+<td class='confluenceTd'> The owner for the virtualenv </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>group</b> </th>
+<td class='confluenceTd'> The group owner of the file (string or id) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>create a 2.6 virtualenv owned by ubuntu user</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">python_virtualenv "/home/ubunut/virtualenvs/myapp" do
+  owner "ubuntu"
+  group "ubuntu"
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>create a Python 2.4 virtualenv</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">python_virtualenv "/home/ubuntu/virtualenvs/myapp" do
+  interpreter "python2.4"
+  owner "ubuntu"
+  group "ubuntu"
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-riak"></a><a href="http://cookbooks.opscode.com/cookbooks/riak">riak</a></h1>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21riakcluster"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> riak_cluster</h3>
+
+<p><font color="#f7681a">Joins a Riak node into a cluster.</font> If you're using chef-client, the other cluster members will be automatically discovered by searching on their <tt>riak.core.cluster_name</tt> attribute. This resource is used in the <tt>riak::autoconf</tt> recipe.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>join</b> </th>
+<td class='confluenceTd'> Joins the local node to a cluster </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>wait_for_ringready</b> </th>
+<td class='confluenceTd'> Waits until cluster membership converges </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>cluster_name</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: the name of the cluster </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>cluster_members</b> </th>
+<td class='confluenceTd'> Other node names that should be part of the cluster </td>
+<td class='confluenceTd'> (discovered by <a href="Search.html" title="Search">Search</a>) </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>node_name</b> </th>
+<td class='confluenceTd'> The name of the local node (<tt>riak.erlang.node_name</tt> attribute) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>timeout</b> </th>
+<td class='confluenceTd'> How long, in seconds, to wait for ring convergence </td>
+<td class='confluenceTd'> 30 </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>riak_admin_path</b> </th>
+<td class='confluenceTd'> Where the <tt>riak</tt> and <tt>riak-admin</tt> scripts are located </td>
+<td class='confluenceTd'> <tt>"/usr/sbin"</tt> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<p>From the <tt>riak::autoconf</tt> recipe:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">riak_cluster node[:riak][:core][:cluster_name] do
+  node_name node[:riak][:erlang][:node_name]
+  action :join
+  riak_admin_path bin_path
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-samba"></a><a href="http://cookbooks.opscode.com/cookbooks/samba">samba</a></h1>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21sambauser"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> samba_user</h3>
+
+<p><font color="#f7681a">Manages the smbpasswd entries for samba users.</font></p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>create</b> </th>
+<td class='confluenceTd'> Creates the user </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>enable</b> </th>
+<td class='confluenceTd'> Enables the user </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>delete</b> </th>
+<td class='confluenceTd'> Deletes the user </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>password</b> </th>
+<td class='confluenceTd'> Password for the user passed to smbpasswd </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">samba_user "jtimberman" do
+  password "SuperSecret"
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-transmission"></a><a href="http://cookbooks.opscode.com/cookbooks/transmission">transmission</a></h1>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21transmissiontorrentfile"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> transmission_torrent_file</h3>
+
+<p><font color="#f7681a">Download a file via the</font> <font color="#f7681a"><a href="http://en.wikipedia.org/wiki/BitTorrent">BitTorrent protocol</a></font><font color="#f7681a">.</font> The usage semantics are like that of the existing <a href="Resources.html#Resources-ResourcesRemoteFile">file</a> and <a href="Resources.html#Resources-ResourcesRemoteFile">remote_file</a> resources.  This allows very fast downloads for files that are part of large BitTorrent swarms.  The Ubuntu 10.04 LTS ISO (around 700MB) downloads in about 50 seconds.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>create</b> </th>
+<td class='confluenceTd'> Download a file via the BitTorrent protocol </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>path</b> </th>
+<td class='confluenceTd'> <font color="green">Name Attribute</font>: the path to the file </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>torrent</b> </th>
+<td class='confluenceTd'> torrent file of the swarm to join. can either be a url or local file path </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>blocking</b> </th>
+<td class='confluenceTd'> should the file be downloaded in a blocking way?  If <tt>true</tt> Chef will download the file in a single Chef run, if <tt>false</tt> Chef will check for a completed download during each Chef run until the download is complete </td>
+<td class='confluenceTd'> true </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>continue_seeding</b> </th>
+<td class='confluenceTd'> should the file continue to be seeded to the swarm after download? </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>owner</b> </th>
+<td class='confluenceTd'> The owner for the file </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>group</b> </th>
+<td class='confluenceTd'> The group owner of the file (string or id) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>rpc_host</b> </th>
+<td class='confluenceTd'> the address of the Transmission RPC host to connect to </td>
+<td class='confluenceTd'> localhost </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>rpc_port</b> </th>
+<td class='confluenceTd'> the port of the Transmission RPC host to connect to </td>
+<td class='confluenceTd'> 9091 </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>rpc_username</b> </th>
+<td class='confluenceTd'> the username of the Transmission RPC account. </td>
+<td class='confluenceTd'> transmission </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>rpc_password</b> </th>
+<td class='confluenceTd'> the password of the Transmission RPC account . should probably be <tt>node</tt><tt>'transmission'</tt><tt>'rpc_password'</tt> which by default is a secure password generated for this node. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Download the Lucid iso</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">transmission_torrent_file "/home/ubuntu/ubuntu.iso"  do
+  torrent "http://releases.ubuntu.com/lucid/ubuntu-10.04.1-server-i386.iso.torrent"
+  owner 'ubuntu'
+  group 'ubuntu'
+  rpc_username node['transmission']['rpc_username']
+  rpc_password node['transmission']['rpc_password']
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>do the same thing but continue seeding after download</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">transmission_torrent_file "/home/ubuntu/ubuntu.iso"  do
+  torrent "http://releases.ubuntu.com/lucid/ubuntu-10.04.1-server-i386.iso.torrent"
+  owner 'ubuntu'
+  group 'ubuntu'
+  continue_seeding true
+  rpc_username node['transmission']['rpc_username']
+  rpc_password node['transmission']['rpc_password']
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="OpscodeLWRPResources-windows"></a><a href="http://community.opscode.com/cookbooks/windows">windows</a></h1>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21windowspackage"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> windows_package</h3>
+
+<p><font color="#f7681a">Manage Windows application packages in an unattended, idempotent way.</font></p>
+
+<p>The following application installers are currently supported:</p>
+
+<ul>
+	<li>MSI packages</li>
+	<li>InstallShield</li>
+	<li>Wise InstallMaster</li>
+	<li>Inno Setup</li>
+	<li>Nullsoft Scriptable Install System</li>
+</ul>
+
+
+<p>If the proper installer type is not passed into the resource's installer_type attribute, the provider will do it's best to identify the type by introspecting the installation package.  If the installation type cannot be properly identified the <tt>:custom</tt> value can be passed into the installer_type attribute along with the proper flags for silent/quiet installation (using the <tt>options</tt> attribute..see example below).</p>
+
+<p><b>PLEASE NOTE</b> &#45; the resource's <tt>package_name</tt> should be the same as the 'DisplayName' registry value in the uninstallation data that is created during package installation.  The easiest way to definitively find the proper 'DisplayName' value is to install the package on a machine and search for the uninstall information under the following registry keys:</p>
+
+<ul>
+	<li><tt>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall</tt></li>
+	<li><tt>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall</tt></li>
+	<li><tt>HKEY_LOCAL_MACHINE\Software\Wow6464Node\Microsoft\Windows\CurrentVersion\Uninstall</tt></li>
+</ul>
+
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>You may also be able to see this value from the "Name" column in the Windows control panel, programs and features, uninstall dialog. (Start-&gt;"Uninstall"-&gt;"Uninstall a program").</td></tr></table></div>
+
+<p>For maximum flexibility the `source` attribute supports both remote and local installation packages.</p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>install</b> </th>
+<td class='confluenceTd'> install a package </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>remove</b> </th>
+<td class='confluenceTd'> remove a package </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> <b>package_name</b> </th>
+<th class='confluenceTh'> <font color="green">Name Attribute</font>: The 'DisplayName' of the application installation package. </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>source</b> </th>
+<td class='confluenceTd'> The source of the windows installer.  This can either be a URI or a local path. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>installer_type</b> </th>
+<td class='confluenceTd'> They type of windows installation package. valid values are: :msi, :inno, :nsis, :wise, :installshield, :custom.  If this value is not provided, the provider will do it's best to identify the installer type through introspection of the file. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>options</b> </th>
+<td class='confluenceTd'> Additional options to pass the underlying installation command </td>
+</tr>
+</tbody></table>
+</div>
+
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>install PuTTY (InnoSetup installer)</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">windows_package "PuTTY version 0.60" do
+  source "http://the.earth.li/~sgtatham/putty/latest/x86/putty-0.60-installer.exe"
+  installer_type :inno
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>install 7-Zip (MSI installer)</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">windows_package "7-Zip 9.20 (x64 edition)" do
+  source "http://downloads.sourceforge.net/sevenzip/7z920-x64.msi"
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>install Notepad++ (Y U No Emacs?) using a local installer</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">windows_package "Notepad++" do
+  source "c:/installation_files/npp.5.9.2.Installer.exe"
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>install VLC for that Xvid (NSIS installer)</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">windows_package "VLC media player 1.1.10" do
+  source "http://superb-sea2.dl.sourceforge.net/project/vlc/1.1.10/win32/vlc-1.1.10-win32.exe"
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>install Firefox as custom installer and manually set the silent install flags</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">windows_package "Mozilla Firefox 5.0 (x86 en-US)" do
+  source "http://3347-mozilla.voxcdn.com/pub/mozilla.org/firefox/releases/5.0/win32/en-US/Firefox%20Setup%205.0.exe"
+  options "-ms"
+  installer_type :custom
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Google Chrome FTW (MSI installer)</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">windows_package "Google Chrome" do
+  source "https://dl-ssl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7B806F36C0-
+                CB54-4A84-A3F30CF8A86575E0%7D%26lang%3Den%26browser%3D3%26usagestats%3D0%26appname%3D
+                Google%2520Chrome%26needsadmin%3Dfalse/edgedl/chrome/install/GoogleChromeStandaloneEnterprise.msi"
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>remove Google Chrome</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">windows_package "Google Chrome" do
+  action :remove
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>remove 7-Zip</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">windows_package "7-Zip 9.20 (x64 edition)" do
+  action :remove
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21windowsregistry"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> windows_registry</h3>
+
+<p><font color="#f7681a">Create and modify Windows registry keys.</font></p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>create</b> </th>
+<td class='confluenceTd'> create a new registry key with the provided values. </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>modify</b> </th>
+<td class='confluenceTd'> modify an existing registry key with the provided values. </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> <b>key_name</b> </th>
+<th class='confluenceTh'> <font color="green">Name Attribute</font>: The registry key to create/modify. </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>values</b> </th>
+<td class='confluenceTd'> hash of the values to set under the registry key. The individual hash items will become respective 'Value name' =&gt; 'Value data' items in the registry key. </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>make the local windows proxy match the one set for Chef</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">proxy = URI.parse(Chef::Config[:http_proxy])
+windows_registry 'HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings' do
+  values 'ProxyEnable' =&gt; 1, 'ProxyServer' =&gt; "#{proxy.host}:#{proxy.port}", 'ProxyOverride' =&gt; '&lt;local&gt;'
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>enable Remote Desktop and poke the firewall hole</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">windows_registry 'HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server' do
+  values 'FdenyTSConnections' =&gt; 0
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="OpscodeLWRPResources-%21orangedot.gif%21windowszipfile"></a><span class="image-wrap" style=""><img src="../attachments/8683680/14057482.gif" style="border: 0px solid black"/></span> windows_zipfile</h3>
+
+<p>Most version of Windows do not ship with native cli utility for managing compressed files. <font color="#f7681a">This resource provides a pure-ruby implementation for managing zip files.</font> <em>Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence, or action will be taken on the zip file every Chef run.</em></p>
+
+<h4><a name="OpscodeLWRPResources-Actions"></a>Actions</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>unzip</b> </th>
+<td class='confluenceTd'> unzip a compressed file </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Attributes"></a>Attributes</h4>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> <b>path</b> </th>
+<th class='confluenceTh'> <font color="green">Name Attribute</font>: The path where files will be unzipped to. </th>
+<th class='confluenceTh'> "." </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>source</b> </th>
+<td class='confluenceTd'> The source of the zip file. This can either be a URI or a local path. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>overwrite</b> </th>
+<td class='confluenceTd'> force an overwrite of the files if the already exists. </td>
+<td class='confluenceTd'> false </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h4><a name="OpscodeLWRPResources-Examples"></a>Examples</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>unzip a remote zip file locally</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">windows_zipfile "c:/bin" do
+  source "http://download.sysinternals.com/Files/SysinternalsSuite.zip"
+  action :unzip
+  not_if {::File.exists?("c:/bin/PsExec.exe")}
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>unzip a local zipfile</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">windows_zipfile "c:/the_codez" do
+  source "c:/foo/baz/the_codez.zip"
+  action :unzip
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)"><span class="image-wrap" style="float: left"><img src="../attachments/8683680/20840710.png" hspace="4" style="border: 0px solid black"/></span> Lightweight Resources and Providers (LWRP)</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Roles.html" title="Roles"><span class="image-wrap" style="float: right"><img src="../attachments/8683680/20840709.png" hspace="4" style="border: 0px solid black"/></span> Roles </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8683680/14057481.jpg">5059886-close-up-of-white-feather-falling-to-hand.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8683680/14057484.gif">orange_dot.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8683680/14057483.stm">orange_dot.stm</a> (application/octet-stream)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8683680/14057482.gif">orange_dot.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8683680/20840709.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8683680/20840710.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-13762561"></a>
+                                    <font class="smallfont"><p>Could use some examples of the query action of the mysql LWRP </p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Jun 02, 2011 01:08
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728687"></a>
+                                    <font class="smallfont"><p>Hi Robert,</p>
+
+<p>I added an example of this to the wiki page above. Let us know if this doesn't clear things up though.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jessica at Jul 06, 2011 02:12
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728689"></a>
+                                    <font class="smallfont"><p>The additional examples are great. I was originally and still wondering with the mysql "query a database", is there a way to get the results of the query?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Jul 06, 2011 03:38
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728694"></a>
+                                    <font class="smallfont"><p>Hi Robert,</p>
+
+<p>It doesn't look like this is possible with LWRP, but you could do this with the mysql library. This post goes over this in more detail: <a href="http://blog.loftninjas.org/2011/02/16/the-power-of-chef-and-ruby/">http://blog.loftninjas.org/2011/02/16/the-power-of-chef-and-ruby/</a> It's basically just explaining how to use the Ruby mysql library. More information on it can also be found here: <a href="http://tmtm.org/en/ruby/mysql/">http://tmtm.org/en/ruby/mysql/</a></p>
+
+<p>So, you could do something like this with this library:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">data = m.query("SELECT * FROM MY_TABLE")</pre>
+		</div>
+</div></div>
+
+<p>According to that Ruby link this would automatically invoke store_result() and return Mysql::Result object when a result is returned. If query does not return a result, it returns nil. So you could get the data from this variable with something that iterates through the variable like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">data.each { |row| puts row }</pre>
+		</div>
+</div></div>
+
+<p>Hope this helps.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jessica at Jul 06, 2011 18:30
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24772805"></a>
+                                    <font class="smallfont"><p>I try this example:<br/>
+python_pip "django" do<br/>
+  version "1.1.4"<br/>
+  action :install<br/>
+end<br/>
+and it says:<br/>
+ERROR: NameError: Cannot find a resource for python_pip on ubuntu version 12.04</p>
+
+<p>How do I solve this?<br/>
+Thanks</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by williamherry at Jun 13, 2012 02:18
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24773305"></a>
+                                    <font class="smallfont"><p>William: "python_pip is dependent on python cookbook - so don't forget to include it in your metadata file in your cookbook."</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jblaine@mitre.org at Jul 19, 2012 00:48
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24773306"></a>
+                                    <font class="smallfont"><p>I had a similar problem on the latest Ubuntu - 12.04. Even though I added Python cookbook - which in turn was dependent on some other cookbook, I was still getting errors.Eventually I ended up with a workaround as I didn't really have much time to investigate - I wrote my own pip LWRP. Have a look here: <a href="https://github.com/milosgajdos83/sentry-cookbook">https://github.com/milosgajdos83/sentry-cookbook</a></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by gyre007 at Jul 19, 2012 01:10
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

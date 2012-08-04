@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : A Can of Condensed Chef Documentation</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : A Can of Condensed Chef Documentation
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 01, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/10387530/21463252.png" hspace="2" vspace="4" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+<hr />
+
+<div class="" align="center"><h4><a name="ACanofCondensedChefDocumentation-"></a><font color="#f7681a">Chef’s documentation is vast and broken up into many pages on the Opscode wiki <br/>
+<br/>
+The goal here is to index this information and give a brief explanation of each topic</font></h4></div>
+
+<p><br class="atl-forced-newline" /></p>
+<hr />
+
+<h1><a name="ACanofCondensedChefDocumentation-Architecture"></a>Architecture</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Architecture">http://wiki.opscode.com/display/chef/Architecture</a></p>
+
+<p>Chef is a configuration management platform in the same class of tools as Cfengine, Bcfg2, and Puppet. The idea is to define policy at a centralized, version controlled place, and then have the machines under management pull down their policy and converge onto that state at regular intervals. This gives you a single point of administration allowing for easier change management and disaster recovery. Combined with a compute resource provisioning layer (such as knife’s ability to manipulate EC2 or Rackspace servers), entire complex infrastructures can pop into existence in minutes.</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-ChefServer"></a>Chef Server</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Chef+Server">http://wiki.opscode.com/display/chef/Chef+Server</a></p>
+
+<p>Chef server has various components under the hood. Assorted information (cookbooks, databags, client certificates, and node objects), are stored in CouchDB as JSON blobs. CouchDB is indexed by chef-solr-indexer. RabbitMQ sits between the data store and A RESTful API service that exposes all this to the network as chef-server. If you don’t want to run chef-server yourself, Opscode will do it for you for with their Hosted Chef service for a pittance. The management console is really handy during development since it provides a nice way to examine JSON data. However, it should be noted that real chefs value knife techniques.</p>
+</td> 
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ACanofCondensedChefDocumentation-Architecture'>Architecture</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-ChefServer'>Chef Server</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-Clients'>Clients</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-Nodes'>Nodes</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-Attributes'>Attributes</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-Ohai'>Ohai</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-ChefClient'>Chef Client</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-Resources'>Resources</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-Recipes'>Recipes</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-Cookbooks'>Cookbooks</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-Roles'>Roles</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-Databags'>Databags</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-Knife'>Knife</a></li>
+    <li><a href='#ACanofCondensedChefDocumentation-Environments'>Environments</a></li>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Glossary</b><br />See the <a href="Glossary.html" title="Glossary">Glossary</a> for a list of the terms, technologies and concepts used by Chef and in working with Chef.</td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<h1><a name="ACanofCondensedChefDocumentation-Clients"></a>Clients</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/API+Clients">http://wiki.opscode.com/display/chef/API+Clients</a></p>
+
+<p>In Chef, the term “client” refers to an SSL certificate for an API user of chef-server. This is often a point of confusion, and should not be confused with chef-client. Most of the time, one machine has one client certificate, which corresponds to one node object.</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-Nodes"></a>Nodes</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Nodes">http://wiki.opscode.com/display/chef/Nodes</a></p>
+
+<p>Nodes are JSON representations of machines under Chef management. They live in chef-server. They contain two important things: The node’s run list, and a collection of attributes. The run list is a collection of recipes names that will be ran on the machine when chef-client is invoked. Attributes are various facts about the node, which can be manipulated either by hand, or from recipes.</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-Attributes"></a>Attributes</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Attributes">http://wiki.opscode.com/display/chef/Attributes</a></p>
+
+<p>Attributes are arbitrary values set in a node object. Ohai provides a lot of informational attributes about the node, and arbitrary attributes can be set by the line cooks. They can be set from recipes or roles, and have a precedence system that allow you to override them. Examples of arbitrary attributes are listen ports for network services, or the names of a package on a particular linux distribution (httpd vs apache2).</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-Ohai"></a>Ohai</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Ohai">http://wiki.opscode.com/display/chef/Ohai</a></p>
+
+<p>Ohai is the Chef equivilent of Cfengine’s cf-know and Puppet’s facter. When invoked, it collects a bunch of information about the machine its running on, including Chef related stuff, hostname, FQDN, networking, memory, cpu, platform, and kernel data. This information is then output as JSON and used to update the node object on chef-server. It is possible to write custom Ohai plugins, if your’re interested in something not dug up by default.</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-ChefClient"></a>Chef Client</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Chef+Client">http://wiki.opscode.com/display/chef/Chef+Client</a></p>
+
+<p>Managed nodes run an agent called chef-client at regular intervals. This agent can be ran as a daemon or invoked from cron. The agent pulls down policy from chef-server and converges the system to the described state. This lets you introduce changes to machines in your infrastructure by manipulating data in chef-server. The pull (vs push) technique ensures machines that are down for maintenance end up the proper state when turned back on.</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-Resources"></a>Resources</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Resources">http://wiki.opscode.com/display/chef/Resources</a></p>
+
+<p>Resources are the basic configuration items that are manipulated by Chef recipes. Resources make up the Chef DSL by providing a declarative interface to objects on the machine. Examples of core resources include files, directories, users and groups, links, packages, and services.</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-Recipes"></a>Recipes</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Recipes">http://wiki.opscode.com/display/chef/Recipes</a></p>
+
+<p>Recipes contain the actual code that gets ran on machines by chef-client. Recipes can be made up entirely of declarative resources statements, but rarely are. The real power of Chef stems from a recipes’s ability to search chef-server for information. Recipes can say “give me a list of all the hostnames of my web servers”, and then generate the configuration file for your load balancer. Another recipe might say “give me a list of all my database servers”, so it can configure Nagios to monitor them.</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-Cookbooks"></a>Cookbooks</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Cookbooks">http://wiki.opscode.com/display/chef/Cookbooks</a></p>
+
+<p>Cookbooks allow you to logically group recipes. Cookbooks come with all the stuff the recipes need to make themselves work, such as files, templates, and custom resources (LWRPs).</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-Roles"></a>Roles</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Roles">http://wiki.opscode.com/display/chef/Roles</a></p>
+
+<p>Roles allow you to assemble trees of recipe names, which are expanded into run lists. Roles can contain other roles, which serve as vertices, and recipe names, which are the leaves. The tree is walked depth first, which makes ordering intuitive when assembling run lists. It is possible to apply many of these trees to a single node, but you don’t have to. Roles can also contain lists of attributes to apply to nodes, potentially changing recipe behavior.</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-Databags"></a>Databags</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Data+Bags">http://wiki.opscode.com/display/chef/Data+Bags</a> </p>
+
+<p>Databags are arbitrary JSON structures that can be searched for by Chef recipes. They typically contain things like database passwords and other information that needs to be shared between resources on nodes. You can think of them as read only global variables that live on chef-server. They also have a great name that can be used to make various jokes in Campfire.</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-Knife"></a>Knife</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Knife">http://wiki.opscode.com/display/chef/Knife</a></p>
+
+<p>knife is the CLI interface to the chef-server API. It can manipulate databags, node objects, cookbooks, etc.  It can also be used to provision cloud resources and bootstrap systems.</p>
+
+<h1><a name="ACanofCondensedChefDocumentation-Environments"></a>Environments</h1>
+
+<p><a href="http://wiki.opscode.com/display/chef/Environments">http://wiki.opscode.com/display/chef/Environments</a></p>
+
+<p>Environments in Chef provide a mechanism for managing different environments such as production, staging, development, and testing, etc with one Chef setup (or one organization on Hosted Chef). With environments, you can specify per environment run lists in roles, per environment cookbook versions, and environment attributes: allowing you to set policies to dictate which versions of a given cookbook may be used in an infrastructure environments.  </p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/10387530/13238297.jpg">condensed.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/10387530/21463252.png">condensed.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

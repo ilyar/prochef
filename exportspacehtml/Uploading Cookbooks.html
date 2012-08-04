@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Uploading Cookbooks</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Uploading Cookbooks
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Feb 07, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <p>This page serves as an excerpt to be included on other pages so we have <a href="http://en.wikipedia.org/wiki/Drydock">"DRY" docs</a>.</p>
+
+<p>The excerpt is hidden. To see it, view the wiki markup, or edit the page. To add it to a page, use:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{excerpt-include:Uploading Cookbooks|nopanel=true}</pre>
+		</div>
+</div></div>
+
+
+<h2><a name="UploadingCookbooks-AddingaCookbooktotheCommunitySite"></a>Adding a Cookbook to the Community Site</h2>
+<p><font color="#f7681a">There are two ways to add a cookbook to the community site, you can either use knife or upload the tarball through the website.</font></p>
+
+<h3><a name="UploadingCookbooks-UploadingacookbookusingKnife"></a>Uploading a cookbook using Knife</h3>
+
+<h4><a name="UploadingCookbooks-share"></a>share</h4>
+<p>Use of Knife's <tt>share</tt> subcommand uploads the specified cookbook using the given category to the Opscode cookbooks site. This requires a login user and certificate for the <a href="http://community.opscode.com/">Opscode Community site</a>.  </p>
+
+<p>By default, knife will use the username and API key you've configured in your configuration file; otherwise you must explicitly set these values on the command line or use an alternate configuration file. You need to be the owner or maintainer of the cookbook if it already exists on the web site.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site share COOKBOOK_NAME CATEGORY (options)
+  -s, --server-url URL          Chef Server URL
+  -k, --key KEY                     API Client Key
+  -c, --config CONFIG          The configuration file to use
+  -o, --cookbook-path PATH:PATH    A colon-separated path to look for cookbooks in
+      --defaults                       Accept default values for all questions
+  -e, --editor EDITOR           Set the editor to use for interactive commands
+  -F, --format FORMAT        Which format to use for output
+  -l, --log_level LEVEL          Set the log level (debug, info, warn, error, fatal)
+  -L, --logfile LOGLOCATION     Set the log file location, defaults to STDOUT
+  -n, --no-editor                    Do not open EDITOR, just accept the data as is
+  -u, --user USER                 API Client Username
+  -p, --print-after                  Show the data after a destructive operation
+  -v, --version                      Show chef version
+  -y, --yes                            Say yes to all prompts for confirmation
+  -h, --help                           Show this message</pre>
+		</div>
+</div></div>
+
+<p>For example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site share "apache2" "Web Servers"</pre>
+		</div>
+</div></div>
+
+<h4><a name="UploadingCookbooks-unshare"></a>unshare</h4>
+<p>Use of the <tt>unshare</tt> subcommand stops sharing the given cookbook on the Opscode cookbooks site.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site unshare COOKBOOK</pre>
+		</div>
+</div></div>
+
+<h3><a name="UploadingCookbooks-Uploadingacookbookusingthewebsite"></a>Uploading a cookbook using the web site</h3>
+<p>An alternate to using <a href="Knife.html" title="Knife">Knife</a> is to upload the cookbook directly through the site.</p>
+
+<h4><a name="UploadingCookbooks-PreparetheCookbook"></a>Prepare the Cookbook</h4>
+<p>First, you should ensure that your cookbook's metadata.rb file is correct. You must include the following metadata:</p>
+<ul>
+	<li>Name</li>
+	<li>Version</li>
+	<li>License</li>
+</ul>
+
+
+<p>We also strongly recommend that you fill out:</p>
+<ul>
+	<li>Description</li>
+	<li>Supported Platforms</li>
+</ul>
+
+
+<p>Once you have done that, you need to bundle the cookbook into a tarball. New versions of the Chef Repository have a task called 'bundle_cookbook' which will do this for you. From the top of your Chef Repository:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ rake bundle_cookbook[apache2]
+... generates metadata ...
+... shows output of tar...</pre>
+		</div>
+</div></div>
+<p>The task will produce a tarball in the pkgs directory of your chef repository:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ ls -lah ./pkgs/apache*
+-rw-r--r--  1 adam  adam    22K Oct 29 10:40 ./pkgs/apache2.tar.gz</pre>
+		</div>
+</div></div>
+
+<h4><a name="UploadingCookbooks-AddthecookbooktotheCookbookSite"></a>Add the cookbook to the Cookbook Site</h4>
+<p>To add a new cookbook to the Cookbook Site:</p>
+<ol>
+	<li>Visit <a href="http://cookbooks.opscode.com">http://cookbooks.opscode.com</a> and log in.</li>
+	<li>Click on the 'Cookbooks' tab at the top.</li>
+	<li>Click the orange <em>Add a new cookbook</em> button.</li>
+	<li>On the "New cookbook" page, browse for your cookbook tarball, select a category, enter tags (separated by commas), and click <em>Create</em>.</li>
+</ol>
+
+
+<h3><a name="UploadingCookbooks-LicensingQuestions"></a>Licensing Questions</h3>
+<h6><a name="UploadingCookbooks-"></a><font color="navy"><em>Do I need to license my cookbooks with Apache 2.0, like Opscode uses for Chef?</em></font></h6>
+
+<p>A: No. You can use any license you wish for your cookbooks as long as you have the rights to share and publish them. You specify which license the cookbook is published under in the metadata of the cookbook itself.</p>
+
+<h6><a name="UploadingCookbooks-"></a><font color="navy"><em>Do I need to sign an Opscode Contributor License Agreement to post cookbooks?</em></font></h6>
+<p>A: No. The Opscode CLA is only required if you want to make contributions to Opscode's published cookbooks.</p>
+
+
+
+
+
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

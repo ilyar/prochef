@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Architecture</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Architecture
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="70%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h3><a name="Architecture-"></a><font color="#f7681a">Clients</font></h3>
+</div></div>
+
+<h5><a name="Architecture-Chefincludesseveralclientswiththedistribution%3A"></a>Chef includes several clients with the distribution:</h5>
+
+<ul>
+	<li><a href="Chef Solo.html" title="Chef Solo"><b>Chef Solo:</b></a> is a client application that works entirely from on-disk data, and is a light-weight alternative to a full client-server configuration.</li>
+	<li><a href="Chef Client.html" title="Chef Client"><b>Chef Client:</b></a> is the client application that works with a <a href="Chef Server.html" title="Chef Server">Chef Server</a> to persist data and download cookbooks. Chef Clients can also take advantage of Chef Server's search abilities to dynamically integrate your applications with the rest of your infrastructure.</li>
+	<li><a href="Knife.html" title="Knife"><b>Knife:</b></a> is the command line interface to Chef. Knife is primarily used to interact with the Chef Server API, and it can be used for local <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a> maintenance.</li>
+	<li><a href="Shef.html" title="Shef"><b>Shef:</b></a> is the interactive Chef shell. Shef allows you to write, run, and debug recipes interactively and also provides a programmatic interface for viewing and editing data on your Chef Server.</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h3><a name="Architecture-"></a><font color="#f7681a">Server Architecture</font></h3>
+</div></div>
+
+<h5><a name="Architecture-TheChefServerthattheChefClientinteractswithiseither%3A"></a>The Chef Server that the Chef Client interacts with is either:</h5>
+
+<h6><a name="Architecture-"></a><font color="#f7681a">Hosted Chef</font></h6>
+<ul>
+	<li><a href="Hosted Chef.html" title="Hosted Chef">Hosted Chef</a> customers do not need to manage their Chef Server, as that is done for them by <a href="http://www.opscode.com/hosted-chef/">Opscode</a>.</li>
+	<li>If you are a Hosted Chef Customer and have a question, please contact <a href="mailto:support@opscode.com">support@opscode.com</a>.</li>
+</ul>
+
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/7274878/7634970.png" hspace="14" style="border: 0px solid black"/></span></p>
+
+<h6><a name="Architecture-"></a><font color="#f7681a">Private Chef</font></h6>
+<ul>
+	<li>Private Chef customers should refer to their separate Private Chef Administration Documention for the Private Chef Server.</li>
+	<li>If you are a Private Chef Customer and have a question, please contact <a href="mailto:support@opscode.com">support@opscode.com</a>.</li>
+</ul>
+
+
+<h6><a name="Architecture-"></a><font color="#f7681a">Open Source Chef Server</font></h6>
+<ul>
+	<li>An Open Source Chef Server is comprised of the following components:
+	<ul>
+		<li><a href="Chef Server.html" title="Chef Server"><b>Chef Server:</b></a> services HTTP API requests from the Web UI, nodes, and other clients (see above).</li>
+		<li><a href="Chef Server.html#ChefServer-ChefServerWebUserInterface"><b>Chef Server Web UI:</b></a> the web-based management console for the Chef Server. It manages your infrastructure by making API calls to Chef Server.</li>
+		<li><a href="http://couchdb.apache.org/"><b>CouchDB:</b></a> the primary data store for a Chef server.</li>
+		<li><a href="http://www.rabbitmq.com/"><b>RabbitMQ:</b></a> stores and then forwards data from Chef Server to the Chef Solr Indexer. It acts as a buffer for cases when high write loads temporarily exceed the ability of the Chef Solr Indexer to update the search index.</li>
+		<li><a href="Chef Indexer.html#ChefIndexer-ChefIndexerChefSolrIndexer"><b>Chef Solr Indexer:</b></a> flattens and expands data to enhance searchability, then writes the data to Chef Solr.</li>
+		<li><a href="Chef Indexer.html#ChefIndexer-ChefIndexerChefSolr"><b>Chef Solr:</b></a> a thin wrapper around the <a href="http://lucene.apache.org/solr/">Apache Solr search engine</a>. Chef Solr allows you to find your way around your infrastructure by querying its metadata.</li>
+	</ul>
+	</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-color: #f7681a;border-width: 2px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<h3><a name="Architecture-"></a><font color="#f7681a">Further Detail</font></h3>
+
+<ul>
+	<li><a href="Authentication and Authorization.html" title="Authentication and Authorization">Authentication and Authorization</a></li>
+	<li><a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">Anatomy of a Chef Run</a></li>
+	<li><a href="Chef Client.html" title="Chef Client">Chef Client</a></li>
+	<li><a href="Chef Solo.html" title="Chef Solo">Chef Solo</a></li>
+	<li><a href="Chef Server.html" title="Chef Server">Chef Server</a></li>
+	<li><a href="Hosted Chef.html" title="Hosted Chef">Hosted Chef</a></li>
+	<li><a href="Server API.html" title="Server API">Server API</a></li>
+	<li><a href="Cookbook Site API.html" title="Cookbook Site API">Cookbook Site API</a></li>
+	<li><a href="Chef Concepts as UML.html" title="Chef Concepts as UML">Chef Concepts as UML</a></li>
+</ul>
+</div></div>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Introduction to Search and Data Bags.html" title="Introduction to Search and Data Bags"><span class="image-wrap" style="float: left"><img src="../attachments/7274878/19005459.png" hspace="4" style="border: 0px solid black"/></span> Introduction to Search and Data Bags </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Authentication and Authorization.html" title="Authentication and Authorization"><span class="image-wrap" style="float: right"><img src="../attachments/7274878/19005458.png" hspace="4" style="border: 0px solid black"/></span> Authentication and Authorization </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7274878/7634969.graffle">chef-server-arch.graffle</a> (application/octet-stream)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7274878/7634970.png">chef-server-arch.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7274878/19005458.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7274878/19005459.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

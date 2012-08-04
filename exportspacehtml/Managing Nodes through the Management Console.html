@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Nodes through the Management Console</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Nodes through the Management Console
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Nov 27, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<p><br class="atl-forced-newline" /></p>
+<h3><a name="ManagingNodesthroughtheManagementConsole-"></a><font color="#f7681a">The Management Console allows users to create, read, update, and delete nodes.</font></h3>
+
+<h2><a name="ManagingNodesthroughtheManagementConsole-ListingNodes"></a>Listing Nodes</h2>
+
+<p>In order to list nodes:</p>
+
+<p>1. Log on to the Management Console.</p>
+
+<p>2. Click Nodes on the main navigation menu.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275127/20840663.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<h2><a name="ManagingNodesthroughtheManagementConsole-ViewingaNode"></a>Viewing a Node</h2>
+
+<p>Viewing a node shows the recipes and roles in the node's run list, as well as the node's attributes.</p>
+
+<p>In order to view a specific node:</p>
+
+<p>1. Login to the Management Console and navigate to the Nodes tab.</p>
+
+<p>2. Click on the node you want to view.</p>
+
+<p>On this page you can see the roles and recipes in the node's run list, as well as an expandable tree view of the JSON attributes on the node.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275127/20840668.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/7275127/20840669.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+
+<h2><a name="ManagingNodesthroughtheManagementConsole-CreatingaNode"></a>Creating a Node</h2>
+
+<p>The node creation page lists all available recipes and roles, and allows you to include these in the run list of the node you are creating. There is also a JSON editor for editing, adding and removing the node's attributes.</p>
+
+<p>In order to create a node:</p>
+
+<p>1. Login to the Management Console and navigate to the Nodes tab.</p>
+
+<p>2. Click Create on the sub navigation bar.</p>
+
+<p>3. Give the node a name.</p>
+
+<p>4. Edit the node, as described in the next section. Continue with your normal edit steps and click "Create Node" to save the new node.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275127/20840664.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/7275127/20840665.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<h2><a name="ManagingNodesthroughtheManagementConsole-EditingaNode"></a>Editing a Node</h2>
+
+<p>NOTE: In any of the following actions where a drag is involved, you must drag the item to the lighter grey area of the target list.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275127/20840666.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/7275127/20840670.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+
+<h3><a name="ManagingNodesthroughtheManagementConsole-ModifyingtheNode%27sRunList"></a>Modifying the Node's Run List</h3>
+<p>1. To include a role in the run list of the node being edited, drag it from "Available Roles" to "Run List".</p>
+
+<p>2. To include a recipe in the run list of node being edited, drag it from "Available Recipes" to "Run List".</p>
+
+<p>3. To remove an included role or recipe from the node being edited, drag it from the "Run List" back to the respective "Available" section.</p>
+
+<p>4. Click "Save Node" to save.</p>
+
+
+
+
+<h3><a name="ManagingNodesthroughtheManagementConsole-ModifyingNodeAttributes"></a>Modifying Node Attributes</h3>
+
+<p>To modify the attributes of a node, such that they override the values of the included recipe or role, click "json" from the "Default and Override Attributes" tree on the bottom left.</p>
+
+<h4><a name="ManagingNodesthroughtheManagementConsole-UsingtheEditortab"></a>Using the Editor tab</h4>
+
+<p>Click the Editor tab on the right, click the green add button under the Editor tab, enter a name as the key and a body as the value and click "Add Attribute". The following figure shows the Default and Override Attributes tree and the JSON editor.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275127/7634958.png" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<h4><a name="ManagingNodesthroughtheManagementConsole-UsingtheSourcetab"></a>Using the Source tab</h4>
+
+<p>Enter the JSON body in the editor, and click the "Load JSON from source" button.</p>
+
+<p>Click the Create Node or Save Node button to save the node. The following figure shows an example.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275127/7634959.png" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<h2><a name="ManagingNodesthroughtheManagementConsole-DeletingaNode"></a>Deleting a Node</h2>
+
+<p>In order to delete a node:</p>
+
+<p>1. Login to the Management Console and navigate to the Nodes tab.</p>
+
+<p>2. Click the Delete link next to the name of the node you want to delete, and click OK on the confirmation message box. Or, click the link of the node to view its details, and click Delete on the sub navigation menu.</p>
+
+<p>Note: You need delete permissions on the node to it. If you don't have permission, you may not see a Delete link or tab.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275127/20840662.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/7275127/20840661.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/7275127/21463199.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Environments through the Management Console.html" title="Managing Environments through the Management Console">Managing Environments through the Management Console</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/7275127/21463198.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Roles through the Management Console.html" title="Managing Roles through the Management Console">Managing Roles through the Management Console</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/7634957.png">Opscode-4_normal.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/7634958.png">management_console_2.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/7634959.png">management_console3.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/20840661.png">node_delete_2.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/20840662.png">node_delete_1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/20840663.png">node_list.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/20840664.png">node_create_1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/20840665.png">node_create_2.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/20840666.png">node_edit_1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/20840668.png">node_show_1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/20840669.png">node_show_2.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/20840670.png">node_edit_2-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/21463198.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275127/21463199.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

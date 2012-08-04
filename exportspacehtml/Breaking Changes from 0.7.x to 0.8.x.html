@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Breaking Changes from 0.7.x to 0.8.x</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Breaking Changes from 0.7.x to 0.8.x
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 12, 2010 by <font color="#0050B2">dan@kallistec.com</font>.
+				    </div>
+
+				    <p>This page documents the breaking changes from Chef version 0.7.x and earlier to Chef version 0.8.x</p>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Without a doubt...</b><br />The biggest breaking change is that the 0.8 series is not backwards compatible between client and server to <b>any</b> previous Chef version.  Make sure you follow the instructions for Upgrading Chef 0.7.x to 0.8.x, and remember that the Server will need to be upgraded before the clients.</td></tr></table></div>
+
+<h2><a name="BreakingChangesfrom0.7.xto0.8.x-Authentication"></a>Authentication</h2>
+
+<p>We have dramatically altered the <a href="http://wiki.opscode.com/display/LEG/Authentication" title="Authentication">Authentication</a> model, and now rely on digitally signing each request.  What you need to know is this: when you upgrade your Chef Server, it will create a "Validation Key" called <tt>validation.pem</tt>.  This key should be put in <tt>/etc/chef/validation.pem</tt> on all your Chef Clients, and will be used to allow them to generate their individual client keys.  Once a client has registered, the validation key should be removed from it. Josh Timberman has a recipe that can do this automatically for you.</p>
+
+<h2><a name="BreakingChangesfrom0.7.xto0.8.x-RESTAPI"></a>REST API</h2>
+
+<p>The <a href="Server API.html" title="Server API">Server API</a> has been made more consistent, and now exists for every operation the Chef Server can perform.  It is also dramatically different in many places from the previous API - so if you have tools that hit the Chef Server REST API, make sure you update them.</p>
+
+<h2><a name="BreakingChangesfrom0.7.xto0.8.x-cookbookpathnowhasamoreconsistentorder"></a>cookbook_path now has a more consistent order</h2>
+
+<p>The configuration option 'cookbook_path' has been reversed, so that it goes in order from least-to-most specific.  In Chef 0.7, if you had:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Chef 0.7 cookbook_path configuration setting</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cookbook_path [ "/var/chef/site-cookbooks", "/var/chef/cookbooks" ]</pre>
+		</div>
+</div></div>
+
+<p>You should now have:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Chef 0.8 cookbook_path configuration setting</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cookbook_path [ "/var/chef/cookbooks", "/var/chef/site-cookbooks" ]</pre>
+		</div>
+</div></div>
+
+<h2><a name="BreakingChangesfrom0.7.xto0.8.x-Search"></a>Search</h2>
+
+<p>The syntax for Searching inside of Chef Recipes has changed.  Previously, it was possible to return only certain attributes from a search:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Chef 0.7 Search</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:node, "ipaddress:192*", [ :hostname, :fqdn ]) do |item|
+  ...
+end</pre>
+		</div>
+</div></div>
+
+<p>In this example, the result was always a list of items that matched, and the item itself was simply a hash with the data requested.</p>
+
+<p>With the API updates in Chef 0.8, we now return full objects from search queries - this makes utilizing them much more consistent (from a user point of view) but means that it's no longer reasonable to return sub-sets of the data.  In Chef 0.8:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Chef 0.8 Search</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:node, "ipaddress:192*") do |node|
+  node[:hostname]
+end</pre>
+		</div>
+</div></div>
+
+<p>Will work.  Notice that we're now getting the full node object itself. <img class="emoticon" src="images/icons/emoticons/smile.gif" height="20" width="20" align="absmiddle" alt="" border="0"/></p>
+
+<p>In addition, the creation of custom search indexes is replaced by <a href="Data Bags.html" title="Data Bags">Data Bags</a>.  If you were using the previous custom search index functionality, move to <a href="Data Bags.html" title="Data Bags">Data Bags</a>.</p>
+
+<p>See the full <a href="Search.html" title="Search">Search</a> documentation for more about the search feature of Chef.</p>
+
+<h2><a name="BreakingChangesfrom0.7.xto0.8.x-RunLists%2CnotRecipeLists"></a>Run Lists, not Recipe Lists</h2>
+
+<p>In Chef 0.7 we introduced the concept of a Run List, which allows you to mix Recipes and Roles.  Due to the awesome work of Thom May, Chef 0.8 allows <a href="Roles.html" title="Roles">Roles</a> to contain other <a href="Roles.html" title="Roles">Roles</a>.  This means that where in Chef 0.7 you would have written:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Chef 0.7 Recipe List</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">node.recipes [ "apache2", "unicorn" ]</pre>
+		</div>
+</div></div>
+
+<p>You should now be writing:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Chef 0.8 Run List</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">node.run_list [ "recipe[apache2]", "role[webserver]" }</pre>
+		</div>
+</div></div>
+
+<p>Your previous code will still work, but we will log a warning every time we encounter it, and expect it to be deprecated in the next major Chef release.</p>
+
+<h2><a name="BreakingChangesfrom0.7.xto0.8.x-CouchDB0.8unsupported"></a>CouchDB 0.8 unsupported</h2>
+
+<p>CouchDB 0.8 is no longer supported by the Chef Server. Opscode provides a <a href="http://github.com/opscode/cookbooks/tree/master/couchdb/recipes/source.rb">recipe</a> for installing CouchDB 0.9.1+ from source, and this is handled on supported server platforms in the <a href="http://wiki.opscode.com/display/LEG/Bootstrap+Chef+RubyGems+Installation" title="Bootstrap Chef RubyGems Installation">bootstrap</a>. When upgrading CouchDB, you need to dump the database from the old version and load it from the dump file.</p>
+
+<ul>
+	<li><a href="http://wiki.apache.org/couchdb/Breaking_changes">CouchDB Breaking Changes</a></li>
+	<li>Third party <a href="http://code.google.com/p/couchdb-python/">dump/restore tool</a> for CouchDB databases.</li>
+</ul>
+
+
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Using Chef to Upgrade Chef</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Using Chef to Upgrade Chef
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Apr 15, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<h3><a name="UsingCheftoUpgradeChef-Overview"></a>Overview</h3>
+
+<p>We do not recommend the approach of having Chef upgrade itself.  It is tricky from a process management perspective during the upgrade process, and can also result in you being surprised by something in the new release.  We recommend following the <a href="Upgrade Instructions.html" title="Upgrade Instructions">specific guide for the upgrade</a> being performed.  That said, if there is some reason that you'd like to proceed with this approach within your environment, the following information may be helpful.</p>
+
+<h3><a name="UsingCheftoUpgradeChef-UpgradingviaaptOpscodeAptRepositoryExcerpt"></a>Upgrading via <a href="Opscode Apt Repository Excerpt.html" title="Opscode Apt Repository Excerpt">apt</a></h3>
+
+<p>Doing an upgrade through <a href="http://apt.opscode.com/conf/distributions">package distribution</a>, as done on the individual version update guides, causes apt to restart chef-client. So in order to update chef via apt with chef, you'll need to fork off a new process that can survive the chef process being killed.  For example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">fork do
+    Process.setsid
+    # code to upgrade the package
+  end
+
+  Chef::Log.info("Exiting for upgrade...")
+  exit! 0</pre>
+		</div>
+</div></div>
+<p>Clearly, not as nice as using the <a href="Resources.html#Resources-Package">package resource</a>.  Alternatively, you could create a custom resource by using Chef's <a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers (LWRP)</a> DSL.</p>
+
+<h3><a name="UsingCheftoUpgradeChef-InstallviaaptOpscodeAptRepositoryExcerptwithKnifeUsetoUpgrade"></a>Install via <a href="Opscode Apt Repository Excerpt.html" title="Opscode Apt Repository Excerpt">apt</a> with <a href="Knife.html" title="Knife">Knife</a> Use to Upgrade</h3>
+
+<p>As mentioned, it's tricky to have chef upgrade itself. For most software that gets significant updates, chef included, we don't recommend having the system update automatically. </p>
+
+<p>If doing so, when using apt packages, we would use action <tt>:install</tt>, not <tt>:upgrade</tt>. This greatly reduces the potential of being surprised by anything in a new release. You can use <a href="Knife.html" title="Knife">knife</a> to upgrade individual environments when you're ready to test and deploy. A few knife examples for consideration:</p>
+<ol>
+	<li>all systems
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ssh 'name:[* TO *]' 'sudo apt-get update ; sudo apt-get install chef'</pre>
+		</div>
+</div></div></li>
+	<li>if you've set up an attribute for each environment
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ssh 'environment:preprod' 'sudo apt-get update ; sudo apt-get install chef'</pre>
+		</div>
+</div></div></li>
+	<li>Chef 0.10 <a href="Environments.html" title="Environments">Environments</a>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ssh -E preprod 'name:[* TO *]' 'sudo apt-get update ; sudo apt-get install chef'</pre>
+		</div>
+</div></div></li>
+</ol>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

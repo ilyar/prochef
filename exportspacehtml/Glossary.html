@@ -1,0 +1,680 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Glossary</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Glossary
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 02, 2011 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<p><br class="atl-forced-newline" /></p>
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 113x168" href='http://wiki.opscode.com/download../attachments/7897143/8939806-close-up-view-of-a-business-word-defition-in-a-dictionary.jpg'><img src="../attachments/thumbnails/7897143/14548997" hspace="20" vspace="4" style="border: 0px solid black"/></a></span></p>
+<h4><a name="Glossary-"></a><font color="#f7681a">This page is a glossary of terms, technologies and concepts used by Chef and in working with Chef.</font></h4>
+<p><br class="atl-forced-newline" /></p>
+<h6><a name="Glossary-Eachsectiondescribesonetermandmaylinktoothertermsinthispage.The%22SeeAlso%22pointstoanotherpageonthewiki%2Cortoanexternalsite."></a>Each section describes one term and may link to other terms in this page. The "See Also" points to another page on the wiki, or to an external site.</h6>
+</div></div>
+
+<h1><a name="Glossary-API"></a>API</h1>
+
+<p>Application Programming Interface. An interface implemented by software that enables it to interact with other software.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://en.wikipedia.org/wiki/Application_programming_interface">API on Wikipedia</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Action"></a>Action</h1>
+
+<p><a href="#Glossary-Provider">Providers</a> in Chef take <a href="#Glossary-Idempotent">idempotent</a> actions to configure <a href="#Glossary-Resources">resources</a></p>
+
+<h1><a name="Glossary-Attribute"></a>Attribute</h1>
+
+<p>Attributes are data about <a href="#Glossary-Nodes">Nodes</a>.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Attributes.html" title="Attributes">Attributes</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Authentication"></a>Authentication</h1>
+
+<p>Chef <a href="#Glossary-Client">clients</a> authenticate to a Chef <a href="#Glossary-server">server</a> using pre-shared RSA keys and signed HTTP headers.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://wiki.opscode.com/display/LEG/Authentication" title="Authentication">Authentication</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Autovivify"></a>Auto-vivify</h1>
+
+<p>Internally in the Chef library, <a href="#Glossary-Attribute">attributes</a> are automatically created as methods.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Attributes.html" title="Attributes">Attributes</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Bootstrap"></a>Bootstrap</h1>
+
+<p>In the context of Chef, bootstrap means to get Chef installed and ready to run on the target system.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Knife Bootstrap.html" title="Knife Bootstrap">How to bootstrap new systems with Knife</a> or <a href="http://wiki.opscode.com/display/LEG/Bootstrap+Chef+RubyGems+Installation" title="Bootstrap Chef RubyGems Installation">How to bootstrap a Chef Client/Server</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Client"></a>Client</h1>
+
+<p>The chef client communicates with a Chef <a href="#Glossary-Server">server</a> to download the <a href="#Glossary-Cookbook">cookbooks</a> it needs to compile and run its configuration.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Chef Client.html" title="Chef Client">Chef Client</a>.</li>
+</ul>
+
+
+<h1><a name="Glossary-Cloud"></a>Cloud</h1>
+
+<p>Cloud computing has been defined ad nauseum across the internet. Chef works well in several cloud computing environments such as Amazon EC2, Rackspace Cloud and Terremark vCloud.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a></li>
+	<li><a href="http://en.wikipedia.org/wiki/Cloud_computing">Cloud computing on Wikipedia</a></li>
+</ul>
+
+
+<h1><a name="Glossary-ConfigurationManagement"></a>Configuration Management</h1>
+
+<p>Setting up all the various components and services on a server so it can fulfill a role is configuration management.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://en.wikipedia.org/wiki/Configuration_management">Configuration Management on wikipedia</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Convergence"></a>Convergence</h1>
+
+<p>The process by which systems are brought in line with the overall configuration management policy.</p>
+
+<h1><a name="Glossary-Cookbook"></a>Cookbook</h1>
+
+<p>Chef cookbooks are packages for code used to configure some aspect of a system.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Cookbooks.html" title="Cookbooks">Cookbooks</a></li>
+</ul>
+
+
+<h1><a name="Glossary-CouchDB"></a>CouchDB</h1>
+
+<p>A document-oriented database that provides a <a href="#Glossary-REST">REST</a> <a href="#Glossary-JSON">JSON</a> <a href="#Glossary-API">API</a>, used by the Chef <a href="#Glossary-Server">Server</a> as a back-end datastore for <a href="#Glossary-Node">Node</a>, <a href="#Glossary-Role">Role</a>, <a href="#Glossary-Client">Client</a>, and <a href="#Glossary-DataBag">Data Bag</a> data.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://couchdb.apache.org/">Apache CouchDB Project page</a></li>
+</ul>
+
+
+<h1><a name="Glossary-DSL"></a>DSL</h1>
+
+<p>Programming or specification language dedicated to a specific problem domain. Chef makes use of meta-programming features in Ruby to create a simple DSL for writing <a href="#Glossary-Recipe">Recipe</a>, <a href="#Glossary-Role">Role</a>, and <a href="#Glossary-Metadata">Metadata</a> files.</p>
+
+<h1><a name="Glossary-DataBag"></a>Data Bag</h1>
+
+<p>Arbitrary store of <a href="#Glossary-JSON">JSON</a> data that is <a href="#Glossary-Index">indexed</a> for <a href="#Glossary-Search">Search</a>.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Data Bags.html" title="Data Bags">Data Bags</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Definition"></a>Definition</h1>
+
+<p>Allow creation of new <a href="#Glossary-Resource">Resource</a> macros that string together other resources.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Definitions.html" title="Definitions">Definitions</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Environments"></a>Environments</h1>
+
+<p>Provide a mechanism for managing different segmented spaces such as production, staging, development, and testing, etc with one Chef setup (or one organization on Hosted Chef): allowing you to set policies to dictate which versions of a given cookbook may be used within an <a href="#Glossary-Infrastructure">Infrastructure</a> segment. </p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Environments.html" title="Environments">Environments</a></li>
+</ul>
+
+
+<h1><a name="Glossary-File"></a>File</h1>
+
+<p>Chef can manage static File and Directory assets as <a href="#Glossary-Resource">resources</a> in <a href="#Glossary-Recipe">recipes</a>.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="File Distribution.html" title="File Distribution">File Distribution</a></li>
+	<li><a href="Resources.html#Resources-CookbookFile">cookbook_file Resource</a></li>
+	<li><a href="Resources.html#Resources-Remotefile">remote_file Resource</a></li>
+	<li><a href="Resources.html#Resources-RemoteDirectory">remote_directory Resource</a></li>
+</ul>
+
+
+<h1><a name="Glossary-FileSpecificity"></a>File Specificity</h1>
+
+<p>File specificity is a special order which Chef looks for host-, platform-version- or platform-specific files to use when downloading/configuring <a href="#Glossary-File">File</a> and <a href="#Glossary-Template">Template</a> resources.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="File Distribution.html#FileDistribution-FileSpecificity">File Distribution#File Specificity</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Git"></a>Git</h1>
+
+<p>Git is a distributed version control system.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://git-scm.com/">Git Home Page</a></li>
+	<li><a href="http://progit.org/book/">Pro Git Book</a></li>
+	<li><a href="http://gitref.org/">GitHub's Git reference</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Group"></a>Group</h1>
+
+<p>Groups are Hosted Chef-specific authorization objects that group together users in an organization. They are not used in the Open Source Chef Server.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Managing Groups with the Hosted Chef Management Console.html" title="Managing Groups with the Hosted Chef Management Console">Managing Groups with the Hosted Chef Management Console</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Idempotent"></a>Idempotent</h1>
+
+<p>A mathematical term that means multiple applications of the same action should not change the result.</p>
+
+<h1><a name="Glossary-Index"></a>Index</h1>
+
+<p>Most data (all but Cookbooks) stored on the Chef <a href="#Glossary-Server">Server</a> are indexed for Search.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Search.html" title="Search">Search</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Infrastructure"></a>Infrastructure</h1>
+
+<p>Applications run on Infrastructure. Infrastructure in this context isn't physical or virtualized things like servers or networking. Rather, infrastructure is the application itself, plus all the underlying software prerequisites, server settings, tweaks, and configuration files need for it to function properly. Infrastructure typically spans nodes, and often networks.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://infrastructures.org">Infrastructures.org</a></li>
+</ul>
+
+
+<h1><a name="Glossary-JSON"></a>JSON</h1>
+
+<p>JavaScript Object Notation is a lightweight data format that is easy to read and write. All the <a href="#Glossary-API">APIs</a> used in Chef are driven by JSON data.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://www.json.org">JSON home page</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Knife"></a>Knife</h1>
+
+<p>A command-line tool used to work with a Chef <a href="#Glossary-Server">Server</a> and local Chef <a href="#Glossary-Repository">Repository</a>.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Knife.html" title="Knife">Knife Documentation</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Library"></a>Library</h1>
+
+<p>In a Chef cookbook, a Library is arbitrary Ruby code that can be used to extend Chef's language, or implement new features.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Libraries.html" title="Libraries">Libraries</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Merb"></a>Merb</h1>
+
+<p>Merb is a lightweight MVC framework used by the Chef <a href="#Glossary-Server">Server</a> to provide the <a href="#Glossary-API">API</a> that <a href="#Glossary-Client">clients</a> communicate with.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://www.merbivore.com/">Merb home page</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Metadata"></a>Metadata</h1>
+
+<p>Chef cookbooks use metadata to provide hints to the Chef <a href="#Glossary-Server">Server</a> about what cookbooks should be deployed to a node, and can be used in user interfaces built on top of Chef.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Metadata.html" title="Metadata">Metadata</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Node"></a>Node</h1>
+
+<p>A node is a system that is configured by Chef.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Nodes.html" title="Nodes">Nodes</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Ohai"></a>Ohai</h1>
+
+<p>Ohai is a tool and library used by Chef to automatically detect information about the node it is running on.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Ohai.html" title="Ohai">Ohai</a></li>
+</ul>
+
+
+<h1><a name="Glossary-OperatingSystem"></a>Operating System</h1>
+
+<p>An operating system manages hardware and provides services for running application software.</p>
+
+<h1><a name="Glossary-HostedChef"></a>Hosted Chef</h1>
+
+<p>The Hosted Chef is a scalable, multi-tenant, secure, online service, supporting all the functionality of Chef and offered commercially by Opscode. </p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://www.opscode.com">Opscode Home Page</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Organization"></a>Organization</h1>
+
+<p>In Hosted Chef, an organization represents a company, department or other grouped set of servers <a href="#Glossary-Infrastructure">Infrastructure</a> managed by Chef. </p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Managing Organizations with the Hosted Chef Management Console.html" title="Managing Organizations with the Hosted Chef Management Console">Managing Organizations with the Hosted Chef Management Console</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Platform"></a>Platform</h1>
+
+<p>Chef detects the <a href="#Glossary-OperatingSystem">Operating System</a> it is running on through <a href="#Glossary-Ohai">Ohai</a>, and uses that platform primarily to determine what <a href="#Glossary-Provider">Provider</a> to use for particular <a href="#Glossary-Resource">resources</a>.</p>
+
+<h1><a name="Glossary-Provider"></a>Provider</h1>
+
+<p>A provider is an abstraction on top of system commands or API calls that is used to configure a <a href="#Glossary-Resource">Resource</a>. Providers are often <a href="#Glossary-OperatingSystem">Operating System</a> specific, such as the provider that installs packages for Debian (APT), Red Hat (Yum) or ArchLinux (Pacman).</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Providers.html" title="Providers">Providers</a></li>
+	<li><a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers &#40;LWRP&#41;</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Provision"></a>Provision</h1>
+
+<p>The act of installing an operating system on bare metal, virtual machine or cloud computing instances is provisioning. Before Chef can <a href="#Glossary-ConfigurationManagement">configure</a> and <a href="#Glossary-SystemIntegration">integrate</a> systems, the system must first be provisioned, and then <a href="#Glossary-Bootstrap">bootstrapped</a>. This process varies by Operating System platform.</p>
+
+<h1><a name="Glossary-Queue"></a>Queue</h1>
+
+<p>The Chef <a href="#Glossary-SOLR">SOLR</a> <a href="#Glossary-Search">Search</a> <a href="#Glossary-Index">Index</a> uses a queue for incoming data that needs to be indexed for search on the Chef <a href="#Glossary-Server">Server</a>.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Search.html" title="Search">Search</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Recipe"></a>Recipe</h1>
+
+<p>A recipe is a <a href="#Glossary-Ruby">Ruby</a> <a href="#Glossary-DSL">DSL</a> configuration file that you write to encapsulate <a href="#Glossary-Resource">resources</a> that should be configured by Chef.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Recipes.html" title="Recipes">Recipes</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Repository"></a>Repository</h1>
+
+<p>A Chef Repository is a directory where you store all the various code used to configure your infrastructure with Chef.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Chef Repository.html" title="Chef Repository">Chef Repository</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Resource"></a>Resource</h1>
+
+<p>A resource is an abstraction that represents a particular thing that needs to be configured, such as a package or a service.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Resources.html" title="Resources">Resources</a></li>
+	<li><a href="Recipes.html" title="Recipes">Recipes</a></li>
+</ul>
+
+
+<h1><a name="Glossary-REST"></a>REST</h1>
+
+<p>"REpresentational State Transfer (REST) is a style of software architecture for distributed hypermedia systems," commonly associated with HTTP. <a href="#Glossary-API">APIs</a> conforming to REST constraints are "RESTful". Chef uses a RESTful <a href="#Glossary-API">API</a>.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://en.wikipedia.org/wiki/Representational_State_Transfer">REST on Wikipedia</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Role"></a>Role</h1>
+
+<p>A role describes a set of functionality for nodes through <a href="#Glossary-Recipe">recipes</a> and <a href="#Glossary-Attribute">attributes</a>.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Roles.html" title="Roles">Roles</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Ruby"></a>Ruby</h1>
+
+<p>Ruby is an object-oriented programming language. Chef is written in Ruby and uses a number of Ruby <a href="#Glossary-DSL">DSLs</a> for writing <a href="#Glossary-Recipe">Recipe</a>, <a href="#Glossary-Role">Role</a>, <a href="#Glossary-Metadata">Metadata</a> as code.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://ruby-lang.org">Ruby Programming Language</a></li>
+</ul>
+
+
+<h1><a name="Glossary-RunList"></a>Run List</h1>
+
+<p>A run list is an array of <a href="#Glossary-Recipe">recipes</a> and <a href="#Glossary-Role">roles</a> that should be applied, in order, on the <a href="#Glossary-Node">Node</a>, or in another <a href="#Glossary-Role">Role</a>.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Nodes.html" title="Nodes">Nodes</a></li>
+	<li><a href="Roles.html" title="Roles">Roles</a></li>
+</ul>
+
+
+<h1><a name="Glossary-SOLR"></a>SOLR</h1>
+
+<p>SOLR is a full text search engine platform written in Java.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://lucene.apache.org/solr/">Apache SOLR home page</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Search"></a>Search</h1>
+
+<p>Data stored by the Chef <a href="#Glossary-Server">Server</a> is indexed for Search and can be queried with SOLR's Lucene search syntax.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Search.html" title="Search">Search</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Server"></a>Server</h1>
+<h1><a name="Glossary-Shef"></a>Shef</h1>
+
+<p>The Chef read-eval-print loop (REPL), Shef, is a way to run Chef in an IRB session. IRB is an interactive Ruby console.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Shef.html" title="Shef">Shef</a></li>
+	<li><a href="http://en.wikipedia.org/wiki/Read-eval-print_loop">REPL on Wikipedia</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Solo"></a>Solo</h1>
+
+<p>Chef Solo is a standalone, non-client/server way to execute Chef <a href="#Glossary-Recipe">recipes</a> on <a href="#Glossary-Node">nodes</a>.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Chef Solo.html" title="Chef Solo">Chef Solo</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Subversion"></a>Subversion</h1>
+
+<p>Subversion is a version control system.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="http://subversion.tigris.org/">Subversion home page</a></li>
+</ul>
+
+
+<h1><a name="Glossary-SystemIntegration"></a>System Integration</h1>
+
+<p>The act of making disparate systems in an <a href="#Glossary-Infrastructure">Infrastructure</a> work together to provide application services and business value is system integration. It is where all the systems that have been configured are brought together to do their job.</p>
+
+<h1><a name="Glossary-Tags"></a>Tags</h1>
+
+<p>Tags are an array <a href="#Glossary-Attribute">Attribute</a> of <a href="#Glossary-Node">nodes</a>.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Recipes.html#Recipes-Tags">Tags</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Template"></a>Template</h1>
+
+<p>Chef uses ERB templates to create dynamically generated configuration files. The template files themselves are stored in <a href="#Glossary-Cookbook">cookbooks</a> and generated using the Erubis library as it is faster than the default implementation of ERB in the Ruby standard library.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Templates.html" title="Templates">Templates</a></li>
+	<li><a href="http://www.kuwata-lab.com/erubis/">Erubis home page</a></li>
+	<li><a href="http://ruby-doc.org/stdlib/libdoc/erb/rdoc/">ERB in the Ruby standard library</a></li>
+</ul>
+
+
+<h1><a name="Glossary-User"></a>User</h1>
+
+<p>In the Open Source Chef Server, users log into the <a href="#Glossary-Webui">Webui</a> Management Console.</p>
+
+<p>In the <a href="#Glossary-HostedChef">Hosted Chef</a>, users are credentialed entities used by humans to connect to Hosted Chef to manage the <a href="#Glossary-Organization">Organization</a>.</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Management Console Users.html" title="Management Console Users">Management Console Users for Open Source Server</a></li>
+	<li><a href="Managing Users and your Private Key with the Hosted Chef Management Console.html" title="Managing Users and your Private Key with the Hosted Chef Management Console">Managing Users and your Private Key with the Hosted Chef Management Console</a></li>
+</ul>
+
+
+<h1><a name="Glossary-Webui"></a>Webui</h1>
+
+<p>Hosted Chef and the Open Source Chef <a href="#Glossary-Server">Server</a> has a web user interface Management Console that can be used to view and modify various parts of the environment</p>
+
+<h4><a name="Glossary-SeeAlso%3A"></a>See Also:</h4>
+
+<ul>
+	<li><a href="Management Console.html" title="Management Console">Management Console</a></li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td> 
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#Glossary-API'>API</a></li>
+    <li><a href='#Glossary-Action'>Action</a></li>
+    <li><a href='#Glossary-Attribute'>Attribute</a></li>
+    <li><a href='#Glossary-Authentication'>Authentication</a></li>
+    <li><a href='#Glossary-Autovivify'>Auto-vivify</a></li>
+    <li><a href='#Glossary-Bootstrap'>Bootstrap</a></li>
+    <li><a href='#Glossary-Client'>Client</a></li>
+    <li><a href='#Glossary-Cloud'>Cloud</a></li>
+    <li><a href='#Glossary-ConfigurationManagement'>Configuration Management</a></li>
+    <li><a href='#Glossary-Convergence'>Convergence</a></li>
+    <li><a href='#Glossary-Cookbook'>Cookbook</a></li>
+    <li><a href='#Glossary-CouchDB'>CouchDB</a></li>
+    <li><a href='#Glossary-DSL'>DSL</a></li>
+    <li><a href='#Glossary-DataBag'>Data Bag</a></li>
+    <li><a href='#Glossary-Definition'>Definition</a></li>
+    <li><a href='#Glossary-Environments'>Environments</a></li>
+    <li><a href='#Glossary-File'>File</a></li>
+    <li><a href='#Glossary-FileSpecificity'>File Specificity</a></li>
+    <li><a href='#Glossary-Git'>Git</a></li>
+    <li><a href='#Glossary-Group'>Group</a></li>
+    <li><a href='#Glossary-Idempotent'>Idempotent</a></li>
+    <li><a href='#Glossary-Index'>Index</a></li>
+    <li><a href='#Glossary-Infrastructure'>Infrastructure</a></li>
+    <li><a href='#Glossary-JSON'>JSON</a></li>
+    <li><a href='#Glossary-Knife'>Knife</a></li>
+    <li><a href='#Glossary-Library'>Library</a></li>
+    <li><a href='#Glossary-Merb'>Merb</a></li>
+    <li><a href='#Glossary-Metadata'>Metadata</a></li>
+    <li><a href='#Glossary-Node'>Node</a></li>
+    <li><a href='#Glossary-Ohai'>Ohai</a></li>
+    <li><a href='#Glossary-OperatingSystem'>Operating System</a></li>
+    <li><a href='#Glossary-HostedChef'>Hosted Chef</a></li>
+    <li><a href='#Glossary-Organization'>Organization</a></li>
+    <li><a href='#Glossary-Platform'>Platform</a></li>
+    <li><a href='#Glossary-Provider'>Provider</a></li>
+    <li><a href='#Glossary-Provision'>Provision</a></li>
+    <li><a href='#Glossary-Queue'>Queue</a></li>
+    <li><a href='#Glossary-Recipe'>Recipe</a></li>
+    <li><a href='#Glossary-Repository'>Repository</a></li>
+    <li><a href='#Glossary-Resource'>Resource</a></li>
+    <li><a href='#Glossary-REST'>REST</a></li>
+    <li><a href='#Glossary-Role'>Role</a></li>
+    <li><a href='#Glossary-Ruby'>Ruby</a></li>
+    <li><a href='#Glossary-RunList'>Run List</a></li>
+    <li><a href='#Glossary-SOLR'>SOLR</a></li>
+    <li><a href='#Glossary-Search'>Search</a></li>
+    <li><a href='#Glossary-Server'>Server</a></li>
+    <li><a href='#Glossary-Shef'>Shef</a></li>
+    <li><a href='#Glossary-Solo'>Solo</a></li>
+    <li><a href='#Glossary-Subversion'>Subversion</a></li>
+    <li><a href='#Glossary-SystemIntegration'>System Integration</a></li>
+    <li><a href='#Glossary-Tags'>Tags</a></li>
+    <li><a href='#Glossary-Template'>Template</a></li>
+    <li><a href='#Glossary-User'>User</a></li>
+    <li><a href='#Glossary-Webui'>Webui</a></li>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="3%"></td></tr></tbody></table> 
+
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897143/14548997.jpg">8939806-close-up-view-of-a-business-word-defition-in-a-dictionary.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

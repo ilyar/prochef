@@ -1,0 +1,352 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Chef Solo</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Chef Solo
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/1179893/14876682.png" hspace="40" vspace="6" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+<h3><a name="ChefSolo-"></a><font color="#f7681a">Chef Solo allows you to run Chef <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> in the absence of a <a href="Chef Server.html" title="Chef Server">Chef Server</a>. <br/>
+<br/>
+To provide the raw execution of cookbook recipes, the complete cookbook needs to be present on the disk.</font></h3>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<h5><a name="ChefSolo-ChefSolodoesnotprovide%3A"></a>Chef Solo does not provide:</h5>
+
+<ul class="alternate" type="square">
+	<li>Node data storage or search indexes.</li>
+	<li>Centralized cookbook distribution.</li>
+	<li>Environments, for setting policy of cookbook versions.</li>
+	<li>A central API to interact with and use to integrate infrastructure components.</li>
+</ul>
+
+
+<h5><a name="ChefSolo-ThisdocumentwillshowyouhowtosetupcookbooksandChefSolo."></a>This document will show you how to set up cookbooks and Chef Solo.</h5>
+<hr /></td> 
+<td class="confluenceTd" valign="top" width="15%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ChefSolo-ConfigureChefSolo'>Configure Chef Solo</a></li>
+    <li><a href='#ChefSolo-JSON%2CAttributesandRecipes'>JSON, Attributes and Recipes</a></li>
+    <li><a href='#ChefSolo-PreparingyourCookbooks'>Preparing your Cookbooks</a></li>
+    <li><a href='#ChefSolo-ExamplesofRunning%7B%7Bchefsolo%7D%7D'>Examples of Running <tt>chef-solo</tt></a></li>
+    <li><a href='#ChefSolo-Roles'>Roles</a></li>
+    <li><a href='#ChefSolo-DataBags'>Data Bags</a></li>
+    <li><a href='#ChefSolo-Environments'>Environments</a></li>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<p>We're going to look at three of the options for <tt>chef-solo</tt></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">-c, --config CONFIG
+-j, --json-attributes JSON_ATTRIBS
+-r, --recipe-url RECIPE_URL</pre>
+		</div>
+</div></div>
+
+<p>And then we'll look at some examples of actually running <tt>chef-solo</tt>.</p>
+
+<h2><a name="ChefSolo-ConfigureChefSolo"></a>Configure Chef Solo</h2>
+
+<p><font color="#f7681a">The first option is <tt>&#45;c</tt> or <tt>&#45;-config</tt>, which takes a filename as a configuration file.</font> If this option is not specified, Chef Solo will look in <tt>/etc/chef/solo.rb</tt> for its configuration. By default Chef Solo will set the default paths to <tt>/var/chef</tt>, for example it looks for cookbooks in <tt>/var/chef/cookbooks</tt>. You can also specify the location of the cookbooks by setting this in <tt>solo.rb</tt>.</p>
+
+<p>For example, in our instructions for <a href="Chef Configuration Settings.html" title="Chef Configuration Settings">Chef Configuration Settings</a>, we use the following <tt>~/solo.rb</tt>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>~/solo.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file_cache_path "/var/chef-solo"
+cookbook_path "/var/chef-solo/cookbooks"</pre>
+		</div>
+</div></div>
+
+<p>For your own systems, you can change this to reflect any directory you like, but you'll need to specify absolute paths and the <tt>cookbook_path</tt> directory should be a subdirectory of the <tt>file_cache_path</tt>.</p>
+
+<p><b>Please note</b>: as mentioned below, the establishment of a <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a> will introduce considerations that you'll need to incorporate when determining your cookbooks directory structure. The result would determine use of the <tt>cookbook_path</tt> variable within <tt>~/solo.rb</tt>.</p>
+
+<h3><a name="ChefSolo-MultipleCookbooksDirectories"></a>Multiple Cookbooks Directories</h3>
+
+<p>You can also specify <tt>cookbook_path</tt> as an array, passing multiple locations to search for cookbooks.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>~/solo.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file_cache_path "/var/chef-solo"
+cookbook_path ["/var/chef-solo/cookbooks", "/var/chef-solo/site-cookbooks"]</pre>
+		</div>
+</div></div>
+
+<p><em>Note that the order is significant</em>, and <a href="Breaking Changes from 0.7.x to 0.8.x.html" title="Breaking Changes from 0.7.x to 0.8.x">changed in chef 0.8</a>; earlier entries are now overridden by later ones. When you create the cookbooks tarball below, you'll need both directories to extract into the <tt>file_cache_path</tt> directory.</p>
+
+<h2><a name="ChefSolo-JSON%2CAttributesandRecipes"></a>JSON, Attributes and Recipes</h2>
+
+<p><font color="#f7681a">Since <tt>chef-solo</tt> doesn't have any interaction with a <a href="Chef Server.html" title="Chef Server">Chef Server</a>, you'll need to specify node-specifc <a href="Attributes.html" title="Attributes">attributes</a> in a JSON file.</font> This can be located on the target system itself, or it can be stored on a remote server such as S3, or a web server on your network.</p>
+
+<p>Within the JSON file, you'll also specify the recipes that Chef should run in the "run_list". An example JSON file, which sets a resolv.conf:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>~/node.json</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "resolver": {
+    "nameservers": [ "10.0.0.1" ],
+    "search":"int.example.com"
+  },
+  "run_list": [ "recipe[resolver]" ]
+}</pre>
+		</div>
+</div></div>
+
+<p>(See the <a href="http://github.com/opscode/cookbooks/tree/master/resolver">opscode/cookbook, resolver</a>)</p>
+
+<h2><a name="ChefSolo-PreparingyourCookbooks"></a>Preparing your <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a></h2>
+
+<p><font color="#f7681a">You can point <tt>chef-solo</tt> at a target directory on the local system, or at a URL containing a tarball archive.</font></p>
+
+<h3><a name="ChefSolo-ChefRepositoryInteraction"></a>Chef Repository Interaction</h3>
+
+<p>If you are establishing a <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a> to define a location where cookbooks and other Chef artifacts will be stored and version controlled, please note the the <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a> will have considerations that you'll need to incorporate when setting up your chef-solo managed server and establishing the target directory that <tt>chef-solo</tt> is directed towards.</p>
+
+<h3><a name="ChefSolo-RunningfromaDirectory"></a>Running from a Directory</h3>
+
+<p>Once that you have <tt>chef-solo</tt> configured for a directory, you can store the cookbooks there directly and run <tt>chef-solo</tt> against that directory if that is the approach that you are undertaking.</p>
+
+<h3><a name="ChefSolo-RunningfromaURL"></a>Running from a URL</h3>
+
+<p>Running <tt>chef-solo</tt> against a URL containing a tarball is probably more common than running against a directory, however. First create the cookbooks tarball.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Creating a Chef Solo Tarball</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">tar zcvf chef-solo.tar.gz ./cookbooks</pre>
+		</div>
+</div></div>
+
+<p>If you're using multiple cookbook directories, note that chef-solo expects the tarball you give it to have a directory structure of the form:</p>
+
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>    cookbooks/
+       |---- cbname1/
+              |--attributes/ ... etc
+       ...
+       |---- cbname2/
+              |--attributes/
+       ...
+</pre>
+</div></div>
+
+<p>(See <a href="http://wiki.opscode.com/display/chef/Chef+Repository#ChefRepository-RakeTasks">Rake Task</a> "bundling cookbooks".)  </p>
+
+<p>Make sure you've modified the cookbook_path variable in solo.rb to include both paths as described above in <a href="#ChefSolo-ChefSoloConfigureChefSolo">Configure Chef Solo</a></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Using Multiple Chef Cookbook Directories</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">tar zcvf chef-solo.tar.gz ./cookbooks ./site-cookbooks</pre>
+		</div>
+</div></div>
+
+<p>Then, upload the resulting <tt>chef-solo.tar.gz</tt> to a web server that is accessible by the servers you wish to run <tt>chef-solo</tt> on. We do this for the bootstrap tarball that <a href="http://wiki.opscode.com/display/LEG/Bootstrap+Chef+RubyGems+Installation" title="Bootstrap Chef RubyGems Installation">Configures Chef Server and Clients</a>.</p>
+
+<h2><a name="ChefSolo-ExamplesofRunning%7B%7Bchefsolo%7D%7D"></a>Examples of Running <tt>chef-solo</tt></h2>
+<div class='navmenu' style='float:right; width:380px; background:#eeeeee; border:4px solid #d7d4c3; margin:10px; padding:10px'><div class="" align="center"><h6><a name="ChefSolo-"></a><font color="navy">Remember: Chef Solo is <b>disconnected from a Chef Server</b></font></h6></div>
+
+
+<p>There is no authentication, no authorization, no search indexes, no persistent attributes. It's just the bare ability to execute <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> and <a href="Data Bags.html" title="Data Bags">Data Bags</a>.</p></div>
+<p>Now that you have configured <tt>chef-solo</tt>, prepared JSON data for your system(s), and prepared your <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a>, it's time to run it!</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Running Solo with URL</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">chef-solo -c ~/solo.rb -j ~/node.json  -r http://www.example.com/chef-solo.tar.gz</pre>
+		</div>
+</div></div>
+
+<p>This actually uses the Chef remote_file resource type to retrieve the specified <tt>chef-solo.tar.gz</tt> into the <tt>file_cache_path</tt>, and extracts it to <tt>cookbooks_path</tt>, then runs Chef with those cookbooks. So once this has occurred, you can modify the cookbooks on the local system and rerun Chef with the directory:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Running Solo with Directory</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">chef-solo -c ~/solo.rb -j ~/node.json</pre>
+		</div>
+</div></div>
+
+<p>Simply remove the '<tt>&#45;r URL</tt>', and the configuration file tells Solo where to look.</p>
+
+<p>You can also specify the JSON data via URL.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Running Solo with URL for Cookbooks and JSON</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">chef-solo -c ~/solo.rb -j http://www.example.com/node.json  -r http://www.example.com/chef-solo.tar.gz</pre>
+		</div>
+</div></div>
+
+<p>These two options, <tt>&#45;r</tt> and <tt>&#45;j</tt> correspond to the <tt>recipe_url</tt> and <tt>json_attribs</tt> config file options, respectively.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>solo.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file_cache_path "/var/chef-solo"
+cookbook_path "/var/chef-solo/cookbooks"
+json_attribs "http://www.example.com/node.json"
+recipe_url "http://www.example.com/chef-solo.tar.gz"</pre>
+		</div>
+</div></div>
+
+<p>You can create the solo.rb in <tt>/etc/chef/solo.rb</tt> instead, as <tt>chef-solo</tt> will look there by default, thus making the '<tt>&#45;c ~/solo.rb</tt>' optional.</p>
+
+<h2><a name="ChefSolo-Roles"></a>Roles</h2>
+
+<p>Chef Solo can also use Roles. <font color="#f7681a">They can be defined in the <a href="Roles.html#Roles-AsJSON">JSON format</a> or with the <a href="Roles.html#Roles-TheRubyDSL">Ruby DSL</a>. By default Chef Solo will look in <tt>/var/chef/roles</tt> but you can also specify a location.</font> Using the earlier example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>~/solo.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file_cache_path "/var/chef-solo"
+cookbook_path "/var/chef-solo/cookbooks"
+role_path "/var/chef-solo/roles"</pre>
+		</div>
+</div></div>
+
+<p>The JSON file for the role would look something like:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/var/chef-solo/roles/test.json</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "test",
+  "default_attributes": { },
+  "override_attributes": { },
+  "json_class": "Chef::Role",
+  "description": "This is just a test role, no big deal.",
+  "chef_type": "role",
+  "run_list": [ "recipe[test]" ]
+}</pre>
+		</div>
+</div></div>
+
+<p>The above file using the Ruby DSL would look like:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/var/chef-solo/roles/test.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">name 'test'
+description 'This is just a test role, no big deal.'
+run_list 'recipe[test]'</pre>
+		</div>
+</div></div>
+
+<p>Finally, the JSON data passed to chef-solo:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>~/chef.json</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{ "run_list": "role[test]" }</pre>
+		</div>
+</div></div>
+
+<p>See how to <a href="Setting the run_list in JSON during run time.html" title="Setting the run_list in JSON during run time">set the run_list in JSON</a>.</p>
+
+<h2><a name="ChefSolo-DataBags"></a>Data Bags</h2>
+
+<p>As of Chef 0.10.4, <a href="Data Bags.html" title="Data Bags">Data Bags</a> are supported in Chef Solo. By default, it will look for them in <tt>/var/chef/data_bags</tt> and they need to be in a JSON file. You can change the location where it looks for data bags by adding the <tt>data_bag_path</tt> option to your solo.rb. Adding to the earlier example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>~/solo.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file_cache_path "/var/chef-solo"
+cookbook_path "/var/chef-solo/cookbooks"
+role_path "/var/chef-solo/roles"
+data_bag_path "/var/chef-solo/data_bags"</pre>
+		</div>
+</div></div>
+
+<p>For example, you can create an 'admins' data bag by creating these folders:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mkdir /var/chef-solo/data_bags
+mkdir /var/chef-solo/data_bags/admins</pre>
+		</div>
+</div></div>
+
+<p>And then creating the JSON file:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/var/chef-solo/data_bags/admins/ITEM_NAME.json</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">{
+     "id": "ITEM_NAME"
+   }</pre>
+		</div>
+</div></div>
+
+<p>There are some examples of using data bags in recipes on the <a href="http://wiki.opscode.com/display/chef/Data+Bags#DataBags-UsingDataBagsinRecipes">Data Bags page in the wiki</a>.</p>
+
+<h2><a name="ChefSolo-Environments"></a>Environments</h2>
+
+<p>Currently chef-solo does not have support for environments.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Chef Client.html" title="Chef Client"><span class="image-wrap" style="float: left"><img src="../attachments/1179893/20840486.png" hspace="4" style="border: 0px solid black"/></span> Chef Client </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Chef Server.html" title="Chef Server"><span class="image-wrap" style="float: right"><img src="../attachments/1179893/20840487.png" hspace="4" style="border: 0px solid black"/></span> Chef Server </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179893/14876682.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179893/20840486.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179893/20840487.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

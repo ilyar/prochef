@@ -1,0 +1,285 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Getting Started with Shef</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Getting Started with Shef
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 02, 2011 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<p><br class="atl-forced-newline" />
+<h1><a name="GettingStartedwithShef-Shef%3ATheChefREPL"></a>Shef: The Chef REPL</h1>
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 48x48" href='http://wiki.opscode.com/download../attachments/21397553/irb_ruby.png'><img src="../attachments/thumbnails/21397553/21463060" hspace="14" style="border: 0px solid black"/></a></span></p>
+<h5><a name="GettingStartedwithShef-"></a><font color="#f7681a">Shef is a way to run chef in an Interactive Ruby (IRb) session. Shef currently supports recipe and attribute file syntax, as well as interactive debugging features.</font></h5>
+
+<h2><a name="GettingStartedwithShef-RunModes"></a>Run Modes</h2>
+<p>Shef has three run modes:</p>
+<ul>
+	<li><font color="#f7681a"><b>Standalone</b></font><br/>
+No cookbooks are loaded, and the run list is empty. This mode is the default.</li>
+	<li><font color="#f7681a"><b>Solo</b></font><br/>
+Shef acts as a chef-solo client. It attempts to load chef-solo's configuration file and JSON attributes. If the JSON attributes set a run list, it will be honored. Cookbooks will be loaded in the same way that chef-solo loads them. Solo mode is activated with the <tt>&#45;s</tt> or <tt>&#45;&#45;solo</tt> command line option, and JSON attributes are specified in the same way as for chef-solo, with <tt>&#45;j /path/to/chef-solo.json</tt>.</li>
+	<li><font color="#f7681a"><b>Client</b></font><br/>
+Shef acts as a chef-client. During startup, it reads the chef client configuration file and contacts the server to get attributes and cookbooks. The run list will be set in the same way as normal chef client runs. Client mode is activated with the <tt>&#45;z</tt> or <tt>&#45;&#45;client</tt> options. You can also specify the configuration file with <tt>&#45;c CONFIG</tt> and the server URL with <tt>&#45;S SERVER_URL</tt>.</li>
+</ul>
+</p>
+
+<p>For more detail on the Chef REPL, see <b><a href="Shef.html" title="Shef">Shef</a></b>.</p>
+
+<h1><a name="GettingStartedwithShef-GettingStarted"></a>Getting Started</h1>
+<p>First, let's start Shef in "standalone" mode, so it doesn't inherit any other configuration. We run this with sudo so we can install a simple package in this example.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% sudo shef -a 
+loading configuration: none (standalone shef session)
+Loading...done.
+
+This is shef, the Chef shell.
+ Chef Version: 0.8.16
+ http://www.opscode.com/chef
+ http://wiki.opscode.com/display/chef/Home
+
+run `help' for help, `exit' or ^D to quit.
+
+Ohai2u jtimberman@localhost!
+chef &gt;</pre>
+		</div>
+</div></div>
+
+<p>The next step is to enter recipe mode, so we can create actual resources that Chef will manage. We also turn off echoing return values to keep the terminal output clean.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef &gt; recipe
+chef:recipe &gt; echo off</pre>
+		</div>
+</div></div>
+
+<p>Now we can start writing <a href="Resources.html" title="Resources">Resources</a> directly into the console, and then run Chef to have them created on the system.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; file "/tmp/shef_example" do
+chef:recipe &gt;   action :create
+chef:recipe ?&gt;  mode "0600"
+chef:recipe ?&gt; end
+chef:recipe &gt; run_chef
+[Wed, 02 Jun 2010 09:07:24 -0600] DEBUG: Processing file[/tmp/shef_example]
+[Wed, 02 Jun 2010 09:07:24 -0600] DEBUG: file[/tmp/shef_example] using Chef::Provider::File
+[Wed, 02 Jun 2010 09:07:24 -0600] INFO: Creating file[/tmp/shef_example] at /tmp/shef_example
+[Wed, 02 Jun 2010 09:07:24 -0600] INFO: Setting mode to 600 for file[/tmp/shef_example]</pre>
+		</div>
+</div></div>
+
+<p>If we look at the local filesystem, we'll see this file has been created:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% ls -l /tmp/shef_example
+-rw------- 1 jtimberman jtimberman 0 2010-06-02 09:07 /tmp/shef_example</pre>
+		</div>
+</div></div>
+
+<p>Neat!</p>
+
+<p>Now let's take a look at how we can use a node attribute. Here, we'll set a node <a href="Attributes.html" title="Attributes">attribute</a>, and then simply display it to the output log.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; quit
+chef &gt; attributes
+chef:attributes &gt; set[:shef_example] = "Hello world!"
+ =&gt; "Hello world!" 
+chef:attributes &gt; quit
+ =&gt; :attributes 
+chef &gt; recipe
+chef:recipe &gt; log node.shef_example
+chef:recipe &gt; run_chef
+[Wed, 02 Jun 2010 09:24:08 -0600] DEBUG: Processing log[Hello world!]
+[Wed, 02 Jun 2010 09:24:08 -0600] DEBUG: log[Hello world!] using Chef::Provider::Log::ChefLog
+[Wed, 02 Jun 2010 09:24:08 -0600] INFO: Hello world!</pre>
+		</div>
+</div></div>
+
+<p>We first enter attributes editing mode, putting shef into the context of a node's attribute space. We set the attribute value, then we enter recipe mode to create a <a href="Resources.html#Resources-ResourcesLog">log resource</a>.</p>
+
+<p>Now let's put the content of this attribute into a file.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; file "/tmp/hello_world" do
+chef:recipe &gt;   content node.shef_example
+chef:recipe ?&gt;  action :create
+chef:recipe ?&gt; end
+chef:recipe &gt; run_chef
+[Wed, 02 Jun 2010 09:29:36 -0600] DEBUG: Processing file[/tmp/shef_example]
+[Wed, 02 Jun 2010 09:29:36 -0600] DEBUG: file[/tmp/shef_example] using Chef::Provider::File
+[Wed, 02 Jun 2010 09:29:36 -0600] DEBUG: Processing log[Hello world!]
+[Wed, 02 Jun 2010 09:29:36 -0600] DEBUG: log[Hello world!] using Chef::Provider::Log::ChefLog
+[Wed, 02 Jun 2010 09:29:36 -0600] INFO: Hello world!
+[Wed, 02 Jun 2010 09:29:36 -0600] DEBUG: Processing file[/tmp/hello_world]
+[Wed, 02 Jun 2010 09:29:36 -0600] DEBUG: file[/tmp/hello_world] using Chef::Provider::File
+[Wed, 02 Jun 2010 09:29:36 -0600] INFO: Creating file[/tmp/hello_world] at /tmp/hello_world
+[Wed, 02 Jun 2010 09:29:36 -0600] INFO: Setting content for file[/tmp/hello_world]</pre>
+		</div>
+</div></div>
+
+<p>If we look at this file, we see it contains the string from the attribute we set earlier.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% cat /tmp/hello_world 
+Hello world!</pre>
+		</div>
+</div></div>
+
+<p>The next example will install a package on the local system.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef:recipe &gt; package "netcat" do
+chef:recipe &gt;   action :install
+chef:recipe ?&gt; end
+chef:recipe &gt; run_chef
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: Processing file[/tmp/shef_example]
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: file[/tmp/shef_example] using Chef::Provider::File
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: Processing log[Hello world!]
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: log[Hello world!] using Chef::Provider::Log::ChefLog
+[Wed, 02 Jun 2010 09:32:40 -0600] INFO: Hello world!
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: Processing file[/tmp/hello_world]
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: file[/tmp/hello_world] using Chef::Provider::File
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: Processing package[netcat]
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: package[netcat] using Chef::Provider::Package::Apt
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: Checking apt-cache policy for netcat
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: Current version is nil
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: Current version is 1.10-38
+[Wed, 02 Jun 2010 09:32:40 -0600] INFO: Installing package[netcat] version 1.10-38
+[Wed, 02 Jun 2010 09:32:40 -0600] DEBUG: Executing apt-get -q -y install netcat=1.10-38
+[Wed, 02 Jun 2010 09:32:43 -0600] DEBUG: ---- Begin output of apt-get -q -y install netcat=1.10-38 ----
+[Wed, 02 Jun 2010 09:32:43 -0600] DEBUG: STDOUT: Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages were automatically installed and are no longer required:
+  liblua5.1-0
+Use 'apt-get autoremove' to remove them.
+The following extra packages will be installed:
+  netcat netcat-traditional
+The following NEW packages will be installed:
+  netcat netcat-traditional
+0 upgraded, 2 newly installed, 0 to remove and 5 not upgraded.
+Need to get 75.9kB of archives.
+After this operation, 291kB of additional disk space will be used.
+Get:1 http://us.archive.ubuntu.com karmic/main netcat-traditional 1.10-38 [69.8kB]
+Get:2 http://us.archive.ubuntu.com karmic/main netcat 1.10-38 [6,178B]
+Fetched 75.9kB in 1s (73.5kB/s)
+Selecting previously deselected package netcat-traditional.
+(Reading database ... 89514 files and directories currently installed.)
+Unpacking netcat-traditional (from .../netcat-traditional_1.10-38_amd64.deb) ...
+Selecting previously deselected package netcat.
+Unpacking netcat (from .../netcat_1.10-38_all.deb) ...
+Processing triggers for man-db ...
+Setting up netcat-traditional (1.10-38) ...
+
+Setting up netcat (1.10-38) ...
+[Wed, 02 Jun 2010 09:32:43 -0600] DEBUG: STDERR: 
+[Wed, 02 Jun 2010 09:32:43 -0600] DEBUG: ---- End output of apt-get -q -y install netcat=1.10-38 ----
+[Wed, 02 Jun 2010 09:32:43 -0600] DEBUG: Ran apt-get -q -y install netcat=1.10-38 returned 0</pre>
+		</div>
+</div></div>
+
+<p>The next example will install three gems that are optional for use with Knife sub-commands (fog, net-ssh-multi and highline)</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef &gt; echo off
+chef &gt; recipe
+chef:recipe &gt; %w{ fog net-ssh-multi highline }.each do |g|
+chef:recipe &gt; gem_package g
+chef:recipe ?&gt; end
+ =&gt; ["fog", "net-ssh-multi", "highline"]
+chef:recipe &gt; run_chef
+[Sat, 10 Jul 2010 20:16:43 -0600] DEBUG: Processing gem_package[fog] on cider.local
+[Sat, 10 Jul 2010 20:16:43 -0600] DEBUG: gem_package[fog] using Chef::Provider::Package::Rubygems
+[Sat, 10 Jul 2010 20:16:43 -0600] DEBUG: Found installed gem fog version 0.1.8 matching fog (&gt;= 0, runtime)
+[Sat, 10 Jul 2010 20:16:43 -0600] DEBUG: Processing gem_package[net-ssh-multi] on cider.local
+[Sat, 10 Jul 2010 20:16:43 -0600] DEBUG: gem_package[net-ssh-multi] using Chef::Provider::Package::Rubygems
+[Sat, 10 Jul 2010 20:16:43 -0600] DEBUG: Found installed gem net-ssh-multi version 1.0.1 matching net-ssh-multi (&gt;= 0, runtime)
+[Sat, 10 Jul 2010 20:16:43 -0600] DEBUG: Processing gem_package[highline] on cider.local
+[Sat, 10 Jul 2010 20:16:43 -0600] DEBUG: gem_package[highline] using Chef::Provider::Package::Rubygems
+[Sat, 10 Jul 2010 20:16:43 -0600] DEBUG: Found installed gem highline version 1.5.2 matching highline (&gt;= 0, runtime)
+ =&gt; true</pre>
+		</div>
+</div></div>
+
+<h1><a name="GettingStartedwithShef-UsesofShef"></a>Uses of Shef</h1>
+<p>Onward to <b><a href="Shef.html" title="Shef">Shef</a></b> for more details, including its use for managing the <a href="Chef Server.html" title="Chef Server">Chef Server</a>, debugging <a href="Recipes.html" title="Recipes">Recipes</a>, and more.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/6357111/21463059.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Fast Start Guide.html" title="Fast Start Guide">Fast Start Guide</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/6357111/21463058.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Chef.html" title="Managing Chef">Managing Chef</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/6357111/21463057.png">irb_ruby.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/6357111/21463058.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/6357111/21463059.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

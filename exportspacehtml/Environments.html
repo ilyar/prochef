@@ -1,0 +1,557 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Environments</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Environments
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Requires Chef 0.10</b><br />The Environments feature is only available in chef 0.10.x and higher.</td></tr></table></div>
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 188x200" href='http://wiki.opscode.com/download../attachments/7897351/harsh-environments-diagram-lg.png'><img src="../attachments/thumbnails/7897351/13238298" hspace="24" vspace="26" style="border: 0px solid black"/></a></span></p>
+<h1><a name="Environments-Overview"></a>Overview</h1>
+
+<h3><a name="Environments-"></a><font color="#f7681a">Environments in Chef provide a mechanism for managing different environments such as production, staging, development, and testing, etc with one Chef setup (or one organization on Hosted Chef). <br/>
+<br/>
+With environments, you can specify per environment run lists in roles, per environment <a href="Version Constraints.html" title="Version Constraints">cookbook versions</a>, and environment attributes.</font></h3>
+
+
+<h1><a name="Environments-ThedefaultEnvironment"></a>The _default Environment</h1>
+
+<p><b>When you first create an organization, only one environment will be setup and it will be named the "_default" environment.</b> You can use this environment for viewing, but editing is restricted so you can't modify it. If you try to, you will get an error similar to this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">ERROR: Method Not Allowed 
+Response: Merb::ControllerExceptions::MethodNotAllowed</pre>
+		</div>
+</div></div>
+<p>You'll want to create a new environment if you want to modify it, such as setting the attributes.</p>
+
+<h1><a name="Environments-CreatingEnvironments"></a>Creating Environments</h1>
+
+<p><b>You can create environments in Chef in 5 different ways:</b></p>
+<ol>
+	<li>through the creation of environment files in your chef repository (that utilize a ruby DSL, which gets compiled to JSON,)</li>
+	<li>the creation of the JSON files directly in your chef repository,</li>
+	<li>through the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>,</li>
+	<li>with <a href="Knife.html" title="Knife">Knife</a>, or</li>
+	<li>through the <a href="Server API.html" title="Server API">REST API</a>.</li>
+</ol>
+
+
+<p>We will cover each option here. When an environment exists, you can set a node to be in the environment using the node's chef_environment method. The remaining sections of this article will show the details of the work-flow.</p></td>
+<td class="confluenceTd" valign="top" width="21%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#Environments-Overview'>Overview</a></li>
+    <li><a href='#Environments-ThedefaultEnvironment'>The _default Environment</a></li>
+    <li><a href='#Environments-CreatingEnvironments'>Creating Environments</a></li>
+    <li><a href='#Environments-ChooseYourWorkflow'>Choose Your Workflow</a></li>
+    <li><a href='#Environments-TheRubyDSL'>The Ruby DSL</a></li>
+<ul>
+    <li><a href='#Environments-name'>name</a></li>
+    <li><a href='#Environments-description'>description</a></li>
+    <li><a href='#Environments-cookbookversions'>cookbook_versions</a></li>
+    <li><a href='#Environments-cookbook'>cookbook</a></li>
+    <li><a href='#Environments-attributes'>attributes</a></li>
+</ul>
+    <li><a href='#Environments-AsJSON'>As JSON</a></li>
+<ul>
+    <li><a href='#Environments-jsonclass'>json_class</a></li>
+    <li><a href='#Environments-cheftype'>chef_type</a></li>
+</ul>
+    <li><a href='#Environments-ManagingEnvironmentsWithKnife'> Managing Environments With Knife</a></li>
+    <li><a href='#Environments-ManagingEnvironmentsWiththeManagementConsole'>Managing Environments With the Management Console</a></li>
+    <li><a href='#Environments-TheRESTAPI'>The REST API</a></li>
+<ul>
+    <li><a href='#Environments-SettingaNode%27sEnvironment'>Setting a Node's Environment</a></li>
+    <li><a href='#Environments-PerEnvironmentRunListsinRoles'>Per Environment Run Lists in Roles</a></li>
+</ul>
+    <li><a href='#Environments-SearchingwithinEnvironments'>Searching within Environments</a></li>
+    <li><a href='#Environments-DataBagsandEnvironments'>Data Bags and Environments</a></li>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef 0.10</b><br />Check out the <a href="http://www.opscode.com/blog/2011/04/21/chef-0-10-preview-environments/">Opscode Blog</a> for an overview of the Environments feature within chef 0.10.</td></tr></table></div>
+<p><br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h1><a name="Environments-ChooseYourWorkflow"></a>Choose Your Workflow</h1>
+
+<p><font color="#f7681a">There are two workflows you can use to manage your environments: you can either write your environments as ruby or JSON files and push them to the server, or you can create environments with <a href="Knife.html" title="Knife">Knife</a> or the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a> and edit them as you go along.</font></p>
+
+<p><b>If you manage environments with files</b></p>
+<ul>
+	<li>You can use the ruby DSL or JSON</li>
+	<li>You can dynamically generate environment data using the ruby DSL</li>
+	<li>You can keep your environments in your version control system and have a history of who changed what and when.</li>
+	<li>You <b>should not</b> edit environments with <a href="Knife.html" title="Knife">Knife</a> or the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>, as your edits will be overwritten next time you upload from the file.</li>
+</ul>
+
+
+<p><b>If you manage environments with <a href="Knife.html" title="Knife">Knife</a>, the <a href="Server API.html" title="Server API">REST API</a> and the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a></b></p>
+<ul>
+	<li>You can use the <tt>&#45;E ENVIRONMENT</tt> switch to <tt>knife cookbook upload</tt> to automatically configure an environment for a given <a href="Version Constraints.html" title="Version Constraints">cookbook version</a>.</li>
+	<li>You can edit your environment with <tt>knife</tt> or the web interface.</li>
+	<li>The canonical source of an environment's data will be the Chef Server, which makes it difficult to keep in version control</li>
+	<li>You cannot use the ruby DSL.</li>
+</ul>
+
+
+<p><em><b>These workflows are mutually exclusive</b>: if you upload an environment to your Chef server from a file, then edit it with <a href="Knife.html" title="Knife">Knife</a> or the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>, and then edit the file and upload again, the changes you made with <a href="Knife.html" title="Knife">Knife</a> or the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a> will be lost.</em></p>
+
+<h1><a name="Environments-TheRubyDSL"></a>The Ruby DSL</h1>
+
+<p><font color="#f7681a">Environments created through this mechanism get compiled to JSON, and then are loaded in to the Chef Server.</font> (We never execute ruby code directly on the chef server&#33;)  Each time you <a href="Chef Repository.html#ChefRepository-InstallthelatestCookbooks">rake install</a> your <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a>, we will re-compile the corresponding JSON and store it in the chef server.</p>
+
+<p>You should create these files in the 'environments' subdirectory of your chef repository. If your repository doesn't have this directory, create it now. Each DSL file should have a .rb suffix.</p>
+
+<p>A complete environment file looks like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>The Dev Environment</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">name "dev"
+description "The development environment"
+cookbook_versions  "couchdb" =&gt; "11.0.0"
+default_attributes "apache2" =&gt; { "listen_ports" =&gt; [ "80", "443" ] }</pre>
+		</div>
+</div></div>
+
+<p>We'll go over each section below.</p>
+
+<h3><a name="Environments-name"></a>name</h3>
+
+<p>Each environment must have a unique name, which is made up of [A-Z][a-z][0-9] and [_-]. Spaces are not allowed.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>name field</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">name 'dev'</pre>
+		</div>
+</div></div>
+
+<h3><a name="Environments-description"></a>description</h3>
+
+<p>A short description of this environment.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>description field</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">description 'The development environment'</pre>
+		</div>
+</div></div>
+
+<h3><a name="Environments-cookbookversions"></a>cookbook_versions</h3>
+
+<p>By specifying cookbook_versions, when chef-client is running on a node within a certain environment, it will pick the specified versions of the cookbooks.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbook_versions</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cookbook_versions({
+  "couchdb"=&gt;"= 11.0.0",
+  "my_rails_app"=&gt;"~&gt; 1.2.0"
+})</pre>
+		</div>
+</div></div>
+
+<p>Please see <a href="Version Constraints.html" title="Version Constraints">Cookbook Version Constraints</a> for more on the syntax for cookbook versions and version constraints, to limit which versions of a cookbook should be used.</p>
+
+<h3><a name="Environments-cookbook"></a>cookbook</h3>
+
+<p>Specify the version constraints for only one cookbook.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbook</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cookbook "couchdb", "= 11.0.0"
+cookbook "my_rails_app", "~&gt; 1.2.0"
+cookbook "gems", "&lt; 1.4.0"</pre>
+		</div>
+</div></div>
+
+<h3><a name="Environments-attributes"></a>attributes</h3>
+
+<p>Environments can set attributes at the <tt>default</tt> and <tt>override</tt> levels.  See <a href="Attributes.html#Attributes-AttributesPrecedence">the attribute precedence list</a> for a complete description of the precedence of attributes set in an environment. An environment attribute will be applied to all nodes within this environment, except in those places where it is overridden by another attribute with higher precedence.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>attributes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">default_attributes "apache2" =&gt; { "listen_ports" =&gt; [ "80", "443" ] }</pre>
+		</div>
+</div></div>
+
+<p>In the above example, all nodes with this environment would have <tt>node[:apache2][:listen_ports]</tt> set to '80' and '443', unless otherwise specified by an attribute of higher precedence.</p>
+
+<h1><a name="Environments-AsJSON"></a>As JSON</h1>
+
+<p><font color="#f7681a">The JSON format for environments maps directly to the Ruby DSL above.</font>  For the environment we describe in that section, the corresponding JSON is:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "dev",
+  "default_attributes": {
+    "apache2": {
+      "listen_ports": [
+        "80",
+        "443"
+      ]
+    }
+  },
+  "json_class": "Chef::Environment",
+  "description": "",
+  "cookbook_versions": {
+    "couchdb": "11.0.0"
+  },
+  "chef_type": "environment"
+}</pre>
+		</div>
+</div></div>
+
+<p>The two additional fields are described below.</p>
+
+<h3><a name="Environments-jsonclass"></a>json_class</h3>
+
+<p>This should always be set to <tt>Chef::Environment</tt>.  This is used internally by Chef to auto-inflate this type of object.  It should be ignored if you are re-building objects outside of Ruby, and its value may change in the future.</p>
+
+<h3><a name="Environments-cheftype"></a>chef_type</h3>
+
+<p>This should always be set to <tt>environment</tt>.  This is the field you should rely on if you are building a system to consume Environments<br/>
+outside of Ruby.</p>
+
+<h1><a name="Environments-ManagingEnvironmentsWithKnife"></a><a href="Managing Environments With Knife.html" title="Managing Environments With Knife">Managing Environments With Knife</a></h1>
+
+<p><a href="Knife.html" title="Knife">Knife</a> is Chef's powerful command line interface tool. <font color="#f7681a">Environments can be managed through Knife.</font> See <b><a href="Managing Environments With Knife.html" title="Managing Environments With Knife">Managing Environments With Knife</a></b> for accomplishing this.</p>
+
+<h1><a name="Environments-ManagingEnvironmentsWiththeManagementConsole"></a>Managing Environments With the Management Console</h1>
+
+<p><font color="#f7681a">You can create and manage environments through the Management Console.</font> Hosted Chef customers should refer to <b><a href="Managing Environments with the Hosted Chef Management Console.html" title="Managing Environments with the Hosted Chef Management Console">Managing Environments with the Hosted Chef Management Console</a></b>. Open Source Chef Server users should refer to <b><a href="Managing Environments through the Management Console.html" title="Managing Environments through the Management Console">Managing Environments through the Management Console</a></b>.</p>
+
+<h1><a name="Environments-TheRESTAPI"></a>The REST API</h1>
+
+<p><font color="#f7681a">You can also create and manage environments directly in a running Chef Server via the <a href="Server API.html" title="Server API">REST API</a>.</font> Please refer to the <a href="Server API.html" title="Server API">Server API</a> article for information.</p>
+
+<h3><a name="Environments-SettingaNode%27sEnvironment"></a>Setting a Node's Environment</h3>
+
+<p>A node is considered by Chef associated with an environment by having the chef_environment "attribute" set</p>
+
+<p>There are several ways to set this attribute:</p>
+<ul>
+	<li>Edit the "chef_environment" attribute on the node directly using <a href="Knife.html" title="Knife">Knife</a> or the <a href="Open Source Chef Server Management Console.html" title="Open Source Chef Server Management Console">Open Source Chef Server Management Console</a>.</li>
+	<li>Set "environment" config entry in <a href="Knife.html" title="Knife">Knife</a>'s config file knife.rb, and bootstrap the node by using "knife bootstrap" command, the instance bootstrapped will be in the specified environment.</li>
+	<li>Set "environment" config entry in <a href="Chef Configuration Settings.html#ChefConfigurationSettings-environment">chef-client's config file (by default /etc/chef/client.rb)</a>, when chef-client runs, it will pick up the value and set the chef_environment attribute of the node based on the value.</li>
+	<li>When creating/updating a node programmatically, suppose node is a Chef::Node object, calling node.chef_environment("dev") and node.save will update the chef_environment attribute on the node to "dev".</li>
+</ul>
+
+
+<p><b>Note: The chef_environment 'attribute' cannot be set with normal or override attributes (i.e. in a role) since it is actually a method.</b>  <em>It must be set explicitly via knife edit, knife exec, or one of the methods listed above.</em> It also cannot be accessed via the typical attribute syntax <tt>node[:attribute_name]</tt> but rather must be accessed by calling the chef_environment method on the node: <tt>node.chef_environment</tt>.</p>
+
+
+<h4><a name="Environments-Movingnodesinbulk"></a>Moving nodes in bulk</h4>
+
+<p>You can move nodes from, for instance, "_default" to your "dev" environment on the command line with:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife exec -E 'nodes.transform("chef_environment:_default") { |n| n.chef_environment("dev") }'</pre>
+		</div>
+</div></div>
+
+<h4><a name="Environments-KnifePlugintoSetEnvironment"></a>Knife Plugin to Set Environment</h4>
+
+<p>You can take advantage of another Chef 0.10.0 feature, custom Knife plugins, to facilitate setting the node environment. <a href="https://gist.github.com/961827">Here's a plugin</a> to set the node environment.</p>
+
+<h3><a name="Environments-PerEnvironmentRunListsinRoles"></a>Per Environment Run Lists in Roles</h3>
+
+<p><font color="#f7681a">In addition to being able to pick specific cookbook versions in an environment, per environment run lists in a role allow you to specify a different run list for a role if the role is in the run list of the node in a specific environment.</font> Before the existence of environments, each role has only one run list and it will be expanded and applied to the node when chef-client runs. With environments, in the role you can specify one run list for each environment, such as:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+  "name": "webserver",
+  "default_attributes": {
+  },
+  "json_class": "Chef::Role",
+  "env_run_lists": {
+    "production": [
+
+    ],
+    "preprod": [
+
+    ],
+    "test": [
+      "role[base]",
+      "recipe[apache]"
+    ],
+    "dev": [
+      "role[base]",
+      "recipe[apache]",
+      "recipe[apache::copy_dev_configs]"
+    ]
+  },
+  "run_list": [
+    "role[base]",
+    "recipe[apache]"
+  ],
+  "description": "The webserver role",
+  "chef_type": "role",
+  "override_attributes": {
+  }
+}</pre>
+		</div>
+</div></div>
+<p><em>If you do not specify a per environment run list for a certain environment, such as "production" and "preprod" in the above example, chef will use the default run list (like before).</em></p>
+
+<p><a href="Roles.html" title="Roles">Roles</a> has additional information on role based runlists, including an example of a <a href="http://wiki.opscode.com/display/chef/Roles#Roles-envrunlists">per environment runlist in .rb format</a>.</p>
+
+<h1><a name="Environments-SearchingwithinEnvironments"></a>Searching within Environments</h1>
+<p><font color="#f7681a">Within search, chef_environment is treated much like an attribute. Thus search results can be limited to a given environment by using a boolean operator and an extra search term.</font></p>
+
+<p>To find all the servers running CentOS in the QA environment using search:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Search within a Chef environment.</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife search node "chef_environment:QA AND platform:centos"</pre>
+		</div>
+</div></div>
+
+<p>In a recipe, a code block like this would be useful:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">qa_nodes = search(:node,"chef_environment:QA")      
+qa_nodes.each do |qa_node|                          
+    # Do useful specific to qa nodes only
+end</pre>
+		</div>
+</div></div>
+
+<h1><a name="Environments-DataBagsandEnvironments"></a>Data Bags and Environments</h1>
+<p><font color="#f7681a">Data bags are global to your organizations are available in any environment.</font>  If you would like to provide per-environment data within a data bag, you can use one of two possible strategies.  The strategy that makes the most sense depends on your use case.</p>
+
+<ol>
+	<li>Within a databag item, use a top level key that corresponds to the environment.  For instance, you might have a databag that looks like this:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+  "id": "some_data_bag_item",
+  "production" : {
+    # Hash with all your data here
+  },
+  "testing" : {
+    # Hash with all your data here
+  }
+}</pre>
+		</div>
+</div></div>
+<p>When using the data bag in a recipe, you would then always access the data bag items looking via code similar to:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">bag_item[node.chef_environment]["some_other_key"]</pre>
+		</div>
+</div></div></li>
+	<li>Within a data bag, use separate items for each environment.  Depending on your data, all of your data may fit nicely in a single item.  If this is the case, then creating different items for each environment is an easy way to provide per-environment values within a data bag.</li>
+</ol>
+
+
+<p>For more information about using data bags, see <a href="Data Bags.html" title="Data Bags">Data Bags</a>.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="" title="Environments"><span class="image-wrap" style="float: left"><img src="../attachments/7897351/20840630.png" hspace="4" style="border: 0px solid black"/></span> Environments </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Exception and Report Handlers.html" title="Exception and Report Handlers"><span class="image-wrap" style="float: right"><img src="../attachments/7897351/20840631.png" hspace="4" style="border: 0px solid black"/></span> Exception and Report Handlers </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897351/21463225.png">harsh-environments-diagram-lg.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897351/14057500.js">chef_wiki_cleanup.user.js</a> (text/javascript)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897351/20840630.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897351/20840631.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897351/13238298.png">harsh-environments-diagram-lg.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-11666267"></a>
+                                    <font class="smallfont"><p>It wasn't obvious from this page that you can upload the Ruby environment file with the command:<br/>
+<tt>knife environment from file environments/dev.rb</tt></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Apr 29, 2011 19:05
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-11666268"></a>
+                                    <font class="smallfont"><p>As far as I can tell, rake install will not upload environment files. At least a rake --dry-run doesn't seem to and I can't find any reference to environments in the chef-0.10.0.rc.1 chef_repo.rake file.</p>
+
+<p>Am I missing something? </p>
+
+<p>It would be nice to have rake upload_environments and upload_environment to match the databag and cookbook patterns</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Apr 29, 2011 19:28
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-12353644"></a>
+                                    <font class="smallfont"><p>It would be really helpful if the section named, "Adding Environment to Nodes" was a bit more explicit in how to add these things. What is the syntax required for specifying an environment in the ~/.chef/knife.rb file?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by dahlgren at May 08, 2011 22:53
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-13172847"></a>
+                                    <font class="smallfont"><p>Hi,</p>
+
+<p>With the new version of chef, I try to do this.</p>
+
+<p>For example: knife cookbook upload tcloudIaaSupdate -E tcloud.</p>
+
+<p>When I press Enter show next error:<br/>
+Uploading tcloudIaaSupdate             0.0.2<br/>
+ERROR: TypeError: wrong argument type Hash (expected Data)</p>
+
+<p>After that I go to the chef-server web and I cannot see that this version its upload.</p>
+
+<p>What is the problem?</p>
+
+<p>Best Regards,<br/>
+Javier</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jaestsan at May 26, 2011 08:36
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-13172948"></a>
+                                    <font class="smallfont"><p>Hi,</p>
+
+<p>When I try to do knife configure -i same error:<br/>
+*Creating initial API user...<br/>
+ERROR: TypeError: wrong argument type Hash (expected Data)*</p>
+
+<p>Please tell me something at soon as possible. It's very urgent</p>
+
+<p>Thanks</p>
+</font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jaestsan at May 30, 2011 15:05
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-13172951"></a>
+                                    <font class="smallfont"><p>Hi Javier,</p>
+
+<p>Please see <a href="Support.html" title="Support">Support</a> and seek assistance through <a href="IRC.html" title="IRC">IRC</a>, or the <a href="http://lists.opscode.com/">Chef mailing list</a>. (Or through <a href="http://help.opscode.com">help.opscode.com</a> if you are a Platform customer.)  You'll likely need to provide info re: your OS Platform and version, and what version of Chef and Ruby and RubyGems you are using - as that error could have a number of causes.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by tom@opscode.com at May 30, 2011 17:32
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728742"></a>
+                                    <font class="smallfont"><p>I had the same error. I was using Ubuntu 11.4 and chef-client 10.<br/>
+Downdagrading chef to 9.16 seemed to be a quickfix for me. I realize that is not a viable solution, but being in the learning chef phaze i needed a fast solution </p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by andrei_sid@yahoo.com at Jul 09, 2011 18:01
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-16089576"></a>
+                                    <font class="smallfont"><p>Is it possible to specify an environment in the first-boot.json file?  </p>
+
+<p>I'm trying to auto-provision servers with an environment. </p>
+
+<p>Alternately, is there a better way to make per environment variables?  <br/>
+I want variables to apply to groups of machines.  <br/>
+I'm using roles to control my webservers, then environments to define variables for dev/production.  I don't want to version cookbooks for one attribute when I can use the defaults in the environment.<br/>
+Am I going about this the wrong way?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by smarx@moxiesoft.com at Aug 12, 2011 20:36
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,444 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Nagios Quick Start</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Nagios Quick Start
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 02, 2011 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <p><br class="atl-forced-newline" /></p>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="48%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-color: #f7681a;border-width: 3px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: right"><img src="../attachments/19071287/19005499.png" hspace="12" vspace="4" style="border: 0px solid black"/></span></p>
+
+<h4><a name="NagiosQuickStart-"></a><font color="#f7681a">Build a Nagios monitoring server using Chef cookbooks available from the <a href="http://cookbooks.opscode.com">Cookbooks Community Site</a> and Hosted Chef.</font> </h4>
+<p>The Walkthrough Guide assumes you followed the <a href="Fast Start Guide.html" title="Fast Start Guide">Fast Start Guide</a> and have Chef installed and working with the Hosted Chef platform.</p>
+
+<p><b>At the end of this guide, you'll have one Ubuntu 10.04 system running Nagios in Amazon EC2.</b></p>
+
+<p>If you don't already have an account with Amazon AWS, go to <a href="http://aws.amazon.com/">Amazon Web Sevices</a> and click "Sign up". You'll need the access and secret access key credentials from the sign-up later.</p>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+We are going to reuse a few cookbooks from the <a href="http://cookbooks.opscode.com">Cookbooks Community Site</a> to build the environment. The <b>nagios</b> cookbook is required, of course. The Nagios web interface will be set up with <b>apache2</b>. Finally, we will need the <b>apt</b> cookbook to ensure the package cache is updated.</p>
+
+<p>If you do not already have an account with Amazon AWS, go to <a href="http://aws.amazon.com/">Amazon Web Sevices</a> and click "Sign up". You will need the access and secret access key credentials from the sign-up later.</p></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="33%">
+<p><br class="atl-forced-newline" /></p>
+<hr />
+<h5><a name="NagiosQuickStart-GuideBasedUponUbuntu10.04onAmazonAWSEC2withChef0.10.0."></a>Guide Based Upon Ubuntu 10.04 on Amazon AWS EC2 with Chef 0.10.0.</h5>
+<hr />
+<p><em><b>Note:</b> At this time, the steps described above have only been tested on the identified platform(s).  Opscode has not researched and does not support alternative steps that may lead to successful completion on other platforms.  Platform(s) supported by this guide may change over time, so please do check back for updates.  If you'd like to undertake this guide on an alternate platform, you may desire to turn to open source community resources for support assistance.</em></p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> <object id="myFlashContent" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+        width="600" height="480">
+    <param name="movie" value="http://blip.tv/play/AYKhjVMC&quot;,&quot;thirdpartyid&quot;:null,&quot;playlists&quot;:null,&quot;thumbnailFilename&quot;:&quot;Opscode-NagiosQuickStartWithChef773-745.jpg&quot;,&quot;embedLookup&quot;:&quot;AYKhjVMC&quot;,&quot;adsEnabled&quot;:null,&quot;nextHiddenDate&quot;:null,&quot;languageCode&quot;:&quot;en&quot;,&quot;numMidrolls&quot;:null,&quot;adminTitle&quot;:&quot;Nagios Quick Start with Chef&quot;,&quot;postsId&quot;:4736623,&quot;thumbnailUrl&quot;:&quot;http://a.images.blip.tv/Opscode-NagiosQuickStartWithChef773-745.jpg&quot;,&quot;midrollStart&quot;:null,&quot;userId&quot;:&quot;371369&quot;,&quot;adOptOut&quot;:&quot;1&quot;,&quot;midrollDuration&quot;:null,&quot;display_name&quot;:&quot;Opscode&quot;,&quot;tags&quot;:[{&quot;name&quot;:&quot;opscode&quot;},{&quot;name&quot;:&quot;chef&quot;},{&quot;name&quot;:&quot;opschef&quot;},{&quot;name&quot;:&quot;automation&quot;},{&quot;name&quot;:&quot;configuration&quot;},{&quot;name&quot;:&quot;management&quot;},{&quot;name&quot;:&quot;monitoring&quot;},{&quot;name&quot;:&quot;nagios&quot;},{&quot;name&quot;:&quot;dynamic&quot;}],&quot;categoryName&quot;:&quot;Technology&quot;,&quot;itemType&quot;:&quot;file&quot;,&quot;hidden&quot;:&quot;0&quot;,&quot;youtube_description&quot;:null},&quot;User&quot;:&quot;opscode&quot;}">
+    <param name="allowFullScreen" value="true">
+    <param name="allowscriptaccess" value="always">
+        <!--[if !IE]>-->
+    <object type="application/x-shockwave-flash" data="http://blip.tv/play/AYKhjVMC&quot;,&quot;thirdpartyid&quot;:null,&quot;playlists&quot;:null,&quot;thumbnailFilename&quot;:&quot;Opscode-NagiosQuickStartWithChef773-745.jpg&quot;,&quot;embedLookup&quot;:&quot;AYKhjVMC&quot;,&quot;adsEnabled&quot;:null,&quot;nextHiddenDate&quot;:null,&quot;languageCode&quot;:&quot;en&quot;,&quot;numMidrolls&quot;:null,&quot;adminTitle&quot;:&quot;Nagios Quick Start with Chef&quot;,&quot;postsId&quot;:4736623,&quot;thumbnailUrl&quot;:&quot;http://a.images.blip.tv/Opscode-NagiosQuickStartWithChef773-745.jpg&quot;,&quot;midrollStart&quot;:null,&quot;userId&quot;:&quot;371369&quot;,&quot;adOptOut&quot;:&quot;1&quot;,&quot;midrollDuration&quot;:null,&quot;display_name&quot;:&quot;Opscode&quot;,&quot;tags&quot;:[{&quot;name&quot;:&quot;opscode&quot;},{&quot;name&quot;:&quot;chef&quot;},{&quot;name&quot;:&quot;opschef&quot;},{&quot;name&quot;:&quot;automation&quot;},{&quot;name&quot;:&quot;configuration&quot;},{&quot;name&quot;:&quot;management&quot;},{&quot;name&quot;:&quot;monitoring&quot;},{&quot;name&quot;:&quot;nagios&quot;},{&quot;name&quot;:&quot;dynamic&quot;}],&quot;categoryName&quot;:&quot;Technology&quot;,&quot;itemType&quot;:&quot;file&quot;,&quot;hidden&quot;:&quot;0&quot;,&quot;youtube_description&quot;:null},&quot;User&quot;:&quot;opscode&quot;}" width="600" height="480">
+        <param name="movie" value="http://blip.tv/play/AYKhjVMC&quot;,&quot;thirdpartyid&quot;:null,&quot;playlists&quot;:null,&quot;thumbnailFilename&quot;:&quot;Opscode-NagiosQuickStartWithChef773-745.jpg&quot;,&quot;embedLookup&quot;:&quot;AYKhjVMC&quot;,&quot;adsEnabled&quot;:null,&quot;nextHiddenDate&quot;:null,&quot;languageCode&quot;:&quot;en&quot;,&quot;numMidrolls&quot;:null,&quot;adminTitle&quot;:&quot;Nagios Quick Start with Chef&quot;,&quot;postsId&quot;:4736623,&quot;thumbnailUrl&quot;:&quot;http://a.images.blip.tv/Opscode-NagiosQuickStartWithChef773-745.jpg&quot;,&quot;midrollStart&quot;:null,&quot;userId&quot;:&quot;371369&quot;,&quot;adOptOut&quot;:&quot;1&quot;,&quot;midrollDuration&quot;:null,&quot;display_name&quot;:&quot;Opscode&quot;,&quot;tags&quot;:[{&quot;name&quot;:&quot;opscode&quot;},{&quot;name&quot;:&quot;chef&quot;},{&quot;name&quot;:&quot;opschef&quot;},{&quot;name&quot;:&quot;automation&quot;},{&quot;name&quot;:&quot;configuration&quot;},{&quot;name&quot;:&quot;management&quot;},{&quot;name&quot;:&quot;monitoring&quot;},{&quot;name&quot;:&quot;nagios&quot;},{&quot;name&quot;:&quot;dynamic&quot;}],&quot;categoryName&quot;:&quot;Technology&quot;,&quot;itemType&quot;:&quot;file&quot;,&quot;hidden&quot;:&quot;0&quot;,&quot;youtube_description&quot;:null},&quot;User&quot;:&quot;opscode&quot;}">
+        <param name="allowFullScreen" value="true">
+        <param name="allowscriptaccess" value="always">
+            <!--<![endif]-->
+        <a href="http://get.adobe.com/flashplayer/">
+           <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />
+        </a>
+    <!--[if !IE]>-->
+    </object>
+    <!--<![endif]-->
+</object> </th>
+</tr>
+<tr>
+<td class='confluenceTd'> If there are issues with the screencast above, it is also available at <a href="http://blip.tv/opscode/nagios-quick-start-with-chef-4736623">blip.tv</a>. </td>
+</tr>
+</tbody></table>
+</div>
+
+</td>
+<td class="confluenceTd" valign="top" width="3%"></td></tr></tbody></table>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h2><a name="NagiosQuickStart-EnvironmentSetup"></a>Environment Setup</h2>
+<p>First, let's configure the local workstation.</p>
+
+<h5><a name="NagiosQuickStart-ShellEnvironment"></a>Shell Environment</h5>
+
+<p>Obtain the repository used for this guide. It contains all the components required. Use git:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">git clone git://github.com/opscode/nagios-quick-start.git</pre>
+		</div>
+</div></div>
+
+<h5><a name="NagiosQuickStart-ChefandKnife"></a>Chef and Knife</h5>
+
+<p>You will need some additional gems for Knife. Fog requires XML2 and XSLT development headers so you'll need to install them for your operating system, for example on Debian and Ubuntu:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get install libxml2-dev libxslt-dev</pre>
+		</div>
+</div></div>
+<p><b>All Users</b>: You'll need some additional gems for Knife to launch instances in Amazon EC2:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo gem install knife-ec2</pre>
+		</div>
+</div></div>
+<p>As part of the <a href="Fast Start Guide.html" title="Fast Start Guide">Fast Start Guide</a>, you cloned a chef-repo and copied the Knife configuration file (knife.rb), validation certificate (ORGNAME-validator.pem) and user certificate (USERNAME.pem) to <tt>~/chef-repo/.chef/</tt>. Copy these files to the new rails-quick-start repository. You can also re-download the Knife configuration file for your organization with the <a href="http://wiki.opscode.com/display/chef/Managing+Organizations+with+the+Hosted+Chef+Management+Console#ManagingOrganizationswiththeHostedChefManagementConsole-RegeneratingthePrivateKeyandtheKnifeConfig">Hosted Chef Management Console</a>.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mkdir ~/nagios-quick-start/.chef
+    cp ~/chef-repo/.chef/knife.rb ~/nagios-quick-start/.chef
+    cp ~/chef-repo/.chef/USERNAME.pem ~/nagios-quick-start/.chef
+    cp ~/chef-repo/.chef/ORGNAME-validator.pem ~/nagios-quick-start/.chef</pre>
+		</div>
+</div></div>
+<p>Add the Amazon AWS credentials to the Knife configuration file.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">vi ~/nagios-quick-start/.chef/knife.rb</pre>
+		</div>
+</div></div>
+<p>Add the following two lines to the end:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife[:aws_access_key_id] = "replace with the Amazon Access Key ID"
+    knife[:aws_secret_access_key] =  "replace with the Amazon Secret Access Key ID"</pre>
+		</div>
+</div></div>
+<p>Once the nagios-quick-start and knife configuration is in place, we'll work from this directory.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cd nagios-quick-start</pre>
+		</div>
+</div></div>
+
+<h5><a name="NagiosQuickStart-AmazonAWSEC2"></a>Amazon AWS EC2</h5>
+
+<p>In addition to the credentials, two additional things need to be configured in the AWS account.</p>
+
+<p>Configure the default <a href="http://docs.amazonwebservices.com/AWSEC2/latest/DeveloperGuide/index.html?using-network-security.html">security group</a> to allow incoming connections for the following ports.</p>
+
+<ul>
+	<li>22 - SSH</li>
+	<li>80 - Nagios web interface via Apache</li>
+</ul>
+
+
+<p>Add these to the default security group for the account using the AWS Console.</p>
+
+<p>1. Sign into the <a href="https://console.aws.amazon.com/s3/home">Amazon AWS Console</a>.<br/>
+2. Click on the "Amazon EC2" tab at the top.<br/>
+3. Click on "Security Groups" in the left sidebar of the AWS Console.<br/>
+4. Select the "Default" group in the main pane.<br/>
+5. Enter the values shown for each of the ports required.<br/>
+<span class="image-wrap" style=""><img src="../attachments/19071287/19005500.jpg" style="border: 1px solid black"/></span></p>
+
+<p>Create an <a href="http://docs.amazonwebservices.com/AWSEC2/latest/DeveloperGuide/index.html?using-credentials.html#using-credentials-keypair">SSH Key Pair</a> and save the private key in <tt>~/.ssh</tt>.</p>
+
+<p>1. In the AWS Console, click on "Key Pairs" in the left sidebar.<br/>
+2. Click on "Create Keypair" at the top of the main pane.<br/>
+3. Give the keypair a name like "nagios-quick-start".<br/>
+4. The keypair will be downloaded automatically by the browser and saved to the default Downloads location.<br/>
+5. Move the nagios-quick-start.pem file from the default Downloads location to <tt>~/.ssh</tt> and change permissions so that only you can read the file. For example,</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mv ~/Downloads/nagios-quick-start.pem ~/.ssh  
+    chmod 600 ~/.ssh/nagios-quick-start.pem</pre>
+		</div>
+</div></div>
+
+<h2><a name="NagiosQuickStart-AcquireCookbooks"></a>Acquire Cookbooks</h2>
+
+<p>The nagios-quick-start repository has all the cookbooks we need for this guide. They were downloaded along with their dependencies from the cookbooks site using Knife. These are in the <tt>cookbooks/</tt> directory.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">apache2
+    apt
+    nagios</pre>
+		</div>
+</div></div>
+<p>Upload all the cookbooks to Hosted Chef.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload -a</pre>
+		</div>
+</div></div>
+
+<h2><a name="NagiosQuickStart-ServerRoles"></a>Server Roles</h2>
+
+<p>All the required roles have been created in the nagios-quick-start repository. They are in the <tt>roles/</tt> directory.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">base.rb
+    production.rb
+    monitoring.rb</pre>
+		</div>
+</div></div>
+<p>Upload all the roles to Hosted Chef.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rake roles</pre>
+		</div>
+</div></div>
+
+<h2><a name="NagiosQuickStart-DataBagItem"></a>Data Bag Item</h2>
+
+<p>The nagios-quick-start repository contains a data bag item that has information about a default user that can log into the Nagios web interface, <b>nagiosadmin</b>.</p>
+
+<p>The data bag name is <b>users</b> and the item name is <b>nagiosadmin</b>. Upload this to Hosted Chef.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag create users
+    knife data bag from file users nagiosadmin.json</pre>
+		</div>
+</div></div>
+
+<h2><a name="NagiosQuickStart-LaunchSingleInstance"></a>Launch Single Instance</h2>
+
+<p>We are going to use an m1.small instance with the 32 bit Ubuntu 10.04 image provided <a href="http://uec-images.ubuntu.com/releases/10.04/release-20101228/">by Canonical</a>. The identifier is <b>ami-7000f019</b> for the AMI in us-east-1 with instance storage that we will use in this guide.  We'll show you the <tt>knife ec2 server create</tt> sub-command to launch instances.</p>
+
+<p>This command will:</p>
+
+<ul>
+	<li>Launch a server on EC2.</li>
+	<li>Connect it to Hosted Chef.</li>
+	<li>Configure the system with Chef.</li>
+</ul>
+
+
+<p>Launch the Nagios monitoring server on a single instance.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ec2 server create -G default -I ami-7000f019 -f m1.small \
+    -S nagios-quick-start -i ~/.ssh/nagios-quick-start.pem -x ubuntu \
+    -r 'role[production],role[base],role[monitoring]'</pre>
+		</div>
+</div></div>
+<p>Once complete, the instance will be running Nagios.</p>
+
+<h2><a name="NagiosQuickStart-Verification"></a>Verification</h2>
+
+<p>Knife will output the fully qualified domain name of the instance when the command completes. You can navigate to the Nagios instance with:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">http://ec2-xxx-xx-xx-xxx.compute-1.amazonaws.com/</pre>
+		</div>
+</div></div>
+<p>The login is nagiosadmin and the password is nagios.</p>
+
+<h2><a name="NagiosQuickStart-AddingServiceChecks"></a>Adding Service Checks</h2>
+
+<p>New service checks can be added easily. Update the services.cfg.erb template. If necessary, update the commands.cfg.erb template for an additional command. Then upload the cookbook.</p>
+
+<p>If the check is for all hosts, use <b>hostgroup_name all</b>.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">vi cookbooks/nagios/templates/default/services.cfg.erb
+    ...
+    define service {
+        service_description HTTP Processes
+        hostgroup_name      webserver
+        check_command       check_http
+        use                 default-service
+    }</pre>
+		</div>
+</div></div>
+<p>If the check is for a certain role, such as <b>monitoring</b>, make sure it only gets enabled in the configuration if that role exists. For example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">vi cookbooks/nagios/templates/default/services.cfg.erb
+    ...
+    &lt;% unless @service_hosts['webserver'].nil? -%&gt;
+    define service {
+        service_description HTTP Processes
+        hostgroup_name      webserver
+        check_command       check_http
+        use                 default-service
+    }
+
+    &lt;% end -%&gt;</pre>
+		</div>
+</div></div>
+<p>If the service check doesn't already exist in the commands.cfg.erb, add it.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">vi cookbooks/nagios/templates/default/commands.cfg.erb
+    ...
+    define command {
+      command_name    check_http
+      command_line    $USER1$/check_http -I $HOSTADDRESS$ -H $HOSTADDRESS$
+    }</pre>
+		</div>
+</div></div>
+<p>Upload the Nagios cookbook and run chef on the monitoring node.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload nagios
+    knife ssh 'role:monitoring' 'sudo chef-client' -x ubuntu -i ~/.ssh/nagios-quick-start.pem</pre>
+		</div>
+</div></div>
+<p>Refer to the <a href="http://nagios.sourceforge.net/docs/3_0/toc.html">Nagios Documentation</a> for more information about writing Nagios service check definitions.</p>
+
+<h2><a name="NagiosQuickStart-AddingNRPEChecks"></a>Adding NRPE Checks</h2>
+
+<p>To add a new NRPE check, create the entry in nrpe.cfg.erb. For example, to add a check for a process named "chef-client":</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">vi cookbooks/nagios/templates/default/nrpe.cfg.erb
+    ...
+    command[check_chef_client]=/usr/lib/nagios/plugins/check_procs -w 1:2 -c 1:2 -C chef-client</pre>
+		</div>
+</div></div>
+<p>Then upload the cookbook and run chef on the client systems, and the plugin will be enabled via NRPE.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload nagios
+    knife ssh '*:*' 'sudo chef-client' -x ubuntu -i ~/.ssh/nagios-quick-start.pem</pre>
+		</div>
+</div></div>
+<p>Refer to the <a href="http://nagios.sourceforge.net/docs/3_0/toc.html">Nagios Documentation</a> for more information about NRPE.</p>
+
+<h2><a name="NagiosQuickStart-AddingNewPluginScripts"></a>Adding New Plugin Scripts</h2>
+
+<p>If you've found a cool Nagios plugin you'd like to use, you can distribute it to nodes with the cookbook files directory.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cp check_something_cool cookbooks/nagios/files/default/plugins
+    knife cookbook upload nagios
+    knife ssh '*:*' 'sudo chef-client' -x ubuntu -i ~/.ssh/nagios-quick-start.pem</pre>
+		</div>
+</div></div>
+<p>Then update the commands.cfg.erb for the new command, and enable a service check by adding an entry in services.cfg.erb, per the sections above.</p>
+
+<p>Refer to the <a href="http://nagios.sourceforge.net/docs/3_0/toc.html">Nagios Documentation</a> for more information about Nagios Plugins.</p>
+
+<h2><a name="NagiosQuickStart-Appendix"></a>Appendix</h2>
+
+<h5><a name="NagiosQuickStart-DatabasePasswords"></a>Database Passwords</h5>
+
+<p>The data bag item for dbapp contains default passwords that should certainly be changed to something stronger.</p>
+
+<p>The passwords in the dbapp Data Bag Item are set to the values show below:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">"mysql_root_password": {
+      "_default": "mysql_root"
+    },
+    "mysql_debian_password": {
+      "_default": "mysql_debian"
+    },
+    "mysql_repl_password": {
+      "_default": "mysql_repl"
+    },</pre>
+		</div>
+</div></div>    
+<p>To change the password to something stronger, modify <b>mysql_root</b>, <b>mysql_debian</b>, <b>mysql_repl</b> values. Something like the following secure passwords:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">vi data_bags/apps/dbapp.json
+    "mysql_root_password": {
+      "_default": "super_s3cur3_r00t_pw"
+    },
+    "mysql_debian_password": {
+      "_default": "super_s3cur3_d3b1@n_pw"
+    },
+    "mysql_repl_password": {
+      "_default": "super_s3cur3_r3pl_pw"
+    },</pre>
+		</div>
+</div></div>
+<p>Once the entries are modified, simply load the data bag item from the json file:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag from file apps dbapp.json</pre>
+		</div>
+</div></div>
+
+<h5><a name="NagiosQuickStart-NonEC2Systems"></a>Non-EC2 Systems</h5>
+
+<p>For people not using Amazon EC2, other Cloud computing providers can be used. Supported by knife and fog as of this revision:</p>
+
+<ul>
+	<li>Rackspace Cloud</li>
+</ul>
+
+
+<p>See the <a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife">Launch Cloud Instances with Knife</a> for more information about using Knife to launch these instance types.</p>
+
+<p>For people not using cloud at all, but have their own infrastructure and hardware, use the <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> knife command. Note that the run-list specification is slightly different. For the first example of the single instance:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap IPADDRESS 
+     -r 'role[base],role[dbapp_database_master],role[dbapp],recipe[dbapp::db_bootstrap],role[dbapp_load_balancer]'</pre>
+		</div>
+</div></div>
+<p>See the contextual help for knife bootstrap on the additional options to set for SSH.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap --help</pre>
+		</div>
+</div></div>
+
+<h5><a name="NagiosQuickStart-ANoteaboutEC2Instances"></a>A Note about EC2 Instances</h5>
+
+<p>We used m1.small instances. This is a low performance instance size in EC2 and just fine for testing. Visit the Amazon AWS documentation to <a href="http://aws.amazon.com/ec2/instance-types/">learn more about instance sizes</a>.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071287/19005499.png">Nagios_logo_black.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071287/19005500.jpg">20101207-nnsrab59tswrbmh56f7rw5k2a6.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

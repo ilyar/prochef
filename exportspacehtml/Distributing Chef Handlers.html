@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Distributing Chef Handlers</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Distributing Chef Handlers
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Mar 18, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/12354152/20840636.png" hspace="12" vspace="2" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<h2><a name="DistributingChefHandlers-"></a><font color="#f7681a">Opscode provides a <a href="http://cookbooks.opscode.com/cookbooks/chef_handler">cookbook</a> for distributing custom Chef Handlers.</font></h2>
+</div></div>
+
+<h3><a name="DistributingChefHandlers-Addcookbooktochefrepo"></a>Add cookbook to chef-repo</h3>
+
+<p>Download the cookbook to your <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook site install chef_handler
+Installing chef_handler to /Users/schisamo/dev/chef_repositories/development/.chef/../cookbooks
+Checking out the master branch.
+Creating pristine copy branch chef-vendor-chef_handler
+Downloading chef_handler from the cookbooks site at version 1.0.0 to /Users/schisamo/dev/chef_repositories/development/.chef/../cookbooks/chef_handler.tar.gz
+Cookbook saved: /Users/schisamo/dev/chef_repositories/development/.chef/../cookbooks/chef_handler.tar.gz
+[ ... SNIP ... ]
+Cookbook chef_handler version 1.0.0 successfully installed</pre>
+		</div>
+</div></div>
+
+<h3><a name="DistributingChefHandlers-WriteChefHandler"></a>Write Chef Handler</h3>
+
+<p>See the <a href="Exception and Report Handlers.html" title="Exception and Report Handlers">Exception and Report Handlers</a> page for instructions on how to write new Chef handlers. These files will go under <tt>cookbooks/chef_handler/files/default/handlers</tt>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$EDITOR cookbooks/chef_handler/files/default/handlers/cloudkick_handler.rb</pre>
+		</div>
+</div></div>
+
+<h3><a name="DistributingChefHandlers-ChangetheHandlerPath"></a>Change the Handler Path</h3>
+
+<p>If you wish to change the directory where the handlers are copied, edit the cookbook attributes file and change the path for the <tt>node['chef_handler']['handler_path']</tt> attribute.  You can also set this value in a role.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">default['chef_handler']['handler_path'] = "/var/chef/handlers"</pre>
+		</div>
+</div></div>
+
+<h3><a name="DistributingChefHandlers-EnabletheChefHandlerwiththe%7B%7Bchefhandler%7D%7DLWRP"></a>Enable the Chef Handler with the <tt>chef_handler</tt> LWRP</h3>
+
+<p><font color="#f7681a">After you distribute handler files down to the node, you have to enable it so Chef will know to fire it on the conclusion of Chef runs.</font>  This is very easy to do using the <tt>chef_handler</tt> LWRP.  This LWRP requires, configures and enables handlers on the node for the current Chef run.  It also has the ability to pass arguments to the handlers initializer, allowing initialization data to be pulled from a node's attribute data.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef_handler "CloudkickHandler" do
+  source "#{node['chef_handler']['handler_path']}/cloudkick_handler.rb"
+  arguments [node['cloudkick']['oauth_key'], node['cloudkick']['oauth_secret']]
+  action :enable
+end</pre>
+		</div>
+</div></div>
+
+<p><b>It is best to declare `chef_handler` resources early on in the compile phase so they are available to fire for any exceptions during the Chef run.</b>  <br/>
+<em>If you have a base role you would want any recipes that register Chef handlers to come first in the run_list.</em></p>
+
+<h3><a name="DistributingChefHandlers-UploadtoyourChefServer"></a>Upload to your Chef Server</h3>
+
+<p><font color="#f7681a">The cookbook needs to be uploaded to the Chef Server to be used.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload chef_handler
+Uploading chef_handler             [1.0.0]
+upload complete</pre>
+		</div>
+</div></div>
+
+<h3><a name="DistributingChefHandlers-Addtherecipetoarunlist"></a>Add the recipe to a run list</h3>
+
+<p>Add the <tt>recipe[chef_handler]</tt> to a node or role run list. <font color="#f7681a">Put it first to make sure your custom handlers are loaded and available to other recipes.</font> <br/>
+When Chef <a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">runs</a>, during the compile phase the handlers will be copied into place and be available for enabling with the <tt>chef_handler</tt> LWRP.</p>
+
+<h3><a name="DistributingChefHandlers-AdditionalInformation"></a>Additional Information</h3>
+
+<p>See the <a href="https://github.com/opscode-cookbooks/chef_handler/blob/master/README.md">README.md</a> of the <tt>chef_handler</tt> cookbook for additional information.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/12354152/20840634.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Exception and Report Handlers.html" title="Exception and Report Handlers">Exception and Report Handlers</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/12354152/20840635.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers &#40;LWRP&#41;</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/12354152/20840634.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/12354152/20840635.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/12354152/20840636.png">9387525-free-delivery-truck-online-order-shipping-from-online-internet-store-package-sending-delivering-parc.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

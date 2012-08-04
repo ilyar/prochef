@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Organizations with the Hosted Chef Management Console</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Organizations with the Hosted Chef Management Console
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<h3><a name="ManagingOrganizationswiththeHostedChefManagementConsole-"></a><font color="#f7681a">Manage your organizations with the Management Console</font></h3>
+<ul>
+	<li>Selecting the Organization</li>
+	<li>Creating an Organization</li>
+	<li>Adding or Removing a User from an Organization</li>
+	<li>Regenerating the Private Key and the Knife Config</li>
+</ul>
+</div></div>
+
+<div class='navmenu' style='float:right; width:500px; background:#ffffff; border:8px solid #d7d4c3; margin:3px; padding:10px'><ul>
+	<li><b>To follow these directions, first <a href="Managing your Account and Billing Information.html#ManagingyourAccountandBillingInformation-LogintotheManagementConsole">log into the Hosted Chef Management Console</a> with your existing username.</b> If you have not signed up for an account yet, follow the directions on the <a href="Setup Opscode User and Organization.html" title="Setup Opscode User and Organization">Setup Opscode User and Organization</a> page.</li>
+</ul>
+
+
+<ul>
+	<li><b>If you're interested in editing account, nodes or other data in the Management Console instead, return to <a href="Hosted Chef Management Console.html" title="Hosted Chef Management Console">Hosted Chef Management Console</a>, and make the appropriate selection.</b></li>
+</ul>
+
+</div>
+
+<h2><a name="ManagingOrganizationswiththeHostedChefManagementConsole-SelectinganOrganizationtoUse"></a>Selecting an Organization to Use</h2>
+
+<p><font color="#f7681a">A user is allowed to be associated with multiple organizations. When there are multiple orgs, you can select which organization to use from the list of associated organizations in the <a href="http://manage.opscode.com">Hosted Chef Management Console</a>.</font> Subsequent actions will be scoped to that organization.</p>
+
+<p>To see which organization is currently selected, or to view the list of associated organizations:</p>
+
+<p>1. Log into the <a href="http://manage.opscode.com">Hosted Chef Management Console</a></p>
+
+<p>2. Click <em>organizations</em> in the upper right of the screen, next to your username. </p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923212/20086816.png" style="border: 0px solid black"/></span></p>
+
+<p>3. On the Organizations page, click the <em>Select</em> link next to the organization you want to select to use. If there are no associated organizations listed, please make sure your user account is associated with an organization or contact Opscode Support. </p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923212/20086877.png" style="border: 0px solid black"/></span></p>
+
+<h2><a name="ManagingOrganizationswiththeHostedChefManagementConsole-CreatinganOrganization"></a>Creating an Organization</h2>
+
+<p>In order to create a new organization:</p>
+
+<p>1. Log in to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> using your existing username.</p>
+
+<p>2. Go to the <em>Organizations</em> page. If you do not have an organization associated with your user, you are on that page automatically. Otherwise, click the <em>Organizations</em> link on the upper right corner.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923212/20086816.png" style="border: 0px solid black"/></span></p>
+
+<p>3. On the <em>Organizations</em> page, click <em>Create</em>.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923212/20086878.png" style="border: 0px solid black"/></span></p>
+
+<p>4. Enter a full name and a short name. The short name is like an account name for your new organization, only lower case a-z, -, and _ are supported. You cannot use spaces in the short name.</p>
+
+<p>5. Select your desired billing plan to create your organization.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923212/20086883.jpg" style="border: 0px solid black"/></span></p>
+
+<p>6. If you selected any of the non-free billing plans in the previous step, you will be prompted to enter your billing information at this time. Please do so before you proceed.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923212/20086885.png" style="border: 0px solid black"/></span></p>
+
+<p>7. Download your validation key and a sample Knife configuration file. You need to use the validation key to register new clients using this organization. The Knife configuration file allows you to start using Chef's command-line tool, <a href="Knife.html" title="Knife">Knife</a>, immediately.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923212/20086882.jpg" style="border: 0px solid black"/></span></p>
+
+<p>If you will be using <a href="Knife.html" title="Knife">Knife</a>, be sure to download the <a href="Managing Users and your Private Key with the Hosted Chef Management Console.html#ManagingUsersandyourPrivateKeywiththeHostedChefManagementConsole-DownloadingandUsingyourPrivateKey">User's Private Key</a> as well.</p>
+
+<h2><a name="ManagingOrganizationswiththeHostedChefManagementConsole-AddingorRemovingaUserfromanOrg"></a>Adding or Removing a User from an Org</h2>
+
+<p>If you want other users to be able to access the organization with <a href="Knife.html" title="Knife">Knife</a> or the REST API, you will need to add them to the organization with the <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">correct permissions</a> so they are authorized to make changes to it.</p>
+
+<h3><a name="ManagingOrganizationswiththeHostedChefManagementConsole-Associateausertotheorganization"></a>Associate a user to the organization</h3>
+
+<p>In order to associate a user with the current organization:</p>
+
+<p>1. Ask them to sign up for a <a href="https://cookbooks.opscode.com/users/new">Hosted Chef account</a> and give you their username.</p>
+
+<p>2. Log on to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>3. Click the <em>Users</em> tab in the main navigation menu. </p>
+
+<p>4. Click <em>Invite</em> in the sub-menu</p>
+
+<p>5. Enter the users you want to associate to the organization shown, separated by comma if there is more than one. And then click on the <em>Invite</em> button:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923212/20086876.png" style="border: 0px solid black"/></span></p>
+
+<p>Afterwards you should see this user appear in the Pending User Invites section of the <em>Users</em> tab.</p>
+
+<p>6. Ask the user to log into their account to accept the invite.</p>
+
+<p>7. The user will need to click on <em>organizations</em> in the upper right hand corner. Then they can click on the <em>Accept</em> link next to the invite at the bottom of the page:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923212/20086860.png" style="border: 0px solid black"/></span></p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">update permissions</a> on the organization to be able to associate a user with the organization. Users in the admins group have update permissions by default.</p>
+
+<h3><a name="ManagingOrganizationswiththeHostedChefManagementConsole-Removeauserfromtheorganization"></a>Remove a user from the organization</h3>
+
+<p>In order to dissociate a user from the current organization:</p>
+
+<p>1. Log on to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Click the <em>Users</em> tab in the main navigation menu. </p>
+
+<p>3. Click <em>Dissociate</em> next to the username. Click <em>OK</em> on the warning message box.</p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">update permissions</a> on the organization to be able to dissociate a user from the organization. Users in the admins group have update permissions by default.</p>
+
+<h2><a name="ManagingOrganizationswiththeHostedChefManagementConsole-RegeneratingthePrivateKeyandtheKnifeConfig"></a>Regenerating the Private Key and the Knife Config</h2>
+
+<p>The private key for the organization is also referred to as the validation key and is used to authenticate with both <a href="Knife.html" title="Knife">Knife</a> and chef-client. Regenerating the key will be useful if you have lost the organization's private key, if the private key has been exposed to someone you don't want to have access to your Hosted Chef account, or if you wish to regularly rotate keys for security purposes.</p>
+
+<p>You can also download a default <a href="Knife.html" title="Knife">Knife</a> config on the same page.</p>
+
+<p>In order to download the private key and the knife.rb file:</p>
+
+<p>1. Log into the <a href="http://manage.opscode.com">Hosted Chef Management Console</a></p>
+
+<p>2. Click <em>organizations</em> in the upper right of the screen, next to your username. </p>
+
+<p>3. On the Organizations page, click the <em>Regenerate validation key</em> and the <em>Generate knife config</em> links to regenerate the private key and download a <a href="Knife.html" title="Knife">Knife</a> config file. If there are no associated organizations listed, please make sure your user account is associated with an organization or contact Opscode Support. </p>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Due to a bug with some browsers, the file may be named "_regenerate_key" after downloading. You can just rename this file to ORG-validator.pem substituting the name of your organization for ORG.</td></tr></table></div>
+
+<p>If you will be using <a href="Knife.html" title="Knife">Knife</a>, be sure to download the <a href="Managing Users and your Private Key with the Hosted Chef Management Console.html#ManagingUsersandyourPrivateKeywiththeHostedChefManagementConsole-DownloadingandUsingyourPrivateKey">User's Private Key</a> as well.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Managing Nodes with the Hosted Chef Management Console.html" title="Managing Nodes with the Hosted Chef Management Console"><span class="image-wrap" style="float: left"><img src="../attachments/19923212/21463169.png" hspace="4" style="border: 0px solid black"/></span> Managing Nodes with the Hosted Chef Management Console </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console"><span class="image-wrap" style="float: right"><img src="../attachments/19923212/21463168.png" hspace="4" style="border: 0px solid black"/></span> Managing Permissions with the Hosted Chef Management Console </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923212/20086816.png">manage-orgs-link2.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923212/20086860.png">invite-accept.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923212/20086876.png">invite-users.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923212/20086877.png">organization-list.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923212/20086878.png">org-create-new.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923212/20086882.jpg">orgkey-knife-download2.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923212/20086883.jpg">org-select-plan.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923212/20086885.png">enter-billing-info_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923212/21463168.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923212/21463169.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

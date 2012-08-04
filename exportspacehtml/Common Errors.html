@@ -1,0 +1,763 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Common Errors</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Common Errors
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jul 31, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/19071174/21987335.png" style="border: 0px solid black"/></span></p>
+<div class="" align="center">
+<h1><a name="CommonErrors-"></a><font color="#f7681a">Common errors with Chef-Client, Knife and Chef-Server</font></h1></div>
+
+
+<h6><a name="CommonErrors-"></a><div class="" align="center"><em>If you run into an error that is not on this page, please see the</em> <em><a href="Troubleshooting and Technical FAQ.html" title="Troubleshooting and Technical FAQ">Troubleshooting and Technical FAQ</a></em> <em>and then turn to</em> <em><a href="Support.html" title="Support">Support</a></em> <em>if you need further assistance.</em></div>
+</h6>
+</div></div>
+
+
+<h2><a name="CommonErrors-401Unauthorized%28usingnode%27sAPIclient%29"></a>401 Unauthorized (using node's API client)</h2>
+
+<p><b>Note:</b> This error is very similar to the error in the next section. If you see a line that states c:/chef/client.pem is not present, follow the directions in the next section for 401 Unauthorized (using validator API client) instead. NODENAME below could be any name, but will never be ORGANIZATION-validator like the error in the next section.</p>
+
+<p>Error on Hosted Chef:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ sudo chef-client
+[Tue, 01 Nov 2011 16:54:29 -0700] INFO: *** Chef 10.X.X ***
+[Tue, 01 Nov 2011 16:54:30 -0700] FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
+[Tue, 01 Nov 2011 16:54:30 -0700] FATAL: Net::HTTPServerException: 401 "Unauthorized"</pre>
+		</div>
+</div></div>
+
+<p>Error on Open Source Chef:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[Thu, 29 Sep 2011 10:10:11 -0400] INFO: *** Chef 10.X.X ***
+[Thu, 29 Sep 2011 10:10:12 -0400] INFO: HTTP Request Returned 401 Unauthorized: Failed to authenticate. Ensure that your client key is valid.
+[Thu, 29 Sep 2011 10:10:12 -0400] FATAL: Stacktrace dumped to /var/cache/chef/chef-stacktrace.out
+[Thu, 29 Sep 2011 10:10:12 -0400] FATAL: Net::HTTPServerException: 401 "Unauthorized"</pre>
+		</div>
+</div></div>
+
+<p><b>Fix:</b><br/>
+This error can typically happen for 1 of 3 reasons:</p>
+
+<ul class="alternate" type="square">
+	<li><font color="#f7681a"><b>1. Your</b></font> <font color="#f7681a"><tt><b>client.pem</b></tt></font> <font color="#f7681a"><b>file is incorrect.</b></font><br/>
+This can be fixed by deleting <tt>client.pem</tt> in /etc/chef, deleting the client and node with knife, and re-running chef-client:
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Saving your Node Data</b><br />The following directions involve deleting the data associated with this node.  If the node attributes or run_list would be hard to recreate, you may want to save them:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node show NODENAME -Fj &gt; NODENAME.json</pre>
+		</div>
+</div></div></td></tr></table></div></li>
+</ul>
+
+
+<h5><a name="CommonErrors-onmanagementstation"></a>on management station</h5>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife client delete NODENAME
+knife node delete NODENAME</pre>
+		</div>
+</div></div>
+
+<h5><a name="CommonErrors-onaffectednode%3A"></a>on affected node:</h5>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo rm /etc/chef/client.pem
+sudo chef-client</pre>
+		</div>
+</div></div>
+
+
+<p>When chef-client runs, it will register the API client and generate the correct key.</p>
+
+<ul class="alternate" type="square">
+	<li><font color="#f7681a"><b>2. You are trying to authenticate with a node_name that is different from the one you used on your first chef-client run.</b></font><br/>
+This can happen for a number of reasons.  For example, if your <tt>client.rb</tt> file does not specify your node name and you have recently changed the systems hostname.  Running chef client with debug logging will allow you to see the node name the client is trying to authenticate with:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[Wed, 05 Oct 2011 22:05:35 +0000] DEBUG: Signing the request as SOMENODENAMEHERE</pre>
+		</div>
+</div></div>
+<p>You can fix this by explicitly setting the node name in the <tt>client.rb</tt> file or with chef-client's <tt>&#45;N</tt> option to match the name originally used to register.  Alternatively, you can re-register using the method described above.</p></li>
+</ul>
+
+
+<ul class="alternate" type="square">
+	<li><font color="#f7681a"><b>3. If you are using Hosted Chef, your node name matches another users username on the platform.</b></font><br/>
+This issue is documented here: <a href="http://tickets.opscode.com/browse/CHEF-2240">http://tickets.opscode.com/browse/CHEF-2240</a>.  If you have unsuccessfully attempted the solutions above, click the Help link from <a href="http://manage.opscode.com">http://manage.opscode.com</a> and request an analyst to verify this is the issue. To rename the node without changing the hostname, follow these steps:
+	<ul>
+		<li>Capture you node data by either <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife node show SOMENODENAMEHERE -Fj &gt; somefile.chef</pre>
+		</div>
+</div></div> or by <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife node edit SOMENODENAMEHERE</pre>
+		</div>
+</div></div> and copy/paste.</li>
+		<li>Delete the node, client and client.pem on the node.
+		<ul>
+			<li><div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife node delete SOMENODENAMEHERE</pre>
+		</div>
+</div></div></li>
+			<li><div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife client delete SOMENODENAMEHERE</pre>
+		</div>
+</div></div></li>
+			<li>On the node to be renamed: <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ sudo rm /etc/chef/client.pem</pre>
+		</div>
+</div></div></li>
+		</ul>
+		</li>
+		<li>Run the chef client on the node and specify the new node name: <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ sudo chef-client -N SOME_NEW_NODENAMEHERE</pre>
+		</div>
+</div></div></li>
+		<li>Replace your node data</li>
+		<li>Run the chef-client again (and in all future instances) as <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ sudo chef-client -N SOME_NEW_NODENAMEHERE</pre>
+		</div>
+</div></div> or add <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">node_name SOME_NEW_NODENAMEHERE</pre>
+		</div>
+</div></div> to the /etc/chef/client.rb file.</li>
+	</ul>
+	</li>
+</ul>
+
+
+<p>To rename your node by changing the host name, delete the node,client and client.pem as described above, change the hostname on the host and run the chef-client as normal.</p></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="25%">
+<p><br class="atl-forced-newline" />
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#CommonErrors-'><font color="#f7681a">Common errors with Chef-Client, Knife and Chef-Server</font></a></li>
+<ul>
+    <li><a href='#CommonErrors-401Unauthorized%28usingnode%27sAPIclient%29'>401 Unauthorized (using node's API client)</a></li>
+<ul>
+<ul>
+<ul>
+    <li><a href='#CommonErrors-onmanagementstation'>on management station</a></li>
+    <li><a href='#CommonErrors-onaffectednode%3A'>on affected node:</a></li>
+</ul>
+</ul>
+</ul>
+    <li><a href='#CommonErrors-401Unauthorized%28usingvalidatorAPIclient%29'>401 Unauthorized (using validator API client)</a></li>
+    <li><a href='#CommonErrors-401Unauthorized%28usingyourAPIclient%29'>401 Unauthorized (using your API client)</a></li>
+    <li><a href='#CommonErrors-401Unauthorized%28FailedtoAuthenticateas%22NODENAME%22%29'>401 Unauthorized (Failed to Authenticate as "NODENAME")</a></li>
+    <li><a href='#CommonErrors-401Unauthorized%28Pleasesynchronizetheclock%29'>401 Unauthorized (Please synchronize the clock)</a></li>
+    <li><a href='#CommonErrors-403Forbidden'>403 Forbidden</a></li>
+    <li><a href='#CommonErrors-Commitorstashyourchangesbeforeimportingcookbooks'>Commit or stash your changes before importing cookbooks</a></li>
+    <li><a href='#CommonErrors-Nosuchfileordirectory%2Fetc%2Fchef%2Fvalidation.pem'>No such file or directory - /etc/chef/validation.pem</a></li>
+    <li><a href='#CommonErrors-Cannotfindconfigfile'>Can not find config file</a></li>
+    <li><a href='#CommonErrors-Can%27tconvertArrayintoString'>Can't convert Array into String</a></li>
+    <li><a href='#CommonErrors-Directorynotfounderrorwhenuploadingcookbooks'>Directory not found error when uploading cookbooks</a></li>
+    <li><a href='#CommonErrors-WindowsSpecific'>Windows Specific</a></li>
+<ul>
+    <li><a href='#CommonErrors-Knifecookbooksiteinstall'>Knife cookbook site install</a></li>
+    <li><a href='#CommonErrors-Cannotfindaversionfornode'>Cannot find a version for node</a></li>
+    <li><a href='#CommonErrors-Nosuchfiletoloadrubywmi'>No such file to load &#8211; ruby-wmi</a></li>
+</ul>
+    <li><a href='#CommonErrors-ChefServerSpecific'>Chef Server Specific</a></li>
+<ul>
+    <li><a href='#CommonErrors-Startingrabbitmqserver%3AFAILED'>Starting rabbitmq-server: FAILED</a></li>
+</ul>
+</ul>
+</ul></div>
+</div></div><br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h2><a name="CommonErrors-401Unauthorized%28usingvalidatorAPIclient%29"></a>401 Unauthorized (using validator API client)</h2>
+
+<p>Error on Hosted Chef:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\chef&gt;chef-client -c client.rb
+[Tue, 04 Oct 2011 16:07:09 -0700] INFO: *** Chef 10.X.X ***
+[Tue, 04 Oct 2011 16:07:11 -0700] INFO: Client key c:/chef/client.pem is not present - registering
+[Tue, 04 Oct 2011 16:07:13 -0700] INFO: HTTP Request Returned 401 Unauthorized: Failed to authenticate as ORGANIZATION-validator. Ensure that your node_name and client key are correct.
+[Tue, 04 Oct 2011 16:07:13 -0700] FATAL: Stacktrace dumped to c:/chef/cache/chef-stacktrace.out
+[Tue, 04 Oct 2011 16:07:13 -0700] FATAL: Net::HTTPServerException: 401 "Unauthorized"</pre>
+		</div>
+</div></div>
+
+<p>Error on Open Source:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[Thu, 14 Jul 2011 11:44:44 +0000] INFO: *** Chef 10.X.X ***
+[Thu, 14 Jul 2011 11:44:44 +0000] INFO: Client key /etc/chef/client.pem is not present - registering
+[Thu, 14 Jul 2011 11:44:44 +0000] INFO: HTTP Request Returned 401 Unauthorized: Failed to authenticate. Ensure that your client key is valid.
+[Thu, 14 Jul 2011 11:44:44 +0000] FATAL: Stacktrace dumped to /var/cache/chef/chef-stacktrace.out
+[Thu, 14 Jul 2011 11:44:44 +0000] FATAL: Net::HTTPServerException: 401 "Unauthorized"</pre>
+		</div>
+</div></div>
+
+<p><b>Fix:</b><br/>
+<font color="#f7681a">If you get this error, you most likely need to recreate the validation key.</font> If you lose this file, or perhaps you end up with an empty CouchDB database and no longer have this client in the database, you could get a 401 Unauthorized error when trying to use it.</p>
+
+<p><b>In Hosted Chef,</b> you can recreate this key by going to <a href="http://manage.opscode.com">http://manage.opscode.com</a> and selecting 'organizations' in the upper right side of the screen. You can then select 'Regenerate validation key' next to the organization you need the key for. You will then want to replace this on the client.  Be aware that any other nodes you have will no longer work until you distribute the new validation.pem to them.</p>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Get an "Organization not found." error?</b><br />If you see this error when trying to recreate the key, it's possible that the client itself was deleted. <br/>
+<p>You will need to create the validator key again and fix it's permissions by using the following directions. In these directions, ORGANIZATION should be replaced by your organizations short name.</p>
+
+<p>1. Click on the 'clients' tab at <a href="http://manage.opscode.com">http://manage.opscode.com</a><br/>
+2. Click on the 'create' sub-tab<br/>
+3. Enter "ORGANIZATION-validator" as the name, substituting your organization's name, and click on the 'create' button<br/>
+4. Click on the 'Download API Key' link to get a copy of the new ORGANIZATION-validator.pem. Save a copy of this private key in a save place, this will be your organization's new validator key.<br/>
+5. Now we will need to fix the permissions on the validator client. Click on the 'list' sub-tab.<br/>
+6. Click on the 'edit permissions' sub-tab <br/>
+7. Check the 'create' and 'list' checkboxes for the ORGANIZATION-validator client and click on the 'update permissions' button</p> <br/>
+You will then want to copy this key to your nodes, and you can continue following the steps below.</td></tr></table></div>
+
+<p>If you've also lost your client_key for knife, you can also regenerate this at <a href="https://www.opscode.com/account/password">https://www.opscode.com/account/password</a>.</p>
+
+<p>Copy these keys over to your node. Your node should be able to register now, as long as there is not still a client by the same name. If there is, you will need to delete that client first. Note that on Opscode Hosted Chef, you currently will need to delete the node as well, because the default permissions only allow the client that created the node to modify it.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife client list
+  ORGANIZATION-validator
+  ip-10-204-150-209.ec2.internal
+  new_ubuntu
+  ubuntu
+$ knife client delete ip-10-204-150-209.ec2.internal
+Do you really want to delete ip-10-204-150-209.ec2.internal? (Y/N) y
+Deleted client[ip-10-204-150-209.ec2.internal]
+$ knife node delete ip-10-204-150-209.ec2.internal
+Do you really want to delete ip-10-204-150-209.ec2.internal? (Y/N) y
+Deleted node[ip-10-204-150-209.ec2.internal]</pre>
+		</div>
+</div></div>
+
+<p><b>On a Chef Server,</b> you can recreate the key by following these steps. First you'll want to remove your validation key on the server, which is typically stored at /etc/chef/validation.pem. Afterwards you can restart the chef-server to create a new key pair on both the disk and in the database:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ ls -l /etc/chef/validation.pem
+-rw-r--r-- 1 root root 1676 2011-07-14 11:44 /etc/chef/validation.pem
+$ sudo rm /etc/chef/validation.pem
+$ sudo /etc/init.d/chef-server restart
+ * Restarting chef-server
+ ~ Killing pid 10783 with INT
+ ~ In 12051
+   ...done.
+$ ls -l /etc/chef/validation.pem
+-rw------- 1 chef chef 1679 2011-07-14 11:55 /etc/chef/validation.pem</pre>
+		</div>
+</div></div>
+<p>The same process works with the webui key pair, which knife uses as the default “admin” key to create initial knife clients:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ ls -l /etc/chef/webui.pem
+-rw------- 1 chef chef 1675 2011-07-14 11:31 /etc/chef/webui.pem
+$ sudo rm /etc/chef/webui.pem
+$ sudo /etc/init.d/chef-server restart
+ * Restarting chef-server
+ ~ Killing pid 12051 with INT
+ ~ In 12091
+   ...done.
+$ ls -l /etc/chef/webui.pem
+-rw------- 1 chef chef 1675 2011-07-14 11:57 /etc/chef/webui.pem</pre>
+		</div>
+</div></div>
+
+<p>If you’ve also lost your client key for your knife client, you will need to create another one. Use a new client name unless you’re sure that the server does not still contain a registration for the previous client. After creating the new client, you can delete the old one from the server using ‘knife client delete MY_OLD_CLIENT’ by replacing MY_OLD_CLIENT with the name of the former client.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ sudo knife configure --initial
+Overwrite /home/ubuntu/.chef/knife.rb? (Y/N) y
+Please enter the chef server URL: [http://ip-10-204-150-209.ec2.internal:4000]
+Please enter a clientname for the new client: [ubuntu] new_ubuntu
+Please enter the existing admin clientname: [chef-webui]
+Please enter the location of the existing admin client's private key: [/etc/chef/webui.pem]
+Please enter the validation clientname: [chef-validator]
+Please enter the location of the validation key: [/etc/chef/validation.pem]
+Please enter the path to a chef repository (or leave blank):
+Creating initial API user...
+Created client[new_ubuntu]
+Configuration file written to /home/ubuntu/.chef/knife.rb</pre>
+		</div>
+</div></div>
+<p>Copy these keys over to your node. Your node should be able to register now, as long as there is not still a client by the same name. If there is, you will need to delete that client first.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife client list
+  chef-validator
+  chef-webui
+  ip-10-204-150-209.ec2.internal
+  new_ubuntu
+  ubuntu
+$ knife client delete ip-10-204-150-209.ec2.internal
+Do you really want to delete ip-10-204-150-209.ec2.internal? (Y/N) y
+Deleted client[ip-10-204-150-209.ec2.internal]</pre>
+		</div>
+</div></div>
+
+<p>You should now be able to run the chef-client command without errors.</p>
+
+<h2><a name="CommonErrors-401Unauthorized%28usingyourAPIclient%29"></a>401 Unauthorized (using your API client)</h2>
+
+<p><b>Note:</b> This error is very similar to the error in the sections above, but only happens when using knife. </p>
+
+<p>Error on Hosted Chef:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife client list
+ERROR: Failed to authenticate to https://api.opscode.com/organizations/orgname as USER_NAME with key /home/user/chef-repo/USER_NAME.pem
+Response:  Failed to authenticate as USER_NAME. Ensure that your node_name and client key are correct.</pre>
+		</div>
+</div></div>
+
+<p><b>Fix:</b><br/>
+This error means that the user key you have locally does not match the one on the server. You will want to check your knife.rb file for the "node_name" and "client_key" lines and confirm the "node_name" listed matches your username at <a href="http://manage.opscode.com">http://manage.opscode.com</a>. You can regenerate the client key using the <a href="http://wiki.opscode.com/display/chef/Managing+your+Opscode+User+Account#ManagingyourOpscodeUserAccount-RegeneratePrivateKey">directions on the Managing your Opscode User Account wiki page</a> and you'll want to confirm the "client_key" line in your knife.rb points to this new key.</p>
+
+<h2><a name="CommonErrors-401Unauthorized%28FailedtoAuthenticateas%22NODENAME%22%29"></a>401 Unauthorized (Failed to Authenticate as "NODENAME")</h2>
+
+<p>Error on Hosted Chef:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef-client -j run_list.json
+[Fri, 03 Jun 2011 14:44:33 -0700] INFO: Client key /etc/chef/client.pem is not present - registering
+[Fri, 03 Jun 2011 14:44:38 -0700] WARN: HTTP Request Returned 401 Unauthorized: Failed to authenticate as NODENAME. Ensure that your node_name and client key are correct.</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">There is an open Hosted Chef bug that user names and client names cannot be the same.</font></p>
+
+<blockquote>
+<p>Creating a new client with an id that clashes with an id in the User namespace results in a successful client create.</p>
+
+<p>Trying to use this client, however, results in failed authentication because the client tries to authenticate in the user namespace.</p>
+
+<p>The system currently does not differentiate between the User and Client namespaces during authentication, and this needs to happen.</p></blockquote>
+
+<p>Future activities to implement name spacing will address this, but pending this bug being fixed, if your proposed NODENAME is already an existing User name - the authentication will fail for this reason. To validate that this is the cause, search the <a href="http://community.opscode.com/users">Opscode Community Site Users</a> to see if there is an existing user with the same name as what you attempted to name the node. Changing the NODENAME to being unique will address this error.</p>
+
+<p>If your node name is unique, and there is no overlapping user name, please provide <a href="mailto:support@opscode.com">support</a> with the debug output of the chef-client run and we'll determine and address the cause.</p>
+
+<h2><a name="CommonErrors-401Unauthorized%28Pleasesynchronizetheclock%29"></a>401 Unauthorized (Please synchronize the clock)</h2>
+
+<p>Error on Hosted Chef:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ sudo chef-client
+[Tue, 01 Nov 2011 16:55:23 -0700] INFO: *** Chef 10.X.X ***
+[Tue, 01 Nov 2011 16:55:23 -0700] INFO: Client key /etc/chef/client.pem is not present - registering
+[Tue, 01 Nov 2011 16:55:24 -0700] INFO: HTTP Request Returned 401 Unauthorized: Failed to authenticate as ORGANIZATION-validator. Synchronize the clock on your host.
+[Tue, 01 Nov 2011 16:55:24 -0700] FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
+[Tue, 01 Nov 2011 16:55:24 -0700] FATAL: Net::HTTPServerException: 401 "Unauthorized"</pre>
+		</div>
+</div></div>
+
+<p>Error on Open Source:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ sudo chef-client
+[Tue, 01 Nov 2011 17:01:11 -0700] INFO: *** Chef 10.X.X ***
+[Tue, 01 Nov 2011 17:01:12 -0700] INFO: Client key /home/ubuntu/chef-repo/client.pem is not present - registering
+[Tue, 01 Nov 2011 17:01:12 -0700] INFO: HTTP Request Returned 401 Unauthorized: Failed to authenticate. Please synchronize the clock on your client
+[Tue, 01 Nov 2011 17:01:12 -0700] FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
+[Tue, 01 Nov 2011 17:01:12 -0700] FATAL: Net::HTTPServerException: 401 "Unauthorized"</pre>
+		</div>
+</div></div>
+
+<p><b>Fix:</b><br/>
+Your system clock has drifted from the actual time by more than 15 minutes. This can be fixed by syncing your clock with an NTP server. You'll need to rerun chef-client after synching NTP.</p>
+
+<h2><a name="CommonErrors-403Forbidden"></a>403 Forbidden</h2>
+
+<p>Error on Hosted Chef:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ sudo chef-client
+[Mon, 30 Jan 2012 19:58:51 -0800] INFO: *** Chef 10.X.X ***
+[Mon, 30 Jan 2012 19:58:53 -0800] FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
+[Mon, 30 Jan 2012 19:58:53 -0800] FATAL: Net::HTTPServerException: 403 "Forbidden"</pre>
+		</div>
+</div></div>
+<p><b>Fix:</b><br/>
+On Hosted Chef, this indicates an issue with the permissions that are setup at <a href="http://manage.opscode.com">http://manage.opscode.com</a>. You can get more information on the specific permission to check by re-running chef-client with <tt>&#45;l debug</tt> at the end of the command to get the debug logs. Once it is done running, you'll need to scroll up in the logs until you find the last HTTP request. There are two different types of permissions issues, <a href="http://wiki.opscode.com/display/chef/Hosted+Chef+Authorization#HostedChefAuthorization-ObjectSpecificPermissions">object specific</a> and <a href="http://wiki.opscode.com/display/chef/Hosted+Chef+Authorization#HostedChefAuthorization-GlobalPermissions">global permissions</a>.</p>
+
+<p><font color="#f7681a"><b>This is an example of a 403 error on a specific object:</b></font></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[Mon, 30 Jan 2012 20:06:43 -0800] DEBUG: Sending HTTP Request via PUT to api.opscode.com:443/organizations/ORGNAME/nodes/NODENAME
+[Mon, 30 Jan 2012 20:06:43 -0800] ERROR: Running exception handlers
+[Mon, 30 Jan 2012 20:06:43 -0800] FATAL: Saving node information to /var/chef/cache/failed-run-data.json
+[Mon, 30 Jan 2012 20:06:43 -0800] ERROR: Exception handlers complete
+[Mon, 30 Jan 2012 20:06:43 -0800] DEBUG: Re-raising exception: Net::HTTPServerException - 403 "Forbidden"</pre>
+		</div>
+</div></div>
+<p>What we are specifically looking for is the type of http request, in this case PUT, and where it tried to PUT to, in this case a specific node/object. Because this points to a specific node instead of the nodes group, this will be an issue with the <a href="http://wiki.opscode.com/display/chef/Hosted+Chef+Authorization#HostedChefAuthorization-ObjectSpecificPermissions">object permissions</a>. If this pointed to the nodes group, this would be an issue with the <a href="http://wiki.opscode.com/display/chef/Hosted+Chef+Authorization#HostedChefAuthorization-GlobalPermissions">global permissions</a> on nodes instead. These errors do not just apply to nodes, you may see these errors for any section of the management console such as Roles, Cookbooks or Environments.</p>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Creating Clients with Knife</b><br />Are you seeing the 403 error when doing a PUT request to /clients/NODENAME whenever you start up a new node? If you are creating the client with knife first, remember to copy the key it provides to <tt>/etc/chef/client.pem</tt> or chef-client will get a 403 error when trying to create it.</td></tr></table></div>
+
+<p>To fix the object permissions, you'll want to follow these steps:<br/>
+1. Go to <a href="http://manage.opscode.com">http://manage.opscode.com</a> and click on nodes in this case, or wherever you see the request failing<br/>
+2. For <a href="http://wiki.opscode.com/display/chef/Hosted+Chef+Authorization#HostedChefAuthorization-ObjectSpecificPermissions">object specific permissions</a>, click on the specific object that showed up in the error, in this case NODENAME<br/>
+3. Click on the permissions sub-tab. Which permission it needs, depends on the type of request that failed:<br/>
+GET - Under the client section, make sure it has the READ permission checked next to the NODENAME<br/>
+PUT - Under the client section, make sure it has the UPDATE permission checked next to the NODENAME<br/>
+DELETE - Under the client section, make sure it has the DELETE permission checked next to the NODENAME<br/>
+4. Check the checkboxes needed and click on 'update permissions'.</p>
+
+<p>If this is an issue with the <a href="http://wiki.opscode.com/display/chef/Hosted+Chef+Authorization#HostedChefAuthorization-GlobalPermissions">global permissions</a> the error will look a bit different. <font color="#f7681a"><b>This is an example of a 403 error on the global permissions:</b></font></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">[Mon, 30 Jan 2012 20:16:22 -0800] DEBUG: Sending HTTP Request via POST to api.opscode.com:443/organizations/ORGNAME/nodes
+[Mon, 30 Jan 2012 20:16:23 -0800] FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
+[Mon, 30 Jan 2012 20:16:23 -0800] DEBUG: Net::HTTPServerException: 403 "Forbidden"</pre>
+		</div>
+</div></div>
+<p>The difference is that here it is referring to the entire nodes group, instead of a specific object/node.</p>
+
+<p>To fix the global permissions you'd want to follow these steps:<br/>
+1. Go to <a href="http://manage.opscode.com">http://manage.opscode.com</a> and click on nodes in this case, or wherever you see the request failing<br/>
+2. Click on the permissions sub-tab. Which permission it needs, depends on which request that failed:<br/>
+GET - Under the group section, make sure it has the LIST permission checked next to the clients group<br/>
+POST - Under the group section, make sure it has the CREATE permission checked next to the clients group<br/>
+3. Check the checkboxes needed and click on 'update permissions'.</p>
+
+<p>More information on the API requests and associated errors can also be found on the <a href="Server API.html" title="Server API">Server API</a> page.</p>
+
+<h2><a name="CommonErrors-Commitorstashyourchangesbeforeimportingcookbooks"></a>Commit or stash your changes before importing cookbooks</h2>
+
+<p>This isn't really an error, but can be confusing to new users. When you try to install a cookbook with changes that have not been committed to git you will get this error:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife cookbook site install getting-started
+Installing getting-started to /home/jes/chef-repo/.chef/../cookbooks
+ERROR: You have uncommitted changes to your cookbook repo (/home/jes/chef-repo/.chef/../cookbooks):
+ M cookbooks/getting-started/recipes/default.rb
+?? .chef/
+?? log
+Commit or stash your changes before importing cookbooks</pre>
+		</div>
+</div></div>
+<p><b>Fix:</b><br/>
+You can solve this by committing your changes. For example, this would commit all new changes with the message "updates".</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git commit -a -m "updates"</pre>
+		</div>
+</div></div>
+
+<p>Alternatively, if you do not want to commit the changes, you can save the changes for later (reverting the branch to the state of the latest commit) by running</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ git stash save</pre>
+		</div>
+</div></div>
+
+<p>Afterwards you can re-enter the command to install the cookbook.</p>
+
+<h2><a name="CommonErrors-Nosuchfileordirectory%2Fetc%2Fchef%2Fvalidation.pem"></a>No such file or directory - /etc/chef/validation.pem</h2>
+
+<p>Error:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; chef-client -c c:\chef\client.rb
+[Fri, 23 Sep 2011 17:37:16 -0700] INFO: *** Chef 10.X.X ***
+[Fri, 23 Sep 2011 17:37:18 -0700] INFO: Client key /etc/chef/client.pem is not
+resent - registering
+[Fri, 23 Sep 2011 17:37:18 -0700] WARN: Failed to read the private key /etc/che
+/validation.pem: #&lt;Errno::ENOENT: No such file or directory - /etc/chef/validat
+on.pem&gt;
+[Fri, 23 Sep 2011 17:37:18 -0700] FATAL: Stacktrace dumped to C:/var/chef/cache
+chef-stacktrace.out
+[Fri, 23 Sep 2011 17:37:18 -0700] FATAL: Chef::Exceptions::PrivateKeyMissing: I
+cannot read /etc/chef/validation.pem, which you told me to use to sign requests</pre>
+		</div>
+</div></div>
+
+<p><b>Fix:</b><br/>
+Make sure your validation.pem (for Chef server Users) or ORGANIZATION-validator.pem (for Hosted Chef Users) is downloaded. Edit your client.rb to point to the location of your validator pem.</p>
+
+<h2><a name="CommonErrors-Cannotfindconfigfile"></a>Can not find config file</h2>
+
+<p>Error:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">c:\chef&gt;chef-client
+[Fri, 30 Sep 2011 13:51:15 -0700] WARN: *****************************************
+[Fri, 30 Sep 2011 13:51:15 -0700] WARN: Can not find config file: /etc/chef/client.rb, using defaults.
+[Fri, 30 Sep 2011 13:51:15 -0700] WARN: No such file or directory - /etc/chef/client.rb
+... output truncated ...
+[Fri, 30 Sep 2011 13:51:20 -0700] FATAL: Chef::Exceptions::PrivateKeyMissing: I
+cannot read /etc/chef/validation.pem, which you told me to use to sign requests!</pre>
+		</div>
+</div></div>
+
+<p><b>Fix:</b><br/>
+This error is related to bug <a href="http://tickets.opscode.com/browse/CHEF-2317">CHEF-2317</a> on Windows, and can also happen if you are not in your chef directory on Linux and Mac. You can work around it by supplying the full path to your client.rb. For example, if your client.rb was in C:\chef you could use this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef-client -c C:\chef\client.rb</pre>
+		</div>
+</div></div>
+
+<h2><a name="CommonErrors-Can%27tconvertArrayintoString"></a>Can't convert Array into String</h2>
+
+<p>Error:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife bootstrap IP --distro ubuntu -x USERNAME
+Bootstrapping Chef on IP
+ERROR: TypeError: can't convert Array into String</pre>
+		</div>
+</div></div>
+
+<p><b>Fix:</b><br/>
+There are a few things that can cause this error. Check the following to resolve this:</p>
+
+<p>1. Make sure you are running this command from your chef-repo directory which has the .chef file in it. Knife will need direct access to the .chef file, which contains it's config.</p>
+
+<p>2. If you are using the <tt>&#45;-distro</tt> switch, confirm the bootstrap file exists in one of the directories it checks:</p>
+
+<ul>
+	<li>bootstrap directory in the installed Chef Knife library (Location varies depending how you installed Chef).</li>
+	<li>bootstrap directory in the $PWD/.chef, e.g. in &#126;/chef-repo/.chef.</li>
+	<li>bootstrap directory in the users <tt>$HOME/.chef</tt>.</li>
+</ul>
+
+
+<p>In the example above, the bootstrap file could be located at <tt>&#126;/chef-repo/.chef/bootstrap/ubuntu.erb</tt>. More information on this is on the <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> and the <a href="Custom Knife Bootstrap Script.html" title="Custom Knife Bootstrap Script">Custom Knife Bootstrap Script</a> pages.</p>
+
+<p>3. Check the knife.rb file for any relative paths and try using the full absolute path instead.</p>
+
+<h2><a name="CommonErrors-Directorynotfounderrorwhenuploadingcookbooks"></a>Directory not found error when uploading cookbooks</h2>
+
+<p>Error:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife cookbook site install runit
+Installing runit to /Users/funkyuser/repos/chef-repo/.chef/../cookbooks
+Checking out the master branch.
+Pristine copy branch (chef-vendor-runit) exists, switching to it.
+Downloading runit from the cookbooks site at version 0.14.2 to /Users/funkyuser/repos/chef-repo/.chef/../cookbooks/runit.tar.gz
+ERROR: Errno::ENOENT: No such file or directory - /Users/funkyuser/repos/chef-repo/.chef/../cookbooks/runit.tar.gz</pre>
+		</div>
+</div></div>
+
+<p><b>Fix:</b></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ cd /Users/funkyuser/repos/chef-repo/.chef/../cookbooks
+$ git checkout master
+$ git status
+....
+nothing to commit (working directory clean)
+$ git branch -D chef-vendor-runit
+$ knife cookbook site install runit -VV</pre>
+		</div>
+</div></div>
+
+<p>The vendored runit is supposed to come with its own .chef directory, but in this case, it was not available, causing the ENOENT.</p>
+
+<h2><a name="CommonErrors-WindowsSpecific"></a>Windows Specific</h2>
+
+<p>These errors below are common on Windows systems and may not apply to Linux/Mac.</p>
+
+<h3><a name="CommonErrors-Knifecookbooksiteinstall"></a>Knife cookbook site install</h3>
+
+<p>Error:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\chef&gt;knife cookbook site install getting-started
+Installing getting-started to c:\chef\cookbooks
+Checking out the master branch.
+Pristine copy branch (chef-vendor-getting-started) exists, switching to it.
+... output truncated ...
+---- End output of rm -r c:\chef\cookbooks/getting-started ----
+Ran rm -r c:\chef\cookbooks/getting-started returned 1</pre>
+		</div>
+</div></div>
+
+<p><b>Fix:</b><br/>
+Knife cookbook site install currently doesn't work due to bug <a href="http://tickets.opscode.com/browse/CHEF-2250">CHEF-2250</a>. You can work around this by using <tt>knife cookbook site download</tt> and then untaring the file:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; cd %HOMEPATH%\chef-repo\cookbooks
+C:\Users\username\chef-repo\cookbooks&gt; knife cookbook site download getting-started
+C:\Users\username\chef-repo\cookbooks&gt; tar zxvf getting-started-0.2.0-tar.gz
+C:\Users\username\chef-repo\cookbooks&gt; del getting-started-0.2.0-tar.gz</pre>
+		</div>
+</div></div>
+
+<h3><a name="CommonErrors-Cannotfindaversionfornode"></a>Cannot find a version for node</h3>
+
+<p>Error:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt;chef-client -c c:\chef\client.rb
+[Fri, 23 Sep 2011 17:43:20 -0700] INFO: *** Chef 10.X.X ***
+[Fri, 23 Sep 2011 17:43:25 -0700] FATAL: Stacktrace dumped to c:/chef/cache/chef
+-stacktrace.out
+[Fri, 23 Sep 2011 17:43:25 -0700] FATAL: ArgumentError: Cannot find a version fo
+r node[windows-xp.hsd1.wa.comcast.net.]</pre>
+		</div>
+</div></div>
+<p><b>Fix:</b><br/>
+This is fixed in Ohai versions 0.6.8 and above. You can update to it with:<br/>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">gem update ohai</pre>
+		</div>
+</div></div>You can confirm you're at the correct version with this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; ohai --version
+Ohai: 0.6.8</pre>
+		</div>
+</div></div>
+<p>Alternatively, you can downgrade your Ruby to 1.8.7 to get around this error.</p>
+
+<h3><a name="CommonErrors-Nosuchfiletoloadrubywmi"></a>No such file to load &#8211; ruby-wmi</h3>
+
+<p>Error:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\chef&gt;chef-client -c c:\chef\client.rb
+C:/Ruby192/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require':
+no such file to load -- ruby-wmi (LoadError)</pre>
+		</div>
+</div></div>
+
+<p><b>Fix:</b><br/>
+Install the Ruby Gems needed for Windows:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; gem install win32-open3 ruby-wmi windows-api windows-pr --no-rdoc --no-ri --verbose
+C:\&gt; gem install rdp-ruby-wmi</pre>
+		</div>
+</div></div>
+
+<h2><a name="CommonErrors-ChefServerSpecific"></a>Chef Server Specific</h2>
+
+<p>These errors are specific to using the Open Source Chef Server, and are not something you will see when using Hosted Chef.</p>
+
+<h3><a name="CommonErrors-Startingrabbitmqserver%3AFAILED"></a>Starting rabbitmq-server: FAILED</h3>
+
+<p>This error only occurs in Ubuntu versions 11.04 and below when installing <tt>chef-server</tt>. It is a <tt>rabbitmq-server</tt> issue that is related to this Rabbitmq bug: <a href="https://bugs.launchpad.net/ubuntu/+source/rabbitmq-server/+bug/653405">https://bugs.launchpad.net/ubuntu/+source/rabbitmq-server/+bug/653405</a></p>
+
+<p>Error:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ sudo apt-get install chef chef-server
+[sudo] password for ubuntu:
+Reading package lists... Done
+Building dependency tree
+... output truncated ...
+Adding group `rabbitmq' (GID 123) ...
+Done.
+Adding system user `rabbitmq' (UID 115) ...
+Adding new user `rabbitmq' (UID 115) with group `rabbitmq' ...
+Not creating home directory `/var/lib/rabbitmq'.
+Starting rabbitmq-server: FAILED - check /var/log/rabbitmq/startup_log, _err
+rabbitmq-server.
+invoke-rc.d: initscript rabbitmq-server, action "start" failed.
+... output truncated ...
+Processing triggers for libc-bin ...
+ldconfig deferred processing now taking place
+Errors were encountered while processing:
+ rabbitmq-server
+ chef-solr
+ chef-expander
+ chef-server-api
+ chef-server
+ chef-server-webui
+E: Sub-process /usr/bin/dpkg returned an error code (1)</pre>
+		</div>
+</div></div>
+
+<p><b>Fix:</b><br/>
+This error can occur when the hostname is not properly resolving, or when the machine has not been rebooted after changing the hostname. You can test this by running the command <tt>ping $HOSTNAME</tt> if it responds with <tt>unknown host</tt> or the old hostname, follow these directions to get Chef Server installed:</p>
+
+<p>1. Edit <tt>/etc/hostname</tt> and <tt>/etc/hosts</tt> so the hostname in <tt>/etc/hostname</tt> resolves to 127.0.1.1 or 127.0.0.1 in <tt>/etc/hosts</tt>.<br/>
+2. Reboot the machine.<br/>
+3. Remove rabbitmq-server, chef, and chef-server:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get remove rabbitmq-server chef chef-server</pre>
+		</div>
+</div></div>
+<p>4. Remove this rabbitmq file so it gets properly installed next time:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo rm -R /var/lib/rabbitmq</pre>
+		</div>
+</div></div>
+<p>5. Re-install Chef and Chef Server:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get install chef chef-server</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071174/21987335.png">3251642-surgeon-with-xray-and-bone-and-shouting-shocked-healthcare-worker.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

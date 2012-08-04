@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Installing Chef Client on Windows</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Installing Chef Client on Windows
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jun 21, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/18645131/21463104.png" hspace="20" vspace="6" style="border: 0px solid black"/></span></p>
+<h4><a name="InstallingChefClientonWindows-"></a><font color="#f7681a">The following instructions walk you through the steps involved to prepare a Windows node for management with Chef and the <tt>chef-client</tt>.</font></h4>
+
+<p>If you would like a more automated approach to bootstrapping your Windows nodes, please look Windows-specific knife bootstrap subcommands that ship as part of the <a href="Knife Windows Bootstrap.html" title="Knife Windows Bootstrap">Knife Windows Bootstrap</a> plugin.</p>
+
+<h5><a name="InstallingChefClientonWindows-UseoftheseknifebootstrapsubcommandsisthepreferredwaytoprepareanodeformanagementbyChef."></a><em>Use of these knife bootstrap subcommands is the preferred way to prepare a node for management by Chef.</em></h5>
+
+<p>If you are using Windows 2008 R2 with Hosted Chef and would like to set your node up as a workstation and a client, you can use the <a href="Fast Start Guide for Windows.html" title="Fast Start Guide for Windows">Fast Start Guide for Windows</a>. This guide also contains a quick walkthrough on using recipes on the client.</p>
+</div></div>
+
+<h1><a name="InstallingChefClientonWindows-InstallChef"></a>Install Chef</h1>
+
+<p><a href="http://opscode.com/chef/install.msi">Download the Chef Full Installer</a> for Windows and open it. Choose defaults for any options.</p>
+
+<p>Once it is installed there will be no icon for it. If needed, you can confirm it was installed correctly with these commands in a new command prompt window:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; tar --version
+bsdtar 2.8.3 - libarchive 2.8.3
+
+C:\&gt; chef-client --version</pre>
+		</div>
+</div></div>
+<p>You should see "Chef: 10.12.0" returned as the version number.</p>
+
+<h1><a name="InstallingChefClientonWindows-ConfigureChef"></a>Configure Chef</h1>
+
+<p>Now we will need to copy over the validation key and create the client.rb so chef-client will be able to authenticate with your organization or Chef Server.</p>
+
+<h3><a name="InstallingChefClientonWindows-Copyoverthevalidationkey"></a>Copy over the validation key</h3>
+
+<p>First you will want to create a directory in C:\ named "chef" so we can put configuration information into it. You can move this directory to another location, but you would need to change the paths to it in your client.rb. </p>
+
+<p><b>You'll then want to copy the validation key onto this node:</b></p>
+
+<ul>
+	<li><b>Hosted Chef</b><br/>
+Copy your ORGANIZATION-validator.pem key to <tt>C:\chef\ORGANIZATION-validator.pem</tt>.</li>
+</ul>
+
+
+<ul>
+	<li><b>Open Source Chef Server</b><br/>
+Copy your validation.pem key to <tt>C:\chef\validation.pem</tt>.</li>
+</ul>
+
+</td> 
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="28%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#InstallingChefClientonWindows-InstallChef'>Install Chef</a></li>
+    <li><a href='#InstallingChefClientonWindows-ConfigureChef'>Configure Chef</a></li>
+<ul>
+    <li><a href='#InstallingChefClientonWindows-Copyoverthevalidationkey'>Copy over the validation key</a></li>
+    <li><a href='#InstallingChefClientonWindows-Createclient.rb'>Create client.rb</a></li>
+</ul>
+    <li><a href='#InstallingChefClientonWindows-Runthechefclient'>Run the chef-client</a></li>
+    <li><a href='#InstallingChefClientonWindows-Ohai'>Ohai</a></li>
+    <li><a href='#InstallingChefClientonWindows-SomeResources%2FProvidersAreKnownToNotWork'>Some Resources/Providers Are Known To Not Work</a></li>
+    <li><a href='#InstallingChefClientonWindows-BootstrappingWindowsNodes'>Bootstrapping Windows Nodes</a></li>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Opscode Windows Cookbooks</b><br /><br class="atl-forced-newline" />
+Providing the setup, automation and maintenance of Windows-based servers and applications
+<ul>
+	<li><b><a href="http://community.opscode.com/cookbooks/powershell">Powershell</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/iis">IIS</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/sql_server">SQL-Server</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/7-zip">7-zip</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/windows">Windows Primitives</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/webpi">Web Platform Installer (WebPI)</a></b></li>
+	<li><b><a href="http://community.opscode.com/cookbooks/wix">Windows Installer XML (WiX)</a></b></li>
+</ul>
+</td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Custom LWRP for IIS 7/7.5 Configuration</b><br /><br class="atl-forced-newline" />
+<b><a href="https://github.com/danzel/chef-cookbooks/tree/master/iis7">iis7</a></b> - is a community developed custom <a href="http://wiki.opscode.com/display/chef/Lightweight+Resources+and+Providers+%28LWRP%29">Lightweight Resource and Provider</a>, to create and configure websites in IIS 7 / 7.5.</td></tr></table></div>
+<p><br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h3><a name="InstallingChefClientonWindows-Createclient.rb"></a>Create client.rb</h3>
+
+<p>With wordpad or your favorite editor, create a file in C:\chef named client.rb. </p>
+
+<p><b>What you place in it's contents is dependent on the type of Chef install you have:</b></p>
+
+<ul>
+	<li><b>Hosted Chef</b><br/>
+<font color="#f7681a">Change ORGANIZATION to the name of your organization when creating this file.</font> Put the following in it's contents:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">log_level	:info
+log_location	STDOUT
+chef_server_url "https://api.opscode.com/organizations/ORGANIZATION"
+validation_client_name "ORGANIZATION-validator"
+validation_key  "c:/chef/ORGANIZATION-validator.pem"
+client_key	"c:/chef/client.pem"
+file_cache_path   "c:/chef/cache"
+file_backup_path  "c:/chef/backup"
+cache_options     ({:path =&gt; "c:/chef/cache/checksums", :skip_expires =&gt; true})</pre>
+		</div>
+</div></div>
+<p>Note that this file uses forward slashes [ / ] and not backslashes [ \ ].</p></li>
+</ul>
+
+
+<ul>
+	<li><b>Open Source Chef Server</b><br/>
+<font color="#f7681a">Change the chef_server_url when creating this file to point to your chef server and include the port if you are not using port 80.</font> Put the following in it's contents:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">log_level	:info
+log_location	STDOUT
+chef_server_url 'http://CHEF-SERVER-URL:4000'
+validation_client_name "chef-validator"
+validation_key  "c:/chef/validation.pem"
+client_key	"c:/chef/client.pem"
+file_cache_path   "c:/chef/cache"
+file_backup_path  "c:/chef/backup"
+cache_options     ({:path =&gt; "c:/chef/cache/checksums", :skip_expires =&gt; true})</pre>
+		</div>
+</div></div>
+<p>Note that this file uses forward slashes [ / ] and not backslashes [ \ ].</p></li>
+</ul>
+
+
+<h1><a name="InstallingChefClientonWindows-Runthechefclient"></a>Run the chef-client</h1>
+
+<p>You can run chef-client by just opening a command prompt window and entering this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">C:\&gt; chef-client</pre>
+		</div>
+</div></div>
+
+<p><b><font color="#f7681a">If this command completes without errors, your install is now completed.</font></b></p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Known issues - addressed with version 10.0</b><br />Chef versions earlier than 10.0 will encounter these issues:  
+<ul>
+	<li><tt>knife cookbook upload</tt> is known to not work.<br/>
+There is no Windows work-around to this issue on being unable to upload cookbooks from a Windows client, other than the above stated approach of running Chef in a VM on their Windows system or manually moving them to the appropriate directory.</li>
+	<li>If you're using Ruby 1.9.2, you no longer need the win32-open3 gem, but things will be broken until you are using chef v 10.0.</li>
+</ul>
+</td></tr></table></div>
+
+<h1><a name="InstallingChefClientonWindows-Ohai"></a>Ohai</h1>
+<p><font color="#f7681a">If you are using Ohai 0.6.x or higher, the following issue has been addressed.</font>   If you're running Ohai 0.5.6 on Windows 7 or Server 2008, add the following to the top of your client.rb :</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">require 'win32ole'
+WIN32OLE.codepage = WIN32OLE::CP_UTF8</pre>
+		</div>
+</div></div>
+
+<p>If you find that the start time on your Windows installation seems excessively slow, you may choose to disable a number of the Ohai plugins that aren't required for Chef to function on Windows.  To do this, you would add the following to your client.rb file:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">Ohai::Config[:disabled_plugins] = [
+"c",
+"groovy",
+"lua",
+"java",
+"mono",
+"passwd",
+"perl",
+]</pre>
+		</div>
+</div></div>
+
+<h1><a name="InstallingChefClientonWindows-SomeResources%2FProvidersAreKnownToNotWork"></a>Some Resources/Providers Are Known To Not Work</h1>
+<p>Not all <a href="Resources.html" title="Resources">Resources</a> work on windows yet. <font color="#f7681a">The Following Resources do not work in windows:</font></p>
+<ul>
+	<li>Cron</li>
+	<li>Deploy</li>
+	<li>Erlang call</li>
+	<li>Git</li>
+	<li>Http request</li>
+	<li>Ifconfig</li>
+	<li>Link</li>
+	<li>Mdadm</li>
+	<li>Package (but gem_package - for ruby gems, does work)</li>
+	<li>Route</li>
+	<li>SCM</li>
+	<li>Script</li>
+	<li>Subversion</li>
+</ul>
+
+
+<h1><a name="InstallingChefClientonWindows-BootstrappingWindowsNodes"></a>Bootstrapping Windows Nodes</h1>
+<p><font color="#f7681a">The <a href="https://github.com/opscode/knife-windows">knife-windows</a> Knife plugin has some <a href="Knife Windows Bootstrap.html" title="Knife Windows Bootstrap">additional Windows-specific bootstrap subcommands</a>.</font>  Although these bootstrap subcommands target Windows nodes they are written in pure Ruby and thus can be run from any platform Chef supports.  So yes you can use your MacBook Pro or Linux box to bootstrap your Windows nodes!
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+Please see the <b><a href="https://github.com/opscode/knife-windows/blob/master/README.rdoc">knife-windows README</a></b> for in depth usage instructions.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/18645131/21463106.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installing Chef Client and Chef Solo.html" title="Installing Chef Client and Chef Solo">Installing Chef Client and Chef Solo</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/18645131/21463105.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Upgrade Instructions.html" title="Upgrade Instructions">Upgrade Instructions</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645131/19005472.png">ruby-install-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645131/19005473.png">rubydev-install-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645131/19005477.png">ruby-install-1.8.7.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645131/19005541.jpg">windows-logo.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645131/21463107.png">windows-logo.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645131/21463105.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645131/21463106.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645131/21463108.png">windows-logo.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645131/21463104.png">windows-logo.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

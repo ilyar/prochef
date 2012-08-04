@@ -1,0 +1,374 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Installing Chef from HEAD</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Installing Chef from HEAD
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Nov 26, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td> 
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 1091x754" href='http://wiki.opscode.com/download../attachments/1180194/head_wire.jpg'><img src="../attachments/thumbnails/1180194/14057497" hspace="12" vspace="4" style="border: 0px solid black"/></a></span></p>
+<hr />
+<h5><a name="InstallingCheffromHEAD-"></a><font color="#f7681a">This document is focused on users who wish to get the latest development version of Chef installed for testing and development, or for the latest and greatest features that haven't been <a href="Release Notes.html" title="Release Notes">officially released</a> yet.</font></h5>
+<hr />
+<p><br class="atl-forced-newline" /></p>
+<h6><a name="InstallingCheffromHEAD-DeveloperswhowishtocontributeHowToContributetotheprojectareencouragedtoreadtheREADME.rdocintheGitHubrepository"></a>Developers who wish to <a href="How to Contribute.html" title="How to Contribute">contribute</a> to the project are encouraged to read the README.rdoc in the <a href="http://github.com/opscode/chef">GitHub repository</a>.</h6>
+
+<h6><a name="InstallingCheffromHEAD-EachreleasedversionofChefistaggedintheGitRepository.Youcanworkwithapreviousversion%27scodebycheckingoutthetag."></a>Each released version of Chef is tagged in the Git Repository. You can work with a previous version's code by checking out the tag.</h6>
+
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Version Numbering Style</b><br />We follow Linux kernel-style versioning. If the patch-level version is odd, it's a 'dev' release, as installing from HEAD is certainly 'dev'.</td></tr></table></div>
+
+<h1><a name="InstallingCheffromHEAD-Requirements"></a>Requirements</h1>
+
+<p>First, you'll want to designate a system for development and deployment. This is the place where you'll clone the repository and create the gems. It can be your local workstation, or it can be the <a href="Chef Server.html" title="Chef Server">Chef Server</a> itself. </p>
+
+<ul>
+	<li>Git - the source is on GitHub, so you'll need to have Git installed for your platform.</li>
+	<li>RubyGems - we have Rake tasks for generating and installing the gems, and these instructions should work anywhere with RubyGems. We recommend installing RubyGems from source.</li>
+	<li>Rake - we like Rake, and use it liberally, install the <tt>rake</tt> gem.</li>
+	<li>RSpec - we do specs in rspec, install the <tt>rspec</tt> gem v 1.3.1. v2.0.0 does not work with our current testsuite.</li>
+	<li>Cucumber - we do feature tests with cucumber, install the <tt>cucumber</tt> gem.</li>
+	<li>Gemcutter and Jeweler - we use jeweler for gemspec generation and may want to push to gemcutter, install these gems.</li>
+</ul>
+
+
+<p>When installing the gems that are built from these instructions and using the <a href="Installing Chef Server using Chef Solo.html" title="Installing Chef Server using Chef Solo">Installing Chef Server using Chef Solo</a> on <a href="Chef Server.html" title="Chef Server">Chef Server</a> or <a href="Chef Client.html" title="Chef Client">Chef Client</a> systems, other dependencies are handled as well such as CouchDB, RabbitMQ and Java. </p>
+
+<p><br class="atl-forced-newline" />
+You can also install the these for a <a href="Installing Chef Server Manually.html" title="Installing Chef Server Manually">Chef Server manually</a>.  </p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install RubyGem Development Requirements</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">gem install rspec rake cucumber jeweler gemcutter</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+Some other gems are required to build the gems, but are automatically installed when we use <tt>rake install</tt> <a href="#InstallingCheffromHEAD-InstallingtheGems">below</a>. If you want to have them available first:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Additional Gem Building Requirements</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">gem install merb-core merb-slices merb-assets merb-helpers merb-haml moneta bunny uuidtools</pre>
+		</div>
+</div></div></td> 
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="28%">
+<p><br class="atl-forced-newline" /> </p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#InstallingCheffromHEAD-Requirements'>Requirements</a></li>
+    <li><a href='#InstallingCheffromHEAD-GitRepositories'>Git Repositories</a></li>
+    <li><a href='#InstallingCheffromHEAD-InstallingtheGems'>Installing the Gems</a></li>
+    <li><a href='#InstallingCheffromHEAD-InstallClient'>Install Client</a></li>
+    <li><a href='#InstallingCheffromHEAD-Installgecode'>Install gecode</a></li>
+<ul>
+    <li><a href='#InstallingCheffromHEAD-AddtheOpscodeAPTRepository'>Add the Opscode APT Repository</a></li>
+    <li><a href='#InstallingCheffromHEAD-AddtheGPGKeyandUpdateIndex'>Add the GPG Key and Update Index</a></li>
+    <li><a href='#InstallingCheffromHEAD-UpgradeExistingPackages'>Upgrade Existing Packages</a></li>
+</ul>
+    <li><a href='#InstallingCheffromHEAD-InstallServer'>Install Server</a></li>
+    <li><a href='#InstallingCheffromHEAD-ConfigureChef'>Configure Chef</a></li>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Bring behaviour-driven development to infrastructure as code</b><br /><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: right"><a class="confluence-thumbnail-link 180x236" href='http://wiki.opscode.com/download../attachments/1180194/cat.gif'><img src="../attachments/thumbnails/1180194/14057501" hspace="8" vspace="4" style="border: 0px solid black"/></a></span><br/>
+Community member <a href="http://agilesysadmin.net/">Stephen Nelson-Smith</a> has written <b><a href="http://oreilly.com/catalog/0636920020042">Test-Driven Infrastructure with Chef</a></b>. 
+
+<p>He demonstrates a radical approach to developing web infrastructure that combines the powerful Chef configuration management framework with Cucumber, the leading Behavior-driven development (BDD) tool. </p>
+
+<p>Learn how developing code test-first allows you to make significant changes without the fear of unexpected side effects.</p></td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Ubuntu Git Package</b><br />Ubuntu's git package to actually get usable git binaries installed is 'git-core', not 'git'.</td></tr></table></div> 
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Don't need RDoc and Ri?</b><br />By default, Gems install with the RDoc and Ri documentation available. You can disable this for gems you install by adding "<tt>gem: --no-rdoc --no-ri</tt>" to ~/.gemrc. This will save time on installation, too.</td></tr></table></div>
+
+<h1><a name="InstallingCheffromHEAD-GitRepositories"></a>Git Repositories</h1>
+<p>Clone the <tt>ohai</tt> and <tt>chef</tt> repositories fresh from github. If you want the latest and greatest from Chef, you probably want the same from Ohai. You'll also need the Opscode mixlibs which are used in Chef and Ohai.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Clone Git Repositories</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">cd ~
+git clone git://github.com/opscode/ohai.git
+git clone git://github.com/opscode/chef.git
+git clone git://github.com/opscode/mixlib-authentication.git
+git clone git://github.com/opscode/mixlib-config.git
+git clone git://github.com/opscode/mixlib-log.git
+git clone git://github.com/opscode/mixlib-cli.git</pre>
+		</div>
+</div></div>
+<h1><a name="InstallingCheffromHEAD-InstallingtheGems"></a>Installing the Gems</h1>
+<p>We're going to install the gems from the repositories checked out above. Each of these has gem dependencies that build on each other. This is the order which you should install the gems.</p>
+
+<p>In each rake install, the respective gem was generated. We recommend setting up an internal RubyGems server in your environment to host the development gems, so you don't have to copy them manually to client systems for testing. Opscode provides a <a href="http://github.com/opscode/cookbooks/tree/master/gems/recipes/server.rb">gems::server recipe</a> that will help you set up a RubyGems server.</p>
+
+<h3><a name="InstallingCheffromHEAD-Installmixlibs"></a>Install mixlibs</h3>
+<p>Ohai and Chef use some "mixin" libraries that Opscode wrote. We need to install these first or the Ohai and Chef gems will fail to build.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install mixlib components</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">#!/bin/sh
+for mixlib in config cli log authentication 
+do
+  pushd mixlib-$mixlib
+  rake install
+  popd
+done</pre>
+		</div>
+</div></div>
+
+<h3><a name="InstallingCheffromHEAD-InstallOhai"></a>Install Ohai</h3>
+<p>Ohai needs to be installed as well so the Chef gems can be built.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Ohai</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">cd ~/ohai
+rake install</pre>
+		</div>
+</div></div>
+
+<h1><a name="InstallingCheffromHEAD-InstallClient"></a>Install Client</h1>
+<p>For a chef-client, just install the <tt>chef</tt> gem, it provides the binaries and code needed to run Chef.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Chef</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">cd ~/chef/chef
+rake install</pre>
+		</div>
+</div></div>
+
+<h1><a name="InstallingCheffromHEAD-Installgecode"></a>Install gecode</h1>
+<p>On Ubuntu lucid, maverick, or Debian lenny release, you can install gecode deb package from the Opscode APT repository.</p>
+
+<p>
+<h2><a name="InstallingCheffromHEAD-AddtheOpscodeAPTRepository"></a>Add the Opscode APT Repository</h2>
+
+<p><font color="#f7681a">Create <tt>/etc/apt/sources.list.d/opscode.list</tt>.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>/etc/apt/sources.list.d/opscode.list</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[deb http://apt.opscode.com/ &lt;codename&gt; main]]></script>
+</div></div>
+
+<ul>
+	<li>For Chef 0.9.x, replace codename with the supported distribution codename, such as "lucid".</li>
+	<li>For Chef 0.10.x, replace codename with the codename, suffixed with "-0.10", for example, "lucid-0.10".</li>
+</ul>
+
+
+<p>If you would like to be able to download source packages, add an additional identical line, but change <tt>deb</tt> to <tt>deb-src</tt> line.</p>
+
+<p>You can copy and paste these examples to create the necessary sources.list entry:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Ubuntu for Chef 0.9.x</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[echo "deb http://apt.opscode.com/ `lsb_release -cs` main" | sudo tee /etc/apt/sources.list.d/opscode.list]]></script>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Ubuntu for Chef 0.10.x</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | sudo tee /etc/apt/sources.list.d/opscode.list]]></script>
+</div></div>
+<p>Debian users will likely need to run 'apt-get install sudo wget lsb-release' as root before pasting the examples.</p>
+
+<h2><a name="InstallingCheffromHEAD-AddtheGPGKeyandUpdateIndex"></a>Add the GPG Key and Update Index</h2>
+
+<p><font color="#f7681a">Before you install the packages, make sure you add the Opscode GPG key to apt.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo mkdir -p /etc/apt/trusted.gpg.d
+gpg --keyserver keys.gnupg.net --recv-keys 83EF826A
+gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg &gt; /dev/null]]></script>
+</div></div>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Issues downloading from gnupg.net?</b><br />If you get an error when trying to download the key that states that the "keyserver timed out", try downloading the key directly from our apt repository instead:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[gpg --fetch-key http://apt.opscode.com/packages@opscode.com.gpg.key]]></script>
+</div></div>
+<p>Afterwards you'll also want to run this command again:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg &gt; /dev/null]]></script>
+</div></div></td></tr></table></div>
+
+<p>Now, we update apt-get with the newly added Opscode repository:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo apt-get update]]></script>
+</div></div>
+
+<p>Installing the opscode-keyring package will keep the key up-to-date:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo apt-get install opscode-keyring # permanent upgradeable keyring]]></script>
+</div></div>
+
+<h2><a name="InstallingCheffromHEAD-UpgradeExistingPackages"></a>Upgrade Existing Packages</h2>
+
+<p>To ensure you are using the latest versions of libraries that chef depends on, you may wish to update your existing packages:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo apt-get upgrade]]></script>
+</div></div>
+</p>
+
+<h4><a name="InstallingCheffromHEAD-Installdebpackage"></a>Install deb package</h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo apt-get install gecode</pre>
+		</div>
+</div></div>
+
+<h3><a name="InstallingCheffromHEAD-BuildandInstallfromSource"></a>Build and Install from Source</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cd /tmp
+curl -C - -O  http://www.gecode.org/download/gecode-3.5.0.tar.gz
+tar zxvf gecode-3.5.0.tar.gz
+cd gecode-3.5.0 &amp;&amp; ./configure
+make &amp;&amp; make install</pre>
+		</div>
+</div></div>
+
+<h1><a name="InstallingCheffromHEAD-InstallServer"></a>Install Server</h1>
+<p>If you are not using a RubyGems server, you'll want to install the Chef Server gems.  </p>
+
+<p>Gemcutter jeweler are also prerequisites to do a rake install for the server. So before you do the rake install for the server:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Gemcutter Jeweler</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">sudo gem install gemcutter jeweler</pre>
+		</div>
+</div></div>
+
+<p>Then you can install the server:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Chef Server</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">cd ~/chef
+rake install</pre>
+		</div>
+</div></div>
+
+<h1><a name="InstallingCheffromHEAD-ConfigureChef"></a>Configure Chef</h1>
+<p>The <a href="Installing Chef Server Manually.html" title="Installing Chef Server Manually">Installing Chef Server Manually</a> procedures can be used to get the server configured. If you're planning to run systems on the development version, we strongly recommend a RubyGems server with Chef and all the dependencies available to ease this process. Or, if you're using Amazon EC2, build an AMI with the gems installed.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/1180194/21463116.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installation.html" title="Installation">Installation</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/1180194/21463115.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Chef.html" title="Managing Chef">Managing Chef</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1180194/14057497.jpg">head_wire.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1180194/14057501.gif">cat.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1180194/21463115.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1180194/21463116.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-4620317"></a>
+                                    <font class="smallfont"><p>Looks like gemcutter jeweler are also prerequisites to do a rake install for the server. Got the following message:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rake install
+(in /Users/rberger/workspace/Chef/rberger-chef/chef-solr)
+Jeweler (or a dependency) not available. Install it from gemcutter with: sudo gem install gemcutter jeweler
+rake aborted!
+Don't know how to build task 'install'</pre>
+		</div>
+</div></div>
+
+<p>So before you do the rake install for the server:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo gem install gemcutter jeweler</pre>
+		</div>
+</div></div></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Dec 20, 2009 04:23
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-8257724"></a>
+                                    <font class="smallfont"><p>As of 2010-11-27 mixlib requires 'spec/rake/spectask' in some Rakefiles, which is not available in rspec 2 anymore.</p>
+
+<p>So if you get any errors about rake being unable to load that file, try installing rspec like this:</p>
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>gem install --version '&lt;2' rspec</pre>
+</div></div></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by sometimesfood at Nov 27, 2010 18:48
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

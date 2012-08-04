@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Data bags through the Management Console</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Data bags through the Management Console
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Nov 27, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<h3><a name="ManagingDatabagsthroughtheManagementConsole-"></a><font color="#f7681a">The Management Console allows users to create, read, update, and delete data bags and data bag items.</font></h3>
+
+<h2><a name="ManagingDatabagsthroughtheManagementConsole-ListingDataBags"></a>Listing Data Bags</h2>
+
+<p>To list data bags:</p>
+
+<p>1. Log on to the Management Console.</p>
+
+<p>2. Click <tt>Databags</tt> on the main navigation menu.</p>
+
+<h2><a name="ManagingDatabagsthroughtheManagementConsole-ViewingorEditingaSpecificDataBag"></a>Viewing or Editing a Specific Data Bag</h2>
+
+<p>To view or edit a specific data bag:</p>
+
+<p>1. Log on to the Management Console.</p>
+
+<p>2. Click <tt>Databags</tt> on the main navigation menu.</p>
+
+<p>3. Click on the specific data bag you want to view or edit.</p>
+
+<p>4. On the following page, you can create, edit, and delete items in the data bag. For details, refer to the sections below.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275165/7634964.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<h2><a name="ManagingDatabagsthroughtheManagementConsole-DeletingaDataBag"></a>Deleting a Data Bag</h2>
+
+<p>To delete a data bag:</p>
+
+<p>1. Log on to the Management Console.</p>
+
+<p>2. Click <tt>Databags</tt> on the main navigation menu.</p>
+
+<p>3. Click the <tt>Delete</tt> link next to the name of the data bag you want to delete, and click <tt>OK</tt> on the confirmation message box. Or, click the link of the data bag to view its details, and click <tt>Delete</tt> on the sub navigation menu.</p>
+
+<h2><a name="ManagingDatabagsthroughtheManagementConsole-CreatingDataBagItems"></a>Creating Data Bag Items</h2>
+
+<p>To create a data bag item in a specific data bag:</p>
+
+<p>1. Repeat the 4 steps in the "Viewing or Editing a Specific Data Bag" section.</p>
+
+<p>2. Click <tt>Create Item</tt> on the sub navigation bar. You will see a page with a JSON editor.</p>
+
+<p>3. Click the Source tab in the JSON editor to edit the data bag item directly, or use the tree view on the left and the Editor tab to add and edit keys and values. You should not delete the "id" key.</p>
+
+<h3><a name="ManagingDatabagsthroughtheManagementConsole-UsingtheEditortab"></a>Using the Editor tab</h3>
+
+<p>1. Expand the Data Attributes tree on the left, click "id", and enter an value for the name of the data bag item, and then click "Save Attribute".</p>
+
+<p>2. Click "json" from the Data Attributes tree on the left, and click the Editor tab on the right, and then click the green add button under the Editor tab, enter a name as the key and a body as the value and click "Add Attribute". The following figures show the Data Attribute tree and the JSON editor.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275165/7634965.png" style="border: 1px solid black"/></span></p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275165/7634966.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<p>3. Click "Create Databag Item" to save the data bag item.</p>
+
+<h3><a name="ManagingDatabagsthroughtheManagementConsole-UsingtheSourcetab"></a>Using the Source tab</h3>
+
+<p>1. Enter the JSON body of your data bag item in the editor, and click the "Load JSON from source" button <span class="image-wrap" style=""><img src="../attachments/7275165/7634968.png" style="border: 0px solid black"/></span>. </p>
+
+<p>2. Click Create Databag Item button to save the data bag item. Here's an example.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style=""><img src="../attachments/7275165/7634967.png" style="border: 1px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+
+<h2><a name="ManagingDatabagsthroughtheManagementConsole-EditingDataBagItems"></a>Editing Data Bag Items</h2>
+
+<p>To edit a data bag item in a specific data bag:</p>
+
+<p>1. Repeat the 4 steps in the "Viewing or Editing a Specific Data Bag" section.</p>
+
+<p>2. Click the <tt>Edit</tt> link next to the name of the data bag item you want to edit.</p>
+
+<p>3. Follow step 3 in the "Creating Data Bag Items" section, except that in the last step click <tt>Edit Databag Item</tt> button instead of <tt>Create Databag Item</tt> button.</p>
+
+
+<h2><a name="ManagingDatabagsthroughtheManagementConsole-DeletingDataBagItems"></a>Deleting Data Bag Items</h2>
+
+<p>To delete a data bag item in a specific data bag:</p>
+
+<p>1. Repeat the 4 steps in the "Viewing or Editing a Specific Data Bag" section.</p>
+
+<p>2. Click the <tt>Delete</tt> link next to the name of the data bag item you want to delete, and click <tt>OK</tt> on the confirmation message box. Or, click the link of the data bag item to view its details, and click <tt>Delete</tt> on the sub navigation menu.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/7275165/21463195.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Cookbooks through the Management Console.html" title="Managing Cookbooks through the Management Console">Managing Cookbooks through the Management Console</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/7275165/21463194.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Environments through the Management Console.html" title="Managing Environments through the Management Console">Managing Environments through the Management Console</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275165/7634964.png">management_con_data_bag.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275165/7634965.png">json_tree.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275165/7634966.png">json_editor_right.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275165/7634967.png">json_source.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275165/7634968.png">json_button.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275165/21463194.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7275165/21463195.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Chef Groups</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Chef Groups
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Apr 21, 2011 by <font color="#0050B2">schisamo</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<p><br class="atl-forced-newline" />
+I have been brainstorming on how to build groups functionality into Chef and the best ways to do it. My thinking is that there are two types of groups, mixed groups and configuration groups. Mixed groups are a collection of machines, such as a group of machines that provide a LAMP stack for a website. They are a group because they combine to form a operational unit. Configuration groups are groups that have identical configurations (outside of specific attributes like ip address), such as a group of load balanced web servers. They all have the same configuration and are generally reconfigured as a whole. Additionally what I mean by "configuration" is a combination of roles, cookbooks, recipes. Here's where it gets tricky and fun, mixed groups can contain configuration groups since you may be have a load balanced web server setup for the hypothetical LAMP stack. Hypothetically one could write a cookbook that says "if this machine is in the X configuration group and the Y mixed group do Z". I think this type of hierarchy may lead to some interesting things (inheritance?). Nodes would have attributes stating the groups that it belongs to and there would also be docs in couch stating which the group and its contents whether it be nodes or configurations. </p>
+
+<p>As I mentioned this is still brainstorming so I would be grateful for feedback before I start digging into the code.</p>
+
+<p>(JIRA Ticket: <a href="http://tickets.opscode.com/browse/CHEF-498">http://tickets.opscode.com/browse/CHEF-498</a>)
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="3%"></td></tr></tbody></table>
+
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-2883585"></a>
+                                    <font class="smallfont"><p>Per an IRC conversation with BTM, I think nested roles should do the trick for the "configuration groups". Additionally Adam suggested "templates" for bulk assignment of cookbooks to machines. I think both of these will do pretty much what I am thinking is needed.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by joew at Aug 21, 2009 23:15
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-2883586"></a>
+                                    <font class="smallfont"><p>Closed 489 and opened two separate tickets for "templates" and nested roles.</p>
+
+
+<p><a href="http://tickets.opscode.com/browse/CHEF-505">http://tickets.opscode.com/browse/CHEF-505</a>
+<a href="http://tickets.opscode.com/browse/CHEF-506">http://tickets.opscode.com/browse/CHEF-506</a></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by joew at Aug 21, 2009 23:21
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Chef Core Principles</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Chef Core Principles
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/19070998/19005443.png" hspace="30" vspace="8" style="border: 0px solid black"/></span></p>
+
+<h3><a name="ChefCorePrinciples-"></a><font color="#f7681a">Chef is idempotent</font></h3>
+
+<p>You can run Chef recipes multiple times on the same system and the resulting system will always return to an identical state. In Chef, resources are defined in recipes and describe actions to be performed on the system. Chef ensures that actions are not performed if the resources have not changed. If you rerun a Chef recipe on a system and nothing has changed either on the system or in the recipe, Chef doesn't change anything.</p>
+
+<h3><a name="ChefCorePrinciples-"></a><font color="#f7681a">Thick Clients, Thin Server</font></h3>
+
+<p>Chef does as much work as possible on the Chef Clients. The Chef Server is built to handle the easy distribution of data to the clients - the recipes to build, templates to render, files to transfer - along with storing the state of each Node. This orientation makes for a system that is easy to scale and extend - the work of deciding how to configure your infrastructure is distributed throughout your infrastructure, rather than centralized on set of configuration management servers.</p>
+
+<h3><a name="ChefCorePrinciples-"></a><font color="#f7681a">Order Matters</font></h3>
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/19070998/20840537.jpg" hspace="12" vspace="8" style="border: 0px solid black"/></span></p>
+
+<p>When you are configuring systems, order matters. If you have not installed Apache, you can't start configuring it, and you certainly can't start the daemon. Configuration management tools have been struggling with this problem for years. Nodes in Chef apply lists of recipes, which in turn specify resources. Within a recipe, resources are applied in the order they appear. At any point in a recipe, you can include any other recipe - assuring that all of its resources are applied before continuing (Chef is smart enough never to apply the same recipe twice.) You specify dependencies only at the recipe level, not the resource level. This means that you only track dependencies between high level concepts - "I need Apache installed before I can start my Django Application". It also means that, given the same set of Cookbooks, Chef will always execute your resources in the same order.</p>
+
+<h3><a name="ChefCorePrinciples-"></a><font color="#f7681a">Reasonability</font></h3>
+
+<p>Chef is designed to be easy to think about, easily changed and easy to extend. Chef assumes that you know best how your infrastructure is put together. Therefore, Chef makes as few decisions for you as possible, and when it does, it's easy to make it change its mind. When Chef does make decisions it sets reasonable defaults that can be easily changed. Moreover, Chef is pragmatic and opinion-less relying less on theory or dogma and more on deterministic results. This is why Chef uses Ruby as its reference language with extended DSL for specific resources. Chef provides a reasonable set of base primitives (i.e., resources) to automate an infrastructure; however, it also provides an easy way to modify and extend the base (via Ruby) – because ... <a href="http://en.wikipedia.org/wiki/There&#39;s_more_than_one_way_to_do_it">TMTOWTDI</a>.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="7274862.html" title="What is Chef?"><span class="image-wrap" style="float: left"><img src="../attachments/19070998/19005450.png" hspace="4" style="border: 0px solid black"/></span> What is Chef? </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="7274864.html" title="Why Chef?"><span class="image-wrap" style="float: right"><img src="../attachments/19070998/19005449.png" hspace="4" style="border: 0px solid black"/></span> Why Chef? </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19070998/19005443.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19070998/19005449.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19070998/19005450.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19070998/20840537.jpg">bikerack-color.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

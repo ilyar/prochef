@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Performance Tune Ohai for Large User Bases</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Performance Tune Ohai for Large User Bases
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 08, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<h1><a name="PerformanceTuneOhaiforLargeUserBases-Overview"></a>Overview</h1>
+<p><a href="Ohai.html" title="Ohai">Ohai</a> detects information about your operating system, and can therefore benefit from fine-tuning to improve performance when running with large user bases.  </p>
+
+<h3><a name="PerformanceTuneOhaiforLargeUserBases-Modifynodes.rbtoreduceautomaticattrssize"></a>Modify nodes.rb to reduce automatic_attrs size</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false"># Serialize this object as a hash
+
+    def to_json(*a)
+      result = {
+        "name" =&gt; name,
+        "chef_environment" =&gt; chef_environment,
+        'json_class' =&gt; self.class.name,
+#        "automatic" =&gt; automatic_attrs,
+
+        "normal" =&gt; normal_attrs,
+        "chef_type" =&gt; "node",
+        "default" =&gt; default_attrs,
+        "override" =&gt; override_attrs,
+        "run_list" =&gt; run_list.run_list
+      }
+      result["_rev"] = couchdb_rev if couchdb_rev
+      result.to_json(*a)
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="PerformanceTuneOhaiforLargeUserBases-ModifyOhaitoreadpasswordsdirectly"></a>Modify Ohai to read passwords directly</h3>
+<p>This will be addressed with <a href="http://tickets.opscode.com/browse/OHAI-165">OHAI-165</a>.  Pending that, the following change will be beneficial:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Add to client.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">Ohai::Config[:disabled_plugins] = [ "passwd" ]</pre>
+		</div>
+</div></div>
+
+<h3><a name="PerformanceTuneOhaiforLargeUserBases-Updatestandardbootstraptemplate"></a>Update standard bootstrap template</h3>
+<p>Speeds up chef-client execution, because LDAP servers can return a huge number of passwords.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">( 
+cat &lt;&lt;'EOP' 
+&lt;%= config_content %&gt; 
+EOP 
+) &gt; /etc/chef/client.rb
+
+echo "&lt;%= 'Ohai::Config[:disabled_plugins] = [ \"passwd\" ]' %&gt;" &gt;&gt; 
+/etc/chef/client.rb</pre>
+		</div>
+</div></div>
+
+<h3><a name="PerformanceTuneOhaiforLargeUserBases-DisableundesirableOhaiplugins"></a>Disable undesirable Ohai plugins</h3>
+<p>If you do not want some Ohai plugins to run, you can disable them by doing something like the following:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Modify etc/chef/client.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">Ohai::Config[:disabled_plugins] &lt;&lt; 'darwin::system_profiler' &lt;&lt; 'darwin::kernel' &lt;&lt; 'darwin::ssh_host_key' &lt;&lt; 'network_listeners'</pre>
+		</div>
+</div></div>
+
+<p>You may desire to choose other plugins that the ones in the above example.  <b>See <a href="Disabling Ohai Plugins.html" title="Disabling Ohai Plugins">Disabling Ohai Plugins</a> for additional information</b>.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="32%">
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#PerformanceTuneOhaiforLargeUserBases-Overview'>Overview</a></li>
+<ul>
+    <li><a href='#PerformanceTuneOhaiforLargeUserBases-Modifynodes.rbtoreduceautomaticattrssize'>Modify nodes.rb to reduce automatic_attrs size</a></li>
+    <li><a href='#PerformanceTuneOhaiforLargeUserBases-ModifyOhaitoreadpasswordsdirectly'>Modify Ohai to read passwords directly</a></li>
+    <li><a href='#PerformanceTuneOhaiforLargeUserBases-Updatestandardbootstraptemplate'>Update standard bootstrap template</a></li>
+    <li><a href='#PerformanceTuneOhaiforLargeUserBases-DisableundesirableOhaiplugins'>Disable undesirable Ohai plugins</a></li>
+</ul>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Thanks!</b><br />Thanks to Chef user Mike Hodgson for much of this information!</td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

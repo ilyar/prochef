@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Disabling Ohai Plugins</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Disabling Ohai Plugins
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Feb 13, 2012 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <p><br class="atl-forced-newline" /></p>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/6848603/24182839.jpg" hspace="20" vspace="6" style="border: 0px solid black"/></span></p>
+
+<p><br class="atl-forced-newline" /></p>
+<h3><a name="DisablingOhaiPlugins-"></a><font color="#f7681a">Often it's desirable not to load certain Ohai plugins. </font></h3>
+
+<h5><a name="DisablingOhaiPlugins-Anexampleofthisisthepasswdplugin%2CshouldyournodesbeconnectedtoalargeLDAPdirectory."></a>An example of this is the passwd plugin, should your nodes be connected to a large LDAP directory.</h5>
+<h5><a name="DisablingOhaiPlugins-ToseelongittakestoloadvariousOhaiplugins%2Cseehttps%3A%2F%2Fgist.github.com%2F1323597"></a>To see long it takes to load various Ohai plugins, see <a href="https://gist.github.com/1323597">https://gist.github.com/1323597</a></h5>
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-width: 1px;"></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='navmenu' style='float:right; width:280px; background:#f4f2e6; margin:10px; padding:3px'><div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>No effect on the "ohai" executable</b><br /><br class="atl-forced-newline" />
+Please note that the <tt>client.rb</tt> configuration file is ignored by the <tt>ohai</tt> executable. 
+
+<p><b>It is therefore not possible to disable plugins when running <tt>ohai</tt> manually.</b>
+<br class="atl-forced-newline" /></p></td></tr></table></div></div>
+<h6><a name="DisablingOhaiPlugins-Todothis%2Caddthefollowinglineto%7B%7B%2Fetc%2Fchef%2Fclient.rb%7D%7D%3Bthisexamplesshows4pluginsbeingdisabled%3A"></a>To do this, add the following line to <tt>/etc/chef/client.rb</tt>; this examples shows 4 plugins being disabled:</h6>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">Ohai::Config[:disabled_plugins] = ["passwd", "rackspace", "dmi", "dmi_common"]</pre>
+		</div>
+</div></div>
+
+<h6><a name="DisablingOhaiPlugins-Toseethelistofavailablepluginsrun%3A"></a>To see the list of available plugins run:</h6>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">gem content ohai | grep lib/ohai/plugins</pre>
+		</div>
+</div></div>
+
+<h6><a name="DisablingOhaiPlugins-Totesttheeffectofdisablingpluginsrunthefollowingcommandandlookforthestring%22%7B%7BSkippingdisabledpluginXXXX%7D%7D%22%3A"></a>To test the effect of disabling plugins run the following command and look for the string "<tt>Skipping disabled plugin XXXX</tt>":</h6>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">chef-client -l debug</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/6848603/20840700.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Distributing Ohai Plugins.html" title="Distributing Ohai Plugins">Distributing Ohai Plugins</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/6848603/20840699.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Providers.html" title="Providers">Providers</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/6848603/20840699.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/6848603/20840700.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/6848603/24182839.jpg">3301830-green-radar-screen-on-a-black-background.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

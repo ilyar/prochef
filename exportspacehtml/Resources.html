@@ -1,0 +1,4595 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Resources</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Resources
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><a name="Resources-top"></a>
+<br class="atl-forced-newline" /> <span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 307x415" href='http://wiki.opscode.com/download../attachments/1179732/resource-definition.jpg'><img src="../attachments/thumbnails/1179732/13238285" hspace="20" vspace="20" style="border: 0px solid black"/></a></span></p>
+
+<h1><a name="Resources-Overview"></a>Overview</h1>
+
+<h4><a name="Resources-"></a><font color="#f7681a">Resources are the basic units of work in Chef - discrete chunks of a system's configuration that are declared in</font> <font color="#f7681a"><a href="Recipes.html" title="Recipes">Recipes</a></font> <font color="#f7681a">and</font> <font color="#f7681a"><a href="Definitions.html" title="Definitions">Definitions</a></font><font color="#f7681a">, and applied to your nodes.</font></h4>
+
+<h5><a name="Resources-"></a><font color="#f7681a">They are usually a cross platform abstraction of the thing you're configuring on the host.</font></h5>
+
+<p>For example, packages may be installed via apt, yum, or the BSD ports and packages systems, but the <a href="#Resources-Package">package resource</a> abstracts these differences away so you can specify that a package should be installed in a cross-platform way.</p>
+
+<p><br class="atl-forced-newline" /></p>
+
+<h5><a name="Resources-ThispageprovidesdocumentationoftheResourcesincludedintheCheflibrary."></a>This page provides documentation of the Resources included in the Chef library.</h5>
+
+<h5><a name="Resources-Eachdescriptionisbrokenintoseveralcategories%3A"></a>Each description is broken in to several categories:</h5>
+
+<p><br class="atl-forced-newline" /></p>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Category </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>Actions</b> </th>
+<td class='confluenceTd'> The list of actions for this resource </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>Attributes</b> </th>
+<td class='confluenceTd'> The list of attributes for this resource </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>Providers</b> </th>
+<td class='confluenceTd'> The list of providers for this resource, along with any shortcut resource name. (You can use the shortcut resource name instead of specifying the <tt>provider</tt> attribute - <tt>apt_package</tt> rather than <tt>package</tt> with <tt>provider Chef::Provider::Package::Apt</tt>.) </td>
+</tr>
+<tr>
+<th class='confluenceTh'> <b>Examples</b> </th>
+<td class='confluenceTd'> The first section, shows examples of using each action. </td>
+</tr>
+</tbody></table>
+</div>
+
+<p><br class="atl-forced-newline" /></p>
+
+<h5><a name="Resources-NewcustomresourcescanalsobecreatedusingChef%27sLightweightResourcesandProviders%28LWRP%29LightweightResourcesandProviders%28LWRP%29DSL.OpscodeprovidesseveralcookbooksthatdefinecustomLightweightResourcesandProviders%28LWRP%29...."></a>New custom resources can also be created using Chef's <a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers (LWRP)</a> DSL. Opscode provides several cookbooks that define custom Lightweight Resources and Providers (LWRP). <a href="Opscode LWRP Resources.html" title="Opscode LWRP Resources">Opscode LWRP Resources</a> details those customer LWRPs, grouped with the cookbook that provides them.</h5></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="23%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#Resources-Overview'>Overview</a></li>
+    <li><a href='#Resources-Meta'>Meta</a></li>
+<ul>
+    <li><a href='#Resources-CommonActions'>Common Actions</a></li>
+    <li><a href='#Resources-CommonAttributes'>Common Attributes</a></li>
+    <li><a href='#Resources-ConditionalExecution'>Conditional Execution</a></li>
+    <li><a href='#Resources-Notifications'>Notifications</a></li>
+    <li><a href='#Resources-RelativePaths'>Relative Paths</a></li>
+</ul>
+    <li><a href='#Resources-CookbookFile'>Cookbook File</a></li>
+    <li><a href='#Resources-Cron'>Cron</a></li>
+    <li><a href='#Resources-Deploy'>Deploy</a></li>
+    <li><a href='#Resources-Directory'>Directory</a></li>
+    <li><a href='#Resources-Env'>Env</a></li>
+    <li><a href='#Resources-ErlangCall'>Erlang Call</a></li>
+    <li><a href='#Resources-Execute'>Execute</a></li>
+    <li><a href='#Resources-File'>File</a></li>
+    <li><a href='#Resources-Git'>Git</a></li>
+    <li><a href='#Resources-Group'>Group</a></li>
+    <li><a href='#Resources-HTTPRequest'>HTTP Request</a></li>
+    <li><a href='#Resources-Ifconfig'>Ifconfig</a></li>
+    <li><a href='#Resources-Link'>Link</a></li>
+    <li><a href='#Resources-Log'>Log</a></li>
+    <li><a href='#Resources-Mdadm'>Mdadm</a></li>
+    <li><a href='#Resources-Mount'>Mount</a></li>
+    <li><a href='#Resources-Ohai'>Ohai</a></li>
+    <li><a href='#Resources-Package'>Package</a></li>
+    <li><a href='#Resources-PowerShellScript'>PowerShell Script</a></li>
+    <li><a href='#Resources-RemoteDirectory'>Remote Directory</a></li>
+    <li><a href='#Resources-RemoteFile'>Remote File</a></li>
+    <li><a href='#Resources-Route'>Route</a></li>
+    <li><a href='#Resources-RubyBlock'>Ruby Block</a></li>
+    <li><a href='#Resources-SCM'>SCM</a></li>
+    <li><a href='#Resources-Script'>Script</a></li>
+    <li><a href='#Resources-Service'>Service</a></li>
+    <li><a href='#Resources-Subversion'>Subversion</a></li>
+    <li><a href='#Resources-Template'>Template</a></li>
+    <li><a href='#Resources-User'>User</a></li>
+    <li><a href='#Resources-OpscodeCookbookLWRPs'>Opscode Cookbook LWRPs</a></li>
+</ul></div>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="7%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Meta"></a>Meta</h1>
+
+<h5><a name="Resources-"></a><font color="#f7681a">The attributes and actions in this section apply to all resources.</font></h5>
+</div></div>
+
+<h2><a name="Resources-CommonActions"></a>Common Actions</h2>
+
+<p><font color="#f7681a">These actions are available in every resource.</font></p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>nothing</b> </td>
+<td class='confluenceTd'> Do nothing - useful if you want to specify a resource, but only notify it of other actions. </td>
+<td class='confluenceTd'> Yes - in the absence of another default action, nothing is the default </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Action Nothing</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">service "memcached" do
+  action :nothing
+  supports :status =&gt; true, :start =&gt; true, :stop =&gt; true, :restart =&gt; true
+end</pre>
+		</div>
+</div></div>
+
+<h2><a name="Resources-CommonAttributes"></a>Common Attributes</h2>
+
+<p><font color="#f7681a">These attributes can be set on any resource.</font></p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>ignore_failure</b> </td>
+<td class='confluenceTd'> If <tt>true</tt>, we will continue running the recipe if this resource fails for any reason. (defaults to <tt>false</tt>) </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>provider</b> </td>
+<td class='confluenceTd'> The class name of a provider to use for this resource. </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>retries</b> </td>
+<td class='confluenceTd'> Number of times to catch exceptions and retry the resource (defaults to 0). Requires Chef &gt;= 0.10.4. </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>retry_delay</b> </td>
+<td class='confluenceTd'> Retry delay in seconds (defaults to 2). Requires Chef &gt;= 0.10.4. </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>supports</b> </td>
+<td class='confluenceTd'> A hash of options that hint providers as to the capabilities of this resource. </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples%3A"></a>Examples:</h3>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>ignore_failure</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">gem_package "syntax" do
+  action :install
+  ignore_failure true
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>provider</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">package "some_package" do
+ provider Chef::Provider::Package::Rubygems
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>supports</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">service "apache" do
+  supports :restart =&gt; true, :reload =&gt; true
+  action :enable
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Provider and Supports</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">service "some_service" do
+  provider Chef::Provider::Service::Upstart
+  supports :status =&gt; true, :restart =&gt; true, :reload =&gt; true
+  action [ :enable, :start ]
+end</pre>
+		</div>
+</div></div>
+
+<p>The <tt>supports</tt> attribute is only utilized by a few providers in Chef. For example <a href="#Resources-User">User</a> and <a href="#Resources-Service">Service</a>.</p>
+
+<h2><a name="Resources-ConditionalExecution"></a>Conditional Execution</h2>
+
+<p><font color="#f7681a">You can add additional guards around resources to prevent them from being run unless some other condition is met using</font> <font color="#f7681a"><tt>not_if</tt></font> <font color="#f7681a">or</font> <font color="#f7681a"><tt>only_if</tt></font><font color="#f7681a">.</font> The most common use of these is to make the <tt>execute</tt> resource idempotent, but they can be used with any resource.</p>
+
+<h3><a name="Resources-ConditionalExecutionAttributes"></a>Conditional Execution Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>not_if</b> </td>
+<td class='confluenceTd'> Do <b>not</b> apply <em>this</em> resource if the given string (shell command) or block (ruby code) results in return code 0 or is true. </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>only_if</b> </td>
+<td class='confluenceTd'> Only apply <em>this</em> resource if the given string (shell command) or block (ruby code) results in return code 0 or is true. </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><tt><b>not_if</b></tt> <b>and</b> <tt><b>only_if</b></tt> <b>attributes can be passed as strings or blocks.</b></p>
+
+<ul>
+	<li>Strings are executed as a shell command. The attribute is <tt>true</tt> if the command returns 0.</li>
+	<li>Blocks are Ruby code. The attribute is <tt>true</tt> if the result is <tt>true</tt>.</li>
+</ul>
+
+
+<p><b>The behavior of the resource depends on whether the attribute was true.</b></p>
+
+<ul>
+	<li><tt>not_if {true</tt>} &#45; indicates the <tt>action</tt> should <b>never</b> be performed.</li>
+	<li><tt>not_if {false</tt>} &#45; indicates the <tt>action</tt> should <b>always</b> be performed.</li>
+	<li><tt>only_if {true</tt>} &#45; indicates the <tt>action</tt> should <b>always</b> be performed.</li>
+	<li><tt>only_if {false</tt>} &#45; indicates the <tt>action</tt> should <b>never</b> be performed..</li>
+</ul>
+
+
+<p><b>Optional arguments are available.</b></p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Argument </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Example </th>
+</tr>
+<tr>
+<td class='confluenceTd'> :user </td>
+<td class='confluenceTd'> Sets the user to run the command as </td>
+<td class='confluenceTd'> <tt>not_if "grep adam /etc/passwd", :user =&gt; 'adam'</tt> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> :group </td>
+<td class='confluenceTd'> Sets the group to run the command as </td>
+<td class='confluenceTd'> <tt>not_if "grep adam /etc/passwd", :group =&gt; 'adam'</tt> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> :environment </td>
+<td class='confluenceTd'> A Hash of environment variables to set </td>
+<td class='confluenceTd'> not_if "grep adam /etc/passwd", :environment =&gt; { 'HOME' =&gt; "/home/adam" } </td>
+</tr>
+<tr>
+<td class='confluenceTd'> :cwd </td>
+<td class='confluenceTd'> Sets the current working directory before running the command </td>
+<td class='confluenceTd'> <tt>not_if "grep adam passwd", :cwd =&gt; '/etc'</tt> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> :timeout </td>
+<td class='confluenceTd'> Sets a timeout for the command </td>
+<td class='confluenceTd'> <tt>not_if "sleep 10000", :timeout =&gt; 10</tt> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples%3A"></a>Examples:</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>not_if</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Any of these next three examples will create /tmp/somefile, but not if /etc/passwd exists.
+# Execute a string
+template "/tmp/somefile" do
+  mode "0644"
+  source "somefile.erb"
+  not_if "test -f /etc/passwd"
+end
+
+# Execute a block
+template "/tmp/somefile" do
+  mode "0644"
+  source "somefile.erb"
+  not_if do
+    File.exists?("/etc/passwd")
+  end
+end
+
+# A block using curly braces
+template "/tmp/somefile" do
+  mode "0644"
+  source "somefile.erb"
+  not_if {File.exists?("/etc/passwd")}
+end
+
+# This next example will create /tmp/somefile but only if the node does not have the attribute some_value
+# A block using curly braces with node attributes
+template "/tmp/somefile" do
+  mode "0644"
+  source "somefile.erb"
+  not_if { node[:some_value] }
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>only_if</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Either of these next two examples will create /tmp/somefile only if /etc/passwd exists.
+# Execute a string
+template "/tmp/somefile" do
+  mode "0644"
+  source "somefile.erb"
+  only_if "test -f /etc/passwd"
+end
+
+# Execute a block
+template "/tmp/somefile" do
+  mode "0644"
+  source "somefile.erb"
+  not_if do ! File.exists?("/etc/passwd") end
+end
+
+# This next example will create /tmp/somefile but only if the node has the attribute some_value
+# A block using curly braces with node attributes
+template "/tmp/somefile" do
+  mode "0644"
+  source "somefile.erb"
+  only_if { node[:some_value] }
+end</pre>
+		</div>
+</div></div>
+
+<h2><a name="Resources-Notifications"></a>Notifications</h2>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>notifies</b> </td>
+<td class='confluenceTd'> Notify another resource to take an action if this resource changes state for any reason. </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>subscribes</b> </td>
+<td class='confluenceTd'> Take action on this resource if another resource changes state. Works similarly to <b>notifies</b>, but the direction of the relationship is reversed. </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-NotifiesSyntax"></a>Notifies Syntax</h3>
+
+<p>The basic form of a notification is:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">resource "name" do
+  notifies :action, "resource_type[resource_name]", :notification_timing
+end</pre>
+		</div>
+</div></div>
+
+<p>For example, if you need to restart the apache service when you modify a template that configures apache, you would write that like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/etc/www/configures-apache.conf" do
+  notifies :restart, "service[apache]"
+end
+
+service "apache"</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">By default, notifications are</font> <font color="#f7681a"><tt>:delayed</tt></font><font color="#f7681a">, that is they are queued up as they are triggered, and then executed at the very end of the Chef run.</font> If you want to run an action immediately, use <tt>:immediately</tt>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/etc/nagios3/configures-nagios.conf" do
+  # other parameters
+  notifies :run, "execute[test-nagios-config]", :immediately
+end
+
+# this will fail and prevent us from restarting nagios if we broke the config
+execute "test-nagios-config" do
+  command "nagios3 --verify-config"
+  action :nothing
+end</pre>
+		</div>
+</div></div>
+
+<p>You can also send notifications to multiple resources, just use multiple attributes. <font color="#f7681a">Multiple attributes will get sent to the notified resources in the order specified.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/etc/netatalk/netatalk.conf" do
+  notifies :restart, "service[afpd]", :immediately
+  notifies :restart, "service[cnid]", :immediately
+end
+
+service "afpd"
+service "cnid"</pre>
+		</div>
+</div></div>
+
+<h3><a name="Resources-SubscribesSyntax"></a>Subscribes Syntax</h3>
+
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Subscriptions require the resource to be defined before it can be subscribed to.  For one resource to subscribe to another, the resource being described to must come first</td></tr></table></div>
+
+<p>The basic form of a subscription is:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">resource "name" do
+  subscribes :action, resources(:resource_type =&gt; "resource_name"), :notification_timing
+end
+
+# This syntax is also supported
+resource "name" do
+  subscribes :action, resources("resource[resource_name]"), :notification_timing
+end</pre>
+		</div>
+</div></div>
+
+<p>The notification timing works the same as notifications, so the following code should achieve the same results as the notification example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/etc/nagios3/configures-nagios.conf" do
+  # other parameters
+end
+
+# this will fail and prevent us from restarting nagios if we broke the config
+execute "test-nagios-config" do
+  command "nagios3 --verify-config"
+  action :nothing
+  subscribes :run, resources(:template =&gt; "/etc/nagios3/configures-nagios.conf"), :immediately
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>notifies</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/tmp/somefile" do
+  mode "0644"
+  source "somefile.erb"
+  notifies :reload, "service[apache]"
+end
+
+service "apache" do
+  supports :restart =&gt; true, :reload =&gt; true
+  action :enable
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>notifies multiple resources</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/etc/chef/server.rb" do
+  source "server.rb.erb"
+  owner "root"
+  group "root"
+  mode "644"
+  notifies :restart, "service[chef-solr]", :delayed
+  notifies :restart, "service[chef-solr-indexer]", :delayed
+  notifies :restart, "service[chef-server]", :delayed
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>notifies multiple resources + chained notifications</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">execute 'foo' do
+  command '...'
+  notifies :run, 'template[baz]', :immediately
+  notifies :install, 'package[bar]', :immediately
+  notifies :run, 'execute[final]', :immediately
+end
+
+template 'baz' do
+  ...
+  notifies :run, 'execute[restart_baz]', :immediately
+end
+
+package 'bar'
+
+execute 'restart_baz'
+
+execute 'final' do
+  command '...'
+end</pre>
+		</div>
+</div></div>
+<blockquote><p>The sequencing should end up (follow Chef's ordering principle):<br/>
+execute foo<br/>
+template baz<br/>
+execute restart_baz<br/>
+package bar<br/>
+execute final</p></blockquote>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>subscribes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/tmp/somefile" do
+  mode "0644"
+  source "somefile.erb"
+end
+
+service "apache" do
+  supports :restart =&gt; true, :reload =&gt; true
+  action :enable
+  subscribes :reload, resources("template[/tmp/somefile]"), :immediately
+end</pre>
+		</div>
+</div></div>
+
+<h2><a name="Resources-RelativePaths"></a>Relative Paths</h2>
+
+<p><font color="#f7681a">These paths are available in every resource.</font></p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Path </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>&#35;{ENV['HOME']}</b> </td>
+<td class='confluenceTd'> This will return the {~} path in Linux and Mac, or the <tt>%HOMEPATH%</tt> in Windows. </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Path Home</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "#{ENV['HOME']}/chef-getting-started.txt" do
+  source "chef-getting-started.txt.erb"
+  mode "0644"
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-CookbookFile"></a>Cookbook File</h1>
+
+<p><font color="#f7681a">Cookbook File transfers files from the</font> <font color="#f7681a"><tt>files/</tt></font> <font color="#f7681a">directory of a cookbook to a specified path on the host running chef-client or solo.</font></p>
+
+<p>The file in the cookbook is selected according to <a href="File Distribution.html" title="File Distribution">file specificity</a>, which allows you to use a different source file based on hostname, host platform (OS or distro, as appropriate), or specific platform version. Files under <tt>COOKBOOK_NAME/files/default</tt> will be used if a more specific version is not available.</p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> Create this file </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create_if_missing</b> </td>
+<td class='confluenceTd'> Create only if it doesn't exist yet </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>delete</b> </td>
+<td class='confluenceTd'> Delete this file </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>backup</b> </td>
+<td class='confluenceTd'> How many backups of this file to keep. Set to <tt>false</tt> if you want no backups. </td>
+<td class='confluenceTd'> 5 </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>group</b> </td>
+<td class='confluenceTd'> The group owner of the file (string or id) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>mode</b> </td>
+<td class='confluenceTd'> The octal mode of the file - e.g. <tt>'0755'</tt> <a href="http://lists.opscode.com/sympa/arc/chef/2011-06/msg00032.html">default varies</a> </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>rights</b> </td>
+<td class='confluenceTd'> Windows Only - The user permissions. e.g. 'rights &lt;permissions&gt;, &lt;principal&gt;, &lt;options&gt;'. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>inherits</b> </td>
+<td class='confluenceTd'> Windows Only - The file inherits rights from parent. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'> true </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>owner</b> </td>
+<td class='confluenceTd'> The owner for the file </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>path</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: The path to the file </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>source</b> </td>
+<td class='confluenceTd'> The basename of the source file </td>
+<td class='confluenceTd'> The basename of the path (destination) </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>cookbook</b> </td>
+<td class='confluenceTd'> The cookbook this file is stored in </td>
+<td class='confluenceTd'> The current cookbook </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>A note about mode: When specifying the mode, the value can be a quoted string, eg "644". For a numeric value (i.e., without quotes), it should be 5 digits, e.g., <tt>00644</tt> to ensure that Ruby can parse it correctly. For more detail, see <a href="http://tickets.opscode.com/browse/CHEF-174">Ticket CHEF-174</a>.</p>
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::CookbookFile</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Transfer a file in this cookbook</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cookbook_file "/tmp/testfile" do
+  source "testfile" # this is the value that would be inferred from the path parameter
+  mode "0644"
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Cron"></a>Cron</h1>
+
+<p><font color="#f7681a">Manage a cron entry.</font> Attributes for schedule will default to '*' if not provided so only specify the schedule attributes that are applicable to your cron entry.</p>
+
+<p>Create will update an entry if it shares the same name. The delete action will delete an entry with a matching name. Both notes only apply on a per-user basis.</p>
+
+<p>Requires that a package providing <tt>crontab</tt> program is installed (typically <tt>cron</tt>).</p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> Create the crontab entry </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>delete</b> </td>
+<td class='confluenceTd'> Delete the crontab entry </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>minute</b> </td>
+<td class='confluenceTd'> The minute this entry should run (0 - 59) </td>
+<td class='confluenceTd'> &#42; </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>hour</b> </td>
+<td class='confluenceTd'> The hour this entry should run (0 - 23) </td>
+<td class='confluenceTd'> &#42; </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>day</b> </td>
+<td class='confluenceTd'> The day of month this entry should run (1 - 31) </td>
+<td class='confluenceTd'> &#42; </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>month</b> </td>
+<td class='confluenceTd'> The month this entry should run (1 - 12) </td>
+<td class='confluenceTd'> &#42; </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>weekday</b> </td>
+<td class='confluenceTd'> The weekday this entry should run (0 - 6) (Sunday=0) </td>
+<td class='confluenceTd'> &#42; </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>command</b> </td>
+<td class='confluenceTd'> The command to run </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>user</b> </td>
+<td class='confluenceTd'> The user to run command as. Note: If you <b>change</b> the crontab user then the original user will <b>still</b> have the same crontab running until you explicity delete that crontab </td>
+<td class='confluenceTd'> root </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>mailto</b> </td>
+<td class='confluenceTd'> Set the MAILTO environment variable </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>path</b> </td>
+<td class='confluenceTd'> Set the PATH environment variable </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>home</b> </td>
+<td class='confluenceTd'> Set the HOME environment variable </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>shell</b> </td>
+<td class='confluenceTd'> Set the SHELL environment variable </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Cron</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Run a program on the fifth hour of the day</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cron "noop" do
+  hour "5"
+  minute "0"
+  command "/bin/true"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Run an entry if a folder exists</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cron "ganglia_tomcat_thread_max" do
+  command "/usr/bin/gmetric -n 'tomcat threads max' -t uint32 -v `/usr/local/bin/tomcat-stat --thread-max`"
+  only_if do File.exist?("/home/jboss") end
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Deploy"></a>Deploy</h1>
+
+<p><font color="#f7681a">The</font> <font color="#f7681a"><tt>deploy</tt></font> <font color="#f7681a">resource is quite detailed and has a</font> <font color="#f7681a"><a href="Deploy Resource.html" title="Deploy Resource">separate document</a></font><font color="#f7681a">. Please see</font> <font color="#f7681a"><b><a href="Deploy Resource.html" title="Deploy Resource">Deploy Resource</a></b></font> <font color="#f7681a">for detail on its use.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Directory"></a>Directory</h1>
+
+<p><font color="#f7681a">Manage a directory.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> Create this directory </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>delete</b> </td>
+<td class='confluenceTd'> Delete this directory </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>group</b> </td>
+<td class='confluenceTd'> The group owner of the directory (string or id) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>mode</b> </td>
+<td class='confluenceTd'> The octal mode of the directory, e.g. <tt>'0755'</tt> <a href="http://lists.opscode.com/sympa/arc/chef/2011-06/msg00032.html">default varies</a> </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>rights</b> </td>
+<td class='confluenceTd'> Windows Only - The user permissions. e.g. 'rights &lt;permissions&gt;, &lt;principal&gt;, &lt;options&gt;'. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>inherits</b> </td>
+<td class='confluenceTd'> Windows Only - The directory inherits rights from parent. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'> true </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>owner</b> </td>
+<td class='confluenceTd'> The owner for the directory </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>path</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: The path to the directory </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>recursive</b> </td>
+<td class='confluenceTd'> When deleting the directory, delete it recursively. When creating the directory, create recursively (ie, mkdir &#45;p). Note: owner/group/mode only applies to the leaf directory, regardless of the value of this attribute </td>
+<td class='confluenceTd'> false </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Directory</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create a directory</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">directory "/tmp/something" do
+  owner "root"
+  group "root"
+  mode "0755"
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create a directory - Windows Example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">directory "C:\tmp\something.txt" do
+  rights :full_control, "DOMAIN\User"
+  inherits false
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create a group of directories</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">%w{dir1 dir2 dir3}.each do |dir|
+   directory "/tmp/mydirs/#{dir}" do
+      mode "0775"
+      owner "root"
+      group "root"
+      action :create
+      recursive true
+   end
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Remove a directory, and its contents</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">directory "/tmp/something" do
+  recursive true
+  action :delete
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Env"></a>Env</h1>
+
+<p><font color="#f7681a">Manages environment keys.</font> Currently, this is <b>a windows-only resource</b>.</p>
+
+<p>On Unix Systems, the best way to manipulate the environment is via Ruby's <tt>ENV</tt> variable; however, manipulating this variable will not have the same "permanent" effect as using the env resource on Windows.  Note that after setting an environment variable  Windows requires a reboot before it is available to the Task Scheduler.</p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> Create new environment variable. </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>delete</b> </td>
+<td class='confluenceTd'> Delete environment variable. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>modify</b> </td>
+<td class='confluenceTd'> Modify an existing environment variable.  This will append the given value to the existing value, delimited by <b>delim</b>. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>key_name</b> </td>
+<td class='confluenceTd'> The name of the key to create, delete, or modify </td>
+<td class='confluenceTd'> <tt>name</tt> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>value</b> </td>
+<td class='confluenceTd'> The value to set <b>key_name</b> to. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>delim</b> </td>
+<td class='confluenceTd'> The delimiter that separates multiple values for a single key. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Env::Windows</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Windows </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Set an environment variable</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">env "ComSpec" do
+    value "C:\\Windows\\system32\\cmd.exe"
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-ErlangCall"></a>Erlang Call</h1>
+
+<p><font color="#f7681a">Connects to a distributed erlang node and makes a call.</font> See the documentation for <a href="http://erlang.mirror.su.se/doc/man/erl_call.html">erl_call</a> in the OTP documentation for more information.</p>
+
+<p>Like the <a href="#Resources-Execute">Execute</a> and <a href="#Resources-Script">Script</a> resources, Erlang Call resources are not idempotent.  Use the <tt>not_if</tt> and <tt>only_if</tt> <a href="#Resources-Meta">meta parameters</a> to guard the resource for idempotence.</p>
+
+<p>Additionally, the erl_call command needs to be on the path for this resource to work properly.</p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>run</b> </td>
+<td class='confluenceTd'> Run this erlang call </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>nothing</b> </td>
+<td class='confluenceTd'> Do not run this command </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>code</b> </td>
+<td class='confluenceTd'> The erlang code to execute on the distributed node </td>
+<td class='confluenceTd'> <tt>q().</tt> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>cookie</b> </td>
+<td class='confluenceTd'> The cookie of erlang node you connect to </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>distributed</b> </td>
+<td class='confluenceTd'> Starts a distributed erlang node if neccessary </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>name_type</b> </td>
+<td class='confluenceTd'> Whether the node_name is an <tt>sname</tt> or <tt>name</tt> </td>
+<td class='confluenceTd'> <tt>sname</tt> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>node_name</b> </td>
+<td class='confluenceTd'> The node hostname to connect to </td>
+<td class='confluenceTd'> <tt>chef@localhost</tt> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::ErlCall</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Run a command on an erlang node</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">erl_call "list names" do
+  code "net_adm:names()."
+  distributed true
+  node_name "chef@latte"
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Execute"></a>Execute</h1>
+
+<p><font color="#f7681a">Execute a command. Use</font> <font color="#f7681a"><a href="#Resources-Script">Script</a></font> <font color="#f7681a">resources to execute a script with a specific interpreter.</font></p>
+
+<p>By their nature, Execute resources are not idempotent, as they are completely up to the user's imagination. Use the <tt>not_if</tt> or <tt>only_if</tt> <a href="#Resources-Meta">meta parameters</a> to guard the resource for idempotence.</p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>run</b> </td>
+<td class='confluenceTd'> Run this command </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>nothing</b> </td>
+<td class='confluenceTd'> Do not run this command </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>Use <tt>action :nothing</tt> to set a command to only run if another resource notifies it.</p>
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>command</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: The command to execute </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>creates</b> </td>
+<td class='confluenceTd'> If the file exists, the command will not be run. The command should create this file. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>cwd</b> </td>
+<td class='confluenceTd'> Current working directory to run the command from. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>environment</b> </td>
+<td class='confluenceTd'> A hash of environment variables to set before running this command. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>group</b> </td>
+<td class='confluenceTd'> A group name or group ID that we should change to before running this command. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>path</b> </td>
+<td class='confluenceTd'> An array of paths to use when searching for the command. Note that these are <b>not</b> added to the command's environment $PATH. </td>
+<td class='confluenceTd'> nil, uses system path </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>returns</b> </td>
+<td class='confluenceTd'> The return value of the command (may be an array of accepted values) - this resource raises an exception if the return value(s) do not match. </td>
+<td class='confluenceTd'> 0 </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>timeout</b> </td>
+<td class='confluenceTd'> How many seconds to let the command run before timing it out. </td>
+<td class='confluenceTd'> 3600 </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>user</b> </td>
+<td class='confluenceTd'> A user name or user ID that we should change to before running this command. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>umask</b> </td>
+<td class='confluenceTd'> Umask for files created by the command </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Execute</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Execute a command, with environment variable</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">execute "slapadd" do
+  command "slapadd &lt; /tmp/something.ldif"
+  creates "/var/lib/slapd/uid.bdb"
+  action :run
+  environment ({'HOME' =&gt; '/home/myhome'})
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Execute a command only on notification</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">execute "slapadd" do
+  command "slapadd &lt; /tmp/something.ldif"
+  creates "/var/lib/slapd/uid.bdb"
+  action :nothing
+end
+
+template "/tmp/something.ldif" do
+  source "something.ldif"
+  notifies :run, resources(:execute =&gt; "slapadd")
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Execute a command, touch file to not run again</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">execute "upgrade script" do
+  command "php upgrade-application.php &amp;&amp; touch /var/application/.upgraded"
+  creates "/var/application/.upgraded"
+  action :run
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-File"></a>File</h1>
+
+<p><font color="#f7681a">Manage files and optionally set the content. See also</font> <font color="#f7681a"><a href="#Resources-CookbookFile">CookbookFile</a></font><font color="#f7681a">,</font> <font color="#f7681a"><a href="#Resources-Template">Template</a></font><font color="#f7681a">, and</font> <font color="#f7681a"><a href="#Resources-RemoteFile">Remote File</a></font><font color="#f7681a">.</font></p>
+
+<p><font color="#f7681a">If you want to copy a file from a cookbook, you probably want to use</font> <font color="#f7681a"><a href="#Resources-CookbookFile">CookbookFile</a></font> <font color="#f7681a">instead. This resource is for working with files already on your node.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> Create this file </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create_if_missing</b> </td>
+<td class='confluenceTd'> Create this file only if it does not exist. If it exists, do nothing. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>delete</b> </td>
+<td class='confluenceTd'> Delete this file </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>touch</b> </td>
+<td class='confluenceTd'> Touch this file (update the mtime/atime) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>path</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: The path to the file </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>backup</b> </td>
+<td class='confluenceTd'> How many backups of this file to keep. Set to <tt>false</tt> if you want no backups. </td>
+<td class='confluenceTd'> 5 </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>group</b> </td>
+<td class='confluenceTd'> The group owner of the file (string or id) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>mode</b> </td>
+<td class='confluenceTd'> The octal mode of the file - e.g. <tt>'0755'</tt> <a href="http://lists.opscode.com/sympa/arc/chef/2011-06/msg00032.html">default varies</a> </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>rights</b> </td>
+<td class='confluenceTd'> Windows Only - The user permissions. e.g. 'rights &lt;permissions&gt;, &lt;principal&gt;, &lt;options&gt;'. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>inherits</b> </td>
+<td class='confluenceTd'> Windows Only - The file inherits rights from parent. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'> true </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>owner</b> </td>
+<td class='confluenceTd'> The owner for the file </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>content</b> </td>
+<td class='confluenceTd'> A string to write to the file. This will replace any previous content if set </td>
+<td class='confluenceTd'> nil (don't manage content) </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>A note about mode: When specifying the mode, the value can be a quoted string, eg "644". For a numeric value, it should be 5 digits, eg "00644" to ensure that Ruby can parse it correctly. For more detail, see <a href="http://tickets.opscode.com/browse/CHEF-174">Ticket CHEF-174</a>.</p>
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::File</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create a file</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file "/tmp/something" do
+  owner "root"
+  group "root"
+  mode "0755"
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create a file - Windows example</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file "C:\tmp\something.txt" do
+  rights :read, "Everyone"
+  rights :full_control, "DOMAIN\User"
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Remove a file</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">file "/tmp/something" do
+  action :delete
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>File Modes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># These are both equivalent.
+file "/tmp/something" do
+  mode "644"
+end
+
+file "/tmp/something" do
+  mode 00644
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Git"></a>Git</h1>
+
+<p><font color="#f7681a">Git is a provider for the</font> <font color="#f7681a"><a href="#Resources-SCM">SCM</a></font> <font color="#f7681a">resource. This is closely linked with doing application code deployment, so it is documented along with the</font> <font color="#f7681a"><a href="Deploy Resource.html" title="Deploy Resource">Deploy Resource</a></font><font color="#f7681a">.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Group"></a>Group</h1>
+
+<p><font color="#f7681a">Manage a local group.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> Create the group. </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>remove</b> </td>
+<td class='confluenceTd'> Remove the group. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>modify</b> </td>
+<td class='confluenceTd'> Modify an existing group, raising an exception if the group does not exist. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>manage</b> </td>
+<td class='confluenceTd'> Manage an existing group. This will take no action if the group does not exist. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>group_name</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: Name of the group. </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>gid</b> </td>
+<td class='confluenceTd'> Group id. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>members</b> </td>
+<td class='confluenceTd'> Include users in a group </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>append</b> </td>
+<td class='confluenceTd'> true: add these members to the group, false: these are the definitive group members </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>system</b> </td>
+<td class='confluenceTd'> true: this is a system group(system dependent low numbered range of GIDs), false: this is not a system group </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default for Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Group</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Group::Dscl</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Mac OS X </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Group::Gpasswd</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Group::Pw</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> FreeBSD </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Group::Usermod</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Solaris </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Group::Windows</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Windows </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Random user</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">group "admin" do
+  gid 999
+  members ['paco', 'vicente']
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Append to existing group</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">group "www-data" do
+  action :modify
+  members "maintenance"
+  append true
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-HTTPRequest"></a>HTTP Request</h1>
+
+<p><font color="#f7681a">Send an HTTP request with an arbitrary message. Handy for implementing your own callbacks&#33;</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>get</b> </td>
+<td class='confluenceTd'> Send a GET request </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>put</b> </td>
+<td class='confluenceTd'> Send a PUT request </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>post</b> </td>
+<td class='confluenceTd'> Send a POST request </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>delete</b> </td>
+<td class='confluenceTd'> Send a DELETE request </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>head</b> </td>
+<td class='confluenceTd'> Send a HEAD request </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>options</b> </td>
+<td class='confluenceTd'> Send an OPTIONS request </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>url</b> </td>
+<td class='confluenceTd'> The URL to send the request to </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>message</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: The message to be sent to the URL (as the <tt>message</tt> parameter) </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>headers</b> </td>
+<td class='confluenceTd'> Hash of custom headers </td>
+<td class='confluenceTd'> {} </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::HttpRequest</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Send a GET request</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Sends "http://example.com/check_in?message=Send a GET request"
+http_request "some message" do
+  url "http://example.com/check_in"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Send a POST request, with JSON message body and basic authentication</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">http_request "posting data" do
+  action :post
+  url "http://example.com/check_in"
+  message :some =&gt; "data"
+  headers({"AUTHORIZATION" =&gt; "Basic #{Base64.encode64("username:password")}"})
+end</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>JSON Body</b><br />The message is posted as application/data and not multipart/form-data or application/x-www-form-urlencoded</td></tr></table></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Ifconfig"></a>Ifconfig</h1>
+
+<p><font color="#f7681a">You can manage interfaces with the</font> <font color="#f7681a"><tt>ifconfig</tt></font> <font color="#f7681a">resource.  This resource is still under development.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>add</b> </td>
+<td class='confluenceTd'> Run <tt>ifconfig</tt> to configure the network interface and, on some platforms, write a configuration file for the network interface. </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>delete</b> </td>
+<td class='confluenceTd'> Run <tt>ifconfig</tt> to bring the network interface down and, on some platforms delete the network interface's configuration file. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>enable</b> </td>
+<td class='confluenceTd'> Run <tt>ifconfig</tt> to configure the network interface. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>disable</b> </td>
+<td class='confluenceTd'> Run <tt>ifconfig</tt> to bring the network interface down. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>target</b> </td>
+<td class='confluenceTd'> The address you would like to assign to the interface. </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>device</b> </td>
+<td class='confluenceTd'> The network interface to be configured. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>hwaddr</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>inet_addr</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>bcast</b> </td>
+<td class='confluenceTd'> Broadcast address.  Note this is not set with ifconfig but is added to the interface's startup configuration file on select platforms. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>mask</b> </td>
+<td class='confluenceTd'> The netmask. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>mtu</b> </td>
+<td class='confluenceTd'> The maximum transmission unit(mtu) of the network interface. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>metric</b> </td>
+<td class='confluenceTd'> The routing metric of the interface. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>onboot</b> </td>
+<td class='confluenceTd'> Determines whether interface should be brought up on boot. Set to "yes" to bring interface up on boot. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>network</b> </td>
+<td class='confluenceTd'> The network address. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>bootproto</b> </td>
+<td class='confluenceTd'> Boot protocol, such as <tt>"dhcp"</tt> </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>onparent</b> </td>
+<td class='confluenceTd'> Determines whether the interface should be brought up when parent interface is brought up.  Set to "yes" to bring up interface when parent interface brought up. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+</tbody></table>
+</div>
+
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Ifconfig</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">ifconfig "192.186.0.1" do
+  device "eth0"
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="Resources-Notes"></a>Notes</h3>
+
+<ul>
+	<li>Currently, the default provider only writes out a start-up configuration file for the interface on Red Hat-based platforms (it writes to <tt>/etc/sysconfig/network-scripts/ifcfg-#{device_name</tt>}).
+<br class="atl-forced-newline" /></li>
+</ul>
+
+
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Link"></a>Link</h1>
+
+<p><font color="#f7681a">Create symbolic or hard links.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> Create a link </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>delete</b> </td>
+<td class='confluenceTd'> Delete a link </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>target_file</b> </td>
+<td class='confluenceTd'> <font color="green">Name Attribute:</font> The file name of the link </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>to</b> </td>
+<td class='confluenceTd'> The real file you want to link to </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>link_type</b> </td>
+<td class='confluenceTd'> Either <tt>:symbolic</tt> or <tt>:hard</tt>. </td>
+<td class='confluenceTd'> <tt>:symbolic</tt> </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>owner</b> </td>
+<td class='confluenceTd'> The owner of the symlink </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>group</b> </td>
+<td class='confluenceTd'> The group of the symlink </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Link</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create a symbolic link</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># ln -s /etc/passwd /tmp/passwd
+link "/tmp/passwd" do
+  to "/etc/passwd"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create a hard link</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># ln /etc/passwd /tmp/passwd
+link "/tmp/passwd" do
+  to "/etc/passwd"
+  link_type :hard
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Delete a link</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">link "/tmp/mylink" do
+  action :delete
+  only_if "test -L /tmp/mylink"
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Log"></a>Log</h1>
+
+<p><font color="#f7681a">Adds log entries from your recipes.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>write</b> </td>
+<td class='confluenceTd'> Write to log </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>level</b> </td>
+<td class='confluenceTd'> :info, :warn, :debug, :error, or :fatal </td>
+<td class='confluenceTd'> :info </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Log::ChefLog</b> </td>
+<td class='confluenceTd'> n/a </td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>info log level</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">log "your string to log"</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>debug log level</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">log("a debug string") { level :debug }</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Mdadm"></a>Mdadm</h1>
+
+<p><font color="#f7681a">Manage</font> <font color="#f7681a"><a href="http://en.wikipedia.org/wiki/Mdadm">mdadm</a></font> <font color="#f7681a">software RAID devices.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> <a href="http://www.linuxfoundation.org/collaborate/workgroups/linux-raid/raid_setup#1._Create">Create a new array with per-device superblocks</a> </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>assemble</b> </td>
+<td class='confluenceTd'> <a href="http://www.linuxfoundation.org/collaborate/workgroups/linux-raid/raid_setup#2._Assemble">Assemble a previously created array into an active array</a> </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>stop</b> </td>
+<td class='confluenceTd'> Stop an active array </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>raid_device</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>:The RAID device name (/dev/md0) </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>devices</b> </td>
+<td class='confluenceTd'> An array of devices to include in the RAID array </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>level</b> </td>
+<td class='confluenceTd'> The RAID level </td>
+<td class='confluenceTd'> 1 </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>chunk</b> </td>
+<td class='confluenceTd'> The chunk size </td>
+<td class='confluenceTd'> 16 </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Mdadm</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Linux </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create and Assemble a RAID 1 Array from two disks with a 64k chunk size</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mdadm "/dev/md0" do
+  devices [ "/dev/sda", "/dev/sdb" ]
+  level 1
+  chunk 64
+  action [ :create, :assemble ]
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>mdadm does not create a config file</b><br /></td></tr></table></div>
+<p>It is important to note that while the mdadm provider will create and assemble an array, it will not create a config file to persist the array upon reboot.<br/>
+In order for that to happen, one must specify a template with the correct array layout, and use the mount provider to create an fstab entry.</p>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Mount"></a>Mount</h1>
+
+<p><font color="#f7681a">Manage a mounted filesystem.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>mount</b> </td>
+<td class='confluenceTd'> Mount the device </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>umount</b> </td>
+<td class='confluenceTd'> Unmount the device </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>remount</b> </td>
+<td class='confluenceTd'> Remount the device </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>enable</b> </td>
+<td class='confluenceTd'> Add entry to fstab </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>disable</b> </td>
+<td class='confluenceTd'> Remove entry from fstab </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>When passing multiple actions order matters. For example, <tt>mount</tt> must happen before <tt>enable</tt>: <tt>action [:mount, :enable]</tt></p>
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>mount_point</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>:The directory/path where the device should be mounted </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>device</b> </td>
+<td class='confluenceTd'> The special block device or remote node, a label or an uuid to mount. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>device_type</b> </td>
+<td class='confluenceTd'> The type of the device specified. Can be :device, :label or :uuid </td>
+<td class='confluenceTd'> :device </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>fstype</b> </td>
+<td class='confluenceTd'> The filesystem type of the device. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>options</b> </td>
+<td class='confluenceTd'> Array or string containing mount options. </td>
+<td class='confluenceTd'> defaults </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>dump</b> </td>
+<td class='confluenceTd'> Dump frequency in days, for fstab entry. </td>
+<td class='confluenceTd'> 0 </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>pass</b> </td>
+<td class='confluenceTd'> Pass number for fsck, for fstab entry. </td>
+<td class='confluenceTd'> 2 </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>supports</b> </td>
+<td class='confluenceTd'> A hash of options for supported mount features </td>
+<td class='confluenceTd'> { :remount =&gt; false } </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>For now, device is required for umount and remount in order to check the mount command output for presence. This requirement will be removed at a later date.</p>
+
+<p>For now, fstype is required. This requirement will be removed at a later date.</p>
+
+<p>If options is a string, it will be converted to an array.</p>
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Mount</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All, except Windows </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Mount::Windows</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Windows </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Mount a local block device</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mount "/mnt/local" do
+  device "/dev/sdb1"
+  fstype "ext3"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Mount a remote filesystem</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mount "/export/www" do
+  device "nas1prod:/export/web_sites"
+  fstype "nfs"
+  options "rw"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Mount a remote windows folder on local drive letter T:</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mount "T:" do
+  action :mount
+  device "\\\\hostname.example.com\\folder"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>un-mount remote windows D-drive attached as local drive letter T:</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mount "T:" do
+  action :umount
+  device "\\\\hostname.example.com\\D$"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Mount a remote filesystem &amp; add to fstab</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mount "/export/www" do
+  device "nas1prod:/export/web_sites"
+  fstype "nfs"
+  options "rw"
+  action [:mount, :enable]
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Mount a labeled filesystem</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mount "/mnt/volume1" do
+  device "volume1"
+  device_type :label
+  fstype "xfs"
+  options "rw"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Mount a non-block filesystem</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">mount "/mount/tmp" do
+  pass     0
+  fstype   "tmpfs"
+  device   "/dev/null"
+  options  "nr_inodes=999k,mode=755,size=500m"
+  action   [:mount, :enable]
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Ohai"></a>Ohai</h1>
+
+<p><font color="#f7681a">Reload node's ohai configuration. This allows recipes that change system attributes (e.g. add a user) to refer to those attributes later in the recipe.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>reload</b> </td>
+<td class='confluenceTd'> Reload the node's ohai configuration </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>plugin</b> </td>
+<td class='confluenceTd'> Optionally restrict reload to a particular Ohai plugin. By default, all plugins are reloaded. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+<th class='confluenceTh'> Options </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Ohai</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Reload ohai</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">ohai "reload" do
+  action :reload
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Reload ohai configuration after new user</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">ohai "reload_passwd" do
+  action :nothing
+  plugin "passwd"
+end
+
+user "daemonuser" do
+  home "/dev/null"
+  shell "/sbin/nologin"
+  system true
+  notifies :reload, resources(:ohai =&gt; "reload_passwd"), :immediately
+end
+
+ruby_block "just an example" do
+  block do
+    # These variables will now have the new values
+    puts node[:etc][:passwd][:daemonuser][:uid]
+    puts node[:etc][:passwd][:daemonuser][:gid]
+  end
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Package"></a>Package</h1>
+
+<p><font color="#f7681a">Manage packages.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>install</b> </td>
+<td class='confluenceTd'> Install a package - if version is provided, install that specific version </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>upgrade</b> </td>
+<td class='confluenceTd'> Upgrade a package to the latest version </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>remove</b> </td>
+<td class='confluenceTd'> Remove a package </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>purge</b> </td>
+<td class='confluenceTd'> Purge a package (this usually entails removing configuration files as well as the package itself) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>package_name</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: The name of the package to install </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>version</b> </td>
+<td class='confluenceTd'> The version of the package to install/upgrade </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>response_file</b> </td>
+<td class='confluenceTd'> An optional response file - used to pre-seed packages (note: the file is fetched by <a href="#Resources-CookbookFile">Cookbook File</a>) </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>source</b> </td>
+<td class='confluenceTd'> Used to provide an optional package source for providers that use a local file (rubygems, dpkg, yum and rpm) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>options</b> </td>
+<td class='confluenceTd'> Add additional options to the underlying package command </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>gem_binary</b> </td>
+<td class='confluenceTd'> A gem_package attribute to specify a gem binary.  Useful for installing ruby 1.9 gems while running chef in ruby 1.8 </td>
+<td class='confluenceTd'> nil (API) </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>arch</b> </td>
+<td class='confluenceTd'> The architecture of the package to install/upgrade (<a href="Yum Package Resource.html" title="Yum Package Resource">yum_package only</a>) </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>flush_cache</b> </td>
+<td class='confluenceTd'> Flush the internal YumCache before/after install/upgrade (<a href="Yum Package Resource.html" title="Yum Package Resource">yum_package only</a>, chef &gt;= 0.10.4) </td>
+<td class='confluenceTd'> { :before =&gt; false, :after =&gt; false } </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>allow_downgrade</b> </td>
+<td class='confluenceTd'> Allow yum to downgrade a package to satisfy a requested version (<a href="Yum Package Resource.html" title="Yum Package Resource">yum_package only</a>, chef &gt;= 0.10.4) </td>
+<td class='confluenceTd'> false </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>For providers that install from a local file (rubygems, dpkg, rpm), you must first grab the file via remote_file or cookbook_file.</p>
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+<th class='confluenceTh'> Options </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Package::Apt</b> </td>
+<td class='confluenceTd'> apt_package </td>
+<td class='confluenceTd'> Debian, Ubuntu </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Package::Dpkg</b> </td>
+<td class='confluenceTd'> dpkg_package </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Package::EasyInstall</b> </td>
+<td class='confluenceTd'> easy_install_package </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Package::Freebsd</b> </td>
+<td class='confluenceTd'> freebsd_package </td>
+<td class='confluenceTd'> Freebsd </td>
+<td class='confluenceTd'> No </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Package::Macports</b> </td>
+<td class='confluenceTd'> macports_package </td>
+<td class='confluenceTd'> Mac OS X </td>
+<td class='confluenceTd'> No </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Package::Portage</b> </td>
+<td class='confluenceTd'> portage_package </td>
+<td class='confluenceTd'> Gentoo </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Package::Rpm</b> </td>
+<td class='confluenceTd'> rpm_package </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Package::Rubygems</b> </td>
+<td class='confluenceTd'> gem_package </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Package::Rubygems</b> </td>
+<td class='confluenceTd'> chef_gem </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b><a href="Yum Package Resource.html" title="Yum Package Resource">Chef::Provider::Package::Yum</a></b> </td>
+<td class='confluenceTd'> yum_package </td>
+<td class='confluenceTd'> Redhat, Centos </td>
+<td class='confluenceTd'> No </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Package::Zypper</b> </td>
+<td class='confluenceTd'> zypper_package </td>
+<td class='confluenceTd'> SuSE </td>
+<td class='confluenceTd'> No </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>The options attribute was added in 0.7.0.</p>
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Package</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">package "tar" do
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Specific Package Version</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">package "tar" do
+  version "1.16.1-1"
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Package with options</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">package "debian-archive-keyring" do
+  action :install
+  options "--force-yes"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Upgrade Package</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">package "tar" do
+  action :upgrade
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Remove Package</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">package "tar" do
+  action :remove
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Purge Package</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">package "tar" do
+  action :purge
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Package Using Specific Provider</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">package "tar" do
+  action :install
+  source "/tmp/tar-1.16.1-1.rpm"
+  provider Chef::Provider::Package::Rpm
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Yum package with specified architecture</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">yum_package "glibc-devel" do
+  arch "i386"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install a gem file from the local filesystem</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">gem_package "right_aws" do
+  source "/tmp/right_aws-1.11.0.gem"
+  action :install
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install a gem file only for use in Chef recipes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">chef_gem "right_aws" do
+  action :install
+end
+
+require 'right_aws'</pre>
+		</div>
+</div></div>
+
+<p>Use of a response file is only supported on Debian and Ubuntu at this time. Providers need to be written to support use of a response_file. On Debian and Ubuntu, the file contains debconf answers to questions normally asked by the package manager on installation. Put the file in <tt>files/default</tt> of the cookbook where the package is specified and Chef will use the <a href="#Resources-CookbookFile">Cookbook File</a> resource to retrieve it.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install a package with a response_file</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">package "sun-java6-jdk" do
+  response_file "java.seed"
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="Resources-GemPackageOptions"></a>Gem Package Options</h3>
+
+<p>As of Chef 0.9.0, the RubyGems package provider attempts to install gems using RubyGems' ruby api without spawning a new gem process, but falls back to spawning a gem command to install when necessary under the following conditions:</p>
+<ol>
+	<li>If you specify a <em>gem_binary</em>, the provider will run that gem command to examine its environment settings, and again to install the gem.</li>
+	<li>If you specify install options as a String, the provider will spawn a gem command with those options when installing the gem.</li>
+</ol>
+
+
+<p>As of Chef 0.10.10, Omnibus installs will now search the PATH for a 'gem' command rather than defaulting to the current gem environment. As part of enforce_path_sanity, the Omnibus bin directories are added to the PATH, which means if you have no other Rubygems installation preceding it in the PATH, the Omnibus Rubygems installation will still be operated against. The gem_package resource under any other installation will still default to the current gem environment unless gem_binary is provided.</p>
+
+<h3><a name="Resources-SpecifyingOptionsWithaHash"></a>Specifying Options With a Hash</h3>
+
+<p>If you're not using an explicit <em>gem_binary</em> parameter to the gem_package resource, it is preferable to provide install  options as a Hash. This allows the provider to install the gem without needing to spawn an external gem process. The following options are available (options are passed to rubygems' DependencyInstaller):</p>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Option </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <tt>:env_shebang</tt> </td>
+<td class='confluenceTd'> whether or not the shebang line in executables uses <tt>/usr/bin/env ruby</tt> </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <tt>:force</tt> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <tt>:format_executable</tt> </td>
+<td class='confluenceTd'> adds the ruby version to executables if your ruby interpreter has a trailing version number, i.e., <tt>chef-client18</tt> </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <tt>:ignore_dependencies</tt> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <tt>:prerelease</tt> </td>
+<td class='confluenceTd'> installs prerelease gems </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <tt>:security_policy</tt> </td>
+<td class='confluenceTd'> see <a href="http://docs.rubygems.org/read/chapter/21">http://docs.rubygems.org/read/chapter/21</a> </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <tt>:wrappers</tt> </td>
+<td class='confluenceTd'> wraps executables so that you can specify which gem version to use with them </td>
+<td class='confluenceTd'> true </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Installing a Gem with a Hash of Options</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">gem_package("bundler") do
+  options(:prerelease =&gt; true, :format_executable =&gt; false)
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="Resources-SpecifyingOptionsWithaString"></a>Specifying Options With a String</h3>
+
+<p>When using an explicit <em>gem_binary</em>, you <b>must</b> pass in the options as a String. When not using an explicit <em>gem_binary</em>, you <b>may</b> still pass the options as a String, but this forces chef to spawn a <tt>gem</tt> process to install the gem, using more system resources. String options are passed verbatim to the gem command, so you specify them just as you would on the command line (i.e., <tt>"--prerelease"</tt> for prerelease gems).</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Installing a Gem with an Options String</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">gem_package("nokogiri") do
+  gem_binary("/opt/ree/bin/gem")
+  options("--prerelease --no-format-executable")
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="Resources-SpecifyingOptionsWitha.gemrcFile"></a>Specifying Options With a .gemrc File</h3>
+
+<p>You can also specify options in your .gemrc file. By default the <tt>gem_package</tt> resource will use the ruby interface to install gems which will ignore the .gemrc file. You can force it to use the gem command instead, and read the .gemrc file by adding the gem_binary attribute to your block:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Installing a Gem with the gem Command</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">gem_package("nokogiri") do
+  gem_binary "gem"
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="Resources-Differencesbetweenchefgemandgempackageresources"></a>Differences between chef_gem and gem_package resources</h3>
+
+<p>The gem_package resource is meant to be used when installing a gem to be used on the system, and chef_gem is useful when the gem is only needed for Chef recipes. The chef_gem resource works with all of the same attributes and options as gem_package, but does not accept gem_binary because it always uses the CurrentGemEnvironment that Chef is running under. In addition to performing actions of the gem_package resource, chef_gem does the following:</p>
+
+<ul>
+	<li>chef_gem runs its actions immediately, before convergence, allowing you to use a gem that you just installed immediately thereafter in the recipe</li>
+	<li>chef_gem runs <tt>Gem.clear_paths</tt> after the action, ensuring that gem is aware of your changes so you can 'require' a gem immediately thereafter</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-PowerShellScript"></a>PowerShell Script</h1>
+
+<p><font color="#f7681a"><a href="#Resources-Execute">Execute</a></font> <font color="#f7681a">a script using the PowerShell interpreter.</font></p>
+
+<p>Includes actions/attributes available to <a href="#Resources-Execute">Execute</a> resources: <tt>creates</tt>, <tt>cwd</tt>, <tt>environment</tt>, <tt>group</tt>, <tt>path</tt>, <tt>timeout</tt>, <tt>user</tt>. A temporary file is created and executed like other script resources, rather than run inline. This resource is used just like the regular <a href="#Resources-Script">Script</a> resource (and providers for <tt>bash</tt>, <tt>csh</tt>, <tt>perl</tt>, <tt>python</tt> and <tt>ruby</tt>) with some small tweaks under the covers for the Windows platform and PowerShell interpreter.</p>
+
+<p>By their nature, Script resources are not idempotent, as they are completely up to the user's imagination. Use the <tt>not_if</tt> or <tt>only_if</tt> <a href="#Resources-Meta">meta parameters</a> to guard the resource for idempotence.</p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>run</b> </td>
+<td class='confluenceTd'> Run the script </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>command</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: Name of the command to execute. </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>code</b> </td>
+<td class='confluenceTd'> Quoted script of code to execute. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>interpreter</b> </td>
+<td class='confluenceTd'> Script interpreter to use for <tt>code</tt> execution. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>flags</b> </td>
+<td class='confluenceTd'> command line flags to pass to the <tt>interpreter</tt> when invoking </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::PowershellScript</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>write out to an interpolated path</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">powershell "write-to-interpolated-path" do
+  code &lt;&lt;-EOH
+  $stream = [System.IO.StreamWriter] "#{Chef::Config[:file_cache_path]}/powershell-test.txt"
+  $stream.WriteLine("In #{Chef::Config[:file_cache_path]}...word.")
+  $stream.close()
+  EOH
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>use the change working directory attribute</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">powershell "cwd-then-write" do
+  cwd Chef::Config[:file_cache_path]
+  code &lt;&lt;-EOH
+  $stream = [System.IO.StreamWriter] "C:/powershell-test2.txt"
+  $pwd = pwd
+  $stream.WriteLine("This is the contents of: $pwd")
+  $dirs = dir
+  foreach ($dir in $dirs) {
+    $stream.WriteLine($dir.fullname)
+  }
+  $stream.close()
+  EOH
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cwd to a winodws env variable</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">powershell "cwd-to-win-env-var" do
+  cwd "%TEMP%"
+  code &lt;&lt;-EOH
+  $stream = [System.IO.StreamWriter] "./temp-write-from-chef.txt"
+  $stream.WriteLine("chef on windows rox yo!")
+  $stream.close()
+  EOH
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>pass an env var to script</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">powershell "read-env-var" do
+  cwd Chef::Config[:file_cache_path]
+  environment ({'foo' =&gt; 'BAZ'})
+  code &lt;&lt;-EOH
+  $stream = [System.IO.StreamWriter] "./test-read-env-var.txt"
+  $stream.WriteLine("FOO is $foo")
+  $stream.close()
+  EOH
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-RemoteDirectory"></a>Remote Directory</h1>
+
+<p><font color="#f7681a">Recursively transfer a directory from the cookbook's files/default directory.</font></p>
+
+<p>Remote directories obey <a href="File Distribution.html#FileDistribution-FilesFileSpecificity">file specificity</a> so the directory you wish to copy should be located under <tt>COOKBOOK_NAME/files/default/REMOTE_DIRECTORY</tt> or a host&#45; or distribution-specific path if desired.</p>
+
+<p>Remote directory includes the attributes and actions of <a href="#Resources-Directory">Directory</a>. Name variable is still <tt>path</tt>.</p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>cookbook</b> </td>
+<td class='confluenceTd'> Specify the cookbook where the directory is located, default is current cookbook </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>files_backup</b> </td>
+<td class='confluenceTd'> Number of backup copies to keep for files in the directory </td>
+<td class='confluenceTd'> 5 </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>files_owner</b> </td>
+<td class='confluenceTd'> The owner for files in the directory. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>files_group</b> </td>
+<td class='confluenceTd'> The group for files in the directory. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>files_mode</b> </td>
+<td class='confluenceTd'> The octal mode for files in the directory - <tt>0755</tt>. </td>
+<td class='confluenceTd'> 0644 </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>rights</b> </td>
+<td class='confluenceTd'> Windows Only - The user permissions. e.g. 'rights &lt;permissions&gt;, &lt;principal&gt;, &lt;options&gt;'. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>inherits</b> </td>
+<td class='confluenceTd'> Windows Only - The directory inherits rights from parent. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'> true </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>path</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: Path to the directory. </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>source</b> </td>
+<td class='confluenceTd'> From the cookbook's <tt>files/</tt> directory. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>purge</b> </td>
+<td class='confluenceTd'> Purge any extra files found in the target directory </td>
+<td class='confluenceTd'> false </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>overwrite</b> </td>
+<td class='confluenceTd'> Overwrite files if different from the source </td>
+<td class='confluenceTd'> true </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>A note about mode: When specifying the mode, the value can be a quoted string, eg "644". For a numeric value, it should be 5 digits, eg "00644" to ensure that Ruby can parse it correctly. For more detail, see <a href="http://tickets.opscode.com/browse/CHEF-174">Ticket CHEF-174</a>.</p>
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default for Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Directory::RemoteDirectory</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Recursively transfer a directory from a remote location</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># create up to 10 backups of the files, set the files owner different from the directory.
+remote_directory "/tmp/remote_something" do
+  source "something"
+  files_backup 10
+  files_owner "root"
+  files_group "root"
+  files_mode "0644"
+  owner "nobody"
+  group "nobody"
+  mode "0755"
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-RemoteFile"></a>Remote File</h1>
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Deprecated Behavior</b><br />In Chef 0.8.x and earlier, Remote File is also used to fetch files from the <tt>files/</tt> directory in a cookbook. This behavior is now provided by <a href="#Resources-CookbookFile">Cookbook File</a>, and use of Remote File for this purpose is deprecated (though still valid) in Chef 0.9.0 and later.</td></tr></table></div>
+<p><font color="#f7681a">Transfer a file from a remote</font> <font color="#f7681a"><tt>source</tt></font><font color="#f7681a">.</font> Remote File includes the attributes and actions of <a href="#Resources-File">File</a>. Name variable is still <tt>path</tt>.</p>
+
+<p>Read more about <a href="File Distribution.html" title="File Distribution">File Distribution</a> to learn how Chef determines <a href="File Distribution.html#FileDistribution-FileSpecificity">where to get the file</a></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> Synchronize the file from the remote <tt>source</tt> to the filesystem </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create_if_missing</b> </td>
+<td class='confluenceTd'> Create the file locally by fetching from the remote source only if the file doesn't yet exist </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>path</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: The path to the file </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>backup</b> </td>
+<td class='confluenceTd'> How many backups of this file to keep. Set to <tt>false</tt> if you want no backups. </td>
+<td class='confluenceTd'> 5 </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>group</b> </td>
+<td class='confluenceTd'> (optional) The group owner of the file (string or id) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>mode</b> </td>
+<td class='confluenceTd'> (optional) The octal mode of the file - e.g. <tt>'0755'</tt> <a href="http://lists.opscode.com/sympa/arc/chef/2011-06/msg00032.html">default varies</a> </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>rights</b> </td>
+<td class='confluenceTd'> Windows Only - The user permissions. e.g. 'rights &lt;permissions&gt;, &lt;principal&gt;, &lt;options&gt;'. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>inherits</b> </td>
+<td class='confluenceTd'> Windows Only - The file inherits rights from parent. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'> true </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>owner</b> </td>
+<td class='confluenceTd'> (optional) The owner for the file </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>source</b> </td>
+<td class='confluenceTd'> The source URL </td>
+<td class='confluenceTd'> the basename of the path attribute (see deprecated attributes) </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>checksum</b> </td>
+<td class='confluenceTd'> (optional) the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-DeprecatedAttributes"></a>Deprecated Attributes</h3>
+
+<p>The following attributes and attribute usage are relevant only to deprecated behavior that is now provided by cookbook file.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>cookbook</b> </td>
+<td class='confluenceTd'> Specify the cookbook where the file is located, default is current cookbook </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>source</b> </td>
+<td class='confluenceTd'> The source file in <tt>files/</tt> directory </td>
+<td class='confluenceTd'> last path component of name </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>The source follows the same search path as <a href="Templates.html#Templates-TemplateLocationSpecificity">Templates</a></p>
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default for Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::File::RemoteFile</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Transfer a file from some URL</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">remote_file "/tmp/testfile" do
+  source "http://www.example.com/tempfiles/testfile"
+  mode "0644"
+  checksum "08da002l" # A SHA256 (or portion thereof) of the file.
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Transfer a file only if the remote source has changed (uses http_request resource)</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">remote_file "/tmp/couch.png" do
+  source "http://couchdb.apache.org/img/sketch.png"
+  action :nothing
+end
+
+http_request "HEAD #{http://couchdb.apache.org/img/sketch.png}" do
+  message ""
+  url http://couchdb.apache.org/img/sketch.png
+  action :head
+  if File.exists?("/tmp/couch.png")
+    headers "If-Modified-Since" =&gt; File.mtime("/tmp/couch.png").httpdate
+  end
+  notifies :create, resources(:remote_file =&gt; "/tmp/couch.png"), :immediately
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Route"></a>Route</h1>
+
+<p><font color="#f7681a">Manage the system routing table.</font></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>Currently Only works on Linux, and only outputs config files on redhat based distros</td></tr></table></div>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>add</b> </td>
+<td class='confluenceTd'> Add a route </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>delete</b> </td>
+<td class='confluenceTd'> Delete a route </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>target</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: The address of the target route </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>netmask</b> </td>
+<td class='confluenceTd'> The decimal representation of the network mask eg <tt>255.255.255.0</tt> </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>gateway</b> </td>
+<td class='confluenceTd'> The gateway for the route </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>device</b> </td>
+<td class='confluenceTd'> Network interface to apply this route to </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Route</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Add a host route</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">route "10.0.1.10/32" do
+  gateway "10.0.0.20"
+   device "eth1"
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Delete a network route</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">route "10.1.1.0/24" do
+  gateway "10.0.0.20"
+   action :delete
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-RubyBlock"></a>Ruby Block</h1>
+
+<p><font color="#f7681a">The</font> <font color="#f7681a"><tt>ruby_block</tt></font> <font color="#f7681a">resource can be used to execute a bit of Ruby code during a run.</font> Ruby code in ruby_block resources is evaluated <b>with</b> other resources during convergence, whereas Ruby code outside ruby_block resources is evaluated <b>before</b> other resources, during recipe evaluation (compilation).</p>
+
+<p>(See <a href="Evaluate and Run Resources at Compile Time.html" title="Evaluate and Run Resources at Compile Time">Evaluate and Run Resources at Compile Time</a> for examples, and <a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">Anatomy of a Chef Run</a> for more detail on code evaluation within a chef-client run.)</p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> Create the Ruby Block </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>block</b> </td>
+<td class='confluenceTd'> A block of Ruby code </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default For Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::RubyBlock</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Reread Chef client config in a run</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">ruby_block "reload_client_config" do
+  block do
+    Chef::Config.from_file("/etc/chef/client.rb")
+  end
+  action :create
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-SCM"></a>SCM</h1>
+
+<p><font color="#f7681a">Source code can be managed via the SCM resource. This is closely linked with doing application code deployment, so it is documented along with the</font> <font color="#f7681a"><a href="Deploy Resource.html" title="Deploy Resource">Deploy Resource</a></font><font color="#f7681a">.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Script"></a>Script</h1>
+
+<p><font color="#f7681a"><a href="#Resources-Execute">Execute</a></font> <font color="#f7681a">a script using the specified interpreter.</font> Includes all actions/attributes available to <a href="#Resources-Execute">Execute</a> resources. Predefined available script interpreters are <tt>bash</tt>, <tt>csh</tt>, <tt>perl</tt>, <tt>python</tt> and <tt>ruby</tt>.</p>
+
+<p>The <tt>ruby</tt> script resource is different than the <tt>ruby_block</tt> resource described above, as it is created as a temporary file and executed like other script resources, rather than run inline.</p>
+
+<p>By their nature, Script resources are not idempotent, as they are completely up to the user's imagination. Use the <tt>not_if</tt> or <tt>only_if</tt> <a href="#Resources-Meta">meta parameters</a> to guard the resource for idempotence.</p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>run</b> </td>
+<td class='confluenceTd'> Run the script </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>command</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: Name of the command to execute. </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>code</b> </td>
+<td class='confluenceTd'> Quoted script of code to execute. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>interpreter</b> </td>
+<td class='confluenceTd'> Script interpreter to use for <tt>code</tt> execution. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>flags</b> </td>
+<td class='confluenceTd'> command line flags to pass to the <tt>interpreter</tt> when invoking </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<p>Providers for Chef::Resource::Script are aliases for different command interpreters.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Resource::Script::Bash</b> </td>
+<td class='confluenceTd'> bash </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Resource::Script::Csh</b> </td>
+<td class='confluenceTd'> csh </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Resource::Script::Perl</b> </td>
+<td class='confluenceTd'> perl </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Resource::Script::Python</b> </td>
+<td class='confluenceTd'> python </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Resource::Script::Ruby</b> </td>
+<td class='confluenceTd'> ruby </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Run a bash script</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">script "install_something" do
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code &lt;&lt;-EOH
+  wget http://www.example.com/tarball.tar.gz
+  tar -zxf tarball.tar.gz
+  cd tarball
+  ./configure
+  make
+  make install
+  EOH
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Use bash provider/interpreter to run the same script</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">bash "install_something" do
+  user "root"
+  cwd "/tmp"
+  code &lt;&lt;-EOH
+  wget http://www.example.com/tarball.tar.gz
+  tar -zxf tarball.tar.gz
+  cd tarball
+  ./configure
+  make
+  make install
+  EOH
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Service"></a>Service</h1>
+
+<p><font color="#f7681a">Manage a service.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>enable</b> </td>
+<td class='confluenceTd'> Enable this service </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>disable</b> </td>
+<td class='confluenceTd'> Disable this service </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>nothing</b> </td>
+<td class='confluenceTd'> Don't do anything with this service </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>start</b> </td>
+<td class='confluenceTd'> Start this service </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>stop</b> </td>
+<td class='confluenceTd'> Stop this service </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>restart</b> </td>
+<td class='confluenceTd'> Restart this service </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>reload</b> </td>
+<td class='confluenceTd'> Reload the configuration for this service </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>Use <tt>action :start</tt> to make sure the service is started and running. Use <tt>action :enable</tt> to enable it at boot. See examples for more.</p>
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>service_name</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: Name of the service. </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>pattern</b> </td>
+<td class='confluenceTd'> Pattern to look for in the process table. </td>
+<td class='confluenceTd'> service_name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>start_command</b> </td>
+<td class='confluenceTd'> Command used to start this service. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>stop_command</b> </td>
+<td class='confluenceTd'> Command used to stop this service. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>status_command</b> </td>
+<td class='confluenceTd'> Command used to check the service run status. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>restart_command</b> </td>
+<td class='confluenceTd'> Command used to restart this service. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>reload_command</b> </td>
+<td class='confluenceTd'> Command used to tell this service to reload its configuration. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>supports</b> </td>
+<td class='confluenceTd'> Features this service supports, ie <tt>:restart</tt>, <tt>:reload</tt>, <tt>:status</tt>. </td>
+<td class='confluenceTd'> false </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>The supports parameter attribute controls how the Chef <a href="Providers.html" title="Providers">Provider</a> will attempt to manage the service.</p>
+
+<ul>
+	<li>:restart - the init script or other service provider can use a restart command. If this is not specified, Chef will attempt to stop then start the service.</li>
+	<li>:reload - the init script or other service provider can use a reload command.</li>
+	<li>:status - the init script or other service provider can use a status command to determine if the service is running. If this is not specified, Chef will attempt to match the service_name against the process table as a regular expression, unless <tt>pattern</tt> is specified as a parameter attribute.</li>
+</ul>
+
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<p>By default, the init provider is used, which runs <tt>/etc/init.d/service_name</tt> with <tt>&#95;command</tt>.</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default for Platform </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Service::Init</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Service::Init::Debian</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Debian, Ubuntu </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Service::Upstart</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Service::Init::Freebsd</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Freebsd </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Service::Init::Gentoo</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Gentoo </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Service::Init::Redhat</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Redhat, Centos </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Service::Solaris</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Solaris </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Service::Windows</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Windows </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::Service::Macosx</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Mac OS X </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Starts the service if it is not running.</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># typically this will run /etc/init.d/example_service start
+service "example_service" do
+  action :start
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Basic example, starts the service if it's not running and enables it to start at system boot time</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># runs /etc/init.d/example_service (start|stop|restart), etc.
+service "example_service" do
+  supports :status =&gt; true, :restart =&gt; true, :reload =&gt; true
+  action [ :enable, :start ]
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Manage the ssh service, named depending on the node's platform</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">service "example_service" do
+  case node[:platform]
+  when "CentOS","RedHat","Fedora"
+    service_name "redhat_name"
+  else
+    service_name "other_name"
+  end
+  supports :restart =&gt; true
+  action [ :enable, :start ]
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Change Provider for service depending on the node's platform</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">service "example_service" do
+    case node[:platform]
+    when "ubuntu"
+      if node[:platform_version].to_f &gt;= 9.10
+        provider Chef::Provider::Service::Upstart
+      end
+    end
+    action [:enable, :start]
+  end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Process table has a different value than the name of the service script</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">service "samba" do
+  pattern "smbd"
+  action [:enable, :start]
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Subversion"></a>Subversion</h1>
+
+<p><font color="#f7681a">Subversion is a provider for the</font> <font color="#f7681a"><a href="#Resources-SCM">SCM</a></font> <font color="#f7681a">resource. This is closely linked with doing application code deployment, so it is documented along with the</font> <font color="#f7681a"><a href="Deploy Resource.html" title="Deploy Resource">Deploy Resource</a></font><font color="#f7681a">.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-Template"></a>Template</h1>
+
+<p><font color="#f7681a">Manage</font> <font color="#f7681a"><a href="#Resources-File">File</a></font> <font color="#f7681a">contents with an embedded ruby (erb) template.</font> Includes actions and attributes from <a href="#Resources-File">File</a>. <tt>path</tt> is the Name attribute. Read more about <a href="Templates.html" title="Templates">templates</a>.</p>
+
+<p>Templates follow the same <a href="File Distribution.html#FileDistribution-FileSpecificity">File Specificity</a> rules as <tt>remote_file</tt> and <tt>file</tt> resources.</p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> Create the file </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create_if_missing</b> </td>
+<td class='confluenceTd'> Create only if it doesn't exist yet </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>backup</b> </td>
+<td class='confluenceTd'> How many backups of this file to keep. Set to <tt>false</tt> if you want no backups. </td>
+<td class='confluenceTd'> 5 </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>cookbook</b> </td>
+<td class='confluenceTd'> Specify the cookbook where the template is located, default is current cookbook </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>path</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: The path to the file </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>source</b> </td>
+<td class='confluenceTd'> Template source file. Found in templates/default for the cookbook. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>group</b> </td>
+<td class='confluenceTd'> The group owner of the file (string or id) </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>mode</b> </td>
+<td class='confluenceTd'> The octal mode of the file - e.g. <tt>'0755'</tt> <a href="http://lists.opscode.com/sympa/arc/chef/2011-06/msg00032.html">default varies</a> </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>rights</b> </td>
+<td class='confluenceTd'> Windows Only - The user permissions. e.g. 'rights &lt;permissions&gt;, &lt;principal&gt;, &lt;options&gt;'. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>inherits</b> </td>
+<td class='confluenceTd'> Windows Only - The file inherits rights from parent. See <a href="http://wiki.opscode.com/display/chef/Improved+Windows+File+Security">Windows File Security</a>. </td>
+<td class='confluenceTd'> true </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>owner</b> </td>
+<td class='confluenceTd'> The owner for the file </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>variables</b> </td>
+<td class='confluenceTd'> Variables to use in the template. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>local</b> </td>
+<td class='confluenceTd'> Is the template already present on the node? </td>
+<td class='confluenceTd'> false </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>Source is found in the search path per the <a href="Templates.html#Templates-TemplateLocationSpecificity">templates page</a></p>
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default for Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> Chef::Provider::File::Template </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Config file from a template</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/tmp/config.conf" do
+  source "config.conf.erb"
+end</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Config file from a local template</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/tmp/config.conf" do
+  local true
+  source "/tmp/config.conf.erb"
+end</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Config file from a template with variable map</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">template "/tmp/config.conf" do
+  source "config.conf.erb"
+  variables(
+    :config_var =&gt; node[:configs][:config_var]
+  )
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-User"></a>User</h1>
+
+<p><font color="#f7681a">Manage a local user.</font></p>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em></p>
+
+<h3><a name="Resources-Actions"></a>Actions</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Action </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>create</b> </td>
+<td class='confluenceTd'> Create the user with given attributes.  If the user exist, ensure that the resource is in the correct state. This implies <b>manage</b>. </td>
+<td class='confluenceTd'> Yes </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>remove</b> </td>
+<td class='confluenceTd'> Remove the user. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>modify</b> </td>
+<td class='confluenceTd'> Modify an existing user, raising an exception if the user does not exist. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>manage</b> </td>
+<td class='confluenceTd'> Manage an existing user. This will take no action if the user does not exist. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>lock</b> </td>
+<td class='confluenceTd'> Lock the user's password. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>unlock</b> </td>
+<td class='confluenceTd'> Unlock the user's password. </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Attributes"></a>Attributes</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Attribute </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Default Value </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>username</b> </td>
+<td class='confluenceTd'> <font color="green">Name attribute</font>: Name of the user. </td>
+<td class='confluenceTd'> name </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>comment</b> </td>
+<td class='confluenceTd'> Gecos/Comment field. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>uid</b> </td>
+<td class='confluenceTd'> Numeric user id. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>gid</b> </td>
+<td class='confluenceTd'> Primary group id. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>home</b> </td>
+<td class='confluenceTd'> Home directory location </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>shell</b> </td>
+<td class='confluenceTd'> Login shell. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>password</b> </td>
+<td class='confluenceTd'> Shadow hash of password. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>system</b> </td>
+<td class='confluenceTd'> Whether to create a system user. </td>
+<td class='confluenceTd'> nil </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>supports</b> </td>
+<td class='confluenceTd'> User features supported, eg <tt>:manage_home</tt>. </td>
+<td class='confluenceTd'> {:manage_home =&gt; false, :non_unique =&gt; false } </td>
+</tr>
+</tbody></table>
+</div>
+
+
+
+<ul>
+	<li>The <b>system</b> parameter can be used with useradd as the provider to create a "system" user which passes the <tt>&#45;r</tt> flag to <tt>useradd</tt>.</li>
+</ul>
+
+
+<ul>
+	<li>The <b>supports</b> attribute accepts a Mash where the keys represent features and the values are booleans indicating whether that particular feature is supported.<br/>
+Currently, there are two features of note:
+	<ul>
+		<li><tt>:manage_home</tt>: Indicates whether the user's home directory will be created when the user is created.<br/>
+In the case of the Useradd provider, this indicates whether <tt>&#45;d</tt> and <tt>&#45;m</tt> will be passed to <tt>useradd</tt> (in the case of <tt>:create</tt>), or whether <tt>&#45;d</tt> will be passed to <tt>usermod</tt> (in the case of <tt>:manage</tt> and <tt>:modify</tt>).</li>
+		<li><tt>:non_unique</tt>: Indicates whether non-unique UIDs are allowed.<br/>
+Currently unused by the existing providers.</li>
+	</ul>
+	</li>
+</ul>
+
+
+<ul>
+	<li>The user resource does not include the &#45;dm parameter on the usermod command when "supports :manage_home=&gt;true". <a href="http://tickets.opscode.com/browse/CHEF-2706">Chef-2706</a> is open to address this.</li>
+</ul>
+
+
+<p><b><em>Looking to add your user's public SSH key to the authorized_keys file?</em></b> <b>See the</b> <b><a href="https://github.com/opscode/cookbooks/tree/master/users">users cookbook</a></b></p>
+
+<h3><a name="Resources-Providers"></a>Providers</h3>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Provider </th>
+<th class='confluenceTh'> Shortcut Resource </th>
+<th class='confluenceTh'> Default for Platforms </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::User</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::User::Useradd</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> All </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::User::Pw</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> FreeBSD </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::User::Dscl</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Mac OS X </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <b>Chef::Provider::User::Windows</b> </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> Windows </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Resources-Prerequisites"></a>Prerequisites</h3>
+
+<p>In order to use the "password" attribute in Chef 0.5.6, you must have "ruby-shadow" installed. You can get this by installing the debian package "libshadow-ruby1.8".</p>
+
+<h3><a name="Resources-PasswordShadowHash"></a>Password Shadow Hash</h3>
+
+<p>Different operating systems support different password encryption methods. MD5 is generally a supported fallback for the time being but newer methods such as SHA-512 should be used where available. Also, the tool you use to create the encrypted password may be different from one distribution to another.</p>
+
+<p>To create a password shadow hash for use in the password attribute, run one of the following in your shell:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create MD5 Password Shadow Hash</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">echo "theplaintextpassword" | makepasswd --clearfrom=- --crypt-md5 |awk '{ print $2 }'</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Create MD5 Password Shadow Hash Alternate Method</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">openssl passwd -1 "theplaintextpassword"</pre>
+		</div>
+</div></div>
+
+<p>The "mkpasswd" utility can generate SHA-512 password hashes. On Ubuntu 9.10-10.04, install the mkpasswd package. On Ubuntu 10.10+, install the whois package. For other distributions, check the local documentation or package repositories.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install mkpasswd</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">sudo apt-get install mkpasswd
+# OR
+sudo apt-get install whois</pre>
+		</div>
+</div></div>
+
+<p>Then generate the password with the mkpasswd command:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">mkpasswd -m sha-512</pre>
+		</div>
+</div></div>
+
+<h3><a name="Resources-Examples"></a>Examples</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Random user</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">user "random" do
+  comment "Random User"
+  uid 1000
+  gid "users"
+  home "/home/random"
+  shell "/bin/zsh"
+  password "$1$JJsvHslV$szsCjVEroftprNn4JHtDi."
+end</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>System User</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">user "systemguy" do
+  comment "system guy"
+  system true
+  shell "/bin/false"
+end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h1><a name="Resources-OpscodeCookbookLWRPs"></a>Opscode Cookbook LWRPs</h1>
+
+<p><font color="#f7681a">Opscode provides several cookbooks that define custom</font> <font color="#f7681a"><a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers (LWRP)</a></font><font color="#f7681a">. They are documented on a separate page.</font></p>
+
+<ul>
+	<li><a href="Opscode LWRP Resources.html" title="Opscode LWRP Resources">Opscode LWRP Resources</a></li>
+</ul>
+</div></div>
+
+<p><em><a href="#Resources-top">return to top of page</a></em>
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Resources and Providers.html" title="Resources and Providers"><span class="image-wrap" style="float: left"><img src="../attachments/1179732/20840706.png" hspace="4" style="border: 0px solid black"/></span> Resources and Providers </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Deploy Resource.html" title="Deploy Resource"><span class="image-wrap" style="float: right"><img src="../attachments/1179732/20840705.png" hspace="4" style="border: 0px solid black"/></span> Deploy Resource </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179732/13238285.jpg">resource-definition.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179732/20840705.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179732/20840706.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-7897305"></a>
+                                    <font class="smallfont"><p>Gem package installs are timing out for me. Could there be an option in future to adjust the timeout for the package resource, or will the generic not_if override the default timeout?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by camelpunch at Sep 29, 2010 15:23
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-8257576"></a>
+                                    <font class="smallfont"><p>Most versions of ruby-shadow that I have seen (including the popular one in this cookbook: <a href="http://github.com/37signals/37s_cookbooks">http://github.com/37signals/37s_cookbooks</a>) do not work with Ruby 1.9.x.</p>
+
+<p>I am using this: <a href="http://github.com/thoughtless/ruby-shadow-cookbook">http://github.com/thoughtless/ruby-shadow-cookbook</a>, which is a fork of <a href="http://github.com/biilmann/ruby-shadow-cookbook">http://github.com/biilmann/ruby-shadow-cookbook</a>.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by opscode.com@phylae.otherinbox.com at Oct 26, 2010 12:04
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-14319620"></a>
+                                    <font class="smallfont"><p>Anyone else curious what the difference between manage, modify and create actions are in the user resource?
+<a href="https://github.com/opscode/chef/blob/master/chef/lib/chef/provider/user.rb">https://github.com/opscode/chef/blob/master/chef/lib/chef/provider/user.rb</a></p>
+
+<p>Might this be documented? Seems that :manage is simply :modify, but will silently do nothing if the user doesn't exit (whereas :modify complains).</p>
+
+<p>But :creates also seems to compare if the user exists, and updates accordingly, so I'm not clear on how it's different from :modify yet...</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by patcon at Jun 14, 2011 21:55
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-14319623"></a>
+                                    <font class="smallfont"><p>Ok, scratch that confusion. Here's what I've got:</p>
+
+
+<p>will...&gt; create | edit | complain if nonexistent<br/>
+<ins>action</ins><br/>
+:create &#8211; x ----- x ------------ -<br/>
+:manage &#8211; - ----- x ------------ -<br/>
+:modify &#8211; - ----- x ------------ x</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by patcon at Jun 14, 2011 22:01
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728641"></a>
+                                    <font class="smallfont"><p>Hi, I'm a new Chef user. I like the resource&nbsp;notification system, but it seems that only allows <b><em>LOCAL</em></b> <b>resource</b> <b>notifications</b> (doesn't support <ins>remote</ins> resource notifications), wright?</p>
+
+<p>I mean, according to this documentation ...</p>
+
+<p><em>The basic form of a notification is:</em></p>
+
+<p><em>resource "name" do</em><br/>
+<em>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; notifies :action, "resource_type</em> <em>resource_name</em><em>", :notification_timing</em><br/>
+<em>end</em></p>
+
+<p>... i understand that you can't&nbsp;specify&nbsp;a remote resource&nbsp;node. If this is correct, what is the best way in Chef to notify a remote resource?</p>
+
+<p>Thank you very much.</p>
+
+<p>Best regards,</p>
+
+<p>Leandro<br class="atl-forced-newline" /></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by leandro at Jun 29, 2011 19:01
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728642"></a>
+                                    <font class="smallfont"><p>Leandro, you right there's no real remote notifications... <br/>
+I'm curious what are you trying to achieve with a remote notification?</p>
+
+<p>For some swift recipes I've written I had to synchronize remote systems. (a file called the ring file needs to be computed in 1 place and distributed when ever it changes to all others).<br/>
+my approach was to scp the file around - either push it when it got recomputed from the source, or pull it when a node was checking for an updated.</p>
+
+<p>Another possible approach is to store information as either node attributes or data_bags. </p>
+
+<p>Both the approaches assume that each machine runs chef-client as a daemon, and that there's no immediacy required - i.e. that its ok to pick the change the next interval (10 minutes or so)</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by aabes at Jun 29, 2011 19:13
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728643"></a>
+                                    <font class="smallfont"><p>I'm still finding my groove with chef (so maybe someone else can comment on how much of a bad idea this is) but if its only one node that needs to run remote notifications on other nodes, perhaps you could make that node into an admin client, and so write to databags from within its recipes. Then right after update, you could ssh over to other nodes (whose identity is perhaps determined through search()) and run chef-client on-demand to act on the new data_bag content.</p>
+
+<p>Not sure when solr indexes the new databag  changes, so that might be a caveat.</p>
+
+<p>I'm sure this isn't how chef is intended to be used, and I imagine there's a more elegant solution, but hey, might get you thinking along the right lines <img class="emoticon" src="images/icons/emoticons/smile.gif" height="20" width="20" align="absmiddle" alt="" border="0"/></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by patcon at Jun 29, 2011 19:40
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728644"></a>
+                                    <font class="smallfont"><p>Hi Andi and Patrick, thank you very much for your quick and useful responses! I'm thinking in how handle clusters configurations with Chef when a new node is added to the cluster, and therefore I need refresh the configuration in the cluster's clients. For example, suppose that we have 2 memory cache servers (i.e running Memcached) in one cluster and have one (or more) web servers that use these cache servers (in this scenario the web servers are "clients" of the cache servers). If I add a third Memcached server to the cluster I will need update the web server configuration (their php configuration and reload the web servers).<br/>
+I think that the two approachs you suggested can work perfect (the "push" strategy of use scp/ssh to send/refresh a new configuration or the "pull" strategy of use data bags and wait until the web servers chef clients refresh their configurations).<br/>
+Howerver, perhaps the use of notifications is not the best approach in this situation. Maybe is a too "event-driven" solution and a more declarative approach could be better. I'm just starting with Chef and have a lot to learn. Anyway, I'm sure these strategies are very useful in many scenarios.</p>
+
+<p>Thank you very much again for your help folks!</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by leandro at Jun 29, 2011 20:43
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728645"></a>
+                                    <font class="smallfont">
+<p>Actually, the scenario you're describing is very similar to what the swift-proxy code needed to do. down to the memcache servers <img class="emoticon" src="images/icons/emoticons/wink.gif" height="20" width="20" align="absmiddle" alt="" border="0"/></p>
+
+<p>take a peek here: <a href="https://github.com/dellcloudedge/openstack-swift/blob/master/cookbooks/swift/recipes/proxy.rb">https://github.com/dellcloudedge/openstack-swift/blob/master/cookbooks/swift/recipes/proxy.rb</a></p>
+
+<p>The assumption here is that the new servers can be picked up "soon". Each server runs this code independently and uses the Chef database to locate it's friends (in my case each server runs a memcached server as well.. but can utilize the peer ones). If any new servers are present, the local configuration is updated, and the service restarted.</p>
+
+<p>Key points here - <br/>
+a) it happens independently on each server, the next time the chef-client daemon is executed<br/>
+b) chef (server) knows about the roles (and hence capabilities) each server has. clients can query the server and use this knowledge to self configure</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by aabes at Jun 29, 2011 20:56
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728646"></a>
+                                    <font class="smallfont"><p>Thank you very much Andi. I read the swift-proxy recipe, is a very good example. Like I can see, there is no need to use notifications in these situations. Using roles and searchs is all what I need. Thank you again!</p>
+
+<p>Leandro </p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by leandro at Jun 29, 2011 22:20
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-15728647"></a>
+                                    <font class="smallfont"><p>Actually, Leandro, you pointed out a bug, or at least made me realize one exists.</p>
+
+<p>Assuming the service in question only reads its configuration when it starts, the template code should notify the service to restart if changes were made (Chef is smart enough to only fire the notification if the template actually changed)<br/>
+I'll put a fix for that in a bit.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by aabes at Jun 29, 2011 22:25
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-16089129"></a>
+                                    <font class="smallfont"><p>The mode doesn't have to be five digits, it just has to have a leading 0 (zero).</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by smparkes at Jul 29, 2011 17:17
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

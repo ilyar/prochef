@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Workstation Setup</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Workstation Setup
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jul 09, 2012 by <font color="#0050B2">jessica</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<hr />
+<h5><a name="WorkstationSetup-"></a><font color="#f7681a">This guide will explain how to setup your workstation for Cookbook development and Chef infrastructure management with Knife.</font>  </h5>
+<hr />
+<p><span class="image-wrap" style="float: left"><img src="../attachments/11666200/19005513.jpg" hspace="20" vspace="10" style="border: 0px solid black"/></span></p>
+
+<p><br class="atl-forced-newline" />
+<em><b>So what's the difference between a workstation and a node?</b></em>  </p>
+<h6><a name="WorkstationSetup-"></a><font color="#f7681a"> A workstation <em>manages</em> Chef <br/>
+A Node <em>is managed by</em> Chef</font></h6>
+
+<p>Your workstation <em>can be</em> set up as a client of the chef-server just like managed nodes, but you will mainly be invoking commands and uploading <a href="Roles.html" title="Roles">Roles</a>, <a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> and other Chef artifacts to the server.</p>
+
+<p>Chef itself is written in Ruby, as are Cookbooks, Knife plugins, and Chef Exception and Report Handlers.  <a href="Just Enough Ruby for Chef.html" title="Just Enough Ruby for Chef">You don't have to be a Ruby expert to be an effective Chef Cook</a>, but as you dive into Chef you will find yourself embracing Chef's Ruby roots.  </p>
+
+<p>The operating system specific guides found below explain how to: </p>
+
+<ol>
+	<li>Install Ruby and Chef on your workstation,</li>
+	<li>Install git on your workstation, and</li>
+	<li>Create and configure a  chef repository on your workstation</li>
+</ol>
+
+</td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="42%">
+<p><br class="atl-forced-newline" />
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><a name="WorkstationSetup-SystemRequirements"></a></p>
+<h3><a name="WorkstationSetup-"></a><font color="#f7681a">System Requirements</font></h3>
+<hr />
+<p><font color="navy"><b>Chef-client is supported on the following platforms</b></font></p>
+
+<ul>
+	<li>Ubuntu (10.04+)</li>
+	<li>Debian (5.0, 6.0)</li>
+	<li>RHEL &amp; CentOS (5.x, 6.x)</li>
+	<li>Fedora 10&#43;</li>
+	<li>Solaris 9,10,11 Sparc</li>
+	<li>Solaris 10,11 (x86 and x64)</li>
+	<li>Mac OS X (10.4, 10.5, 10.6, 10.7)</li>
+	<li>Windows 7</li>
+	<li>Windows Server 2003 R2, 2008 R2</li>
+</ul>
+
+
+<p>Additionally, chef-client is known to run on the following platforms</p>
+
+<ul>
+	<li>Ubuntu (6.06, 8.04-9.10)</li>
+	<li>RHEL &amp; CentOS (5.x)</li>
+	<li>Gentoo (11.1,11.2)</li>
+	<li>FreeBSD (7.1)</li>
+	<li>OpenBSD (4.4)</li>
+	<li>OpenSolaris (2008.11)</li>
+	<li>Solaris 5.10 (u6)</li>
+	<li>SuSE (11.x)</li>
+	<li>Windows Vista</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" /></p>
+</div></div></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h2><a name="WorkstationSetup-TheComponentsofaChefWorkstation"></a>The Components of a Chef Workstation</h2>
+
+<h4><a name="WorkstationSetup-"></a><font color="#f7681a">Ruby and Chef</font></h4>
+<p>As mentioned above, Chef is written in Ruby.  A Chef Workstation must have ruby installed. On Unix based platforms (Mac OS X, Ubuntu, CentOS, Debian etc.) we will be using packages provided either by the distribution's repository or from well-known 3rd party repositories.  On the Windows platform we will install Ruby 1.9 with the <a href="http://rubyinstaller.org/">RubyInstaller</a> provided by the Ruby community.  We will also install the <a href="https://github.com/oneclick/rubyinstaller/wiki/Development-Kit">Ruby Development Kit</a> to allow the native extensions of certain gems to compile correctly.</p>
+
+<p>Rubygems will be installed from source on Unix-like platforms and via the RubyInstallerChef on windows.  Chef will be installed using Rubygems.</p>
+
+<h4><a name="WorkstationSetup-%28optional%29"></a><font color="#f7681a">Git</font> (optional)</h4>
+
+<p>Git is a distributed version control system. The <a href="http://gitscm.org/">Git project</a> describes itself best:</p>
+
+<blockquote>
+<p>Git is a free &amp; open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency. Every Git clone is a full-fledged repository with complete history and full revision tracking capabilities, not dependent on network access or a central server. Branching and merging are fast and easy to do.</p></blockquote>
+
+<p>You don't have to use Git to effectively use Chef, but Git is used heavily by the Chef community as a whole and the larger Ruby development community.  </p>
+
+<h4><a name="WorkstationSetup-"></a><font color="#f7681a">A Chef Repository</font></h4>
+
+<p>A <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a> is a folder that holds your configuration files, cookbooks, and the other files that drive your infrastructure's configuration.  Most of the work you do will be from within a chef repository.  We recommend using the Git version control system to effectively manage your chef repository.</p>
+
+<h2><a name="WorkstationSetup-SelectaGuide"></a>Select a Guide</h2>
+
+<p>And with that we are ready to go.  <em>Please select the appropriate guide for your platform and happy cooking!</em></p>
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h4><a name="WorkstationSetup-"></a><ul><li><a href="Omnibus Workstation Setup for Linux and Mac.html" title="Omnibus Workstation Setup for Linux and Mac">Omnibus Workstation Setup for Linux and Mac</a></li><li><a href="Workstation Setup for openSUSE.html" title="Workstation Setup for openSUSE">Workstation Setup for openSUSE</a></li><li><a href="Workstation Setup for Windows.html" title="Workstation Setup for Windows">Workstation Setup for Windows</a></li><li><a href="Workstation Setup for Debian and Ubuntu.html" title="Workstation Setup for Debian and Ubuntu">Workstation Setup for Debian and Ubuntu</a></li><li><a href="Workstation Setup for CentOS, Red Hat, Fedora.html" title="Workstation Setup for CentOS, Red Hat, Fedora">Workstation Setup for CentOS, Red Hat, Fedora</a></li><li><a href="Workstation Setup for Mac OS X.html" title="Workstation Setup for Mac OS X">Workstation Setup for Mac OS X</a></li></ul></h4>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/11666200/21463068.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installation.html" title="Installation">Installation</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/11666200/21463067.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installing Chef Server.html" title="Installing Chef Server">Installing Chef Server</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666200/19005513.jpg">4418779-computer-mouse-in-classroom-computers-on-desk-in-school-classroom.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666200/21463067.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11666200/21463068.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

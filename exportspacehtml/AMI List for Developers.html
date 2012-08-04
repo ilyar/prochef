@@ -1,0 +1,343 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : AMI List for Developers</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : AMI List for Developers
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jul 31, 2012 by <font color="#0050B2">btm</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h1><a name="AMIListforDevelopers-Overview"></a>Overview</h1>
+<div class='navmenu' style='float:right; width:480px; background:#ffffff; border:3px solid #d7d4c3; margin:8px; padding:10px'><p><a href="https://aws.amazon.com/amis"><span class="image-wrap" style="float: right"><img src="../attachments/24019087/24182825.jpg" hspace="4" vspace="2" style="border: 0px solid black"/></span></a></p>
+<h4><a name="AMIListforDevelopers-AmazonMachineImageshttps%3A%2F%2Faws.amazon.com%2Famis"></a><a href="https://aws.amazon.com/amis">Amazon Machine Images</a></h4>
+<p>An Amazon Machine Image (AMI) is a special type of pre-configured operating system and virtual application software which is used to create a virtual machine within the Amazon Elastic Compute Cloud (EC2). It serves as the basic unit of deployment for services delivered using EC2.</p></div>
+<p><font color="#f7681a"><b>This is a list of AMIs for developers, but these are not supported by Opscode.</b></font> These instances can be useful when developing Chef cookbooks, allowing you to test your cookbook changes on other platforms without having to build a Virtual Machine image. They can also be useful if you are having issues with a particular AMI, to see if the issue occurs on other AMIs as well. </p>
+
+<p><b>These do not have chef-client pre-installed and are meant to be used with the knife-ec2 plugin.</b> </p>
+<ul>
+	<li>If you have not used the knife-ec2 plugin before, there is an <a href="EC2 Bootstrap Fast Start Guide.html" title="EC2 Bootstrap Fast Start Guide">EC2 Bootstrap Fast Start Guide</a> that can help get you started.</li>
+	<li>The bootstrap file listed is the one most likely to work with this AMI, if it does not work or there is not one listed you can try creating a <a href="Custom Knife Bootstrap Script.html" title="Custom Knife Bootstrap Script">Custom Knife Bootstrap Script</a>.</li>
+</ul>
+
+
+<p><b>These are collected and maintained by the community and their compatibility with Chef is not guaranteed.</b></p>
+
+<h2><a name="AMIListforDevelopers-AMIList"></a>AMI List</h2>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> AMI Name </th>
+<th class='confluenceTh'> OS / Distro / Release </th>
+<th class='confluenceTh'> Storage type </th>
+<th class='confluenceTh'> Login Name </th>
+<th class='confluenceTh'> Source </th>
+<th class='confluenceTh'> Arch </th>
+<th class='confluenceTh'> Bootstrap File </th>
+<th class='confluenceTh'> Notes </th>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-b89842d1 </th>
+<td class='confluenceTd'> Ubuntu 12.04 Precise </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> ubuntu </td>
+<td class='confluenceTd'> Alestic </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'> ubuntu12.04-gems </td>
+<td class='confluenceTd'> <a href="https://uec-images.ubuntu.com/releases/precise/release/">https://uec-images.ubuntu.com/releases/precise/release/</a> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-3962a950 </th>
+<td class='confluenceTd'> Ubuntu 11.10 Oneiric </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> ubuntu </td>
+<td class='confluenceTd'> Alestic </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'> ubuntu10.04-gems </td>
+<td class='confluenceTd'> You can find more 11.10 AMIs on Canonical's site: 
+<a href="https://uec-images.ubuntu.com/releases/11.10/release/">https://uec-images.ubuntu.com/releases/11.10/release/</a>
+<p> </p></td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-c15994a8 </th>
+<td class='confluenceTd'> Ubuntu 11.04 Natty </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> ubuntu </td>
+<td class='confluenceTd'> Alestic </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'> ubuntu10.04-gems </td>
+<td class='confluenceTd'> You can find more 11.04 AMIs on Canonical's site: 
+<a href="https://uec-images.ubuntu.com/releases/11.04/release/">https://uec-images.ubuntu.com/releases/11.04/release/</a>
+<p> </p></td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-9930fdf0 </th>
+<td class='confluenceTd'> Ubuntu 10.10 Maverick </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> ubuntu </td>
+<td class='confluenceTd'> Alestic </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'> ubuntu10.04-gems </td>
+<td class='confluenceTd'> You can find more 10.10 AMIs on Canonical's site: 
+<a href="http://uec-images.ubuntu.com/releases/10.10/release/">http://uec-images.ubuntu.com/releases/10.10/release/</a>
+<p> </p></td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-6936fb00 </th>
+<td class='confluenceTd'> Ubuntu 10.04 LTS Lucid </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> ubuntu </td>
+<td class='confluenceTd'> Alestic </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'> ubuntu10.04-gems or ubuntu10.04-apt </td>
+<td class='confluenceTd'> You can find more 10.04 AMIs on Canonical's site: 
+<a href="http://uec-images.ubuntu.com/releases/10.04/release/">http://uec-images.ubuntu.com/releases/10.04/release/</a>
+<p> </p></td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-0e7a8267 </th>
+<td class='confluenceTd'> Ubuntu 8.04 LTS Hardy </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> ubuntu </td>
+<td class='confluenceTd'> Alestic </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-2d8e4c44 </th>
+<td class='confluenceTd'> RHEL-5.5 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> i386 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-a95390c0 </th>
+<td class='confluenceTd'> RHEL-5.5 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> x86_64 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-8d8f4de4 </th>
+<td class='confluenceTd'> RHEL-5.6 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> i386 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-8f4083e6 </th>
+<td class='confluenceTd'> RHEL-5.6 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> x86_64 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-77a2601e </th>
+<td class='confluenceTd'> RHEL-5.7 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> i386 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-0f0bc866 </th>
+<td class='confluenceTd'> RHEL-5.7 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> x86_64 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-5550933c </th>
+<td class='confluenceTd'> RHEL-6.0 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> i386 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-6f63a006 </th>
+<td class='confluenceTd'> RHEL-6.0 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> x86_64 </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-3ddb1954 </th>
+<td class='confluenceTd'> RHEL-6.1 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> i386 </td>
+<td class='confluenceTd'> fedora13-gems or centos5-gems </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-31d41658 </th>
+<td class='confluenceTd'> RHEL-6.1 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'> x86_64 </td>
+<td class='confluenceTd'> fedora13-gems or centos5-gems </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-43c2032a </th>
+<td class='confluenceTd'> Centos 6.0 </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'> Rightscale </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'> centos5-gems </td>
+<td class='confluenceTd'> <a href="https://my.rightscale.com/clouds/ec2/1/images/565694">https://my.rightscale.com/clouds/ec2/1/images/565694</a> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-3fe42456 </th>
+<td class='confluenceTd'> Centos 5.6 </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'> Rightscale </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'> centos5-gems </td>
+<td class='confluenceTd'> <a href="https://my.rightscale.com/clouds/ec2/1/images/585208">https://my.rightscale.com/clouds/ec2/1/images/585208</a> </td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-f8b35e91 </th>
+<td class='confluenceTd'> CentoS 5.4 </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'> Rightscale </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'> centos5-gems </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-c041bda9 </th>
+<td class='confluenceTd'> Debian 6.0.1 Squeeze </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'> ec2debian list </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'> ubuntu10.04-gems or ubuntu10.04-apt </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-dcf615b5 </th>
+<td class='confluenceTd'> Debian 5.0.3 Lenny </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> root </td>
+<td class='confluenceTd'> Alestic via AMI Catalog </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-4b814f22 </th>
+<td class='confluenceTd'> Amazon </td>
+<td class='confluenceTd'> instance-store </td>
+<td class='confluenceTd'> ec2-user </td>
+<td class='confluenceTd'> <a href="https://aws.amazon.com/amazon-linux-ami/">AWS Website</a> </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'> fedora13-gems </td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-08d97e61 </th>
+<td class='confluenceTd'> Fedora 17 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'> ec2-user </td>
+<td class='confluenceTd'> <a href="http://fedoraproject.org/wiki/Cloud_images">Fedora</a> </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+<tr>
+<th class='confluenceTh'> ami-5f16d836 </th>
+<td class='confluenceTd'> Fedora 16 </td>
+<td class='confluenceTd'> ebs </td>
+<td class='confluenceTd'> ec2-user </td>
+<td class='confluenceTd'> <a href="http://fedoraproject.org/wiki/Cloud_images">Fedora</a> </td>
+<td class='confluenceTd'> 32-bit </td>
+<td class='confluenceTd'>&nbsp;</td>
+<td class='confluenceTd'>&nbsp;</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/24019087/24182824.png">AWS.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/24019087/24182826.jpg">AWS.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/24019087/24182825.jpg">AWS.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

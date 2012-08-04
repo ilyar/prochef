@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Guide to Creating A Cookbook and Writing A Recipe</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Guide to Creating A Cookbook and Writing A Recipe
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Feb 28, 2012 by <font color="#0050B2">hikeit</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class='navmenu' style='float:right; width:220px; background:#ffffff; border:4px solid #d7d4c3; margin:10px; padding:4px'><p><span class="image-wrap" style="display: block; text-align: center"><img src="../attachments/16089608/21463247.jpg" hspace="8" vspace="6" style="border: 0px solid black"/></span> </p>
+<div class="" align="center">You may want to also review the <b><a href="Cookbook Fast Start Guide.html" title="Cookbook Fast Start Guide">Cookbook Fast Start Guide</a></b>, within the <a href="Installation.html" title="Installation">Installation</a> section.</div>
+</div>
+<p><span class="image-wrap" style="float: left"><img src="../attachments/16089608/21463216.jpg" hspace="20" vspace="2" style="border: 0px solid black"/></span></p>
+<h1><a name="GuidetoCreatingACookbookandWritingARecipe-Introduction"></a>Introduction</h1>
+
+<p>Opscode Team Member <a href="http://community.opscode.com/users/someara">Sean OMeara</a> put together a <a href="http://blog.afistfulofservers.net/post/2011/03/16/a-brief-chef-tutorial-from-concentrate/">Brief Chef Tutorial</a> on his personal blog. A portion of it is reproduced here, to provide an example... </p>
+
+<h3><a name="GuidetoCreatingACookbookandWritingARecipe-"></a><font color="#f7681a">From concept to release ... the birth of a NTP Cookbook.</font></h3>
+
+<h1><a name="GuidetoCreatingACookbookandWritingARecipe-Hello%2CNTP%21"></a>Hello, NTP!</h1>
+<p>A machine’s NTP client is simple to install and configure. Every systems administrator is already familiar with it, which makes it a great example.  </p>
+
+<p>Most software available as a native package in a given linux distribution can be managed with a “package, template, service” design pattern.  Each of those words refers to a Chef <a href="Resources.html" title="Resources">resource</a>, which we pass arguments to.</p>
+
+<h3><a name="GuidetoCreatingACookbookandWritingARecipe-"></a><font color="#f7681a">Step One : Creating an ntp cookbook</font></h3>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> documentation reference </th>
+<td class='confluenceTd'> <a href="Cookbooks.html#Cookbooks-HowdoIcreateanewCookbook%3F">How do I create a new Cookbook?</a> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife cookbook create ntp</pre>
+		</div>
+</div></div>
+
+<p>This creates a directory structure for the ntp cookbook. You can check it out with ls:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ ls -la cookbooks/ntp/
+total 24
+drwxr-xr-x  13 someara  staff   442 Mar 14 17:56 .
+drwxr-xr-x  36 someara  staff  1224 Mar 15 19:39 ..
+-rw-r--r--   1 someara  staff    58 Mar 14 17:56 README.rdoc
+drwxr-xr-x   2 someara  staff    68 Mar 14 17:56 attributes
+drwxr-xr-x   2 someara  staff    68 Mar 14 17:56 definitions
+drwxr-xr-x   3 someara  staff   102 Mar 14 17:56 files
+drwxr-xr-x   2 someara  staff    68 Mar 14 17:56 libraries
+-rw-r--r--   1 someara  staff   259 Mar 14 17:56 metadata.rb
+drwxr-xr-x   2 someara  staff    68 Mar 14 17:56 providers
+drwxr-xr-x   4 someara  staff   136 Mar 14 17:56 recipes
+drwxr-xr-x   2 someara  staff    68 Mar 14 17:56 resources
+drwxr-xr-x   3 someara  staff   102 Mar 14 17:56 templates</pre>
+		</div>
+</div></div>
+
+<h3><a name="GuidetoCreatingACookbookandWritingARecipe-"></a><font color="#f7681a">Step Two : Deciding what to name the recipe</font></h3>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> documentation reference </th>
+<td class='confluenceTd'> <a href="Recipes.html#Recipes-UsingRecipes">Using Recipes</a> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>Recipe names are related to cookbook structure. Putting <tt>recipe[foo::bar]</tt> in a node’s run list results in <tt>cookbooks/foo/recipes/bar.rb</tt> being downloaded from chef-server and executed. </p>
+
+<p>There is a special recipe in every cookbook called <tt>default.rb</tt>. It is executed by every recipe in the cookbook. Specifying <tt>recipe[foo::bar]</tt> actually results in <tt>cookbooks/foo/recipes/default.rb</tt>, as well as <tt>cookbooks/foo/recipes/bar.rb</tt> being executed.</p>
+
+<p>Default.rb is a good place to put common stuff when writing cookbooks with multiple recipes, but we’re going to keep it simple and just use <tt>default.rb</tt> for everything.</p>
+
+<h3><a name="GuidetoCreatingACookbookandWritingARecipe-"></a><font color="#f7681a">Step Three : Creating a recipe</font></h3>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> documentation reference </th>
+<td class='confluenceTd'> <a href="Recipes.html" title="Recipes">Recipes</a> </td>
+<td class='confluenceTd'> <a href="Resources.html" title="Resources">Resources</a> </td>
+<td class='confluenceTd'> <a href="Just Enough Ruby for Chef.html" title="Just Enough Ruby for Chef">Just Enough Ruby for Chef</a> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>This is where all the fun stuff happens. When using resources, you’re writing things in a declarative fashion. Declarative means you can concentrate on the WHAT without having to worry about the HOW. Chef will take care of that for you with something called a resource provider. When installing a package, it will check to see what your operating system is and use the appropriate methodology. For example, on Debian based systems, it will use apt-get, and on Redhat based systems, it will use yum.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ vim cookbooks/ntp/recipes/default.rb
+
+package "ntp" do
+    action [:install]
+end
+
+template "/etc/ntp.conf" do
+    source "ntp.conf.erb"
+    variables( :ntp_server =&gt; "time.nist.gov" )
+    notifies :restart, "service[ntpd]"
+end
+
+service "ntpd" do
+    action [:enable,:start]
+end</pre>
+		</div>
+</div></div>
+
+<p>Chef recipes are evaluated top down (like a normal ruby program), with each resource being ran in the order it appears. Order is important. In the above example, if we were to reverse the order of those three resources, it would first fail to start the service (as the software is not installed yet), then write the configuration file, then finally clobber the file it just wrote by installing the package.</p>
+
+<h3><a name="GuidetoCreatingACookbookandWritingARecipe-"></a><font color="#f7681a">Step Four : Creating the ntp.conf.erb template</font></h3>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> documentation reference </th>
+<td class='confluenceTd'> <a href="Cookbooks.html#Cookbooks-CustomizingTemplatesandFiles">Customizing Templates and Files</a> </td>
+<td class='confluenceTd'> <a href="Templates.html" title="Templates">Templates</a> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ vim cookbooks/ntp/templates/default/ntp.conf.erb
+
+# generated by Chef.
+restrict default kod nomodify notrap nopeer noquery
+restrict -6 default kod nomodify notrap nopeer noquery
+restrict 127.0.0.1
+restrict -6 ::1
+server &lt;%= @ntp_server %&gt;
+server  127.127.1.0     # local clock
+driftfile /var/lib/ntp/drift
+keys /etc/ntp/keys</pre>
+		</div>
+</div></div>
+
+<h3><a name="GuidetoCreatingACookbookandWritingARecipe-"></a><font color="#f7681a">Step Five : uploading the cookbook to chef-server</font></h3>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> documentation reference </th>
+<td class='confluenceTd'> <a href="Cookbooks.html#Cookbooks-HowdoIuploadcookbookstotheChefServer%253F">How do I upload my cookbooks to the Chef Server?</a> </td>
+</tr>
+</tbody></table>
+</div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$ knife cookbook upload ntp</pre>
+		</div>
+</div></div>
+<div class='navmenu' style='float:right; width:600px; background:#f4f2e6; margin:10px; padding:4px'><div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Want Another Example on Writing a Chef Cookbook?</b><br /><span class="image-wrap" style="float: right"><img src="../attachments/16089608/21463217.png" hspace="10" vspace="4" style="border: 0px solid black"/></span>
+
+<p><br class="atl-forced-newline" />
+For another guide, Opscode teammate <a href="http://jtimberman.posterous.com/">Joshua Timberman</a> has <b><a href="http://jtimberman.posterous.com/guide-to-writing-chef-cookbooks">Guide to Writing Chef Cookbooks</a></b> on his personal blog. Check it out for an additional tutorial on building a cookbook for automation of your infrastructure.</p></td></tr></table></div></div>
+
+<h1><a name="GuidetoCreatingACookbookandWritingARecipe-More%3F"></a>More?</h1>
+<p>For more of the tutorial from Sean, see <b><a href="http://blog.afistfulofservers.net/post/3902042503/a-brief-chef-tutorial-from-concentrate">A Brief Chef Tutorial (from concentrate)</a></b>.  For more information on any of the steps above, see the documentation reference listed.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089608/16187424.png">SeanOMeara.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089608/20840596.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089608/20840597.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089608/21463216.jpg">9846274-pretty-pages-of-a-gourmet-cookbook.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089608/21463217.png">4881014-open-book-and-cup-of-coffee.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089608/21463246.png">quickstart people.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089608/21463247.jpg">5601106-a-pocket-watch-in-hand-on-a-sky-background-pocket-watch.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Encrypted Data Bags</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Encrypted Data Bags
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Feb 07, 2012 by <font color="#0050B2">dmerrick</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 380x292" href='http://wiki.opscode.com/download../attachments/8257885/best-apple-iphone-password-application.jpg'><img src="../attachments/thumbnails/8257885/14057518" hspace="20" vspace="14" style="border: 0px solid black"/></a></span></p>
+<h2><a name="EncryptedDataBags-EncryptedDataBags"></a>Encrypted Data Bags</h2>
+
+<p><a href="Data Bags.html" title="Data Bags">Data Bags</a> are a great way to store and access data infrastructure wide, so long as it isn't associated directly with node or role <a href="Attributes.html" title="Attributes">attributes</a>. </p>
+
+<h5><a name="EncryptedDataBags-"></a><font color="#f7681a">Encrypted Data Bags allow sensitive information, such as database passwords, to be stored in data bags in an encrypted form.  
+<br class="atl-forced-newline" />
+<br/>
+This protects the sensitive data from exposure if the Chef server is compromised and allows the data bag to be managed in a source control system without having plain-text passwords in revision history.</font>  </h5>
+
+<p><br class="atl-forced-newline" />
+Only designated nodes will be able to decrypt values stored in an encrypted data bag because a shared secret is required for decryption.</p>
+
+<p><ins><b>Encrypted Data Bags provide the following features</b></ins></p>
+
+<ol>
+	<li>Only the values of data bag items are encrypted, so that keys are still searchable.</li>
+	<li>The system uses shared key encryption; <b>users distribute the shared key to authorized nodes and users</b>.</li>
+	<li>Recipes can load encrypted data bags and access values like regular <a href="Data Bags.html" title="Data Bags">Data Bags</a>.  Decryption relies on the shared secret being present in a file on the node or accessible via a URI path.</li>
+	<li>Encrypted Data Bag support is integrated into knife. The <tt>knife data bag *</tt> commands make it possible to create, edit, and show encrypted data bags using the <tt>&#45;&#45;secret</tt> and <tt>--secret-file</tt> options.</li>
+</ol>
+</td> 
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="24%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#EncryptedDataBags-EncryptedDataBags'>Encrypted Data Bags</a></li>
+    <li><a href='#EncryptedDataBags-Encrypteddatabagsandknife'>Encrypted data bags and knife</a></li>
+<ul>
+    <li><a href='#EncryptedDataBags-Createanewencrypteddatabagitem'>Create a new encrypted data bag item</a></li>
+    <li><a href='#EncryptedDataBags-Decryptanencrypteddatabagitem'>Decrypt an encrypted data bag item</a></li>
+    <li><a href='#EncryptedDataBags-Otherknifeencrypteddatabagcommands'>Other knife encrypted data bag commands</a></li>
+</ul>
+    <li><a href='#EncryptedDataBags-Accessingencrypteddatabagsfromarecipe'>Accessing encrypted data bags from a recipe</a></li>
+    <li><a href='#EncryptedDataBags-Example'>Example</a></li>
+    <li><a href='#EncryptedDataBags-Implementationnotes'>Implementation notes</a></li>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef 0.10 Overview</b><br /><br class="atl-forced-newline" />
+Check out the <b><a href="http://www.opscode.com/blog/2011/04/29/chef-0-10-preview-encrypted-data-bags/">Opscode Blog</a></b> for additional information on Encrypted Data Bags.</td></tr></table></div>
+<p><br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><h2><a name="EncryptedDataBags-Encrypteddatabagsandknife"></a>Encrypted data bags and knife</h2>
+
+<p><font color="#f7681a">The encrypted data bag features of the <tt>knife data bag *</tt> subcommands are activated by specifying either a <tt>&#45;&#45;secret</tt> or <tt>--secret-file</tt> option.</font></p>
+
+<ul>
+	<li><tt>&#45;&#45;secret SECRET</tt> is used to specify the key used for encryption and decryption on the command line.</li>
+	<li><tt>--secret-file FILE</tt> is used to specify the path to a file that contains the encryption/decryption key.</li>
+</ul>
+
+
+<h3><a name="EncryptedDataBags-Createanewencrypteddatabagitem"></a>Create a new encrypted data bag item</h3>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[openssl rand -base64 512 | tr -d '\r\n' &gt; /tmp/my_data_bag_key
+knife data bag create --secret-file /tmp/my_data_bag_key passwords mysql
+# Enter user and password credentials in the editor and save]]></script>
+</div></div>
+
+<p>Verify that the data bag has been created and encrypted</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife data bag show passwords mysql
+
+## example output:
+{
+  "id": "mysql",
+  "pass": "trywgFA6R70NO28PNhMpGhEvKBZuxouemnbnAUQsUyo=\n",
+  "user": "e/p+8WJYVHY9fHcEgAAReg==\n"
+}]]></script>
+</div></div>
+
+<h3><a name="EncryptedDataBags-Decryptanencrypteddatabagitem"></a>Decrypt an encrypted data bag item</h3>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife data bag show --secret-file /tmp/my_data_bag_key passwords mysql
+## example output:
+{
+  "id": "mysql",
+  "pass": "thesecret123",
+  "user": "fred"
+}]]></script>
+</div></div>
+
+<h3><a name="EncryptedDataBags-Otherknifeencrypteddatabagcommands"></a>Other knife encrypted data bag commands</h3>
+
+<p>When given a <tt>&#45;&#45;secret</tt>  or <tt>--secret-file</tt> option,</p>
+
+<ul>
+	<li><tt>knife data bag from file</tt> will <b>encrypt</b> the data bag item contained in the specified JSON file;</li>
+	<li><tt>knife data bag edit</tt> will <b>decrypt</b> an existing data bag item, allow you to edit it, and then encrypt it before saving it to Chef</li>
+</ul>
+</p>
+
+<h2><a name="EncryptedDataBags-Accessingencrypteddatabagsfromarecipe"></a>Accessing encrypted data bags from a recipe</h2>
+
+<p><font color="#f7681a">In order for <a href="Recipes.html" title="Recipes">recipes</a> running on a node to decrypt data bag items, the node must have access to the key used to encrypt the data bag.</font>  You can specify a secret directly by using<br/>
+<tt>Chef::EncryptedDataBagItem.load</tt> like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mysql_creds = Chef::EncryptedDataBagItem.load("passwords", "mysql", secret)
+mysql_creds["pass"] # will be decrypted</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">You can store the encryption key in a file on the nodes that need it and configure Chef so that it knows where to look using <tt>Chef::Config[:encrypted_data_bag_secret]</tt> which defaults to <tt>/etc/chef/encrypted_data_bag_secret</tt>.</font>  In this case, you can omit the third argument to load and have Chef load the secret for you based on the <tt>encrypted_data_bag_secret</tt> configuration:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false"># look for secret in file pointed to by encrypted_data_bag_secret config.
+# If not set explicitly use default of /etc/chef/encrypted_data_bag_secret
+mysql_creds = Chef::EncryptedDataBagItem.load("passwords", "mysql")
+mysql_creds["pass"] # will be decrypted</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">You can also store the encryption key in an alternate file on the nodes that need it and specify the path location to the file inside an attribute; however, EncryptedDataBagItem.load expects to see the actual secret as the third argument, rather than a path to the secret file.</font>  In this case, you can use EncryptedDataBagItem.load_secret to slurp the secret file contents and then pass them:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false"># inside your attribute file:
+# default[:mysql][:secretpath] = "C:\\chef\\any_secret_filename"
+#
+# inside your recipe:
+# look for secret in file pointed to by mysql attribute :secretpath
+mysql_secret = Chef::EncryptedDataBagItem.load_secret("#{node[:mysql][:secretpath]}")
+mysql_creds = Chef::EncryptedDataBagItem.load("passwords", "mysql", mysql_secret)
+mysql_creds["pass"] # will be decrypted</pre>
+		</div>
+</div></div>
+
+<h2><a name="EncryptedDataBags-Example"></a>Example</h2>
+<p>To demonstrate the use of encrypted data bags on a node, we'll start by copying the <tt>secret_key</tt> file created above to our example node using scp and moving it to <tt>/etc/chef/encrypted_data_bag_secret</tt>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">scp ./secret_key $MY_NODE_IP:~/
+ssh $MY_NODE_IP
+sudo mv ./secret_key /etc/chef/encrypted_data_bag_secret</pre>
+		</div>
+</div></div>
+
+<p>As of 0.10.6, <tt>knife bootstrap</tt> supports the 'encrypted_data_bag_secret' setting in knife.rb. You will want to add this line to your knife.rb:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">encrypted_data_bag_secret '/path/to/your/data_bag_key'</pre>
+		</div>
+</div></div>
+<p>And change '/path/to/your/data_bag_key' to the location of where the data bag key is located. When you run knife bootstrap afterwards it automatically adds this line to the client.rb for the node you are bootstrapping and copies the key over.</p>
+
+<p>Next, we'll create a recipe that will log the decrypted values for demonstration purposes (if these were real secrets, you would want to avoid logging them).</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook create edb_demo</pre>
+		</div>
+</div></div>
+
+<p>Now edit <tt>cookbooks/edb_demo/recipes/default.rb</tt> so that it contains the following:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false"># cookbooks/edb_demo/recipes/default.rb
+passwords = Chef::EncryptedDataBagItem.load("prod", "passwords")
+mysql = passwords["mysql"]
+Chef::Log.info("The mysql password is: ‘#{mysql}’")</pre>
+		</div>
+</div></div>
+
+<p>Finally, upload the cookbook and run chef-client on the node.  You should see something like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload edb_demo
+# output clipped
+knife ssh name:i-8a436fe5 -a ec2.public_hostname &amp;#8216;sudo chef-client&amp;#8217;
+INFO: *** Chef 0.10.0 ***
+INFO: Run List is [recipe[edb_demo]]
+INFO: Run List expands to [edb_demo]
+INFO: Starting Chef Run for i-8a436fe5
+INFO: Loading cookbooks [edb_demo]
+INFO: The mysql password is: &amp;#8216;open-sesame-123&amp;#8242;
+INFO: Chef Run complete in 3.122228 seconds
+INFO: Running report handlers
+INFO: Report handlers complete</pre>
+		</div>
+</div></div>
+
+<p>As you can see, the recipe was able to decrypt the values in the encrypted data bag.  It did so by using the shared secret located in the default location of <tt>/etc/chef/encrypted_data_bag_secret</tt>.</p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Encrypted Data Bag Implementation Example</b><br /><br class="atl-forced-newline" />
+Opscode team member <a href="http://wiki.opscode.com/display/~jtimberman/Home">Joshua Timberman</a> put together a blog entry on setting up <b><a href="https://jtimberman.posterous.com/64227128">Encrypted Data Bag for Postfix SASL Authentication</a></b> that should also serve as a nice example to those seeking use of encrypted data bags in their environment.</td></tr></table></div>
+
+<h2><a name="EncryptedDataBags-Implementationnotes"></a>Implementation notes</h2>
+
+<ul>
+	<li>Only data bag item values are encrypted so that searches can be executed based on the keys.</li>
+	<li>The values associated with the "id" key of a data bag item is <b>not encrypted</b> because it is needed for Chef to track the data bag item.</li>
+	<li>Each data bag item value is encrypted by converting it to YAML, encrypting using AES 256 CBC via the openssl Ruby library, and then base 64 encoding the encrypted data.</li>
+	<li>The EncryptedDataBagItem class is a read-only wrapper that decrypts data bag item values on the fly.</li>
+	<li>The data bag secret can also reference any URI that Ruby's 
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>open-uri</pre>
+</div></div>
+<p> library supports.</p></li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/8257885/20840629.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Data Bags.html" title="Data Bags">Data Bags</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/8257885/20840628.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Environments.html" title="Environments">Environments</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257885/14057518.jpg">best-apple-iphone-password-application.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257885/20840628.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257885/20840629.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-8257918"></a>
+                                    <font class="smallfont"><p>The only enhancement that might be nice is some sort of way to selectively choose which values will be encrypted in a databag item.  Could we do this through some sort of key naming convention (enc_pass vs pass)?  I could see only needing to encrypted a few values in the data bag item.  If we did something like this you could just always use Chef::DataBagItem.load which would presumably know what values to decrypt.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by schisamo at Jan 06, 2011 15:09
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-11141206"></a>
+                                    <font class="smallfont"><p>I was expecting that you would segregate sensitive values into their own data bag.  The naming convention could be convenient, but I worry that it could catch someone by surprise if a key matches the convention by accident and breaks.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by seth at Apr 12, 2011 22:40
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

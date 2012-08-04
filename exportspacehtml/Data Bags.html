@@ -1,0 +1,547 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Data Bags</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Data Bags
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/5406768/20840627.png" hspace="10" vspace="20" style="border: 0px solid black"/></span></p>
+<h1><a name="DataBags-WhatareDataBags%3F"></a>What are Data Bags?</h1>
+
+<h5><a name="DataBags-"></a><font color="#f7681a">Data bags provide an arbitrary stores of globally available JSON data.</font> </h5>
+
+<p>Data Bags are not directly associated with Node or Role attributes. When using Data Bags with a chef server, they are stored on the server and indexed for searching. When using Data Bags with chef-solo, data bags are stored in a directory hierarchy on the machine running chef-solo.  </p>
+
+<p><a href="#DataBags-UsingDataBagsinRecipes">Recipes</a> can load data bags directly or <a href="#DataBags-LoadingDataBagsthroughtheSearchInterface">search</a> a data bag for specific values similar to attributes in node indexes.  </p>
+
+<h1><a name="DataBags-StoreDataBagsInSourceControl"></a>Store Data Bags In Source Control</h1>
+<p>If you clone the <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a> from Opscode, there is a directory called <tt>data_bags</tt>. <font color="#f7681a">You can create a directory for each bag, and put the JSON files for each item in the bag's directory.</font>  This will provide for more easily managing data bags in source control systems and in understanding and use.  Access to your data bag structure can then be done through the knife command to load from file.</p>
+
+<h3><a name="DataBags-DataBagFromFile"></a>Data Bag From File</h3>
+
+<p>A individual data bag can refer to either a sub-directory of the chef-repo/data_bags directory or a .json file in that directory or one of the sub-directories. From the earlier example of admins:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mkdir data_bags/admins</pre>
+		</div>
+</div></div>
+
+<p>Either create the new data bag item as a JSON file in the admins directory, or if the item already exists on the Chef Server, write to a file.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">vi data_bags/admins/charlie.json</pre>
+		</div>
+</div></div>
+
+<p>Or:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag show admins charlie -Fj &gt; data_bags/admins/charlie.json</pre>
+		</div>
+</div></div>
+
+<p>Here is an example of what a complete data bag directory structure could look like:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">data_bags
+            |_admins
+                       |_charlie.json
+                       |_bob.json
+                       |_tom.json
+            |_db_users
+                       |_charlie.json
+                       |_bob.json
+                       |_sarah.json
+            |_db_config
+                       |_small.json
+                       |_medium.json
+                       |_large.json
+            |_standard_packages.json
+            |_global_shell_settings.json</pre>
+		</div>
+</div></div>
+
+<p><em><b>The directory structure is used by knife as a convenience so you don't have to type the full path when using the <tt>data bag from file</tt> sub-command.</b></em>  </p>
+
+<p>The data bag itself provides a container of related items. For example, admins and db_users in your output would be separate bags. The "standard_packages" and "global_shell_settings" are things that might be under a "common" bag or whatever makes sense to you for grouping.</p>
+
+<p>Each item in the bag gets its own JSON file. <b>The only structural requirement of items is that they have an id.</b></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+     "id": "ITEM_NAME"
+   }</pre>
+		</div>
+</div></div>
+
+<p>Then when using the knife command to load the data bag item from the JSON file, you don't have to specify the path, just the name of the bag and the filename of the item.  Knife's <tt>data bag from file</tt> automatically knows how to find the directory and the file under <tt>data_bags</tt>.</p>
+
+<p>The command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag from file BAG_NAME ITEM_NAME.json</pre>
+		</div>
+</div></div>
+<p>Loads the file:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">data_bags/BAG_NAME/ITEM_NAME.json</pre>
+		</div>
+</div></div>
+
+<p>(Note: the bag "BAG_NAME" must exist already.)</p>
+
+<p>So, for the example above, if you are in the directory </p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">data_bags/admins</pre>
+		</div>
+</div></div>
+<p>and make changes to the file charlie.json, then you would want to upload that change to the Chef server with the command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag from file admins charlie.json</pre>
+		</div>
+</div></div>
+
+
+<p>If you are not in the root directory for chef, you can also specify the path with this command:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag from file BAG_NAME /path/to/file/ITEM_NAME.json</pre>
+		</div>
+</div></div></td> 
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="21%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#DataBags-WhatareDataBags%3F'>What are Data Bags?</a></li>
+    <li><a href='#DataBags-StoreDataBagsInSourceControl'>Store Data Bags In Source Control</a></li>
+<ul>
+    <li><a href='#DataBags-DataBagFromFile'>Data Bag From File</a></li>
+</ul>
+    <li><a href='#DataBags-ManagingDataBagsWithKnife'> Managing Data Bags With Knife</a></li>
+    <li><a href='#DataBags-UsingDataBagsinRecipes'>Using Data Bags in Recipes</a></li>
+<ul>
+    <li><a href='#DataBags-LoadingaDataBagDirectly'>Loading a Data Bag Directly</a></li>
+<ul>
+    <li><a href='#DataBags-AMoreCompleteExample'>A More Complete Example</a></li>
+</ul>
+    <li><a href='#DataBags-LoadingDataBagsthroughtheSearchInterface'>Loading Data Bags through the Search Interface</a></li>
+    <li><a href='#DataBags-CreatingandEditingDataBagswithinaRecipe'>Creating and Editing Data Bags within a Recipe</a></li>
+</ul>
+    <li><a href='#DataBags-DataBagsandEnvironments'>Data Bags and Environments</a></li>
+    <li><a href='#DataBags-UsingDataBagswithChefSolo'>Using Data Bags with Chef Solo</a></li>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Deploying from your private repo using Data Bags?</b><br /><br class="atl-forced-newline" />
+Don't overlook the <tt>deploy_key</tt> option.  It's there for you to use to add the deployment private key to the data bag.
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+     "id": "my_app",
+     ... (truncated) ...
+     "deploy_key": "SSH private key"
+  }</pre>
+		</div>
+</div></div>
+<p>The key would be the one from your private git repository, and needs to be a string with the newlines converted to "\n"'s</p></td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Command Output Change in 0.10</b><br /><br class="atl-forced-newline" />
+Prior to version 0.10, <tt>knife data bag</tt> output was a JSON representation of the relavent information. JSON output can still be received in 0.10 and above by passing the <tt>-Fj</tt> command line option to knife.</td></tr></table></div>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h1><a name="DataBags-ManagingDataBagsWithKnife"></a><a href="Managing Data Bags With Knife.html" title="Managing Data Bags With Knife">Managing Data Bags With Knife</a></h1>
+<p><font color="#f7681a">Data bags can be managed with the <a href="Knife.html" title="Knife">knife command line client</a>.</font> See <b><a href="Managing Data Bags With Knife.html" title="Managing Data Bags With Knife">Managing Data Bags With Knife</a></b> to accomplish this.</p>
+
+<h1><a name="DataBags-UsingDataBagsinRecipes"></a>Using Data Bags in Recipes</h1>
+
+<p><font color="#f7681a">Data bags can be loaded by name using the DSL in a <a href="Recipes.html" title="Recipes">recipe</a>, or can be accessed via the <a href="Search.html" title="Search">search indexes</a>.</font> When using a single data bag item, use the direct method whenever possible, as it avoids the search index entirely and so has lower overhead. On the other hand, if you plan to loop over all of the items in a data bag, using the search interface will cause Chef to bulk load the items, resulting in lower overhead.</p>
+
+<h3><a name="DataBags-LoadingaDataBagDirectly"></a>Loading a Data Bag Directly</h3>
+<p>The recipe DSL provides access to data bags via the <tt>data_bag(BAG)</tt> method and access to data_bag_items via the <tt>data_bag_item(BAG, ITEM)</tt> method.</p>
+
+<p>The <tt>data_bag</tt> method returns an array of the keys of the items that belong to the data bag. For the admins data bag shown in the above examples, we'd use the data_bag method like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">data_bag("admins")
+# =&gt; ["charlie"]</pre>
+		</div>
+</div></div>
+<p>To get the contents of the 'charlie' data bag item, we use the data_bag_item method. Note that each time you use data_bag_item in a recipe, Chef makes an API call to the server to load the item.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">data_bag_item('admins', 'charlie')
+# =&gt; {"comment"=&gt;"Crazy Charlie", "gid"=&gt;1005, "id"=&gt;"charlie", "uid"=&gt;1005, "shell"=&gt;"/bin/zsh"}</pre>
+		</div>
+</div></div>
+
+<h4><a name="DataBags-AMoreCompleteExample"></a>A More Complete Example</h4>
+<p>If we want to create a user on our systems for each admin in our admins data bag, we might do something like this:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Example Admins Recipe default.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Load the keys of the items in the 'admins' data bag
+admins = data_bag('admins')
+
+admins.each do |login|
+  # This causes a round-trip to the server for each admin in the data bag
+  admin = data_bag_item('admins', login)
+  home = "/home/#{login}"
+  
+  # for each admin in the data bag, make a user resource
+  # to ensure they exist
+  user(login) do
+    uid       admin['uid']
+    gid       admin['gid']
+    shell     admin['shell']
+    comment   admin['comment']
+
+    home      home
+    supports  :manage_home =&gt; true
+  end
+
+end
+
+# Create an "admins" group on the system
+# You might use this group in the /etc/sudoers file
+# to provide sudo access to the admins
+group "admins" do
+  gid     999
+  members admins
+end</pre>
+		</div>
+</div></div>
+
+<h3><a name="DataBags-LoadingDataBagsthroughtheSearchInterface"></a>Loading Data Bags through the Search Interface</h3>
+<p>In some situations you may not know which data bag items you want information from in advance, or you may want to load all of the items in the data bag. In these cases you can use the <a href="Search.html" title="Search">search index</a> to find the data you want. <font color="#f7681a">When searching for data bag items, you provide the name of the data bag to search and the query string as arguments to the <tt>search(BAG, QUERY_STRING)</tt> method.</font> Using the admins data bag, you can search for items based on any value, for example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>find every admin in the admins data bag</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:admins, "*:*")</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>search for an admin with the id "charlie"</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:admins, "id:charlie")</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>search for admins with a gid of "ops"</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:admins, "gid:ops")</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>search for admins with an id beginning with the letter 'c'</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:admins, "id:c*")</pre>
+		</div>
+</div></div>
+<p>Note that even though the search is returning the data bag items as Chef::DataBagItem objects, you can use these objects just like they were a Hash:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Use DataBagItem Objects Like Hashes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">charlie = search(:admins, "id:charlie").first
+# =&gt; variable 'charlie' is set to the charlie data bag item
+charlie["gid"]
+# =&gt; "ops"
+charlie["shell"]
+# =&gt; "/bin/zsh"</pre>
+		</div>
+</div></div>
+
+<p>Here's the same "create a user for each admin" recipe as shown above, modified to load the admins using the search interface:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Example Admins Recipe default.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># An empty array to which we'll add the admins' logins as we go.
+admins = []
+
+# search for all items in the 'admins' data bag and loop over them
+search(:admins, "*:*") do |admin|
+  # Set `login` to the id of the data bag item
+  login = admin["id"]
+
+  # build up the list of the admins logins
+  admins &lt;&lt; login
+
+  home = "/home/#{login}"
+  
+  # for each admin in the data bag, make a user resource
+  # to ensure they exist
+  user(login) do
+    uid       admin['uid']
+    gid       admin['gid']
+    shell     admin['shell']
+    comment   admin['comment']
+
+    home      home
+    supports  :manage_home =&gt; true
+  end
+
+end
+
+# Create an "admins" group on the system
+# You might use this group in the /etc/sudoers file
+# to provide sudo access to the admins
+group "admins" do
+  gid     999
+  members admins
+end</pre>
+		</div>
+</div></div>
+<h3><a name="DataBags-CreatingandEditingDataBagswithinaRecipe"></a>Creating and Editing Data Bags within a Recipe</h3>
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Danger!</b><br />If two clients are simultaneously attempting to update a data bag, the data written last wins.  This can lead to data loss if the user is not careful about multiple clients writing to data bags concurrently.  
+
+<p>Altering data bags from the node when using the Open Source chef-server requires giving the node's API client admin privileges.  In most cases, this is not advisable.</p>
+
+<p>Please use the methods in this section below with extreme care.</p></td></tr></table></div>
+
+<p>Data bags can be created within recipes using a variety of methods. The following examples describe how to create and edit data bag and data bag items within recipes by directly using the methods provided by the <tt>Chef::DataBag</tt> and <tt>Chef::DataBagItem</tt> objects.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Creating a Data Bag within a Recipe</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">users = Chef::DataBag.new
+users.name("users")
+users.save</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Creating a Data Bag Item within a Recipe</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sam = {
+  "id" =&gt; "sam",
+  "Full Name" =&gt; "Sammy",
+  "shell" =&gt; "/bin/zsh"
+}
+databag_item = Chef::DataBagItem.new
+databag_item.data_bag("users")
+databag_item.raw_data = sam 
+databag_item.save</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Editing a Data Bag Item within a Recipe</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sam = data_bag_item("users", "sam")
+sam["Full Name"] = "Samantha"
+sam.save</pre>
+		</div>
+</div></div>
+
+<h1><a name="DataBags-DataBagsandEnvironments"></a>Data Bags and Environments</h1>
+<p>Data Bags are global and can be accessed by nodes in any environment.  For details on strategies that you can use to provide per-environment values in data bags, see <a href="Environments.html#Environments-DataBagsandEnvironments">Data Bags and Environments</a> on the <a href="Environments.html" title="Environments">Environments</a> page.</p>
+
+<h1><a name="DataBags-UsingDataBagswithChefSolo"></a>Using Data Bags with Chef Solo</h1>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef 0.10.4+ Only</b><br />Since 0.10.4 Data bags are available for use in <b>Chef Solo</b> as well as in the <b>Chef Server</b>.</td></tr></table></div> 
+
+<p>Data bags can also be used by chef-solo and are read-only in the chef-solo context.  <font color="#f7681a">Chef solo loads data bags from a directory structure on the local file system.</font>  The location of the data bag directory is configurable with the <tt>data_bag_path</tt> configuration option in <tt>solo.rb</tt>.  Each subdirectory within <tt>data_bag_path</tt> corresponds to a data bag.  JSON files within each data bag directory corresponds to a data bag item.  This is the same convention used by knife and described in the <a href="#DataBags-DataBagsfromFile">Data Bags from File</a> section.</p>
+
+<p>Since search is not available in recipes run with chef-solo, you must use the <tt>data_bag()</tt> and <tt>data_bag_item()</tt> functions to access data bags and items within a recipe.</p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Search using Chef Solo</b><br />A community member, Edelight, created a chef-solo search implementation for data bags.  This functionality is provided via a cookbook that can be found on GitHub:
+
+<p><a href="https://github.com/edelight/chef-solo-search">https://github.com/edelight/chef-solo-search</a></p></td></tr></table></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Cookbooks.html" title="Cookbooks"><span class="image-wrap" style="float: left"><img src="../attachments/5406768/20840624.png" hspace="4" style="border: 0px solid black"/></span> Cookbooks </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Environments.html" title="Environments"><span class="image-wrap" style="float: right"><img src="../attachments/5406768/20840625.png" hspace="4" style="border: 0px solid black"/></span> Environments </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/5406768/20840626.jpg">big_data_nerd_bag-p1496631464820063122wl62_125.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/5406768/20840624.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/5406768/20840625.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/5406768/13238293.jpg">big_data_nerd_bag-p1496631464820063122wl62_125.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/5406768/20840627.png">big_data_nerd_bag-p1496631464820063122wl62_125.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-5407164"></a>
+                                    <font class="smallfont"><p>Right (0.8.4) now only clients with Admin access can write to databags</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Mar 04, 2010 03:22
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-5407176"></a>
+                                    <font class="smallfont"><p>This is different to the platform behavior <img class="emoticon" src="images/icons/emoticons/sad.gif" height="20" width="20" align="absmiddle" alt="" border="0"/></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by aj at Mar 08, 2010 00:11
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-5898288"></a>
+                                    <font class="smallfont"><p>Very cool idea. I think this may help solve some of the issues I've had trying to using a finite set of node attributes to setup N resources on a node. (ex. multiple vhosts)</p>
+
+<p>Question: given a cookbook that uses databags &#8211; how do I know what to put into my bag?  Right now it seems that performing a by-hand code inspection of the cookbook might be the only way?</p>
+</font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by cary at Mar 31, 2010 22:47
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-5898368"></a>
+                                    <font class="smallfont"><p>I added bit of code to chef-repo Rakefile to dump and load data bags to chef-repo, with eye toward editing databags remotely.  Unfortunately knife does not have data bag dump or data bag load commands, to had to improvise.  </p>
+
+<p>If someone else find this useful, here is the link:  <a href="http://gist.github.com/368740">http://gist.github.com/368740</a></p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by alexg at Apr 16, 2010 18:06
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-7274557"></a>
+                                    <font class="smallfont"><p>Should changing a data bag used in a recipe (via search) cause the recipe to run on the next client execution?</p>
+
+<p>For example, nagios::server uses a data bag "users". Will changing the contents of users cause the nagios::server recipe to regenerate files?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by mtnygard at Jul 16, 2010 16:56
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-7897313"></a>
+                                    <font class="smallfont"><p>Data Bags don't have any direct impact on the configuration on the machine, they're just, er... bags of data. So the important part for determining if changing a databag (item) will change the configuration on a host is whether that will change the data being fed to a resource in a recipe. For example, if your nagios recipe has a template that loops over all of the users to set up the contact groups, then adding or removing a user will cause Chef to update the template on the next run.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by dan@kallistec.com at Sep 30, 2010 15:48
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-12354005"></a>
+                                    <font class="smallfont"><p>Any best practices for writing and read-modify-write databags from a recipe?</p>
+
+<p>There is the example of creating a new databag from the ebs_volume example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">item = {
+  "id" =&gt; "ebs_#{db_role}_#{node[:app_environment]}",
+  "volume_id" =&gt; ebs_vol_id
+}
+databag_item = Chef::DataBagItem.new
+databag_item.data_bag("aws")
+databag_item.raw_data = item
+databag_item.save</pre>
+		</div>
+</div></div>
+
+<p>But how would I do an update to that?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at May 11, 2011 08:56
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-19923163"></a>
+                                    <font class="smallfont"><p>I see that data bags are now supported in Chef Solo.  What about encrypted data bags?  Are these supported, and if so, are there any examples of how they would be used?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by akerr@fluid.com at Oct 24, 2011 14:06
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24772783"></a>
+                                    <font class="smallfont"><p>It seems data bag should create first use 'knife data bag create BAG_NAME'</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by williamherry at Jun 11, 2012 09:18
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

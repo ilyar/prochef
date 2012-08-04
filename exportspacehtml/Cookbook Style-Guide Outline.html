@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Cookbook Style-Guide Outline</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Cookbook Style-Guide Outline
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 08, 2011 by <font color="#0050B2">spkane</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<h3><a name="CookbookStyle-GuideOutline-SessionTitle%3ACookbookStyleGuideDiscussion"></a>Session Title: Cookbook Style Guide Discussion</h3>
+
+<p><b>Convener:</b><br/>
+<a href="http://wiki.opscode.com/display/~mleinart">Michael Leinartas</a></p>
+
+<p><b>Participants:</b></p>
+<ul>
+	<li><a href="http://wiki.opscode.com/display/~jtimberman">Joshua Timberman</a></li>
+	<li><a href="http://wiki.opscode.com/display/~coderanger">Noah Kantrowitz</a></li>
+	<li><a href="http://wiki.opscode.com/display/~atomic-penguin">Eric G. Wolfe</a></li>
+	<li><a href="http://wiki.opscode.com/display/~msf">Mathieu Sauve-Frankel</a></li>
+	<li><a href="http://wiki.opscode.com/display/~mleinart">Michael Leinartas</a></li>
+	<li><a href="http://wiki.opscode.com/display/~fnichol">Fletcher Nichol</a></li>
+	<li><a href="http://wiki.opscode.com/display/~spkane">Sean P. Kane</a></li>
+	<li>...and others</li>
+</ul>
+
+
+<h4><a name="CookbookStyle-GuideOutline-Summaryofdiscussions%3A"></a>Summary of discussions:</h4>
+
+<p>The discussion touched on a number of common cookbook patterns, but didn't get to the point where the contents of a "style guide" were discussed or enumerated.</p>
+
+<h4><a name="CookbookStyle-GuideOutline-Discussionnotes%3A"></a>Discussion notes:</h4>
+
+<p><b>Misc criteria for usability of 'library-style' cookbooks</b></p>
+<ul>
+	<li>Easily shareable</li>
+	<li>Useful to others</li>
+	<li>Environment aware</li>
+	<li>LWRPs are very good</li>
+	<li>Can make some reasonable assumptions</li>
+	<li>Configuration items as attributes</li>
+	<li>Ability to easily swap in new templates - usually a good idea</li>
+</ul>
+
+
+<p><b>Plugins</b></p>
+<ul>
+	<li>No way to do this right now, but not a very difficult implementation</li>
+	<li>Ability to subclass built-in resources and other LWRPs in an LWRP</li>
+	<li>Plugins as a way to create hook points/callbacks</li>
+	<li>Cookbooks can be more generic and defer specific implementation to plugins (e.g. database replication strategy)</li>
+	<li>Related: All resources should have pre/post hooks</li>
+</ul>
+
+
+<p><b>@node vs passed in variables in templates?</b></p>
+<ul>
+	<li>Not resolved, some contend that @node should never be used as it's dangerous and has potential for side-effects</li>
+	<li>Passed in variables are a way for the cookbook author to define an api into the template</li>
+</ul>
+
+
+<p><b>Miscellaneous points discussed</b></p>
+<ul>
+	<li>Attribute references should be strings (node['attribute']) - all other methods are discouraged and deprecated</li>
+	<li>Dividing line on what should and should not be an LWRP is fuzzy - this could use some fleshing out by someone</li>
+	<li>IP addresses: first interface vs second?, cloud IPs or not? This needs some kindof helper</li>
+	<li>Platform case statements are a repeated complaint, no good solution at this point</li>
+	<li>Direction on how to properly architect a cookbook, so that internal data is stolred separately from core cookbook files that might be re-shared upstream.</li>
+</ul>
+
+
+<h4><a name="CookbookStyle-GuideOutline-Whatwillwedonow%3FWhatneedstohappennext%3F"></a>What will we do now? What needs to happen next?</h4>
+
+<p>Opscode has begun work on a <a href="Cookbook Style Guide Draft.html" title="Cookbook Style Guide Draft">Cookbook Style Guide Draft</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

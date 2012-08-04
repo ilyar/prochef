@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing API Clients With Knife</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing API Clients With Knife
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/21397539/21463056.jpg" hspace="24" vspace="30" style="border: 0px solid black"/></span></p>
+
+<h2><a name="ManagingAPIClientsWithKnife-Overview"></a>Overview</h2>
+
+<h5><a name="ManagingAPIClientsWithKnife-"></a><font color="#f7681a">Knife is a command-line tool that comes with Chef.</font> </h5>
+<h5><a name="ManagingAPIClientsWithKnife-"></a><font color="#f7681a">It is used by administrators to interact with the Chef <a href="Server API.html" title="Server API">Server API</a>, the local Chef repository and and can be used to create, edit, view, list, and delete API clients.</font> </h5>
+<p><br class="atl-forced-newline" /></p>
+<table><tr><td><h5><a name="ManagingAPIClientsWithKnife-Knife%27s%7B%7Bclient%7D%7DsubcommandprovidestheabilitytomanageAPIclients."></a>Knife's <tt>client</tt> sub-command provides the ability to manage API clients.  </h5>
+
+<p>For more information about Knife, refer to the <b><a href="Knife.html" title="Knife">Knife</a></b> documentation. <br/>
+See <b><a href="API Clients.html" title="API Clients">API Clients</a></b> for more information on API Clients.</p></td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><div class="panel" style="border-width: 1px;"><div class="panelContent">
+<div class="" align="center"><font color="navy"><b>Knife commands all have the same form</b></font></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife sub-command [ARGUMENTS] (options)</pre>
+		</div>
+</div></div>
+</div></div></td></tr></table>
+<p><br class="atl-forced-newline" /></p></td> 
+<td class="confluenceTd" valign="top" width="25%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ManagingAPIClientsWithKnife-Overview'>Overview</a></li>
+    <li><a href='#ManagingAPIClientsWithKnife-bulkdelete'>bulk delete</a></li>
+    <li><a href='#ManagingAPIClientsWithKnife-create'>create</a></li>
+    <li><a href='#ManagingAPIClientsWithKnife-delete'>delete</a></li>
+    <li><a href='#ManagingAPIClientsWithKnife-edit'>edit</a></li>
+    <li><a href='#ManagingAPIClientsWithKnife-list'>list</a></li>
+    <li><a href='#ManagingAPIClientsWithKnife-reregister'>reregister</a></li>
+    <li><a href='#ManagingAPIClientsWithKnife-show'>show</a></li>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p>The following client arguments are available:</p>
+
+<h2><a name="ManagingAPIClientsWithKnife-bulkdelete"></a>bulk delete</h2>
+<p>Delete clients where the client name matches the regular expression (regex) on the Chef Server. The regular expression should be given as a quoted string, and not surrounded by forward slashes.<br/>
+<b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife client bulk delete REGEX (options)</pre>
+		</div>
+</div></div>
+
+<h2><a name="ManagingAPIClientsWithKnife-create"></a>create</h2>
+<p>Create a new client. This generates an RSA keypair. The private key will be displayed on <b>STDOUT</b> or written to the named file. The public half will be stored on the Server. For <b>chef-client</b> systems, the private key should be copied to the system as <tt>/etc/chef/client.pem</tt>. If you do not copy the key and try running <b>chef-client</b> for the first time without it, you will get a <a href="http://wiki.opscode.com/display/chef/Common+Errors#CommonErrors-403Forbidden">403 error</a> because you won't have sufficient permissions to re-create the key.</p>
+
+<p>Admin clients should be created for users that will use <b>knife</b> to access the API as an administrator. The private key will generally be copied to <tt>~/.chef/client_name.pem</tt> and referenced in the <tt>knife.rb</tt> configuration file. <b>Hosted Chef</b> users should note that marking clients as "Admin clients" will have no effect when using Hosted Chef.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife client create CLIENT_NAME (options)</pre>
+		</div>
+</div></div>
+<p><b>Additional Options</b>:</p>
+<ul>
+	<li><tt>&#45;a</tt>, <tt>&#45;&#45;admin</tt>:<br/>
+    Create the client as an admin</li>
+	<li><tt>&#45;f</tt>, <tt>&#45;&#45;file FILE</tt>:<br/>
+    Write the key to a file</li>
+</ul>
+
+
+<h2><a name="ManagingAPIClientsWithKnife-delete"></a>delete</h2>
+<p>Deletes a registered client.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife client delete CLIENT_NAME</pre>
+		</div>
+</div></div>
+
+<h2><a name="ManagingAPIClientsWithKnife-edit"></a>edit</h2>
+<p>Edit a registered client.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife client edit CLIENT_NAME (options)</pre>
+		</div>
+</div></div>
+
+<p>The clients record will be open with EDITOR and can be edited by the user.</p>
+
+<h2><a name="ManagingAPIClientsWithKnife-list"></a>list</h2>
+<p>List all registered clients</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife client list (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+<ul>
+	<li><tt>&#45;w</tt>, <tt>&#45;&#45;with-uri</tt>:<br/>
+    Show corresponding URIs</li>
+</ul>
+
+
+<p><b>Example Output</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife client list
+  exampleorg-validator
+  i-12345678
+  rs-123456</pre>
+		</div>
+</div></div>
+
+<h2><a name="ManagingAPIClientsWithKnife-reregister"></a>reregister </h2>
+<p>Regenerate the RSA keypair for a client. The public half will be stored on the server and the private key displayed on <b>STDOUT</b> or written to the named file. <b>This operation will invalidate the previous keypair used by the client, preventing it from authenticating with the Chef Server.</b> Use care when reregistering the validator client.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife client reregister CLIENT_NAME (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+
+<ul>
+	<li><tt>&#45;f</tt>, <tt>&#45;&#45;file FILE</tt>:<br/>
+    Write the key to a file</li>
+</ul>
+
+
+<h2><a name="ManagingAPIClientsWithKnife-show"></a>show</h2>
+<p>Show a client.  Output format is determined by the --format option.</p>
+
+<p><b>Usage</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife client show CLIENT_NAME (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+<ul>
+	<li><tt>&#45;a</tt>, <tt>&#45;&#45;attribute ATTR</tt>:<br/>
+    Show only one attribute</li>
+</ul>
+
+
+<p><b>Example Output</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">&gt; knife client show testclient
+admin:       false
+chef_type:   client
+json_class:  Chef::ApiClient
+name:        testclient
+public_key:</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Launch Cloud Instances with Knife.html" title="Launch Cloud Instances with Knife"><span class="image-wrap" style="float: left"><img src="../attachments/21397539/21463054.png" hspace="4" style="border: 0px solid black"/></span> Launch Cloud Instances with Knife </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Managing Cookbooks With Knife.html" title="Managing Cookbooks With Knife"><span class="image-wrap" style="float: right"><img src="../attachments/21397539/21463055.png" hspace="4" style="border: 0px solid black"/></span> Managing Cookbooks With Knife </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397539/21463054.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397539/21463055.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21397539/21463056.jpg">9401037-angry-male-cook-in-white-uniform-and-hat-with-two-knifes-black-bckground.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

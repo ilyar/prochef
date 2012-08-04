@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Installation</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Installation
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<p><br class="atl-forced-newline" /></p>
+<hr />
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/1179837/20840546.jpg" hspace="10" vspace="6" style="border: 0px solid black"/></span></p>
+
+<h3><a name="Installation-"></a><font color="#f7681a">The Flavors of Chef</font></h3>
+
+<h5><a name="Installation-Nomatterhowcomplextherealitiesofyourbusiness%2CChefmakesiteasytodeployserversandscaleapplicationsthroughoutyourentireinfrastructure.OpscodeprovidesdifferentflavorsofChefTheDifferentFlavorsofChef%2C..."></a>No matter how complex the realities of your business, Chef makes it easy to deploy servers and scale applications throughout your entire infrastructure. Opscode provides <a href="The Different Flavors of Chef.html" title="The Different Flavors of Chef">different flavors of Chef</a>, so there is a means for you to manage your infrastructure.  </h5>
+
+<h5><a name="Installation-ToinstallChef%2CfollowthedirectionsfortheChef%22flavor%22thatappliestoyou."></a>To install Chef, follow the directions for the Chef "flavor" that applies to you.</h5>
+<p><br class="atl-forced-newline" /></p>
+<hr />
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h3><a name="Installation-"></a><font color="#f7681a">Chef Server + Chef Clients</font></h3>
+
+<p>    To use your own Chef Server to manage your nodes, you will need to</p>
+
+<ol>
+	<li><a href="Installing Chef Server.html" title="Installing Chef Server">Install a Chef Server</a></li>
+	<li><a href="Workstation Setup.html" title="Workstation Setup">Configure your local workstation</a></li>
+	<li><a href="Installing Chef Client and Chef Solo.html" title="Installing Chef Client and Chef Solo">Install chef-client on your nodes</a></li>
+</ol>
+
+
+<h3><a name="Installation-"></a><font color="#f7681a">Hosted Chef + Chef Clients</font></h3>
+
+<p>    Those using Hosted Chef do not need to install a Chef Server.  Rather, to begin using Chef to manage your infrastructure, you need to</p>
+
+<ol>
+	<li><a href="https://community.opscode.com/users/new">Create a Hosted Chef Account</a>,</li>
+	<li><a href="Workstation Setup.html" title="Workstation Setup">Configure your local workstation</a>, and</li>
+	<li><a href="Installing Chef Client and Chef Solo.html" title="Installing Chef Client and Chef Solo">Install chef-client on your nodes</a></li>
+</ol>
+
+
+<p>    The <a href="Fast Start Guide.html" title="Fast Start Guide">Fast Start Guide</a> provides a tutorial-style step-by-step introduction to using Chef for those using Hosted Chef.</p>
+
+<h3><a name="Installation-"></a><font color="#f7681a">Chef Solo</font></h3>
+
+<p>    Those using Chef-Solo to configure nodes within their infrastructure need to</p>
+
+<ol>
+	<li><a href="Installing Chef Client and Chef Solo.html" title="Installing Chef Client and Chef Solo">Install chef-solo on your nodes</a>, and</li>
+	<li><a href="Chef Solo.html" title="Chef Solo">Configure chef-solo for use</a></li>
+</ol>
+
+
+<p>Note that chef-solo is shipped in the same package as chef-client. </p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="46%">
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Current Release</b><br />These directions cover the installation of the current release.  <a href="Release Notes.html" title="Release Notes">The current release of Chef is 10.12.0</a>.</td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<h3><a name="Installation-"></a><font color="#f7681a">Additional Fast Start or Installation Documentation</font></h3>
+<div class="" align="center"><table cellpadding="6" cellspacing="10"><tr><td> <a href="Cookbook Fast Start Guide.html" title="Cookbook Fast Start Guide">Cookbook Fast Start Guide</a> </td>
+<td> <a href="Getting Started with Shef.html" title="Getting Started with Shef">Getting Started with Shef</a> </td>
+<td> <a href="Installing Chef from HEAD.html" title="Installing Chef from HEAD">Installing Chef from HEAD</a> </td></tr></table>
+<table><tr><td> <a href="Vagrant.html" title="Vagrant">Vagrant</a> </td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td> <a href="Configure Management Workstation As A Chef-Client.html" title="Configure Management Workstation As A Chef-Client">Management Workstation as Chef Client</a> </td></tr></table></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Looking for instant gratification?</b><br /><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/1179837/21463043.jpg" hspace="12" vspace="4" style="border: 0px solid black"/></span>
+
+<p>The <b><a href="Fast Start Guide.html" title="Fast Start Guide">Fast Start Guide</a></b> will get you up and running quickly on Linux or Mac OS X using Hosted Chef (as your chef server) with the <a href="http://www.opscode.com/chef/install/">Omnibus Full Installer</a>. There is also a <a href="Fast Start Guide for Windows.html" title="Fast Start Guide for Windows">Fast Start Guide for Windows</a>.</p>
+
+<p>If you prefer to install your own server, use the Chef Server + Chef client directions on this page.</p></td></tr></table></div> 
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Search.html" title="Search"><span class="image-wrap" style="float: left"><img src="../attachments/1179837/21463042.png" hspace="4" style="border: 0px solid black"/></span> Search</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Fast Start Guide.html" title="Fast Start Guide"><span class="image-wrap" style="float: right"><img src="../attachments/1179837/21463041.png" hspace="4" style="border: 0px solid black"/></span> Fast Start Guide</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/1310734.gz">chef-server-install-solo.tar.gz</a> (application/x-gzip)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/1310735.gz">chef-server-install-solo.tar.gz</a> (application/x-gzip)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/1310736.gz">chef-server-install-solo.tar.gz</a> (application/x-gzip)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/1310737.gz">chef-server-install-solo.tar.gz</a> (application/x-gzip)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/1310733.gz">chef-server-install-solo.tar.gz</a> (application/x-gzip)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/2719745.png">chef-server-running.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/2064394.png">chef-server-running.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/14876695.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/13238292.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/16187403.png">iRule_editor_icon.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/19005506.png">quickstart people.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/20840546.jpg">download_chef.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/21463041.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/21463042.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/21463043.jpg">jesse-sarah-watchingsmile.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179837/21463044.gif">orange_dot.gif</a> (image/gif)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:04</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

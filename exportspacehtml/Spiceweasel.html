@@ -1,0 +1,502 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Spiceweasel</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Spiceweasel
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #FFFFFF;border-width: 4px;"><div class="panelContent" style="background-color: #FFFFFF;">
+<p><span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 900x603" href='http://wiki.opscode.com/download../attachments/13172768/spice_weasel_by_xythelle-d365szu.jpg'><img src="../attachments/thumbnails/13172768/13238275" hspace="16" vspace="28" style="border: 0px solid black"/></a></span>
+<br class="atl-forced-newline" /></p>
+<h4><a name="Spiceweasel-"></a><font color="#f7681a">Spiceweasel is a command-line tool for batch loading Chef infrastructure.</font></h4>
+
+<h4><a name="Spiceweasel-ItprovidesasimplesyntaxineitherJSONorYAMLfordescribinganddeployinginfrastructureinorderwiththeChefcommandlinetoolKnife."></a>It provides a simple syntax in either JSON or YAML for describing and deploying infrastructure in order with the Chef command-line tool <a href="Knife.html" title="Knife">Knife</a>.</h4>
+
+<h4><a name="Spiceweasel-"></a><font color="#f7681a">Please note, Spiceweasel is not an "official Chef tool", but it is developed by Opscode team member <a href="http://community.opscode.com/users/mray">Matt Ray</a>.</font></h4>
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+
+<h2><a name="Spiceweasel-Requirements"></a>Requirements</h2>
+<ul>
+	<li>Spiceweasel currently depends on knife to run commands for it. Infrastructure files must either end in .json or .yml to be processed.</li>
+	<li>It is written with Chef 0.9.12 and the 0.10.x series and supports cookbooks, environments, roles, data bags and nodes.</li>
+	<li>Also, as Spiceweasel is not an "official Chef tool", <em>it is not supported for Hosted Chef customers</em>.</li>
+</ul>
+
+
+<h2><a name="Spiceweasel-Installation"></a>Installation</h2>
+<p>The source code is available <a href="https://github.com/mattray/spiceweasel">on github</a>, but Spiceweasel is distributed and installable as a gem.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">gem install spiceweasel</pre>
+		</div>
+</div></div>
+
+<h2><a name="Spiceweasel-Syntax"></a>Syntax</h2>
+<p><font color="#f7681a">The syntax for the spiceweasel file may be either JSON or YAML format of Chef primitives describing what is to be instantiated.</font> Below are 2 examples describing the same infrastructure.</p></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="26%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#Spiceweasel-Requirements'>Requirements</a></li>
+    <li><a href='#Spiceweasel-Installation'>Installation</a></li>
+    <li><a href='#Spiceweasel-Syntax'>Syntax</a></li>
+    <li><a href='#Spiceweasel-Cookbooks'> Cookbooks</a></li>
+    <li><a href='#Spiceweasel-Environments'> Environments</a></li>
+    <li><a href='#Spiceweasel-Roles'> Roles</a></li>
+    <li><a href='#Spiceweasel-DataBags'> Data Bags</a></li>
+    <li><a href='#Spiceweasel-Nodes'> Nodes</a></li>
+    <li><a href='#Spiceweasel-Usage'>Usage</a></li>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>OpenStack Swift, Chef and SpiceWeasel</b><br /><br class="atl-forced-newline" />
+Our friends at <a href="https://www.voxel.net/">Voxel</a> put together two great blog posts on the use of <a href="Deploying OpenStack with Chef.html" title="Deploying OpenStack with Chef">OpenStack</a>, Chef, and Spiceweasel to automate the deployment, configuration and management of their infrastructure.
+
+<p>Read <b><a href="https://www.voxel.net/blog/2011/05/openstack-swift-chef-and-spiceweasel-part-1-0">Part One</a></b>, and <b><a href="https://www.voxel.net/blog/2011/07/cooking-openstack-swift-chef-and-spiceweasel-part-2">Part Two</a></b>, and love the weasel.
+<br class="atl-forced-newline" /></p></td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Spiceweasel 1.0</b><br /><br class="atl-forced-newline" />
+For more information, check out the <b><a href="http://leastresistance.wordpress.com/2012/01/03/spiceweasel-1-0/">blog post detailing Spiceweasel 1.0</a></b> put together by Opscode Team Member <a href="http://community.opscode.com/users/mray">Matt Ray</a>.
+<br class="atl-forced-newline" /></td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="6%"></td></tr></tbody></table>
+
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h5><a name="Spiceweasel-YAML"></a>YAML</h5>
+<p>Given the `example.yml`:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbooks:
+- apache2:
+- apt:
+    - 1.2.0
+- mysql:
+
+environments:
+- development:
+- qa:
+- production:
+
+roles:
+- base:
+- iisserver:
+- monitoring:
+- webserver:
+
+data bags:
+- users:
+- alice
+- bob
+- chuck
+- data:
+- *
+- passwords:
+- secret secret_key
+- mysql
+- rabbitmq
+
+nodes:
+- serverA:
+- role[base]
+- -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems
+- serverB serverC:
+- role[base]
+- -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -E production
+- ec2 4:
+- role[webserver] recipe[mysql::client]
+- -S mray -i ~/.ssh/mray.pem -x ubuntu -G default -I ami-7000f019 -f m1.small
+- rackspace 3:
+- recipe[mysql],role[monitoring]
+- --image 49 --flavor 2
+- windows_winrm winboxA:
+- role[base],role[iisserver]
+- -x Administrator -P 'super_secret_password'
+- windows_ssh winboxB winboxC:
+- role[base],role[iisserver]
+- -x Administrator -P 'super_secret_password'</pre>
+		</div>
+</div></div>
+
+<p>Spiceweasel generates the following knife commands:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload apache2
+knife cookbook upload apt
+knife cookbook upload mysql
+knife environment from file development.rb
+knife environment from file qa.rb
+knife environment from file production.rb
+knife role from file base.rb
+knife role from file iisserver.rb
+knife role from file monitoring.rb
+knife role from file webserver.rb
+knife data bag create users
+knife data bag from file users alice.json
+knife data bag from file users bob.json
+knife data bag from file users chuck.json
+knife data bag create data
+knife data bag create passwords
+knife data bag from file passwords mysql.json --secret-file secret_key
+knife data bag from file passwords rabbitmq.json --secret-file secret_key
+knife bootstrap serverA -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -r 'role[base]'
+knife bootstrap serverB -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -E production -r 'role[base]'
+knife bootstrap serverC -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -E production -r 'role[base]'
+knife ec2 server create -S mray -i ~/.ssh/mray.pem -x ubuntu -G default -I ami-7000f019 -f m1.small -r 'role[webserver],recipe[mysql::client]'
+knife ec2 server create -S mray -i ~/.ssh/mray.pem -x ubuntu -G default -I ami-7000f019 -f m1.small -r 'role[webserver],recipe[mysql::client]'
+knife ec2 server create -S mray -i ~/.ssh/mray.pem -x ubuntu -G default -I ami-7000f019 -f m1.small -r 'role[webserver],recipe[mysql::client]'
+knife ec2 server create -S mray -i ~/.ssh/mray.pem -x ubuntu -G default -I ami-7000f019 -f m1.small -r 'role[webserver],recipe[mysql::client]'
+knife rackspace server create --image 49 --flavor 2 -r 'recipe[mysql],role[monitoring]'
+knife rackspace server create --image 49 --flavor 2 -r 'recipe[mysql],role[monitoring]'
+knife rackspace server create --image 49 --flavor 2 -r 'recipe[mysql],role[monitoring]'
+knife bootstrap windows winrm winboxA -x Administrator -P 'super_secret_password' -r 'role[base],role[iisserver]'
+knife bootstrap windows ssh winboxB -x Administrator -P 'super_secret_password' -r 'role[base],role[iisserver]'
+knife bootstrap windows ssh winboxC -x Administrator -P 'super_secret_password' -r 'role[base],role[iisserver]'</pre>
+		</div>
+</div></div>
+
+<h2><a name="Spiceweasel-Cookbooks"></a><a href="Cookbooks.html" title="Cookbooks">Cookbooks</a></h2>
+
+<p><font color="#f7681a">The `cookbooks` section of the manifest currently supports <tt>knife cookbook upload FOO</tt> where `FOO` is the name of the cookbook in the `cookbooks` directory.</font> <em>The default behavior is to download the cookbook as a tarball, untar it and remove the tarball.</em> The <tt>--siteinstall</tt> option will allow for use of <tt>knife cookbook site install</tt> with the cookbook and the creation of a vendor branch if git is the underlying version control. If a version is passed, it is validated against the existing cookbook `metadata.rb` and it must match the `metadata.rb` string exactly. You may pass any additional arguments if necessary.</p>
+
+<p>Assuming the apt cookbook is not present, the YAML snippet</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cookbooks:
+- apache2:
+- apt:
+  - 1.1.0
+- mysql:</pre>
+		</div>
+</div></div>
+<p>produces the knife commands</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload apache2
+knife cookbook site download apt 1.1.0 --file cookbooks/apt.tgz
+tar -C cookbooks/ -xf cookbooks/apt.tgz
+knife cookbook upload apt
+knife cookbook upload mysql</pre>
+		</div>
+</div></div>
+
+<h2><a name="Spiceweasel-Environments"></a><a href="Environments.html" title="Environments">Environments</a></h2>
+<p><font color="#f7681a">The `environments` section of the manifest currently supports <tt>knife environment from file FOO</tt> where `FOO` is the name of the environment file ending in `.rb` or `.json` in the `environments` directory.</font> Validation is done to ensure the filename matches the environment and that any cookbooks referenced are listed in the manifest.</p>
+
+<p>The YAML snippet</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">environments:
+- development:
+- qa:
+- production:</pre>
+		</div>
+</div></div>
+<p>produces the knife commands</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife environment from file development.rb
+knife environment from file qa.rb
+knife environment from file production.rb</pre>
+		</div>
+</div></div>
+
+<h2><a name="Spiceweasel-Roles"></a><a href="Roles.html" title="Roles">Roles</a></h2>
+<p><font color="#f7681a">The `roles` section of the manifest currently supports <tt>knife role from file FOO</tt> where `FOO` is the name of the role file ending in `.rb` or `.json` in the `roles` directory.</font> Validation is done to ensure the filename matches the role name and that any cookbooks or roles referenced are listed in the manifest.</p>
+
+<p>The YAML snippet</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">roles:
+- base:
+- monitoring:
+- webserver:</pre>
+		</div>
+</div></div>
+<p>produces the knife commands</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife role from file base.rb
+knife role from file monitoring.rb
+knife role from file webserver.rb</pre>
+		</div>
+</div></div>
+
+<h2><a name="Spiceweasel-DataBags"></a><a href="Data Bags.html" title="Data Bags">Data Bags</a></h2>
+<p><font color="#f7681a">The `data bags` section of the manifest currently creates the data bags listed with <tt>knife data bag create FOO</tt> where `FOO` is the name of the data bag.</font> Individual items may be added to the data bag as part of a JSON or YAML sequence, the assumption is made that they `.json` files and in the proper `data_bags/FOO` directory. You may also pass a wildcard as an entry to load all matching data bags (ie. `*`). <a href="Encrypted Data Bags.html" title="Encrypted Data Bags">Encrypted Data Bags</a> are supported by listing `secret filename` as the first item (where `filename` is the secret key to be used). Validation is done to ensure the JSON is properly formatted, the id matches and any secret keys are in the correct locations. </p>
+
+<p>Assuming the presence of `dataA.json` and `dataB.json` in the `data_bags/data` directory, the YAML snippet</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">data bags:
+- users:
+  - alice
+  - bob
+  - chuck
+- data:
+  - *
+- passwords:
+  - secret secret_key
+  - mysql
+  - rabbitmq</pre>
+		</div>
+</div></div>
+<p>produces the knife commands</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag create users
+knife data bag from file users data_bags/users/alice.json
+knife data bag from file users data_bags/users/bob.json
+knife data bag from file users data_bags/users/chuck.json
+knife data bag create data
+knife data bag from file users data_bags/data/dataA.json
+knife data bag from file users data_bags/data/dataB.json
+knife data bag create passwords
+knife data bag from file passwords data_bags/passwords/mysql.json --secret-file secret_key
+knife data bag from file passwords data_bags/passwords/rabbitmq.json --secret-file secret_key</pre>
+		</div>
+</div></div>
+
+<h2><a name="Spiceweasel-Nodes"></a><a href="Nodes.html" title="Nodes">Nodes</a></h2>
+<p><font color="#f7681a">The `nodes` section of the manifest bootstraps a node for each entry where the entry is a hostname or provider and count.</font> A shortcut syntax for bulk-creating nodes with various providers where the line starts with the provider and ends with the number of nodes to be provisioned. Windows nodes need to specify either `windows_winrm` or `windows_ssh` depending on the protocol used, followed by the name of the node(s). <em>Each node requires 2 items after it in a sequence.</em> You may also use the <tt>--parallel</tt> flag from the command line, allowing provider commands to run simultaneously for faster deployment.</p>
+
+<p>The first item after the node is the run_list and the second are the CLI options used. The run_list may be space or comma-delimited. Validation is performed on the run_list components to ensure that only cookbooks and roles listed in the manifest are used. Validation on the options ensures that any Environments referenced are also listed. You may specify multiple nodes to have the same configuration by listing them separated by a space. </p>
+
+<p>The YAML snippet</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">nodes:
+- serverA:
+  - role[base]
+  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems
+- serverB serverC:
+  - role[base]
+  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -E production
+- ec2 3:
+  - role[webserver] recipe[mysql::client]
+  - -S mray -i ~/.ssh/mray.pem -x ubuntu -G default -I ami-7000f019 -f m1.small
+- rackspace 3:
+  - recipe[mysql],role[monitoring]
+  - --image 49 --flavor 2
+- windows_winrm winboxA:
+  - role[base],role[iisserver]
+  - -x Administrator -P 'super_secret_password'
+- windows_ssh winboxB winboxC:
+  - role[base],role[iisserver]
+  - -x Administrator -P 'super_secret_password'</pre>
+		</div>
+</div></div>
+<p>produces the knife commands</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap serverA -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -r 'role[base]'
+knife bootstrap serverB -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -E production -r 'role[base]'
+knife bootstrap serverC -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -E production -r 'role[base]'
+knife ec2 server create -S mray -i ~/.ssh/mray.pem -x ubuntu -G default -I ami-7000f019 -f m1.small -r 'role[webserver],recipe[mysql::client]'
+knife ec2 server create -S mray -i ~/.ssh/mray.pem -x ubuntu -G default -I ami-7000f019 -f m1.small -r 'role[webserver],recipe[mysql::client]'
+knife ec2 server create -S mray -i ~/.ssh/mray.pem -x ubuntu -G default -I ami-7000f019 -f m1.small -r 'role[webserver],recipe[mysql::client]'
+knife ec2 server create -S mray -i ~/.ssh/mray.pem -x ubuntu -G default -I ami-7000f019 -f m1.small -r 'role[webserver],recipe[mysql::client]'
+knife rackspace server create --image 49 --flavor 2 -r 'recipe[mysql],role[monitoring]'
+knife rackspace server create --image 49 --flavor 2 -r 'recipe[mysql],role[monitoring]'
+knife rackspace server create --image 49 --flavor 2 -r 'recipe[mysql],role[monitoring]'
+knife bootstrap windows winrm winboxA -x Administrator -P 'super_secret_password' -r 'role[base],role[iisserver]'
+knife bootstrap windows ssh winboxB -x Administrator -P 'super_secret_password' -r 'role[base],role[iisserver]'
+knife bootstrap windows ssh winboxC -x Administrator -P 'super_secret_password' -r 'role[base],role[iisserver]'</pre>
+		</div>
+</div></div>
+
+<h2><a name="Spiceweasel-Usage"></a>Usage</h2>
+<p>To run a spiceweasel file, run the following from you Chef repository directory:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">spiceweasel path/to/infrastructure.json</pre>
+		</div>
+</div></div>
+
+<p>or</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">spiceweasel path/to/infrastructure.yml</pre>
+		</div>
+</div></div>
+
+<p>This will generate the knife commands to build the described infrastructure. <em>Infrastructure files must end in either `.json` or `.yml`.</em></p>
+
+<p><b><tt>-c --knifeconfig</tt></b><br/>
+Specify a `knife.rb` configuration file to use with the knife commands.</p>
+
+<p><b><tt>--debug</tt></b><br/>
+This provides verbose debugging messages.</p>
+
+<p><b><tt>-d --delete</tt></b><br/>
+The delete command will generate the knife commands to delete the infrastructure described in the file. This includes each cookbook, role, data bag, environment and node listed. Node deletion will specify individual nodes, attempt to pass the list of nodes to the cloud provider for deletion, and finish with `knife node bulk delete`. If you are mixing individual nodes with cloud provider nodes it is possible that nodes may be missed from cloud provider deletion and you should double-check (ie. <tt>knife ec2 server list</tt>).</p>
+
+<p><b><tt>--dryrun</tt></b><br/>
+This is the default action, printing the knife commands to be run without executing them.</p>
+
+<p><b><tt>-h --help</tt></b><br/>
+Print the currently-supported usage options for spiceweasel.</p>
+
+<p><b><tt>--novalidation</tt></b><br/>
+Disable validation ensuring existence of the cookbooks, environments, roles, data bags and nodes in infrastructure file.</p>
+
+<p><b><tt>--parallel</tt></b><br/>
+Use the GNU `parallel` command to execute `knife VENDOR server create` commands that may be run simultaneously.</p>
+
+<p><b><tt>-r --rebuild</tt></b><br/>
+The rebuild command will generate the knife commands to delete and recreate the infrastructure described in the file. This includes each cookbook, role, data bag, environment and node listed.</p>
+
+<p><b><tt>--siteinstall</tt></b><br/>
+Use the 'install' command with 'knife cookbook site' instead of the default 'download'.</p>
+
+<p><b><tt>-v --version</tt></b><br/>
+Print the version of spiceweasel currently installed.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Shef.html" title="Shef"><span class="image-wrap" style="float: left"><img src="../attachments/13172768/21463153.png" hspace="4" style="border: 0px solid black"/></span> Shef </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Documentation.html" title="Documentation"><span class="image-wrap" style="float: right"><img src="../attachments/13172768/21463152.png" hspace="4" style="border: 0px solid black"/></span> Documentation </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/13172768/13238275.jpg">spice_weasel_by_xythelle-d365szu.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/13172768/21463152.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/13172768/21463153.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-13762635"></a>
+                                    <font class="smallfont"><p>I think you should not embed the knife options as a single line in the node object, but instead use a hash where the keys are the full text names of the options as a child of nodes. You should also have the run_list as one of the options and have the actual roles and recipes as an array under the run_list key:</p>
+
+<div class="code panel" style="border-style: solid;border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;border-bottom-style: solid;"><b>Example node</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+    "ec2":
+    {
+    "quantity": 3,
+    "node-name": "my_big_server",
+    "run_list": 
+      [
+        "role[webserver]",
+        "recipe[mysql::client]",
+      ],
+    "ssh_key": "mray",
+    "identity-file": "~/.ssh/mray.pem",
+    "ssh-user": "ubuntu",
+    "groups": "default",
+    "image": "ami-7000f019",
+    "flavor": "m1.small"
+    }
+}</pre>
+		</div>
+</div></div>
+<p>You could also have a special key for passing knife options as you are doing now as a fall back/compatability option.</p>
+
+<p>If you are going to have the mechanism to specify the quantity of the nodes to generate (which is not passed to the knife command, but it is used to determine how many times to run the command), it should be an explicit key/option. </p>
+
+<p>It should also take the node-name and append a number to the node-name that is the index of the loop. </p>
+
+<p>I would suggest adding another parameter that is also not passed to knife but is used as an offset for the number appended to the node-name. So if you add nodes of the same basename you can explicitly specify the starting number of the next batch of nodes of the same basename. </p>
+
+<p>You can also make an option to append the environment to the name or some other string to further namespace node-names if need be.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by rberger@runa.com at Jun 04, 2011 01:49
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-13762667"></a>
+                                    <font class="smallfont"><p>I'm not sure I want to introduce additional complexity to the yaml and json files for Spiceweasel. By keeping the syntax restricted and simple, it's easier to share and understand the files. By adding a hash of all the available options, the format of the files will greatly change, introducing a lot more verbosity to the file. I prefer having the list of CLI options because in my opinion it encourages looking those up and becoming more familiar with knife, rather than introducing another layer of abstraction.</p>
+
+<p>Of course Spiceweasel is free to fork, so perhaps if you implement it and make it an additional option we can see how that looks, but I don't believe I want to add that myself.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by matt at Jun 06, 2011 11:17
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-24773124"></a>
+                                    <font class="smallfont"><p>Formatting of `example.yml` is messed up. Can the original author post something correct?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jacobelder at Jul 09, 2012 20:54
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

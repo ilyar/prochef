@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Environments with the Hosted Chef Management Console</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Environments with the Hosted Chef Management Console
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<h3><a name="ManagingEnvironmentswiththeHostedChefManagementConsole-"></a><font color="#f7681a">The Management Console can be used to manage environments.</font></h3>
+<ul>
+	<li>Listing Environments</li>
+	<li>Viewing Environments</li>
+	<li>Creating Environments</li>
+	<li>Editing Environments</li>
+	<li>Modifying Environment Attributes</li>
+	<li>Adding a Node to an Environment</li>
+	<li>Deleting Environments</li>
+</ul>
+</div></div>
+
+<div class='navmenu' style='float:right; width:500px; background:#ffffff; border:8px solid #d7d4c3; margin:3px; padding:10px'><ul>
+	<li><b>To follow these directions, first <a href="Managing your Account and Billing Information.html#ManagingyourAccountandBillingInformation-LogintotheManagementConsole">log into the Hosted Chef Management Console</a> with your existing username.</b> If you have not signed up for an account yet, follow the directions on the <a href="Setup Opscode User and Organization.html" title="Setup Opscode User and Organization">Setup Opscode User and Organization</a> page.</li>
+</ul>
+
+
+<ul>
+	<li><b>If you're interested in editing account, nodes or other data in the Management Console instead, return to <a href="Hosted Chef Management Console.html" title="Hosted Chef Management Console">Hosted Chef Management Console</a>, and make the appropriate selection.</b></li>
+</ul>
+
+</div>
+
+<h2><a name="ManagingEnvironmentswiththeHostedChefManagementConsole-ListingEnvironmentsintheOrganization"></a>Listing Environments in the Organization</h2>
+
+<p>To list environments in your organization:</p>
+
+<p>1. Log on to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Click <em>Environments</em> on the main navigation menu.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923235/20086933.png" style="border: 0px solid black"/></span></p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">list permissions</a> on the global environments level to see the list of environments.</p>
+
+<h2><a name="ManagingEnvironmentswiththeHostedChefManagementConsole-ViewinganEnvironment"></a>Viewing an Environment</h2>
+
+<p>In order to view a specific environment:</p>
+
+<p>1. Log on to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Click <em>Environments</em> on the main navigation menu.</p>
+
+<p>3. Click on the name of the specific environment you want to view on the environments list page. This will show you data such as the Cookbook Version Constraints and Attributes for the Environment:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923235/20086935.png" style="border: 0px solid black"/></span></p>
+
+<p>In order to see other data in the environment, such as the nodes that are members of it, you can select the environment from the drop down box at the top of the page and then go to the relevant tab in the Management Console:</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923235/20086938.png" style="border: 0px solid black"/></span></p>
+
+<p>For instance, to view nodes in the environment you could click on the <em>Node</em> tab after selecting environment from the drop down. <font color="#f7681a">To view data for all environments select <em>None</em> from the drop down.</font> This can also get set by clicking on the <em>Select</em> link next to an environment on the <em>Environments</em> tab.</p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">read permissions</a> on the environment to view it.</p>
+
+<h2><a name="ManagingEnvironmentswiththeHostedChefManagementConsole-CreatinganEnvironment"></a>Creating an Environment</h2>
+
+<p>The environment creation page allows you to create a new environment and set its cookbook version constraints and attributes.</p>
+
+<p>In order to create an environment:</p>
+
+<p>1. Log on to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and navigate to the <em>Environments</em> tab.</p>
+
+<p>2. Click <em>Create</em> on the sub navigation bar.</p>
+
+<p>3. Give the environment a name and an optional description</p>
+
+<p>4. If necessary, add any cookbook version constraints by selecting the cookbook name, operator, and entering the version number in the format of x.y or x.y.z, and then click <em>add</em>.</p>
+
+<p>5. If necessary, add environment attributes in the JSON attribute editor. More information on using the JSON editor can be found in the <a href="#ManagingEnvironmentswiththeHostedChefManagementConsole-ModifyingEnvironmentDefaultandOverrideAttributes">next section</a>.</p>
+
+<p>6. Click <em>Create Environment</em>.</p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">create permissions</a> on the global environments level to create an environment.</p>
+
+<h2><a name="ManagingEnvironmentswiththeHostedChefManagementConsole-EditinganEnvironment"></a>Editing an Environment</h2>
+
+<p>1. Log on to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Click <em>Environments</em> on the main navigation menu.</p>
+
+<p>3. Click on the <em>edit</em> link next to the name of the environment you want to edit.</p>
+
+<p>4. On this page you can add any cookbook version constraints by selecting the cookbook name, operator, and entering the version number in the format of x.y or x.y.z, and then click <em>add</em>. You can also edit the Attributes, which is described further below.</p>
+
+<p>5. Click the <em>Create Environment</em> or <em>Update Environment</em> button when you are done to save the environment. </p>
+
+<p>Note: You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">update permissions</a> on the environment to edit it.</p>
+
+<h3><a name="ManagingEnvironmentswiththeHostedChefManagementConsole-ModifyingEnvironmentDefaultandOverrideAttributes"></a>Modifying Environment Default and Override Attributes</h3>
+
+<p>You can edit the override <a href="Attributes.html" title="Attributes">Attributes</a> of an environment, to override the values of an included recipe or role, and you can edit the default attributes of an environment to specify attributes that do not exist in included recipes and roles. You can use the <em>Editor</em> or <em>Source</em> tabs on this page to edit the attributes. With the <em>Editor</em> tab you can edit the attributes by selecting the location on the tree and adding the details. You can use the <em>Source</em> tab to paste in JSON directly.</p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">update permissions</a> on the environment to edit the attributes.</p>
+
+<h4><a name="ManagingEnvironmentswiththeHostedChefManagementConsole-UsingtheEditortab"></a>Using the <em>Editor</em> tab</h4>
+
+<p>1. Click on the plus sign next to "json" and select "default" or "override" from the tree on the left, depending on the type of attribute you want to create. If you're unsure, you should select "default" unless you are trying to override a default attribute that is already set in the node or in a recipe.</p>
+
+<p>2. Click on the <em>Editor</em> tab on the right.</p>
+
+<p>3. Push the green add button under the <em>Editor</em> tab: <span class="image-wrap" style=""><img src="../attachments/19923235/20086953.png" style="border: 0px solid black"/></span></p>
+
+<p>4. Select a type of attribute from the drop down box. If you are unsure, you most likely want "string" if the value is text, or "number" if the value is a number.</p>
+
+<p>5. Enter a name as the key and a body as the value and click <em>Add Attribute</em>. The following figure shows the Default and Override Attributes tree and the JSON editor.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923235/20086963.png" style="border: 0px solid black"/></span></p>
+
+<p>6. Click the <em>Create Environment</em> or <em>Update Environment</em> button to save the environment. </p>
+
+<h4><a name="ManagingEnvironmentswiththeHostedChefManagementConsole-UsingtheSourcetab"></a>Using the <em>Source</em> tab</h4>
+
+<p>1. Enter the JSON body in the editor, and click the <em>Load JSON from source</em> button: <span class="image-wrap" style=""><img src="../attachments/19923235/20086955.png" style="border: 0px solid black"/></span></p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923235/20086962.png" style="border: 0px solid black"/></span></p>
+
+<p>2. Click the <em>Create Environment</em> or <em>Update Environment</em> button to save the environment. </p>
+
+<h2><a name="ManagingEnvironmentswiththeHostedChefManagementConsole-MovingaNodetoanEnvironment"></a>Moving a Node to an Environment</h2>
+
+<p>1. Log on to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Click <em>Nodes</em> on the main navigation menu.</p>
+
+<p>3. Click on the <em>edit</em> link next to the node you want to move to the environment.</p>
+
+<p>4. Select the environment from the drop down box under <em>Environment</em>.</p>
+
+<p><span class="image-wrap" style=""><img src="../attachments/19923235/20086934.png" style="border: 0px solid black"/></span></p>
+
+<p>5. Click on the <em>Save Node</em> button.</p>
+
+<p>Note: You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">update permissions</a> on the node to edit it.</p>
+
+<h2><a name="ManagingEnvironmentswiththeHostedChefManagementConsole-DeletinganEnvironment"></a>Deleting an Environment</h2>
+
+<p>1. Log on to the <a href="http://manage.opscode.com">Hosted Chef Management Console</a> and select an organization to use if you are associated with multiple organizations.</p>
+
+<p>2. Click <em>Environments</em> on the main navigation menu.</p>
+
+<p>3. Click on the <em>delete</em> link next to the environment you want to delete.</p>
+
+<p><b>Note:</b> You need <a href="Managing Permissions with the Hosted Chef Management Console.html" title="Managing Permissions with the Hosted Chef Management Console">delete permissions</a> on the environment to delete it.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Managing Data Bags and Items with the Hosted Chef Management Console.html" title="Managing Data Bags and Items with the Hosted Chef Management Console"><span class="image-wrap" style="float: left"><img src="../attachments/19923235/21463163.png" hspace="4" style="border: 0px solid black"/></span> Managing Data Bags and Items with the Hosted Chef Management Console </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Managing Groups with the Hosted Chef Management Console.html" title="Managing Groups with the Hosted Chef Management Console"><span class="image-wrap" style="float: right"><img src="../attachments/19923235/21463162.png" hspace="4" style="border: 0px solid black"/></span> Managing Groups with the Hosted Chef Management Console </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923235/20086933.png">env-list.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923235/20086934.png">env-node.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923235/20086935.png">env-show.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923235/20086938.png">env-select.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923235/20086953.png">node-editor-green-button.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923235/20086955.png">data-bags-attributes-source1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923235/20086962.png">attributes-override-source.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923235/20086963.png">env-attributes.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923235/21463162.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923235/21463163.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Installing Chef Client on OS X</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Installing Chef Client on OS X
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jun 25, 2012 by <font color="#0050B2">tyler</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/18645133/21463096.png" hspace="20" vspace="2" style="border: 0px solid black"/></span></p>
+
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: right"><img src="../attachments/18645133/19005531.png" hspace="20" vspace="8" style="border: 0px solid black"/></span></p>
+<h4><a name="InstallingChefClientonOSX-"></a><font color="#f7681a">These directions explain how to install Chef on a node running OS X via Rubygems. <a href="Nodes.html" title="Nodes">Nodes</a> are hosts whose configuration you want to manage using Chef.</font>  </h4>
+
+<p><b>In general, installing chef-client on a node includes:</b></p>
+
+<ul class="alternate" type="square">
+	<li>Installing Ruby and Other Dependencies</li>
+	<li>Installing Chef</li>
+	<li>Configuring Chef</li>
+</ul>
+</div></div>
+
+<h2><a name="InstallingChefClientonOSX-InstallXCode"></a>Install XCode</h2>
+<p>Install XCode from your OS X installation media or by downloading and installing it from <a href="http://developer.apple.com/xcode/">http://developer.apple.com/xcode/</a></p>
+
+<p>You must also install the additional Xcode command line tools if this was not done so. After Xcode installs, launch it, and go: Xcode -&gt; Preferences -&gt; Downloads -&gt; Install (command line tools)</p>
+
+<h2><a name="InstallingChefClientonOSX-InstallRuby"></a>Install Ruby</h2>
+<p>Ruby 1.8.7 or better is required to run Chef.  Ruby is already installed in recent versions of OS X.  If you do not have Ruby installed or if your version of Ruby is too old, you can install Ruby using the information provided at <a href="http://www.ruby-lang.org/en/downloads/">http://www.ruby-lang.org/en/downloads/</a></p>
+
+<p><h2><a name="InstallingChefClientonOSX-InstallRubyGemsfromSource"></a>Install RubyGems from Source</h2>
+
+<p><font color="#f7681a">We prefer to install RubyGems from source rather than use the OS-provided version (if any), as it is cross platform, so we know what to expect.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install RubyGems</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[cd /tmp
+curl -O http://production.cf.rubygems.org/rubygems/rubygems-1.8.10.tgz
+tar zxf rubygems-1.8.10.tgz
+cd rubygems-1.8.10
+sudo ruby setup.rb --no-format-executable]]></script>
+</div></div>
+
+<h2><a name="InstallingChefClientonOSX-InstallChefGem"></a>Install Chef Gem</h2>
+
+<p><font color="#f7681a">To install Chef and its dependencies, run the following code:</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Install Chef</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: bash; gutter: false"><![CDATA[sudo gem install chef --no-ri --no-rdoc]]></script>
+</div></div>
+</p>
+
+<ul>
+	<li>If you are installing Chef to use chef-client, proceed below.</li>
+	<li>If you are installing Chef-solo as a means of installing Chef Server, return to <a href="Installing Chef Server using Chef Solo.html" title="Installing Chef Server using Chef Solo">Installing Chef Server using Chef Solo</a>.</li>
+	<li>If you wish to use Chef-solo as your primary Chef client, see <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a>.</li>
+</ul>
+
+
+<p><h2><a name="InstallingChefClientonOSX-Configurechefclient"></a>Configure chef-client</h2>
+
+<p>The initial configuration of a chef-client requires a <tt>client.rb</tt> configuration file and a <tt>validation.pem</tt> file to be placed in <tt>/etc/chef</tt>.   At a minimum <tt>client.rb</tt> must contain the configuration settings necessary for chef-client to communicate with chef-server.  <tt>validation.pem</tt> is the permission certificate for your validator client.  This API client is used on the first-run of chef-client and is used to create a new API client for the node.  To create these we do the following:</p>
+
+<ol>
+	<li>Create <tt>/etc/chef</tt>:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[sudo mkdir -p /etc/chef]]></script>
+</div></div></li>
+	<li>Create <tt>client.rb</tt> and <tt>validation.pem</tt>:
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<b>If you have a properly configured workstation</b>, you should be able to run the following command from your workstation's chef repository
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[knife configure client ./]]></script>
+</div></div>
+<p>This will place <tt>client.rb</tt> and <tt>validation.pem</tt> in your current working directory on your chef workstation.  You can then use <tt>scp</tt> or another method to move both files into <tt>/etc/chef</tt> on the node you are configuring.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<b>If you do not have a configured workstation</b>, you should create a minimal <tt>/etc/chef/client.rb</tt>.  If you are using your own chef-server <tt>client.rb</tt> should look as follows (substituting the correct address of your chef server):</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>client.rb</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[log_level        :info
+log_location     STDOUT
+chef_server_url  'http://yourchefserver.com:4000'
+validation_client_name 'chef-validator']]></script>
+</div></div>
+<p>If you are using Hosted Chef, <tt>client.rb</tt> should look as follows (with ORGNAME replaced with your Organization Short Name}}:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>client.rb for Hosted Chef</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[log_level        :info
+log_location     STDOUT
+chef_server_url  'https://api.opscode.com/organizations/ORGNAME'
+validation_key         "/etc/chef/ORGNAME-validator.pem"
+validation_client_name 'ORGNAME-validator']]></script>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<b>Your <tt>validation.pem</tt> can be downloaded from your chef-server if you are running your own chef-server.  On your Chef Server, <tt>validation.pem</tt> should be in <tt>/etc/chef/</tt>. Users of Hosted Chef can find their validator client's key from the <a href="Managing Organizations with the Hosted Chef Management Console.html" title="Managing Organizations with the Hosted Chef Management Console">Hosted Chef Management Console</a>.  Note that if you are using Hosted Chef, your key is named <tt>ORGNAME-validator.pem</tt>.</b></p></li>
+</ol>
+
+
+<p>Chef client has a number of configuration settings that do not appear above. See <a href="Chef Configuration Settings.html" title="Chef Configuration Settings">Chef Configuration Settings</a> for further details.</p>
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/18645133/21463098.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Installing Chef Client and Chef Solo.html" title="Installing Chef Client and Chef Solo">Installing Chef Client and Chef Solo</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/18645133/21463097.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Upgrade Instructions.html" title="Upgrade Instructions">Upgrade Instructions</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645133/19005530.jpg">apple-logo.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645133/19005531.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645133/21463096.png">apple_logo_by_tyrroche-d3hg9bd.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645133/21463097.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/18645133/21463098.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

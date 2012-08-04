@@ -1,0 +1,406 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Cookbook Site API</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Cookbook Site API
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<h4><a name="CookbookSiteAPI-"></a><font color="#f7681a"> Opsocode maintains a public collection of cookbooks at the <a href="http://cookbooks.opscode.com">cookbooks.opscode.com</a>.  This collection is accessible via a <a href="Server API.html" title="Server API">REST API</a>.  This article documents the REST API methods accepted by the cookbooks site.</font></h4>
+</div></div>
+<h1><a name="CookbookSiteAPI-Introduction"></a>Introduction</h1>
+
+<p>A cookbook is the fundamental unit of distribution in Chef. They are how you encapsulate all the different resources you need to automate your infrastructure, and they are the component that is easily sharable between different Chef users. <font color="#f7681a">Opscode maintains a public collection of cookbooks at cookbooks.opscode.com.</font> This site contains all the cookbooks authored by Opscode, as well as many cookbooks from other members of the community.</p>
+
+<p>All the cookbooks on the site are accessible through a REST API rooted at cookbooks.opscode.com/api/v1/. The endpoints and their HTTP methods are described below.</p>
+
+<p><b>In most cases, using this API directly is unnecessary.</b> <em>Rather, you should use the <tt>knife cookbook site</tt> sub-commands or interact directly with the <a href="http://cookbooks.opscode.com">Cookbooks site</a>.</em>  See <b><a href="Knife.html" title="Knife">Knife</a></b> and <b><a href="Cookbook Site Help.html" title="Cookbook Site Help">Cookbook Site Help</a></b> for more details.</p>
+</td>
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#CookbookSiteAPI-Introduction'>Introduction</a></li>
+    <li><a href='#CookbookSiteAPI-APIEndpoints'>API Endpoints</a></li>
+<ul>
+    <li><a href='#CookbookSiteAPI-%2Fcookbooks'>/cookbooks</a></li>
+    <li><a href='#CookbookSiteAPI-%2Fcookbooks%2F%5C'>/cookbooks/{cookbook}</a></li>
+    <li><a href='#CookbookSiteAPI-%2Fcookbooks%2F%5C%2Fversions%2F%5C'>/cookbooks/{cookbook}/versions/{version}</a></li>
+    <li><a href='#CookbookSiteAPI-%2Fsearch'>/search</a></li>
+</ul>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Work in Progress</b><br />This document is a work in progress and is subject to change.</td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h1><a name="CookbookSiteAPI-APIEndpoints"></a>API Endpoints</h1>
+
+<h2><a name="CookbookSiteAPI-%2Fcookbooks"></a>/cookbooks</h2>
+
+<h3><a name="CookbookSiteAPI-HTTPMETHODS"></a>HTTP METHODS</h3>
+
+<h4><a name="CookbookSiteAPI-POST"></a>POST</h4>
+
+<p>Creates a new cookbook.</p>
+
+<h4><a name="CookbookSiteAPI-GET"></a>GET</h4>
+
+<p>Gets a listing of the available cookbooks. It is a good idea to use the optional parameters start and items to limit and paginate the results.</p>
+
+<p><b>Parameters:</b></p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Parameter</th>
+<th class='confluenceTh'>Description</th>
+</tr>
+<tr>
+<td class='confluenceTd'>start</td>
+<td class='confluenceTd'> The offset into the cookbook list at which you would like the result set to start.</td>
+</tr>
+<tr>
+<td class='confluenceTd'>items</td>
+<td class='confluenceTd'> The number of items to return in the result set.</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><b>Example Request and Response</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">GET /cookbooks?start=20&amp;items=5</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+ "items":
+  [
+   {
+    "cookbook_name": "apache",
+    "cookbook_description": "installs apache.",
+    "cookbook": "http://cookbooks.opscode.com/api/v1/cookbooks/apache",
+    "cookbook_maintainer": "john"
+   },
+   {"cookbook_name": "fail2ban",
+    "cookbook_description": "installs fail2ban.",
+    "cookbook": "http://cookbooks.opscode.com/api/v1/cookbooks/fail2ban",
+    "cookbook_maintainer": "jill"
+   },
+   {"cookbook_name": "mysql",
+    "cookbook_description": null,
+    "cookbook": "http://cookbooks.opscode.com/api/v1/cookbooks/mysql",
+    "cookbook_maintainer": "barry"
+   },
+   {"cookbook_name": "capistrano",
+    "cookbook_description": null,
+    "cookbook": "http://cookbooks.opscode.com/api/v1/cookbooks/capistrano",
+    "cookbook_maintainer": "pt"
+   },
+   {"cookbook_name": "ptapache",
+    "cookbook_description": "an alternate apache recipe.",
+    "cookbook": "http://cookbooks.opscode.com/api/v1/cookbooks/ptapache",
+    "cookbook_maintainer": "pt"
+   }
+  ],
+ "total": 5234,
+ "start": 20
+}</pre>
+		</div>
+</div></div>
+
+<p>Each item in the array contains the name of the cookbook, the description, URI, and username of the maintainer of the cookbook. The total is the number of cookbooks on the site.</p>
+
+<p><b>Response Codes:</b></p>
+
+<ul>
+	<li>Returns "200 OK".</li>
+</ul>
+
+
+<h2><a name="CookbookSiteAPI-%2Fcookbooks%2F%5C"></a>/cookbooks/{cookbook}</h2>
+
+<h3><a name="CookbookSiteAPI-HTTPMETHODS"></a>HTTP METHODS</h3>
+
+<h4><a name="CookbookSiteAPI-DELETE"></a>DELETE</h4>
+
+<p>Deletes a cookbook. Not yet fully implemented.</p>
+
+<h4><a name="CookbookSiteAPI-GET"></a>GET</h4>
+
+<p>Gets a cookbook.</p>
+
+<p><b>Parameters</b></p>
+
+<p>None.</p>
+
+<p><b>Example Request and Response</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">GET /cookbooks/apache</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+    "name": "apache",
+    "category": "web servers",
+    "updated_at": "2009-09-26T00:51:36Z",
+    "maintainer": "jtimberman",
+	"latest_version": "http://cookbooks.opscode.com/api/v1/cookbooks/apache/versions/2_0",
+	"external_url": null,
+	"versions":
+	 ["http://www.example.com/api/v1/cookbooks/apache/versions/1_0",
+	  "http://www.example.com/api/v1/cookbooks/apache/versions/2_0"],
+	"description": "installs apache.",
+	"average_rating": null,
+	"created_at": "2009-09-26T00:51:36Z"
+}</pre>
+		</div>
+</div></div>
+
+<p>latest_version is the URI for the most recent version of the cookbook. external_url is an optional field that can be used by the cookbook maintainer to point to a related website. The versions array contains the URIs for all available versions of the cookbook.</p>
+
+<p><b>Example Response for a Deprecated Cookbook</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">GET /cookbooks/apache</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+    "name": "apache",
+	"category": "web servers",
+	"updated_at": "2009-09-26T00:51:36Z",
+	"maintainer": "jtimberman",
+	"latest_version": "http://cookbooks.opscode.com/api/v1/cookbooks/apache/versions/2_0",
+	"external_url": null,
+	"versions":
+	 ["http://www.example.com/api/v1/cookbooks/apache/versions/1_0",
+	  "http://www.example.com/api/v1/cookbooks/apache/versions/2_0"],
+	"description": "installs apache.",
+	"replacement": "http://cookbooks.opscode.com/api/v1/cookbooks/ptapache",
+	"deprecated": true,
+	"average_rating": null,
+	"created_at": "2009-09-26T00:51:36Z"
+}</pre>
+		</div>
+</div></div>
+
+<p>In this example, deprecated is set to true, indicating that the maintainer of the cookbook has deprecated it. In this case, another cookbook may be indicated in the replacement field. The replacement may also be "".</p>
+
+<p><b>Response Codes:</b></p>
+
+<ul>
+	<li>Returns 200 when the cookbook exists.</li>
+	<li>Returns 404 when the cookbook does not exist. In this case, the response body will be:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+	"error_messages":
+	["Resource does not exist"],
+	"error_code": "NOT_FOUND"
+    }</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<h2><a name="CookbookSiteAPI-%2Fcookbooks%2F%5C%2Fversions%2F%5C"></a>/cookbooks/{cookbook}/versions/{version}</h2>
+
+<h3><a name="CookbookSiteAPI-HTTPMETHODS"></a>HTTP METHODS</h3>
+
+<h4><a name="CookbookSiteAPI-GET"></a>GET</h4>
+
+<p>Gets a specific version of a cookbook.</p>
+
+<p><b>Parameters</b></p>
+
+<p>None.</p>
+
+<p><b>Example Requests and Responses</b></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Requests</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">GET /cookbooks/apache/versions/latest
+    GET /cookbooks/apache/versions/2_0
+    GET /cookbooks/apache/versions/0_1
+    GET /cookbooks/apache/versions/2_0_1
+    GET /cookbooks/apache/versions/4</pre>
+		</div>
+</div></div>
+
+<p>The <tt>version</tt> is always in the form <tt>INT[&#95;INT[Staging:&#95;INT]]</tt> or "latest".</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+	"license": "GPLv2",
+	"updated_at": "2009-09-26T00:51:36Z",
+	"tarball_file_size": null,
+	"version": "2.0",
+	"average_rating": null,
+	"cookbook": "http://www.example.com/api/v1/cookbooks/ptapache",
+	"created_at": "2009-09-26T00:51:36Z",
+	"file": "/tarballs/original/missing.png"
+    }</pre>
+		</div>
+</div></div>
+
+<p>license is a string containing the name of the license under which the cookbook is distributed. It can contain anything the cookbook's maintainer chooses to put in it. file contains the link to the actual cookbook tarball.</p>
+
+<p><b>Response Codes:</b></p>
+
+<ul>
+	<li>Returns 200 when the cookbook exists.</li>
+	<li>Returns 404 when the cookbook does not exist. In this case, the response body will be:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+	"error_messages":
+	["Resource does not exist"],
+	"error_code": "NOT_FOUND"
+    }</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<h2><a name="CookbookSiteAPI-%2Fsearch"></a>/search</h2>
+
+<h3><a name="CookbookSiteAPI-HTTPMETHODS"></a>HTTP METHODS</h3>
+
+<h4><a name="CookbookSiteAPI-GET"></a>GET</h4>
+
+<p>Gets a listing of cookbooks whose names match a given string. It is a good idea to use the optional parameters start and items to limit and paginate the results.</p>
+
+<p><b>Parameters</b></p>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'>Parameter </th>
+<th class='confluenceTh'> Description</th>
+</tr>
+<tr>
+<td class='confluenceTd'>q</td>
+<td class='confluenceTd'> The search query.</td>
+</tr>
+<tr>
+<td class='confluenceTd'>start</td>
+<td class='confluenceTd'> The offset into the cookbook list at which you would like the result set to start.</td>
+</tr>
+<tr>
+<td class='confluenceTd'>items</td>
+<td class='confluenceTd'> The number of items to return in the result set.</td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p><b>Examples and Responses</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Request</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">GET /search?q=apache GET /search?q=apache&amp;start=20&amp;items=5</pre>
+		</div>
+</div></div>
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Response</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+	"items":
+	 [{"cookbook_name": "apache",
+	   "cookbook_description": "installs a web server.",
+	   "cookbook": "http://cookbooks.opscode.com/api/v1/cookbooks/apache",
+	   "cookbook_maintainer": "jtimberman"},
+	  {"cookbook_name": "webserver",
+	   "cookbook_description": "installs apache.",
+	   "cookbook": "http://cookbooks.opscode.com/api/v1/cookbooks/webserver",
+	   "cookbook_maintainer": "raxmus"}],
+	"total": 2,
+	"start": 0
+    }</pre>
+		</div>
+</div></div>
+
+<p>Items that are in the result set contain the search query in the cookbook_name or cookbook_description. Each item in the array contains the name of the cookbook, the description, URI, and username of the maintainer of the cookbook. The total is the number of cookbooks on the site.</p>
+
+<p><b>Response Codes:</b></p>
+
+<ul>
+	<li>Returns "200 OK".</li>
+</ul>
+
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Server API.html" title="Server API"><span class="image-wrap" style="float: left"><img src="../attachments/19923397/20840503.png" hspace="4" style="border: 0px solid black"/></span>  Server API </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Chef Concepts as UML.html" title="Chef Concepts as UML"><span class="image-wrap" style="float: right"><img src="../attachments/19923397/20840502.png" hspace="4" style="border: 0px solid black"/></span>  Chef Concepts as UML </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923397/20840502.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923397/20840503.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

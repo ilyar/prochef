@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Chef Essentials</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Chef Essentials
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+
+
+<hr />
+<p><span class="image-wrap" style="float: right"><img src="../attachments/19923746/20840559.jpg" hspace="18" vspace="6" style="border: 0px solid black"/></span><br/>
+<span class="image-wrap" style="float: left"><img src="../attachments/19923746/20086975.jpg" hspace="6" vspace="10" style="border: 0px solid black"/></span></p>
+<div class="" align="center"><h3><a name="ChefEssentials-"></a><font color="#f7681a">Understanding and use of these essential components will provide you the capability to take advantage of the power of Chef.</font></h3></div>
+
+<p><br class="atl-forced-newline" /></p>
+<hr />
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<table><tr><td><p>&nbsp;</p></td></tr>
+<tr><td><h4><a name="ChefEssentials-Attributes"></a><a href="Attributes.html" title="Attributes">Attributes</a> </h4></td>
+<td><p>Node data such as the IP address, hostname, loaded kernel modules, version of programming languages available on the system and more.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Cookbooks"></a><a href="Cookbooks.html" title="Cookbooks">Cookbooks</a> </h4></td>
+<td><p>The fundamental units of distribution in Chef. They encapsulate all the resources you need to automate your infrastructure and are easily sharable with other Chef users.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Definitions"></a><a href="Definitions.html" title="Definitions">Definitions</a> </h4></td>
+<td><p>Allow the creation of new Resources by stringing together existing resources.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Libraries"></a><a href="Libraries.html" title="Libraries">Libraries</a> </h4></td>
+<td><p>Allow inclusion of arbitrary Ruby code, either to extend Chef's language or to implement your own classes directly. They are the secret sauce that will allow you to plug in to your existing infrastructure and utilize it to inform how your systems are configured.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Metadata"></a><a href="Metadata.html" title="Metadata">Metadata</a> </h4></td>
+<td><p>A small amount of meta-data is required in cookbooks. This information is used to provide hints to the Chef Server as to what cookbooks should be deployed to a given node, and in the future it will be integral to an automated system for discovering and installing cookbooks.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Recipes"></a><a href="Recipes.html" title="Recipes">Recipes</a> </h4></td>
+<td><p>The fundamental configuration in Chef. Recipes encapsulate collections of <a href="Resources.html" title="Resources">Resources</a> which are executed in the order defined to configure the <a href="Nodes.html" title="Nodes">Nodes</a>.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Templates"></a><a href="Templates.html" title="Templates">Templates</a></h4></td>
+<td><p>Files written in a markup language that allows one to dynamically generate the file's final content based on variables or more complex logic. Templates are commonly used to manage configuration files with Chef.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-ChefRepository"></a><a href="Chef Repository.html" title="Chef Repository">Chef Repository</a> </h4></td>
+<td><p>The place where cookbooks, roles, config files and other artifacts for managing systems with Chef will live. </p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-DataBags"></a><a href="Data Bags.html" title="Data Bags">Data Bags</a> </h4></td>
+<td><p>Provide an arbitrary stores of globally available JSON data.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Environments"></a><a href="Environments.html" title="Environments">Environments</a> </h4></td>
+<td><p>Provide a mechanism for managing different environments such as production, staging, development, and testing, etc with one Chef setup (or one organization on Hosted Chef). </p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-ExceptionandReportHandlers"></a><a href="Exception and Report Handlers.html" title="Exception and Report Handlers">Exception and Report Handlers</a>  </h4></td>
+<td><p>A feature of Chef that allow you to run code in response to a Chef run succeeding or failing. </p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-LightweightResourcesandProviders%28LWRP%29"></a><a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers &#40;LWRP&#41;</a>  </h4></td>
+<td><p>Resource and providers whose implementation is quick and easy, requiring less Ruby knowledge than their heavier counterparts.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Nodes"></a><a href="Nodes.html" title="Nodes">Nodes</a>  </h4></td>
+<td><p>Hosts that runs the Chef client. The primary features of a node, from Chef's point of view, are its <a href="Attributes.html" title="Attributes">Attributes</a> and its run list. Nodes are the thing that <a href="Recipes.html" title="Recipes">Recipes</a> and <a href="Roles.html" title="Roles">Roles</a> are applied to.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Providers"></a><a href="Providers.html" title="Providers">Providers</a> </h4></td>
+<td><p>Take a resource, compare that resource to the current state of the part of the system it is managing, and then takes the Action specified in the resource. They are the way that Chef supports multiple platforms with a single Resource.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Resources"></a><a href="Resources.html" title="Resources">Resources</a>  </h4></td>
+<td><p>A cross platform abstraction of the thing you're configuring on the host. For example, packages may be installed via apt, yum, or the BSD ports and packages systems, but the package resource abstracts these differences away so you can specify that a package should be installed in a cross-platform way. Chef's resources are mostly just containers for data, with some basic validation functionality.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Roles"></a><a href="Roles.html" title="Roles">Roles</a> </h4></td>
+<td><p>Provide a means of grouping similar features of similar nodes, providing a mechanism for easily composing sets of functionality. At web scale, you almost never have just one of something, so you use roles to express the parts of the configuration that are shared by a group of Nodes.</p></td></tr>
+<tr><td><hr /></td></tr>
+<tr><td><h4><a name="ChefEssentials-Search"></a><a href="Search.html" title="Search">Search</a> </h4></td>
+<td><p>A feature of the Chef Server that allows you to use a full-text search engine (based on Apache Solr) to query information about your infrastructure and applications. Searches are built by the Chef Server, and allow you to query arbitrary data about your infrastructure. </p></td></tr>
+<tr><td><hr /></td></tr></table>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Chef Concepts as UML.html" title="Chef Concepts as UML"><span class="image-wrap" style="float: left"><img src="../attachments/19923746/20840569.png" hspace="4" style="border: 0px solid black"/></span> Chef Concepts as UML </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Attributes.html" title="Attributes"><span class="image-wrap" style="float: right"><img src="../attachments/19923746/20840568.png" hspace="4" style="border: 0px solid black"/></span> Attributes </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923746/20086975.jpg">5631502-3d-image-of-a-synapses.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923746/20086976.jpg">attributes.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923746/20840559.jpg">Steven-Nathan-Noah-Dan.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923746/20840568.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19923746/20840569.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

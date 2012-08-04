@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Infrastructure Proposal</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Infrastructure Proposal
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Apr 21, 2011 by <font color="#0050B2">schisamo</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<p><br class="atl-forced-newline" />
+Currently, a Chef Server contains nodes, roles, and cookbooks - it's responsible for distributing cookbooks to nodes, allows you to assign roles, and more.  This approach works fine when your entire infrastructure is monolithic; as long as every system that uses a given cookbook is ready for that cookbook to be updated, everything is copacetic.  The issue arises when this is no longer the case - for example, when you want to have a production, development, or staging environment, where new versions of a cookbook can be used in each.  Today, this is only possible by running a distinct chef server instance per environment.</p>
+
+<p>This proposal documents the current thinking around the creation of 'Infrastructures', which solve the above problem.</p>
+
+<p>Infrastructures can be though of as a 'container' for a group of cookbooks, roles, and nodes.  Each infrastructure will be given a name, such as 'production', 'development', or 'bootstrapping', along with a long-form description. </p>
+
+<p>What follows is a breakdown of how each component would need to change with the addition of infrastructures, and how they will be exposed through infrastructures.</p>
+
+<h2><a name="InfrastructureProposal-Components"></a>Components</h2>
+
+<h3><a name="InfrastructureProposal-Cookbooks"></a>Cookbooks</h3>
+
+<p>We already track cookbook versions.  With the addition of infrastructures, we will change the on-disk layout for how the chef server stores cookbooks to be version specific, and to allow multiple versions of the cookbook to be uploaded.  For example, when you run:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Uploading cookbooks</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">$ knife cookbook upload apache2</pre>
+		</div>
+</div></div>
+
+<p>Rather than storing the new apache2 cookbook directly at <tt>/var/chef/cookbooks/apache2</tt>, we'll shift to <tt>/var/chef/cookbooks/apache2/VERSION</tt>.  The cookbook loader will be extended to understand the existence of multiple cookbook versions.  </p>
+
+<p>Each infrastructure will be able to look at the list of cookbooks available on the server, and set itself to using the latest version of the cookbook, a specific version of the cookbook, or to exclude the cookbook altogether.  For example, if we had version 1.0.0, 2.0.0, and 3.0.0 of the apache2 cookbook, we can set the production infrastructure at the '2.0.0' version of the cookbook, while letting the development environment always be at the 'latest' version, and making the apcahe2 cookbook unavailable at all within the 'bootstrapping' infrastructure.  </p>
+
+<h3><a name="InfrastructureProposal-Roles"></a>Roles</h3>
+
+<p>Roles do not currently have a version number applied.  In order to support multiple disparate configurations, we'll need to add this ability, or something similar, to roles.  Either they gain the ability to be versioned, or they get entirely containerized within an infrastrucutre - and it's the responsibility of the end user to keep the role up to date.  </p>
+
+<h3><a name="InfrastructureProposal-Nodes"></a>Nodes</h3>
+
+<p>A node is 'assigned' to an infrastructure, and it can be in only one at a time.  </p>
+
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-width: 1px;"><div class="panelHeader" style="border-bottom-width: 1px;"><b>Table of Contents</b></div><div class="panelContent">
+<div>
+<ul>
+    <li><a href='#InfrastructureProposal-Components'>Components</a></li>
+<ul>
+    <li><a href='#InfrastructureProposal-Cookbooks'>Cookbooks</a></li>
+    <li><a href='#InfrastructureProposal-Roles'>Roles</a></li>
+    <li><a href='#InfrastructureProposal-Nodes'>Nodes</a></li>
+</ul>
+    <li><a href='#InfrastructureProposal-API'>API</a></li>
+<ul>
+    <li><a href='#InfrastructureProposal-%2Finfrastructures'>/infrastructures</a></li>
+    <li><a href='#InfrastructureProposal-%2Finfrastructures%2FNAME'>/infrastructures/NAME</a></li>
+</ul>
+    <li><a href='#InfrastructureProposal-ImpactsonSearch'>Impacts on Search</a></li>
+    <li><a href='#InfrastructureProposal-Migration%2Fpromotionofcookbooks'>Migration/promotion of cookbooks</a></li>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="3%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<h2><a name="InfrastructureProposal-API"></a>API</h2>
+
+<p>A simple API proposal would look like:</p>
+
+<h3><a name="InfrastructureProposal-%2Finfrastructures"></a>/infrastructures</h3>
+
+<h4><a name="InfrastructureProposal-GET"></a>GET</h4>
+
+<p>Returns a list of infrastructures.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>GET /infrastructures</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "production": "https://example.com/infrastructures/production",
+  "bootstrapping": "https://example.com/infrastructures/production"
+}</pre>
+		</div>
+</div></div>
+
+<h4><a name="InfrastructureProposal-POST"></a>POST</h4>
+
+<p>Creates a new infrastructure.  The body of the POST should be as follows:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>POST /infrastructures</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "production",
+  "cookbooks": {
+    "apache2": "latest",
+    "snort": "1.0.1",
+    "fatman": "exclude"
+  },
+  "roles": {
+    "webserver": "1.0.0"
+  }
+}</pre>
+		</div>
+</div></div>
+
+<p>The hash of cookbooks and roles both point to versions.  If a cookbook or role is excluded, then we will default to creating the infrastructure with it pinned to 'latest'.</p>
+
+<h3><a name="InfrastructureProposal-%2Finfrastructures%2FNAME"></a>/infrastructures/NAME</h3>
+
+<h4><a name="InfrastructureProposal-GET"></a>GET</h4>
+
+<p>Returns the current configuration for this infrastructure.  Response looks like:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>POST /infrastructures</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: javascript; gutter: false">{
+  "name": "production",
+  "cookbooks": {
+    "apache2": "latest",
+    "snort": "1.0.1",
+    "fatman": "exclude"
+    ....
+    "rock": "1.1.1"
+  },
+  "roles": {
+    "webserver": "1.0.0"
+  }
+}</pre>
+		</div>
+</div></div>
+
+<h4><a name="InfrastructureProposal-PUT"></a>PUT</h4>
+
+<p>Updates the role.  The body should look like the response from GET.</p>
+
+<h2><a name="InfrastructureProposal-ImpactsonSearch"></a>Impacts on Search</h2>
+
+<p>By default, any search request tendered from within a recipe will be scoped to the current infrastructure.  For example:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Search with Infrastructures</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">search(:node, "monkey:behind_glass")</pre>
+		</div>
+</div></div>
+
+<p>Would only search within the current node's infrastructure (say, 'production').  If you wanted to search every node known to the chef server, you would do:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Search with Infrastructures - for all nodes</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># Only in production
+search(:node, "monkey:behind_glass", "production")
+
+# Only in production and bootstrap
+search(:node, "monkey:behind_glass", [ "production", "bootstrap" ])</pre>
+		</div>
+</div></div>
+
+<h2><a name="InfrastructureProposal-Migration%2Fpromotionofcookbooks"></a>Migration/promotion of cookbooks</h2>
+
+<p>Would be possible through the API - this proposal makes no workflow assumptions, but they would be easily enabled.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

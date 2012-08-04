@@ -1,0 +1,433 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Nodes With Knife</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Nodes With Knife
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/20775425/20840646.jpg" hspace="24" vspace="30" style="border: 0px solid black"/></span></p>
+
+<h2><a name="ManagingNodesWithKnife-Overview"></a>Overview</h2>
+
+<h4><a name="ManagingNodesWithKnife-"></a><font color="#f7681a">Knife is a command-line tool that comes with Chef.</font> </h4>
+<h4><a name="ManagingNodesWithKnife-"></a><font color="#f7681a">It is used by administrators to interact with the Chef Server API, the local Chef repository and can be used to create, edit, view, list, tag and delete nodes.</font> </h4>
+<p><br class="atl-forced-newline" /></p>
+<table><tr><td><h5><a name="ManagingNodesWithKnife-Knife%27s%7B%7Bnode%7D%7Dsubcommandprovidestheabilitytomanagenodes."></a>Knife's <tt>node</tt> sub-command provides the ability to manage nodes.  </h5>
+
+<p>For more information about Knife, refer to the <b><a href="Knife.html" title="Knife">Knife</a></b> documentation. <br/>
+See <b><a href="Nodes.html" title="Nodes">Nodes</a></b> for more information on nodes.</p></td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><div class="panel" style="border-width: 1px;"><div class="panelContent">
+<div class="" align="center"><font color="navy"><b>Knife commands all have the same form</b></font></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife sub-command [ARGUMENTS] (options)</pre>
+		</div>
+</div></div>
+</div></div></td></tr></table>
+<p><br class="atl-forced-newline" /></p></td> 
+<td class="confluenceTd" valign="top" width="25%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ManagingNodesWithKnife-Overview'>Overview</a></li>
+    <li><a href='#ManagingNodesWithKnife-CreatinganodewithKnife'>Creating a node with Knife</a></li>
+    <li><a href='#ManagingNodesWithKnife-EditinganodewithKnife'>Editing a node with Knife</a></li>
+<ul>
+    <li><a href='#ManagingNodesWithKnife-Addtoanode%27srunlist.'>Add to a node's run list.</a></li>
+    <li><a href='#ManagingNodesWithKnife-Removeanitemfromanode%27srunlist.'>Remove an item from a node's run list.</a></li>
+</ul>
+    <li><a href='#ManagingNodesWithKnife-ViewingorShowinganodewithKnife'>Viewing or Showing a node with Knife</a></li>
+    <li><a href='#ManagingNodesWithKnife-Listingthenodes'>Listing the nodes</a></li>
+    <li><a href='#ManagingNodesWithKnife-DeletinganodewithKnife'>Deleting a node with Knife</a></li>
+    <li><a href='#ManagingNodesWithKnife-UsingTAGS'>Using TAGS</a></li>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<h2><a name="ManagingNodesWithKnife-CreatinganodewithKnife"></a>Creating a node with Knife</h2>
+<p><font color="#f7681a">Create a new node.</font></p>
+
+<p><b><em>Note:</em> A node is created the first time you run chef-client, or when you use <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> commands.</b> <br/>
+<em>Use of this knife subcommand to create nodes isn't required if you have taken either of those steps.</em> </p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node create NODE</pre>
+		</div>
+</div></div>
+
+<p>Unless the --no-editor option is given, an empty node object will be created and displayed in your text editor. If the editor exits with a successful exit status, the node data will be posted to the Chef Server to create the node.</p>
+
+<h4><a name="ManagingNodesWithKnife-ThroughanEDITOR"></a>Through an EDITOR</h4>
+
+<ol>
+	<li>set EDITOR environment variable, for example:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">export EDITOR=vi</pre>
+		</div>
+</div></div></li>
+	<li>create a new node, for example:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node create foobar</pre>
+		</div>
+</div></div></li>
+	<li>enter the content of the node in JSON, for example:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">{
+    "normal": {
+    },
+    "name": "foobar",
+    "override": {
+    },
+    "default": {
+    },
+    "json_class": "Chef::Node",
+    "automatic": {
+    },
+    "run_list": [
+       "recipe[zsh]",
+       "role[webserver]"
+    ],
+    "chef_type": "node"
+}</pre>
+		</div>
+</div></div></li>
+	<li>Save it.<br/>
+If there isn't an existing node, you will see a warning message about that, which is normal. For example:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">WARN: HTTP Request Returned 404 Not Found: Cannot load node foobar
+Created (or updated) node[foobar]</pre>
+		</div>
+</div></div></li>
+</ol>
+
+
+<h4><a name="ManagingNodesWithKnife-CreateanodefromaJSONfile"></a>Create a node from a JSON file</h4>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node from file FILE</pre>
+		</div>
+</div></div>
+
+<h2><a name="ManagingNodesWithKnife-EditinganodewithKnife"></a>Editing a node with Knife</h2>
+<p><font color="#f7681a">Edit an existing node.</font></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node edit NAME (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+<ul>
+	<li><tt>&#45;a</tt>, <tt>&#45;&#45;all</tt>:<br/>
+    Display all node data in the editor. By default, default, override, and automatic attributes are not shown.</li>
+</ul>
+
+
+<p>The JSON description of the node will be opened with EDITOR and saved back to the Chef Server once editing is complete.  See <a href="Nodes.html" title="Nodes">Nodes</a> for more information on the node description.</p>
+
+<h4><a name="ManagingNodesWithKnife-ThroughanEDITOR"></a>Through an EDITOR</h4>
+<ol>
+	<li>set EDITOR environment variable, for example:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">export EDITOR=vi</pre>
+		</div>
+</div></div></li>
+	<li>edit a node, for example:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node edit foobar</pre>
+		</div>
+</div></div></li>
+	<li>Update the JSON in the editor.</li>
+	<li>Save it.</li>
+</ol>
+
+
+<h3><a name="ManagingNodesWithKnife-Addtoanode%27srunlist."></a>Add to a node's run list.</h3>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node run_list add NODE_NAME RUNLIST_ITEMS (options)</pre>
+		</div>
+</div></div>
+
+<p>This will add RUNLIST_ITEMS to the run list of NODE.</p>
+
+<p><b>Additional Options</b>:</p>
+<ul>
+	<li><tt>&#45;a</tt>, <tt>&#45;&#45;after ITEM</tt>:<br/>
+    Place the ENTRY in the run list after ITEM</li>
+</ul>
+
+
+<p><b>Details</b>:<br/>
+<font color="#f7681a">Run list items may be either roles or recipes.</font></p>
+
+<h5><a name="ManagingNodesWithKnife-"></a><font color="navy">Recipe addition</font></h5>
+<p>When adding a recipe to a run list, there are several valid formats:</p>
+
+<ul>
+	<li>Fully Qualified Format:<br/>
+    <tt>'recipe[COOKBOOK::RECIPE_NAME]'</tt>, for example, <tt>'recipe[chef::client]'</tt> or if you wanted to add multiple recipes at once, <tt>'recipe[chef::client],recipe[chef-client::service]'</tt> </li>
+	<li>Cookbook Recipe Format:<br/>
+    For brevity, the recipe part of the fully qualified format may be omitted, and recipes specified as <tt>'COOKBOOK::RECIPE_NAME'</tt>, e.g., <tt>'chef-client::service'</tt>  or if you wanted to add multiple recipes at once, <tt>'chef::client,chef-client::service'</tt></li>
+	<li>Default Recipe Format:<br/>
+    When adding the default recipe of a cookbook to a run list, the recipe name may be omitted as well, e.g., <tt>chef-client::default</tt> may be written as just <tt>chef-client</tt></li>
+</ul>
+
+
+<h5><a name="ManagingNodesWithKnife-"></a><font color="navy">Roles addition</font></h5>
+<p>Roles can be added to a run list using the following format:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">'role[ROLENAME]'</pre>
+		</div>
+</div></div>
+
+<p><em>Note that you need to put the role in quotes when using the knife node run_list add subcommand.</em> </p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node run_list add NODE_NAME 'role[ROLE NAME]'</pre>
+		</div>
+</div></div>
+
+<p><b>Example</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife node run_list add serverA getting-started
+run_list:
+    recipe[getting-started]</pre>
+		</div>
+</div></div>
+
+<p>You can also specify multiple roles at once or combine this with adding recipes to the run list. For example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife node run_list add serverA 'role[chef-client],recipe[getting-started],recipe[chef-client::service]'
+run_list:
+    role[chef-client]
+    recipe[getting-started]
+    recipe[chef-client::service]</pre>
+		</div>
+</div></div>
+
+<h3><a name="ManagingNodesWithKnife-Removeanitemfromanode%27srunlist."></a>Remove an item from a node's run list.</h3>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node run_list remove NODE_NAME RUN_LIST_ITEMS (options)</pre>
+		</div>
+</div></div>
+
+<h2><a name="ManagingNodesWithKnife-ViewingorShowinganodewithKnife"></a>Viewing or Showing a node with Knife</h2>
+<p><font color="#f7681a">Displays information about a node.</font></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node show NODE_NAME (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Knife 0.10+ and above do not display all node attributes by default.</b>  The full list of attributes is very large and are thus suppressed from the default output.  <em>You can see all of the node data by choosing JSON formatted output via the <tt>-Fj</tt> option.</em></p>
+
+<p><b>Additional Options</b>:</p>
+<ul>
+	<li><tt>&#45;a</tt>, <tt>&#45;&#45;attribute ATTR</tt>:<br/>
+    Show only one attribute</li>
+	<li><tt>&#45;r</tt>, <tt>&#45;&#45;run&#45;list</tt>:<br/>
+    Show only the run list</li>
+	<li><tt>&#45;F</tt>, <tt>&#45;&#45;format FORMAT</tt>:<br/>
+    Display the node in a different format.</li>
+	<li><tt>&#45;m</tt>, <tt>&#45;&#45;medium</tt>:<br/>
+    Display more, but not all, of the node's data when using the default <em>summary</em> format</li>
+</ul>
+
+
+<p><b>Examples</b></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt; knife node show brand-new-node
+Node Name:   brand-new-node
+Environment: _default
+FQDN:
+IP:
+Run List:
+Roles:
+Recipes:
+Platform:</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife node show i-12345678 -a fqdn
+fqdn: ip-10-251-75-20.ec2.internal</pre>
+		</div>
+</div></div>
+
+<p><em>Note that when displaying a single attribute, the value shown is determined via attribute precedence.</em> (See <a href="Attributes.html" title="Attributes">Attributes</a> for more information.)</p>
+
+<p><b>Examples</b>:<br/>
+Viewing all data in a node:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node show foobar</pre>
+		</div>
+</div></div>
+
+<p>Viewing the run list of a node</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node show foobar -r</pre>
+		</div>
+</div></div>
+
+<h2><a name="ManagingNodesWithKnife-Listingthenodes"></a>Listing the nodes</h2>
+<p><font color="#f7681a">List all nodes.</font></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node list</pre>
+		</div>
+</div></div>
+
+<p><b>Additional Options</b>:</p>
+<ul>
+	<li><tt>&#45;w</tt>, <tt>&#45;&#45;with-uri</tt>:<br/>
+    Show corresponding URIs</li>
+</ul>
+
+
+<p><b>Examples</b>:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">% knife node list
+  i-12345678
+  rs-123456</pre>
+		</div>
+</div></div>
+
+<h2><a name="ManagingNodesWithKnife-DeletinganodewithKnife"></a>Deleting a node with Knife</h2>
+<p><font color="#f7681a">Removing a node from being managed via the Chef Server.</font></p>
+
+<h4><a name="ManagingNodesWithKnife-bulkdelete"></a>bulk delete</h4>
+<p>Deletes nodes for which the name matches the regular expression on the Chef Server. The regular expression should be given in quotes, and should not be surrounded with forward slashes.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node bulk delete REGEX(options)</pre>
+		</div>
+</div></div>
+
+<h4><a name="ManagingNodesWithKnife-deleteanindividualnode"></a>delete an individual node</h4>
+<p>Deletes a node from the Chef Server.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node delete NODE_NAME (options)</pre>
+		</div>
+</div></div>
+
+<p><b>Note</b>: Deleting the node does not delete any corresponding API client for the node.</p>
+
+<h2><a name="ManagingNodesWithKnife-UsingTAGS"></a>Using TAGS</h2>
+<p><font color="#f7681a">You can also "tag" nodes and then manage them with knife through those tags.</font></p>
+
+<h4><a name="ManagingNodesWithKnife-CreatinganewnodewithaTAG"></a>Creating a new node with a TAG</h4>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife tag create NODE TAG ...</pre>
+		</div>
+</div></div>
+
+<h4><a name="ManagingNodesWithKnife-Listanode%27sTAGs"></a>List a node's TAGs</h4>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife tag list NODE</pre>
+		</div>
+</div></div>
+
+<h4><a name="ManagingNodesWithKnife-DeletingNodebasedonTAGs"></a>Deleting Node based on TAGs</h4>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife tag delete NODE TAG ...</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Managing Environments With Knife.html" title="Managing Environments With Knife"><span class="image-wrap" style="float: left"><img src="../attachments/20775425/20840647.png" hspace="4" style="border: 0px solid black"/></span> Managing Environments With Knife </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Managing Roles With Knife.html" title="Managing Roles With Knife"><span class="image-wrap" style="float: right"><img src="../attachments/20775425/20840648.png" hspace="4" style="border: 0px solid black"/></span> Managing Roles With Knife </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/20775425/20840644.jpg">chefknife.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/20775425/20840646.jpg">9401037-angry-male-cook-in-white-uniform-and-hat-with-two-knifes-black-bckground.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/20775425/20840647.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/20775425/20840648.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:05</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Making Authenticated API Requests</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Making Authenticated API Requests
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<p><span class="image-wrap" style="float: left"><img src="../attachments/19071696/20611118.png" hspace="24" vspace="2" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" /></p>
+<div class="" align="center"><h3><a name="MakingAuthenticatedAPIRequests-"></a><font color="navy">This is a technical description of the authentication method used when API clients make requests to the Chef Server</font> </h3></div>
+
+<h5><a name="MakingAuthenticatedAPIRequests-"></a><div class="" align="center">For a broad overview of the authentication process see <b><a href="Authentication and Authorization.html" title="Authentication and Authorization">Authentication and Authorization</a></b></div>
+ </h5>
+</div></div>
+
+<h2><a name="MakingAuthenticatedAPIRequests-ProtocolOverview"></a>Protocol Overview</h2>
+
+<p>Authentication occurs by constructing a specific set of HTTP headers, and then signing a subset of those headers and information about the request using the API client's private key. The server verifies the signature using the public key of the specified API client.</p>
+
+<div class='navmenu' style='float:right; width:240px; background:#f4f2e6; margin:14px; padding:4px'><p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>API Calls against Hosted Chef</b><br /><br class="atl-forced-newline" />
+API calls against Hosted Chef must also include the header <b>X-Chef-Version</b> which should be set to the version of the Chef executable making the API call.  Practically, this controls whether you will receive API responses in the form expected by 0.9.x or 0.10.x.
+<br class="atl-forced-newline" /></td></tr></table></div></div>
+<h3><a name="MakingAuthenticatedAPIRequests-RequiredAuthenticationHeaders"></a>Required Authentication Headers</h3>
+
+<p><font color="#f7681a">Every API request must contain the following headers:</font></p>
+
+<ul>
+	<li><b>X-Ops-Timestamp</b>: A timestamp in <a href="http://www.iso.org/iso/catalogue_detail?csnumber=40874">ISO-8601</a> format.  The time must be in UTC, indicated by a trailing Z, and separated by the character "T".  The following is an example of a time in this format:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">2011-10-14T18:17:48Z</pre>
+		</div>
+</div></div></li>
+	<li><b>X-Ops-UserId</b>: The name of the API client whose private key will be used to create the authorization header.</li>
+	<li><b>X-Ops-Content-Hash</b>: The body of the request, hashed using SHA1 and encoded using Base64. See Hashing below.</li>
+	<li><b>X-Ops-Sign</b>: Set to "version=1.0"</li>
+	<li><b>X-Ops-Authorization-N</b>: One or more headers whose value are the signature of the "canonical headers", encoded in Base64.  See <b>Canonical Headers</b> and <b>X-Ops-Authorization Headers</b> below.</li>
+</ul>
+
+
+<p>Note, that these are the headers required for authentication.  Other headers such as "Accept" should also be included in your request.</p>
+
+<h3><a name="MakingAuthenticatedAPIRequests-CanonicalHeaders"></a>Canonical Headers</h3>
+<p>The <b>Canonical Header</b> is a string in the following format:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">"Method:HTTP_METHOD\nHashed Path:HASHED_PATH\nX-Ops-Content-Hash:HASHED_BODY\nX-Ops-Timestamp:TIME\nX-Ops-UserId:USERID"</pre>
+		</div>
+</div></div>
+
+<p>HTTP_METHOD is the method being used in the API request (e.g., GET or POST) and must be capitalized.  HASHED_PATH is the path of the request (e.g., "/clients" on Open Source Chef or "/organizations/ORGNAME/clients" on Hosted Chef) hashed with SHA1 and encoded using Base64 (see <b>Hashing</b>).  The path <b>must not</b> have repeated "/"s and <b>must not</b> end in a "/", unless the path is "/".</p>
+
+<h3><a name="MakingAuthenticatedAPIRequests-Hashing"></a>Hashing</h3>
+
+<p>All Hashing is done using SHA1 and encoded in Base64.  The Base64 encoding should have line breaks every 60 characters.</p>
+
+<h3><a name="MakingAuthenticatedAPIRequests-XOpsAuthorizationHeaders"></a>X-Ops-Authorization Headers</h3>
+
+<p>To create the <b>Authorization Headers</b>, the canonical header is signed with the API client's private key and encoded using Base64. The private key must be an RSA key in SSL's PEM format.  This signature is then broken in into 60 character strings and placed in the headers <b>X-Ops-Authorization-1</b> through <b>X-Ops-Authorization-N</b> where N is the last header needed to send the entire string.</p>
+
+<p>The Chef server decrypts the X-Ops-Authorization headers and ensures their content matches the content of the non-encrypted headers that were sent.  Further, the timestamp of the message is checked to ensure that the request has been received within a reasonable amount of time.</p>
+
+<p>Within Chef, this authorization method is implemented by <a href="https://github.com/opscode/mixlib-authentication">mixlib-authentication</a>.</p>
+
+<h2><a name="MakingAuthenticatedAPIRequests-MakingAPIRequestsinRuby"></a>Making API Requests in Ruby</h2>
+<p><span class="image-wrap" style=""><a class="confluence-thumbnail-link 331x119" href='http://wiki.opscode.com/download../attachments/19071696/rubylogo.gif'><img src="../attachments/thumbnails/19071696/20611120" style="border: 0px solid black"/></a></span></p>
+
+<h3><a name="MakingAuthenticatedAPIRequests-FromaKnifePluginorKnifeExecscript"></a>From a Knife Plugin or Knife Exec script</h3>
+
+<p>When creating a Knife Plugin or Knife Exec script, the libraries required to make authenticated API requests have already been included.  <font color="#f7681a">In the most cases, one will not need to make API calls directly when using knife plugins or knife exec scripts, as it is easier to interact with nodes, clients, and other objects via other means.</font>  See the <b><a href="Knife Plugins.html" title="Knife Plugins">Knife Plugins</a></b> and <b><a href="Knife Exec.html" title="Knife Exec">Knife Exec</a></b> page for details.</p>
+
+<p>In a Knife Exec script (and Shef), the <tt>api</tt> object already includes all of the necessary configuration to make API calls using the following methods:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">api.get
+api.post
+api.put
+api.delete</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>API Request from a Knife Exec Script, Example 1</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife exec -E 'puts api.get("/nodes/nodename")'</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>API Request from a Knife Exec Script, Example 2</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">client_desc = {
+  "name"  =&gt; "monkeypants",
+  "admin" =&gt; false
+}
+new_client = api.post("/clients", client_desc)
+puts new_client["private_key"]</pre>
+		</div>
+</div></div>
+
+<p>Moreover, whenever possible, <tt>api</tt> will return an object of the relevant type, on which you can call methods.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>API Request from a Knife Exec Script, Example 2</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false"># We could also just call api.delete, but that wouldn't show 
+# that api returns a node object
+silly_node = api.get("/nodes/foobar")
+silly_node.destroy</pre>
+		</div>
+</div></div>
+
+<p>In a Knife Plugin, the <tt>rest</tt> object is similar to the <tt>api</tt> client.  The only difference is the function names:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rest.get_rest
+rest.put_rest
+rest.post_rest
+rest.delete_rest</pre>
+		</div>
+</div></div>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>API Request from a Knife Plugin</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">module MyCommands
+  class MyNodeDelete &lt; Chef::Knife
+    #An implementation of knife node delete
+    banner 'knife my node delete [NODE_NAME]'
+    
+    def run
+      if name_args.length &lt; 1
+        show_usage
+        ui.fatal("You must specify a node name.")
+        exit 1
+      end
+      nodename = name_args[0]
+      api_endpoint = "nodes/#{nodename}"
+      # Again, we could just call rest.delete_rest
+      nodey = rest.get_rest(api_endpoint)
+      ui.confirm("Do you really want to delete #{nodey}")
+      nodey.destroy
+    end
+  end
+end</pre>
+		</div>
+</div></div>
+
+<p>Note that knife will handle any HTTP exceptions that arise within your knife plugin or exec script.</p>
+
+<h3><a name="MakingAuthenticatedAPIRequests-ArbitraryRubyScripts"></a>Arbitrary Ruby Scripts</h3>
+
+<p><font color="#f7681a">On a system with Chef installed, the easiest way to make authenticated API request is to use the chef libraries.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">require 'rubygems'
+require 'chef/config'
+require 'chef/log'
+require 'chef/rest'
+
+chef_server_url="https://chefserver.com"
+client_name = "clientname"
+signing_key_filename="/path/to/pem/for/clientname"
+
+rest = Chef::REST.new(chef_server_url, client_name, signing_key_filename)
+puts rest.get_rest("/clients")</pre>
+		</div>
+</div></div>
+
+<p>Another example of using the Chef library to make API requests</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">require 'rubygems'
+require 'mixlib/cli'
+require 'chef'
+require 'chef/node'
+require 'chef/mixin/xml_escape'
+require 'json'
+ 
+config_file = "c:/chef/client.rb"
+Chef::Config.from_file(config_file)
+Chef::Log.level = Chef::Config[:log_level]
+
+
+def Usage()
+  puts "Enter configuration file location. e.g. c:/chef/client.rb or /etc/chef/client.rb or ~/home/.chef/knife.rb etc."
+  config_file = gets.chomp
+  if (!File.exists?(config_file))
+      puts "config_file #{config_file} does not exist. Exiting.\n"
+      exit
+  end
+  STDOUT.puts &lt;&lt;-EOF
+Choose options e.g. 1
+
+  1 Display all nodes per environment
+  2 Display all nodes in detail (can be slow if there a large number of nodes)
+  9 Exit
+  EOF
+end
+
+def ExecuteUserChoice()
+  testoption = gets.chomp
+  case testoption 
+  when "1"
+    Execute(method(:DisplayNodesPerEnv))
+  when "2"
+    Execute(method(:DisplayNodesDetail))
+  when "9"
+    puts "exit"
+  else
+   puts "Unknown option #{testoption}. Exiting\n"
+   exit
+  end
+end
+
+def DisplayNodesPerEnv()
+  Chef::Environment.list(false).each do |envr|
+    print "ENVIRONMENT: ", envr[0], "\n"
+    Chef::Node.list_by_environment(envr[0], false).each do |node_info|
+      print "\tNODE: ", node_info[0], "\n"
+      print "\t\tURL: ", node_info[1], "\n"
+    end
+  end
+end
+
+def DisplayNodesDetail()
+  Chef::Node.list(true).each do |node_array|
+    node = node_array[1]
+    print "#{node.name}\n"
+    print "\t#{node[:fqdn]}\n"
+    print "\t#{node[:kernel][:machine]}\n"
+    print "\t#{node[:kernel][:os]}\n"
+    print "\t#{node[:platform]}\n"
+    print "\t#{node[:platform_version]}\n"
+    print "\t#{node.chef_environment}\n"
+    print "\t#{node.run_list.roles}\n"
+  end
+end
+    
+def Execute(option)
+  begin
+    profilestart = Time.now
+    option.call()
+    profileend = Time.now
+    timeofrun = profileend - profilestart
+    print "Time taken = #{timeofrun}"
+  rescue Exception =&gt; ex
+    print "Error calling chef API"
+    print ex.message
+    print ex.backtrace.join("\n")
+  end
+end
+
+Usage()
+ExecuteUserChoice()</pre>
+		</div>
+</div></div>
+
+<p>Alternatively, you can use <a href="https://github.com/opscode/mixlib-authentication">mixlib-authentication</a> directly.</p>
+
+<h2><a name="MakingAuthenticatedAPIRequests-MakingAPIRequestsinPython"></a>Making API Requests in Python</h2>
+<div class='navmenu' style='float:left; width:440px; background:#f4f2e6; margin:10px; padding:4px'><div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Python API for Interacting with Chef Server</b><br /><span class="image-wrap" style="float: right"><img src="../attachments/19071696/20611119.png" hspace="8" vspace="6" style="border: 0px solid black"/></span><br/>
+Opscode team member <a href="http://coderanger.net/">Noah Kantrowitz</a> has constructed <b><a href="https://github.com/coderanger/pychef">PyChef</a></b>: a Python library satisfying the Mixlib::Authentication pre-requisites, for interacting with the Chef Server. 
+<br class="atl-forced-newline" /></td></tr></table></div> </div>
+<p><br class="atl-forced-newline" />
+<font color="#f7681a">As with <a href="Knife Plugins.html" title="Knife Plugins">Knife Plugins</a> and <a href="Knife Exec.html" title="Knife Exec">Knife Exec</a> scripts, you will typically not want to make API calls directly, but use other facilities provided by the library.</font>  </p>
+
+<p>For example, the following is the example provided in PyChef's README:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: python; gutter: false">from chef import autoconfigure, Node
+
+api = autoconfigure()
+n = Node('web1')
+print n['fqdn']
+n['myapp']['version'] = '1.0'
+n.save()</pre>
+		</div>
+</div></div>
+
+<p>However, it is also possible to make API calls directly:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: python; gutter: false">from chef import autoconfigure
+
+api = autoconfigure()
+print api.api_request('GET', '/clients')</pre>
+		</div>
+</div></div>
+
+<p><em>Note: Both of these examples assume that your current working directory is such that PyChef can find a valid chef configuration file in the same manner chef-client or knife would find its configuration.</em></p>
+
+<h2><a name="MakingAuthenticatedAPIRequests-MakingAPIRequestswithCurl"></a>Making API Requests with Curl</h2>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/19071696/20611121.png" hspace="20" style="border: 0px solid black"/></span></p>
+
+<p><font color="#f7681a">It is also possible to make authenticated API requests using <tt>curl</tt> or <tt>wget</tt> provided you have various common tools installed.</font>  <br/>
+The following is an example of how one can create an authenticated request using curl.  It is a Bash shell script which requires the following utilities: awk, openssl</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: bash; gutter: false">_chef_dir () {
+    # Helper function:
+    # Recursive function that searches for chef configuration directory
+    # It looks upward from the cwd until it hits /.  If no directory is found,
+    # ~/.chef is chosen if it exists
+    # You could simply hard-code the path below
+
+    if [ "$PWD" = "/" ]; then
+        if [ -d ".chef" ]; then
+            echo "/.chef"
+        elif [ -d "$HOME/.chef" ]; then
+            echo "$HOME/.chef"
+        fi
+        return
+    fi
+
+    if [ -d '.chef' ];then
+        echo "${PWD}/.chef"
+    else
+        (cd ..; _chef_dir)
+    fi
+}
+
+
+_chomp () {
+    # helper function to remove newlines
+    awk '{printf "%s", $0}'
+}
+
+chef_api_request() {
+    # This is the meat-and-potatoes, or rice-and-vegetables, your preference really.
+
+    local method path body timestamp chef_server_url client_name hashed_body hashed_path
+    local canonical_request headers auth_headers
+
+    chef_server_url="https://api.opscode.com/organizations/paul-opscode"
+    # '/organizations/ORG_NAME' is needed for Hosted Chef
+    if echo $chef_server_url | grep -q "https://api.opscode.com" ; then
+        endpoint=/${chef_server_url##https://api.opscode.com/}$2
+    else
+        endpoint=$2
+    fi
+    path=${chef_server_url}$2
+    client_name="pmooring"
+    method=$1
+    body=$3
+
+    hashed_path=$(echo -n "$endpoint" | openssl dgst -sha1 -binary | openssl enc -base64)
+    hashed_body=$(echo -n "$body" | openssl dgst -sha1 -binary | openssl enc -base64)
+    timestamp=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
+
+    canonical_request="Method:$method\nHashed Path:$hashed_path\nX-Ops-Content-Hash:$hashed_body\nX-Ops-Timestamp:$timestamp\nX-Ops-UserId:$client_name"
+    headers="-H X-Ops-Timestamp:$timestamp -H X-Ops-Userid:$client_name -H X-Chef-Version:0.10.4 -H Accept:application/json -H X-Ops-Content-Hash:$hashed_body -H X-Ops-Sign:version=1.0"
+
+    auth_headers=$(printf "$canonical_request" | openssl rsautl -sign -inkey "$(_chef_dir)/${client_name}.pem" | openssl enc -base64 | _chomp |  awk '{ll=int(length/60);i=0; while (i&lt;=ll) {printf " -H X-Ops-Authorization-%s:%s", i+1, substr($0,i*60+1,60);i=i+1}}')
+
+    case $method in
+        GET)
+            curl_command="curl $headers $auth_headers $path"
+            $curl_command
+            ;;
+        *)
+            echo "Unknown Method. I only know: GET" &gt;&amp;2
+            return 1
+            ;;
+    esac
+
+}</pre>
+		</div>
+</div></div>
+
+<p>After sourcing this shell script into your local shell, you might use it as follows:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef_api_request GET "/clients"</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Hosted Chef Authorization.html" title="Hosted Chef Authorization"><span class="image-wrap" style="float: left"><img src="../attachments/19071696/20840482.png" hspace="4" style="border: 0px solid black"/></span> Hosted Chef Authorization </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="API Clients.html" title="API Clients"><span class="image-wrap" style="float: right"><img src="../attachments/19071696/20840481.png" hspace="4" style="border: 0px solid black"/></span> API Clients </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071696/20611118.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071696/20611119.png">python-logo.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071696/20611120.gif">rubylogo.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071696/20611121.png">ds-curlicon.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071696/20840481.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/19071696/20840482.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

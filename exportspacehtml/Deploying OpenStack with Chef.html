@@ -1,0 +1,417 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Deploying OpenStack with Chef</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Deploying OpenStack with Chef
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 08, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<h1><a name="DeployingOpenStackwithChef-Overview"></a>Overview</h1>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/11141177/13238276.jpg" hspace="10" vspace="10" style="border: 0px solid black"/></span>
+<br class="atl-forced-newline" />
+<font color="#f7681a">This page is a brief guide to deploying OpenStack</font> with the cookbooks currently available from Matt Ray's GitHub repository (<a href="http://github.com/mattray/openstack-cookbooks/tree/cactus">http://github.com/mattray/openstack-cookbooks/tree/cactus</a>). It is currently intended for deploying the point-release codenamed "Cactus", other branches will be added as they are released ("Bexar" is still available as a branch). The intention for the repository is to only support major releases.</p>
+
+<p>This code base is under development, so ask <a href="http://wiki.opscode.com/display/~matt">Matt Ray</a> about the current state if these instructions aren't currently working.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+<h2><a name="DeployingOpenStackwithChef-Status"></a>Status</h2>
+
+<p><font color="#f7681a">Right now the Cactus cookbooks support a single machine with Glance and Nova, but they are under active development.</font> Other components will be added in time and new releases will be added as they are available. There is currently no intention to continue development on previous releases once a new release is available (but they are available and patches are welcome&#33;). <font color="#f7681a">The eventual goal is to support all the configuration options available for OpenStack with Chef cookbooks.</font></p>
+
+<p>All code in the repository is Apache 2 licensed and covered by the <a href="How to Contribute.html" title="How to Contribute">Contribution License Agreement</a>. Patches will not be accepted without this requirement.</p>
+
+<h2><a name="DeployingOpenStackwithChef-Requirements"></a>Requirements</h2>
+
+<p>This has been primarily tested with Ubuntu 10.04 (a bit with 10.10) and Chef 0.10 and later.</p>
+
+<h2><a name="DeployingOpenStackwithChef-HardwareRequirements"></a>Hardware Requirements</h2>
+
+<ul>
+	<li>OpenStack Compute currently requires x86 hardware with virtualization support (KVM is currently the only hypervisor).</li>
+	<li>OpenStack Object Storage should not be deployed with RAID.</li>
+</ul>
+
+
+<h1><a name="DeployingOpenStackwithChef-OpenStack"></a>OpenStack</h1>
+
+<p>What is OpenStack?</p>
+
+<blockquote>
+<p>OpenStack is a collection of open source technologies delivering a massively scalable cloud operating system. OpenStack is currently developing two interrelated projects: <a href="http://openstack.org/projects/compute">OpenStack Compute</a> and <a href="http://openstack.org/projects/storage">OpenStack Object Storage</a>. OpenStack Compute is software to provision and manage large groups of virtual private servers, and OpenStack Object Storage is software for creating redundant, scalable object storage using clusters of commodity servers to store terabytes or even petabytes of data.</p></blockquote>
+
+<ul>
+	<li><b>OpenStack Compute</b>, code-named <em>“Nova”</em>, provides the software to provision virtual machines on standard hardware on a massive scale.</li>
+</ul>
+
+
+<ul>
+	<li><b>OpenStack Image Registry</b>, code-named <em>"Glance"</em>, provides services for discovering, registering, and retrieving virtual machine images.</li>
+</ul>
+
+
+<ul>
+	<li><b>OpenStack Object Storage</b>, code-named <em>“Swift”</em>, provides the software to store billions of objects distributed across standard hardware.</li>
+</ul>
+
+
+<h1><a name="DeployingOpenStackwithChef-Code"></a>Code</h1>
+
+<p><font color="#f7681a">The cookbooks and configuration files are currently available from <a href="http://github.com/mattray/openstack-cookbooks/tree/cactus">Matt Ray's GitHub repository</a>.</font></p>
+
+<p><em>(note the "cactus" branch)</em></p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">git clone git://github.com/mattray/openstack-cookbooks.git</pre>
+		</div>
+</div></div>
+
+<p>These were originally forked from the work in <a href="https://github.com/ansolabs/openstack-cookbooks">Anso Labs' OpenStack-Cookbooks</a> but have diverged greatly since the original fork.</p></td>
+<td class="confluenceTd" valign="top" width="30%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#DeployingOpenStackwithChef-Overview'>Overview</a></li>
+<ul>
+    <li><a href='#DeployingOpenStackwithChef-Status'>Status</a></li>
+    <li><a href='#DeployingOpenStackwithChef-Requirements'>Requirements</a></li>
+    <li><a href='#DeployingOpenStackwithChef-HardwareRequirements'>Hardware Requirements</a></li>
+</ul>
+    <li><a href='#DeployingOpenStackwithChef-OpenStack'>OpenStack</a></li>
+    <li><a href='#DeployingOpenStackwithChef-Code'>Code</a></li>
+<ul>
+    <li><a href='#DeployingOpenStackwithChef-Cookbooks'>Cookbooks</a></li>
+    <li><a href='#DeployingOpenStackwithChef-Roles'>Roles</a></li>
+<ul>
+    <li><a href='#DeployingOpenStackwithChef-novasinglemachine'>nova-single-machine</a></li>
+    <li><a href='#DeployingOpenStackwithChef-novamulticontroller'>nova-multi-controller</a></li>
+    <li><a href='#DeployingOpenStackwithChef-novamulticompute'>nova-multi-compute</a></li>
+</ul>
+</ul>
+    <li><a href='#DeployingOpenStackwithChef-ConfigureAttributesforDeployment'>Configure Attributes for Deployment</a></li>
+<ul>
+<ul>
+    <li><a href='#DeployingOpenStackwithChef-Singlenode'>Single node</a></li>
+    <li><a href='#DeployingOpenStackwithChef-Multinode'>Multi node</a></li>
+</ul>
+</ul>
+    <li><a href='#DeployingOpenStackwithChef-VerifyyourInstallation'>Verify your Installation</a></li>
+    <li><a href='#DeployingOpenStackwithChef-knifeopenstack'>knife openstack</a></li>
+    <li><a href='#DeployingOpenStackwithChef-Roadmap'>Roadmap</a></li>
+</ul></div>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Matt Ray talks Crowbar, Chef, and OpenStack integration for building private clouds</b><br /><br class="atl-forced-newline" />
+<a href="http://wiki.opscode.com/display/~matt">Matt Ray</a> discusses the integration work he is doing with <a href="http://robhirschfeld.com/2011/03/14/how-openstack-installer-works/">Crowbar</a> (a soon to be open source bare-metal provisioning tool from <a href="http://www.dell.com/">Dell</a>), <a href="http://www.opscode.com/products/">Chef</a>, and <a href="http://www.openstack.org/">OpenStack</a>.  This toolchain stretches the concept of infrastructure as code all the way from the bios to the provisioning of a private cloud... it's a "datacenter as code".
+
+<p><a href="http://dev2ops.org/blog/2011/7/19/matt-ray-talks-crowbar-chef-and-openstack-integration-for-bu.html">Watch the Video on the dev2ops blog.</a></p></td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/11141177/16187402.jpg" hspace="8" vspace="4" style="border: 0px solid black"/></span> Our friends from the <a href="http://www.cloudave.com/blog/">CloundAve Blog</a> put together an excellent overview of OpenStack cloud solution installer, Crowbar - and its' secret sauce: <b><a href="http://www.cloudave.com/14174/opscode-chef-the-secret-sauce-behind-dell-open-source-crowbar/">Opscode Chef, The Secret Sauce Behind Dell Open Source Crowbar</a></b></p>
+
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Automated Deployment of OpenStack With Chef</b><br /><br class="atl-forced-newline" />
+Watch Opscode team member Matt Ray's Presentation from Velocity 2011 on <a href="http://www.slideshare.net/opscode/velocity-2011-chef-openstack-workshop">Deploying OpenStack with Opscode Chef</a><br class="atl-forced-newline" /></td></tr></table></div>
+<p><br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="7%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+<h2><a name="DeployingOpenStackwithChef-Cookbooks"></a>Cookbooks</h2>
+
+<p><b>Download the following cookbooks:</b></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site download apache2 0.99.4
+knife cookbook site download apt 1.1.2
+knife cookbook site download mysql 1.0.5
+knife cookbook site download openssl 1.0.0
+knife cookbook site download rabbitmq 1.2.1</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li><b>glance</b>
+	<ul>
+		<li>Included in the repository.</li>
+	</ul>
+	</li>
+	<li><b>nova</b>
+	<ul>
+		<li>Included in the repository.</li>
+	</ul>
+	</li>
+	<li><b>swift</b>
+	<ul>
+		<li>Included in the repository, untested.</li>
+	</ul>
+	</li>
+</ul>
+
+
+<p>Once the cookbooks have been all been downloaded and untarred into the cookbooks directory</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload -a</pre>
+		</div>
+</div></div>
+
+<div class='panelMacro'><table class='infoMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/information.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Cooking Up OpenStack Chef Recipes</b><br /><br class="atl-forced-newline" />
+<a href="http://openstack.org/">OpenStack</a> team members from Dell also have some <a href="https://github.com/dellcloudedge/">Swift and Nova Chef recipes available</a>.</td></tr></table></div>
+
+<h2><a name="DeployingOpenStackwithChef-Roles"></a>Roles</h2>
+
+<p>From the openstack-cookbooks directory</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rake roles</pre>
+		</div>
+</div></div>
+
+<p>to load all the roles in the repository.</p>
+
+<p>Here is a graphic of the relationships between the roles (ovals) and recipes:<br/>
+<span class="image-wrap" style=""><img src="../attachments/11141177/11403268.png" width="900" style="border: 1px solid black"/></span></p>
+
+<h3><a name="DeployingOpenStackwithChef-novasinglemachine"></a>nova-single-machine</h3>
+
+<p>Installs everything required to run Nova on a single machine, a special case of multi-node and simply depends on the "nova-multi-controller" and "nova-multi-compute" roles.</p>
+
+<h3><a name="DeployingOpenStackwithChef-novamulticontroller"></a>nova-multi-controller</h3>
+
+<ul>
+	<li><b>nova-db</b>, role providing MySQL configuration</li>
+	<li><b>nova-rabbitmq-server</b>, role providing RabbitMQ configuration</li>
+	<li><b>glance-single-machine,</b> role installing the Glance service and uploading AMIs</li>
+	<li><b>nova-api,</b> recipe providing the nova-api service</li>
+	<li><b>nova-network,</b> recipe providing the nova-network service</li>
+	<li><b>nova-scheduler,</b> recipe providing the nova-scheduler service</li>
+	<li><b>nova-objectstore,</b> recipe providing the nova-objectstore service</li>
+	<li><b>nova-project,</b> configures the projects and credentials for the nova installation</li>
+</ul>
+
+
+<h3><a name="DeployingOpenStackwithChef-novamulticompute"></a>nova-multi-compute</h3>
+
+<ul>
+	<li><b>nova-compute</b> components, installing KVM and providing the hypervisor.</li>
+</ul>
+
+
+<h1><a name="DeployingOpenStackwithChef-ConfigureAttributesforDeployment"></a>Configure Attributes for Deployment</h1>
+
+<p><font color="#f7681a">OpenStack is a complicated application with many configurable and interchangeable components.</font> Once you have your repository and have uploaded your cookbooks and roles, you will need to configure and upload the <b>openstack</b> data bag. Glance and Nova are configured with the <b>glance</b> and <b>nova</b> JSON files in the data_bags/openstack/ directory. AMIs to be installed are managed with the <b>images</b> JSON file. You may upload these with</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rake databag:upload_all</pre>
+		</div>
+</div></div>
+
+<p>There are also attributes available for configuration, these may be overridden as necessary. Once these are in place you may apply the roles to nodes. The default installation currently uses MySQL, RabbitMQ and KVM and only deploys Glance on the Nova Controller (so no integration with Swift yet). </p>
+
+<h3><a name="DeployingOpenStackwithChef-Singlenode"></a>Single node</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node run_list add server "role[nova-single-machine]"</pre>
+		</div>
+</div></div>
+
+<p>and run the chef-client on the machine.</p>
+
+<h3><a name="DeployingOpenStackwithChef-Multinode"></a>Multi node</h3>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node run_list add mycontroller "role[nova-multi-controller]"
+knife node run_list add mycomputenodeN "role[nova-multi-compute]"</pre>
+		</div>
+</div></div>
+
+<p>and run the chef-client on the controller and then compute node(s).</p>
+
+<h1><a name="DeployingOpenStackwithChef-VerifyyourInstallation"></a>Verify your Installation</h1>
+
+<p>Once you've deployed your servers, SSH into the controller node (or single box) and</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">sudo su - nova</pre>
+		</div>
+</div></div>
+
+<p>then, as the nova user verify that your services are all running properly:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">nova@$ nova-manage service list
+mycontroller nova-scheduler enabled  :-) 2011-06-23 18:30:45
+mycontroller nova-network enabled  :-) 2011-06-23 18:30:48
+mycomputenodeN nova-compute enabled  :-) 2011-06-23 18:30:50</pre>
+		</div>
+</div></div>
+
+<p>and list the available images</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">nova@mycontroller:~$ euca-describe-images
+IMAGE	aki-00000001	None (lucid-server-uec-amd64-vmlinuz-virtual)		available	public			kernel		
+IMAGE	ami-00000002	None (lucid-server-uec-amd64.img)		available	public			machine	aki-00000001	
+IMAGE	aki-00000003	None (maverick-server-uec-amd64-vmlinuz-virtual)		available	public			kernel		
+IMAGE	ami-00000004	None (maverick-server-uec-amd64.img)		available	public			machine	aki-00000003</pre>
+		</div>
+</div></div>
+
+<p>select the ami-00000002 (or whichever you prefer) and enter the following</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">nova@$ euca-run-instances ami-00000002 -k mykey -t m1.tiny
+RESERVATION	r-mro4sk16	admin	default
+INSTANCE	i-00000001	ami-00000002			scheduling	mykey (admin, None)	0		m1.tiny	2011-06-23T22:17:31Z	unknown zone</pre>
+		</div>
+</div></div>
+
+<p>see the progress as your instance starts up</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">nova@$ euca-describe-instances
+RESERVATION	r-mro4sk16	admin	default
+INSTANCE	i-00000001	ami-00000002	192.168.11.2	192.168.11.2	running	mykey (admin, mycontroller)	0		m1.tiny	2011-06-23T22:17:31Z	nova</pre>
+		</div>
+</div></div>
+
+<p>once it is running</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">nova@$ ssh -i mykey.priv ubuntu@192.168.11.2</pre>
+		</div>
+</div></div>
+
+<p>and connect to your new OpenStack instance.</p>
+
+<h1><a name="DeployingOpenStackwithChef-knifeopenstack"></a>knife openstack</h1>
+
+<p><font color="#f7681a">OpenStack is supported by the Chef command-line tool knife with Chef 0.10 and the <a href="https://github.com/opscode/knife-openstack">knife openstack plugin</a>. You can install it with "gem install knife-openstack".</font></p>
+
+<p>You will need to update your .chef/knife.rb with the following:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife[:openstack_access_key_id]     = "Your OpenStack Access Key ID"
+knife[:openstack_secret_access_key] = "Your OpenStack Secret Access Key"
+knife[:openstack_api_endpoint]      = "http://mycontroller:8773/service/Cloud"</pre>
+		</div>
+</div></div>
+<p>You can get the access_key and secret_key values with "knife node show mycontroller &#45;a nova &#124; grep key"</p>
+
+<p>You should now be able to run</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife openstack server create -S mykey -x ubuntu -I ami-52f4e131 -f m1.tiny</pre>
+		</div>
+</div></div>
+<p>which currently fails to bootstrap, but creates the instance (euca-describe-instances will list it). <a href="http://tickets.opscode.com/browse/KNIFE_OPENSTACK-1">http://tickets.opscode.com/browse/KNIFE_OPENSTACK-1</a></p>
+
+<h1><a name="DeployingOpenStackwithChef-Roadmap"></a>Roadmap</h1>
+
+<p>This is a non-ordered list of things that are prioritized to work on.</p>
+
+<ul>
+	<li>More fine-grained roles for different deployment environments
+	<ul>
+		<li>Pluggable/Modular Roles
+		<ul>
+			<li>Databases (MySQL/PostgreSQL/Drizzle/etc.)</li>
+			<li>ObjectStore implementations</li>
+			<li>Network configurations</li>
+			<li>Hypervisors (KVM/Xen/LXC/etc.)</li>
+		</ul>
+		</li>
+		<li>Swift integration</li>
+	</ul>
+	</li>
+	<li>Dashboard
+	<ul>
+		<li>simple Django application, recipe already exists</li>
+	</ul>
+	</li>
+	<li>Swift
+	<ul>
+		<li>cookbook exists, untested</li>
+		<li>pluggable/modular roles like Nova</li>
+	</ul>
+	</li>
+	<li>Diablo</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11141177/13238274.png">nova-roles.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11141177/15466501.png">nova-roles.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11141177/13238276.jpg">openstack_logo_thumb230.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11141177/11403268.png">nova-roles.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/11141177/16187402.jpg">CloudAve.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

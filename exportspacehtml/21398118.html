@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : How to apply &quot;tactical&quot; config changes?</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : How to apply &quot;tactical&quot; config changes?
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 09, 2011 by <font color="#0050B2">furikake1</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<h3><a name="Howtoapply%22tactical%22configchanges%3F-Howtoapply%22tactical%22configchanges%3F"></a>How to apply "tactical" config changes?</h3>
+
+
+<p><b>Convener:</b> Andrew Fort</p>
+
+<p><b>Participants:</b> Adam, Kyle, <a href="http://wiki.opscode.com/display/~furikake1">Sean Horn</a>, Dave, Matt, Greg, Kate Leroux, apologies to others!</p>
+
+
+
+<h4><a name="Howtoapply%22tactical%22configchanges%3F-Summaryofdiscussions%3A"></a>Summary of discussions:</h4>
+
+<p>Making tactical changes to a chef managed service.<br/>
+Approaches;</p>
+<ul>
+	<li>Using chef</li>
+	<li>Using orchestration (fabric, capistrano, mcollective, noah, doozer, zookeeper, etc)</li>
+</ul>
+
+
+<p>How does one keep things in their commit history?  What about rapidly pushed changes?</p>
+
+<p>Make the change via push then roll the commit anyhow, knowing it will safely integrate later.</p>
+
+<p>Branching strategies for tactical change (hotfixes into master, etc)</p>
+
+<p>Using partial chef runs to apply certain configuration only</p>
+
+<p>Performing roll-forward provisioning via environments/role list changes (major changes)</p>
+
+<p>Using environment names built from and tied to CI (e.g., commit-hash named, or "dev" for latest), so that CI passes can trigger staging updates and green-light revisions for being set to development.</p>
+
+<p>Adam says in response to Andrew's question "Is there a better way than changing BGP routes to move traffic around?": Couple ways to redirect traffic to different segments of the infrastructure</p>
+<ul class="alternate" type="square">
+	<li>Case1: You have control of app.  To get away from changing BGP routes: Push logic for draining app into app. This circles around dark launching.</li>
+	<li>Case2: No control of app: Decouple deploy of app and configuration changes</li>
+	<li>Case3: Traditional gates and phases: Log in here, do this, log in there, do that. Done</li>
+</ul>
+
+
+<p>   Do we want to do these things with Chef? </p>
+
+<p>   Rolling deployments - When 50% of systems get to a certain state, deploy the next. May move through environments, just add something to role to get to next state. Running on demand Chef runs to roll to a new state with different paths and daemons running there, then write it in a recipe, not roles and environments. Recipe grossness shows the grossness of the system environments.</p>
+
+<p>Adam mentions Mark Burgess (author of cfengine and Principles of Network and System Administration) in question to "why the argument about pull vs push".  Pull basically better for reasons of network segmentation, machines receiving timely updates when they appear, etc - but not always; push is almost always used for small changes.</p>
+
+<p>That's the key issue of this session - how one might converge the ideas of chef managed configuration with that which needs to be pushed to machines very rapidly.</p>
+
+<p>One final point Adam mentioned - using polling, if a machine can ask Chef "is there any changes for me" (either via a new TCP/HTTP request or a long-lived TCP connection to a polling-IO HTTP server serving chef), then one may be able to use pull for these types of tactical changes, keeping the workflow the same.</p>
+
+<p>Closing the time delay is the issue: if it takes too long to do things "the right way", they will be done the pragmatic/expedient way.</p>
+
+<h4><a name="Howtoapply%22tactical%22configchanges%3F-Whatwillwedonow%3FWhatneedstohappennext%3F"></a>What will we do now? What needs to happen next? </h4>
+
+<p>Consider implementing polling as a solution to reducing the time to making changes the right way.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

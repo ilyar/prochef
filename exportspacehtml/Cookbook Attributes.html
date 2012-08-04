@@ -1,0 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Cookbook Attributes</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Cookbook Attributes
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Nov 20, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/15728853/20840581.jpg" hspace="12" vspace="10" style="border: 0px solid black"/></span></p>
+
+<h2><a name="CookbookAttributes-Overview"></a>Overview</h2>
+
+<h5><a name="CookbookAttributes-"></a><font color="#f7681a"><a href="Attributes.html" title="Attributes">Attributes</a> are <a href="Nodes.html" title="Nodes">Node</a> data such as the IP address, hostname, loaded kernel modules, version of programming languages available on the system and more. New attributes can be dynamically added to the node in a variety of ways.<br/>
+<br/>
+During the <a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">Chef run</a>, the <a href="Chef Client.html" title="Chef Client">Chef Client</a> saves these node attributes on the <a href="Chef Server.html" title="Chef Server">Chef Server</a> where they are indexed for <a href="Search.html" title="Search">Search</a>. When the <a href="Chef Client.html" title="Chef Client">Chef Client</a> runs again, it will retrieve the attributes that were saved previously and merge in attributes based on the priority rules described below.</font></h5>
+
+<h2><a name="CookbookAttributes-SettingAttributes"></a>Setting Attributes</h2>
+
+<p>Attributes may be set on the node from the following objects</p>
+
+<ul>
+	<li>cookbooks</li>
+	<li>environments (Chef 0.10.0 or above only)</li>
+	<li>roles</li>
+	<li>nodes</li>
+</ul>
+</td>
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#CookbookAttributes-Overview'>Overview</a></li>
+    <li><a href='#CookbookAttributes-SettingAttributes'>Setting Attributes</a></li>
+<ul>
+    <li><a href='#CookbookAttributes-Precedence'>Precedence</a></li>
+    <li><a href='#CookbookAttributes-Notation'>Notation</a></li>
+</ul>
+    <li><a href='#CookbookAttributes-CookbookAttributes'>Cookbook Attributes</a></li>
+<ul>
+    <li><a href='#CookbookAttributes-CookbookAttributeMethods'>Cookbook Attribute Methods</a></li>
+    <li><a href='#CookbookAttributes-CookbookAttributeFileOrdering'>Cookbook Attribute File Ordering</a></li>
+    <li><a href='#CookbookAttributes-AttributeAccessorMethods'>Attribute Accessor Methods</a></li>
+</ul>
+</ul></div>
+</div></div> </td>
+<td class="confluenceTd" valign="top" width="7%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="70%">
+<h3><a name="CookbookAttributes-Precedence"></a>Precedence</h3>
+<p><b><font color="#f7681a">The precedence of the attributes is as follows, from low to high:</font></b></p>
+
+<ul>
+	<li><tt>default</tt> attributes applied in an attributes file</li>
+	<li><tt>default</tt> attributes applied in an environment</li>
+	<li><tt>default</tt> attributes applied in a role</li>
+	<li><tt>default</tt> attributes applied on a node directly in a recipe</li>
+	<li><tt>normal</tt> or <tt>set</tt> attributes applied in an attributes file</li>
+	<li><tt>normal</tt> or <tt>set</tt> attributes applied on a node directly in a recipe</li>
+	<li><tt>override</tt> attributes applied in an attributes file</li>
+	<li><tt>override</tt> attributes applied in a role</li>
+	<li><tt>override</tt> attributes applied in an environment</li>
+	<li><tt>override</tt> attributes applied on a node directly in a recipe</li>
+</ul>
+
+
+<p><tt>default</tt> attributes applied in an attributes file have the lowest priority and <tt>override</tt> attributes applied on a node directly in a recipe have the highest priority. </p>
+
+<p><em>Write your cookbooks with default attributes, but override these with role-specific or node-specific values as necessary.</em><br/>
+<font color="#f7681a"><b>See examples</b></font> <b><a href="Setting Attributes (Examples).html" title="Setting Attributes (Examples)">here...</a></b></p>
+
+<p>The exception to this are <a href="Automatic Attributes.html" title="Automatic Attributes">Automatic Attributes</a>. <em>They have the highest precedence and may not be modified, as they are regenerated by <a href="Ohai.html" title="Ohai">Ohai</a> every time Chef runs.</em>  </p>
+
+<h3><a name="CookbookAttributes-Notation"></a>Notation</h3>
+<p>Attributes are a special key-value store called a <b>Mash</b> within the Ruby DSL context.  A <b>Mash</b> is just a <b>Hash</b> where the key can be either a Ruby symbol (:key) or a string ("key").  <font color="#f7681a">It's easier to stick with string notation if you are just starting out with Chef and/or Ruby.</font> This allows you to just "quote it", rather than also having to learn about special cases, name space overlap (and method_missing), character constraints, and escaping work at the beginning.   </p>
+
+<p>That way, by the time you may want to use symbols stylistically or contextually, you can <a href="http://www.ruby-lang.org/en/">learn to wield them</a> with an existing base of knowledge. Our examples and detail on attributes use a string notation for that reason. If you already know your way around symbols in ruby, you may of course use them.</p>
+
+<h2><a name="CookbookAttributes-CookbookAttributes"></a>Cookbook Attributes</h2>
+
+<p><font color="#f7681a">Cookbook attribute files are found in the</font> <font color="#f7681a"><tt>attributes</tt></font> <font color="#f7681a">subdirectory of the cookbook.</font> They are evaluated in the context of the Node object and <a href="Nodes.html" title="Nodes">Node</a> methods are used to set attribute values.</p>
+
+<p>e.g. from Opscode's Apache cookbook:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbooks/apache2/attributes/default.rb</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[default["apache"]["dir"]          = "/etc/apache2"
+default["apache"]["listen_ports"] = [ "80","443" ]]]></script>
+</div></div>
+
+<p>The use of the node object is implicit here. The following is equivalent:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbooks/apache2/attributes/default.rb</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[node.default["apache"]["dir"]          = "/etc/apache2"
+node.default["apache"]["listen_ports"] = [ "80","443" ]]]></script>
+</div></div>
+
+<p>Attributes can be set in a recipe as well, but <tt>node</tt> must be used.</p>
+
+<h3><a name="CookbookAttributes-CookbookAttributeMethods"></a>Cookbook Attribute Methods</h3>
+
+<p>Use the following methods within a cookbook's attributes file or in a recipe. They correspond to the attribute type of the same name (set is an alias for normal).</p>
+
+<ul>
+	<li><tt>override</tt></li>
+	<li><tt>default</tt></li>
+	<li><tt>normal</tt> (or <tt>set</tt>)</li>
+</ul>
+
+
+<p>See <a href="Attributes.html" title="Attributes">Attributes</a> for details on how precedence is determined.</p>
+
+<h3><a name="CookbookAttributes-CookbookAttributeFileOrdering"></a>Cookbook Attribute File Ordering</h3>
+
+<p>When Chef loads cookbook attribute files, it does so in alphabetical order for all the cookbooks. If you need to ensure that one attribute file is loaded before another (for example, if your Apache cookbook attributes requires that the Rails cookbook attributes are available first) you can use the <tt>include_attribute</tt> method, like so:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>include_attribute</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: ruby; gutter: false"><![CDATA[include_attribute "rails"
+node.set['apache2']['proxy_to_unicorn'] = node['rails']['use_unicorn']]]></script>
+</div></div>
+
+<p>This loads <tt>rails/attributes/default.rb</tt> before continuing the processing of the current attribute file.</p>
+
+<p>The syntax for this follows the same "double colon" pattern as <tt>include_recipe</tt>, so a statement like:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>include_attribute</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: ruby; gutter: false"><![CDATA[include_attribute "rails::tunables"]]></script>
+</div></div>
+
+<p>This loads the <tt>attributes/tunables.rb</tt> file in a rails cookbook.</p>
+
+<h4><a name="CookbookAttributes-ReloadingAttributeFilesFromRecipes"></a>Reloading Attribute Files From Recipes</h4>
+
+<p>Attributes sometimes depend on actions taken from within recipes, so it may be necessary to reload a given attribute from within a recipe. For example: if you have an attribute that reads firewall rules, and a recipe that installs a firewall package, the firewall attributes will not be set the first time you execute the cookbook. Since <tt>include_attribute</tt> is not available from inside recipes, you will need to manually reload your firewall::default attribute:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>reloading attributes from recipes</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: ruby; gutter: false"><![CDATA[package 'iptables' do
+  notifies :create, 'ruby_block[try_firewall_again]', :immediately
+end
+
+ruby_block 'try_firewall_again' do
+  block do
+    node.load_attribute_by_short_filename('default', 'firewall')
+  end
+  action :nothing
+end]]></script>
+</div></div>
+
+
+<h3><a name="CookbookAttributes-AttributeAccessorMethods"></a>Attribute Accessor Methods</h3>
+
+<p>Attribute accessor methods are automatically created and the method invocation can be used interchangeably with the keys. The following is equivalent to the usage above:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>cookbooks/apache2/attributes/default.rb</b></div><div class="codeContent panelContent">
+<script type="syntaxhighlighter" class="theme: Confluence; brush: java; gutter: false"><![CDATA[default.apache.dir          = "/etc/apache2"
+default.apache.listen_ports = [ "80","443" ]]]></script>
+</div></div>
+
+<p>This is a matter of style, and may be seen when "retrieving" the value of an attribute.</p>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/15728853/20840579.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Cookbooks.html" title="Cookbooks">Cookbooks</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/15728853/20840580.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Setting Attributes (Examples).html" title="Setting Attributes (Examples)">Setting Attributes &#40;Examples&#41;</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/15728853/15892493.gif">discover_attributes_robots.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/15728853/20840579.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/15728853/20840580.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/15728853/20840581.jpg">5096749-keyboard--pen.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

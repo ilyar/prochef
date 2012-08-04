@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Migrating to Hosted Chef from an Open Source Chef Server implementation</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Migrating to Hosted Chef from an Open Source Chef Server implementation
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top" width="70%">
+<p><br class="atl-forced-newline" /></p>
+
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><br class="atl-forced-newline" /></p>
+<h3><a name="MigratingtoHostedCheffromanOpenSourceChefServerimplementation-"></a><font color="#f7681a">If you run your own Open Source Chef Server and want all the benefits of configuration management with none of the adminstration hassle, you can migrate to <a href="http://www.opscode.com/hosted-chef/">Hosted Chef</a> without losing the work you've already done.  Here's how...</font></h3>
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/16089659/21463260.png" style="border: 0px solid black"/></span></p>
+
+<h2><a name="MigratingtoHostedCheffromanOpenSourceChefServerimplementation-Benefits"></a>Benefits</h2>
+<p>As a Hosted Chef Customer you...</p>
+
+<ul>
+	<li>are free from managing your own Chef server(s) as your business scales. You get back to focusing on core business essentials.</li>
+	<li>benefit immediately from new versions of Chef and the Opscode API when they are released.  Data migrations and backwards compatibility are taken care of by Opscode, virtually eliminating the work that may be required for major upgrades.</li>
+	<li>don't worry about scalability.  As you move from tens to hundreds to thousands of systems under management, Hosted Chef will gracefully handle the load, with no concurrent increase in management overhead.</li>
+	<li>are protected by an industry-leading SLA and 24x7x365 support options, giving you the confidence to run mission-critical systems.</li>
+</ul>
+
+
+<h2><a name="MigratingtoHostedCheffromanOpenSourceChefServerimplementation-Approach"></a>Approach</h2>
+<p>Migrate by taking the following actions:</p>
+
+<h4><a name="MigratingtoHostedCheffromanOpenSourceChefServerimplementation-"></a><font color="#f7681a">1. Prepare your backup.</font></h4>
+
+<ul>
+	<li>Download the following <a href="Knife Plugins.html" title="Knife Plugins">Knife Plugin</a> (<a href="https://raw.github.com/stevendanna/knife-hacks/master/plugins/backup_export.rb">backup_export.rb</a>):</li>
+</ul>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cd ~/path/to/chef/repository
+mkdir -p .chef/plugins/knife
+curl https://raw.github.com/stevendanna/knife-hacks/master/plugins/backup_export.rb &gt; .chef/plugins/knife/backup_export.rb</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Run the knife plugin to backup your existing Chef Server:</li>
+</ul>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife backup export</pre>
+		</div>
+</div></div>
+
+<p>This will export from the chef server all data bags, roles, environments, and nodes, storing them as JSON files within the <tt>.chef/chef_server_backup</tt> directory.</p>
+
+<p>These JSON files will later be uploaded to Hosted Chef in step 5.</p>
+
+<h4><a name="MigratingtoHostedCheffromanOpenSourceChefServerimplementation-"></a><font color="#f7681a">2. Create your accounts and organization on Hosted Chef.</font></h4>
+
+<p>See <a href="Setup Opscode User and Organization.html" title="Setup Opscode User and Organization">Setup Opscode User and Organization</a> for detailed instructions on creating a new organization. Rather than creating a new, local chef repository, you can reconfigure your current repository to use Hosted Chef.</p>
+
+<ul>
+	<li>Replace <tt>.chef/knife.rb</tt> with the version provided by the <a href="http://manage.opscode.com">Management console</a>.</li>
+	<li>Move your Hosted Chef user's authentication key into the <tt>.chef</tt> directory, and</li>
+	<li>Move your Hosted Chef organization's validator key into the <tt>.chef</tt> directory.</li>
+</ul>
+
+
+<h4><a name="MigratingtoHostedCheffromanOpenSourceChefServerimplementation-"></a><font color="#f7681a">3. Confirm that your new Opscode Hosted Chef organization has no nodes and just the validator client</font></h4>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node list
+knife client list</pre>
+		</div>
+</div></div>
+
+<p>The only client that should be listed is your organization's validator client.  No nodes should be listed.</p>
+
+<h4><a name="MigratingtoHostedCheffromanOpenSourceChefServerimplementation-"></a><font color="#f7681a">4. Register your existing servers with Hosted Chef</font></h4>
+
+<p>Use a custom <a href="Knife Bootstrap.html" title="Knife Bootstrap">Knife Bootstrap</a> template to populate the nodes with the correct configuration file and validation certificate, delete the existing client certificate, and run chef-client to register the node as a new API client to the Opscode Hosted Chef Organization.</p>
+
+<p>If your nodes are running a Microsoft Windows platform, you will need to use the <a href="Knife Windows Bootstrap.html" title="Knife Windows Bootstrap">Knife Windows Bootstrap</a> and modify the template for the Windows platform. Be sure to remove the client.pem file, typically <tt>c:\chef\client.pem</tt>.</p>
+
+<p><b>Note</b> <em>This assumes, as above, that your Hosted Chef organization has no data for these nodes. The run list will be empty. We will populate that from the backed up node data in a later step. It is important to bootstrap the nodes at this stage before restoring the backup, in order to avoid creating a permissions issue.</em></p>
+
+<ul>
+	<li>Save the following script as <tt>.chef/bootstrap/migration.erb</tt> within your chef repository. <b>Note</b> <em>if you customized the client.rb, you will need to modify this script.</em></li>
+</ul>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">bash -c '
+# removed installation, presumably Chef is installed on existing nodes
+
+rm /etc/chef/client.pem /etc/chef/validation.pem
+
+(
+cat &lt;&lt;'EOP'
+&lt;%= validation_key %&gt;
+EOP
+) &gt; /tmp/validation.pem
+awk NF /tmp/validation.pem &gt; /etc/chef/validation.pem
+rm /tmp/validation.pem
+
+(
+cat &lt;&lt;'EOP'
+&lt;%= config_content %&gt;
+EOP
+) &gt; /etc/chef/client.rb
+
+chef-client
+'</pre>
+		</div>
+</div></div>
+
+<ul>
+	<li>Run this bootstrap on each of your nodes.  The exact command will depend on how your environment is configured.  To run this on a node running Ubuntu you may execute the command:</li>
+</ul>
+
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife bootstrap TARGET_IPADDR -d migration -x ubuntu --sudo</pre>
+		</div>
+</div></div>
+
+
+
+<h4><a name="MigratingtoHostedCheffromanOpenSourceChefServerimplementation-"></a><font color="#f7681a">5. Upload data to your Hosted Chef organization</font></h4>
+
+<p>You can restore the node data using a <a href="Knife Plugins.html" title="Knife Plugins">Knife Plugin</a> (<a href="https://github.com/stevendanna/knife-hacks/blob/master/plugins/backup_restore.rb">backup_restore.rb</a>):</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">cd ~/path/to/chef/repo
+curl https://raw.github.com/stevendanna/knife-hacks/master/plugins/backup_restore.rb &gt; .chef/plugins/knife/backup_restore.rb
+knife backup restore</pre>
+		</div>
+</div></div>
+
+<p>Alternatively, can upload the data by hand:</p>
+
+<ul>
+	<li><b>node data</b><br/>
+   For each of the files found in the <tt>nodes</tt> directory of your chef backup, do the following:
+   <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife node from file /path/to/chef/backup/nodes/some_node.json</pre>
+		</div>
+</div></div>
+<p>   Running this command will repopulate the newly created nodes with their previous run_list and attributes.</p></li>
+</ul>
+
+
+<ul>
+	<li><b>cookbooks</b><br/>
+   From a chef repository configured to use hosted chef and containing all of your cookbooks do:
+   <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload -a</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<ul>
+	<li><b>roles</b><br/>
+   For each of the files found in the <tt>roles</tt> directory of your chef backup, do the following:
+   <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife role from file /path/to/chef/backup/roles/some_role.json</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<ul>
+	<li><b>data bags</b><br/>
+   For each of the files found in the <tt>data_bags</tt> directory of your chef backup, do the following:
+   <div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife data bag from file /path/to/chef/backup/data_bags/some_bag.json</pre>
+		</div>
+</div></div></li>
+</ul>
+
+
+<h4><a name="MigratingtoHostedCheffromanOpenSourceChefServerimplementation-"></a><font color="#f7681a">6. Run chef-client on all of your nodes</font></h4>
+
+<p>Depending on your environment, this could be done via knife ssh:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife ssh 'name:*' 'sudo chef-client'</pre>
+		</div>
+</div></div>
+
+<h2><a name="MigratingtoHostedCheffromanOpenSourceChefServerimplementation-Questionsonthemigration%3F"></a>Questions on the migration?</h2>
+
+<p><font color="#f7681a">Open a <a href="http://www.opscode.com/support">Hosted Chef ticket</a> with any questions or issues encountered, or send an email to <a href="mailto:support@opscode.com">support@opscode.com</a>.</font></p>
+
+<h2><a name="MigratingtoHostedCheffromanOpenSourceChefServerimplementation-NeedSpecializedAssistance%3F"></a>Need Specialized Assistance?</h2>
+
+<p>If you have a particularly complex environment, and would like to seek <a href="http://www.opscode.com/services-and-support/">Professional Services</a> assistance, <font color="#f7681a">please <a href="mailto:sales@opscode.com?Subject=Professional%20Services%20Inquiry">contact us</a> with your needs and we'll go over the possibilities with you.</font></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Hosted Chef.html" title="Hosted Chef"><span class="image-wrap" style="float: left"><img src="../attachments/16089659/20840495.png" hspace="4" style="border: 0px solid black"/></span> Hosted Chef </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="Server API.html" title="Server API"><span class="image-wrap" style="float: right"><img src="../attachments/16089659/20840494.png" hspace="4" style="border: 0px solid black"/></span> Server API </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089659/20840494.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089659/20840495.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089659/21463261.png">9513126-red-dart-hitting-target-center--isolated-on-white.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/16089659/21463260.png">9513126-red-dart-hitting-target-center--isolated-on-white.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-24019321"></a>
+                                    <font class="smallfont"><p>Problems uncovered while following this doc: Backup &amp; restore scripts don't cover cookbooks. Document doesn't mention migrating cookbooks, or migrating older cookbooks that may be required by pinned environments.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by mr_chip at Mar 01, 2012 18:38
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

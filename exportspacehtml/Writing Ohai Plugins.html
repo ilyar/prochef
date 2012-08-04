@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Writing Ohai Plugins</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Writing Ohai Plugins
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Nov 24, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/3178506/20840691.jpg" hspace="20" vspace="8" style="border: 0px solid black"/></span></p>
+<hr />
+<h3><a name="WritingOhaiPlugins-"></a><font color="#f7681a">Need to Gather Additional Information About Your Infrastructure?</font></h3>
+<p>Ohai detects data about your operating system, and can be used standalone. As it's primary purpose is to provide data to Chef, Ohai itself is included with Chef. When invoked, Ohai collects detailed, extensible information about the machine it's running on, including Chef configuration, hostname, FQDN, networking, memory, CPU, platform, and kernel data.</p>
+
+<h6><a name="WritingOhaiPlugins-Whenusedstandalone%2COhaiwillprintoutaJSONdatablobforalltheknowndataaboutyoursystem.Thatdataisthenavailabletoyouforwhateverbenefityoucanderivethroughitsuse."></a>When used standalone, Ohai will print out a JSON data blob for all the known data about your system. That data is then available to you for whatever benefit you can derive through its use. </h6>
+<h6><a name="WritingOhaiPlugins-"></a><font color="#f7681a"><b>If you'd like additional information about your system infrastructure - you could write your own Custom Ohai Plugin to gather that information for you.</b></font></h6>
+
+<p><em>Thanks to Community Member <a href="http://www.codeography.com/">Christopher Sexton</a> for this tutorial.</em></p>
+<hr />
+
+<h2><a name="WritingOhaiPlugins-Createasimpleplugin"></a>Create a simple plugin</h2>
+<p><font color="#f7681a">Ohai plugins use a ruby DSL</font><br/>
+The following is about as simple as it gets:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">provides "orly"
+orly "yeah, rly."</pre>
+		</div>
+</div></div>
+<h2><a name="WritingOhaiPlugins-LoadingYourPlugin"></a>Loading Your Plugin</h2>
+<p>Create a "plugins" folder and put the above code in the <a href="http://github.com/csexton/ohai-plugin-howto/blob/master/plugins/orly.rb">plugins/orly.rb</a> file.</p>
+
+<p>Now to fire up irb (I am assuming you are in the directory that contains the "plugins" folder, if not adjust your path):</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">&gt;&gt; require 'ohai'
+&gt;&gt; Ohai::Config[:plugin_path] &lt;&lt; './plugins'
+&gt;&gt; o = Ohai::System.new
+&gt;&gt; o.all_plugins
+&gt;&gt; o.orly #=&gt; "yea, rly"</pre>
+		</div>
+</div></div>
+
+<p>The entire script can be found in <a href="http://github.com/csexton/ohai-plugin-howto/blob/master/orly.rb">orly.rb</a>.</p>
+
+<p>If you run `o.orly` and get `nil` the chances are the plugin path is probably incorrect. I battled with this for hours banging my head against the wall. Turns out I just forgot the 's' on the end of './plugins'</p>
+
+<h2><a name="WritingOhaiPlugins-UsingaMash"></a>Using a Mash</h2>
+<p><font color="#f7681a">Most of the information we want to lookup would be nested in some way, and ohai tends to do this by storing the data in a Mash.</font> This can be done by creating a new mash and setting the attribute to it.</p>
+
+<p>In <a href="http://github.com/csexton/ohai-plugin-howto/blob/master/plugins/canhaz.rb">plugins/canhas.rb</a>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">provides "canhas"
+canhas Mash.new
+canhas[:burger] = "want"</pre>
+		</div>
+</div></div>
+
+
+<h2><a name="WritingOhaiPlugins-WorkingwithDifferentPlatforms"></a>Working with Different Platforms</h2>
+<p><font color="#f7681a">One of the main reasons for using ohai is to gather information regardless of the operating system, luckily this is made easy by optionally loading <a href="Recipes.html" title="Recipes">Recipes</a> based on the platform.</font> With that platform specific calls abstracted away you can keep your code DRY.</p>
+
+<p>The builtin plugins that come with ohai use the following trick to load platform specific code: </p>
+
+<p>It works by creating a base cross-platform plugin that loads the platform specific plugin from a subdirectory. In <a href="http://github.com/csexton/ohai-plugin-howto/blob/master/plugins/lolcode.rb">plugins/lolcode.rb</a>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">provides "languages/lolcode"
+require_plugin "languages"
+require_plugin "#{os}::lolcode"
+
+languages[:lolcode] = Mash.new unless languages[:lolcode]
+languages[:lolcode][:version] = "TEH VERSHIONS"</pre>
+		</div>
+</div></div>
+
+<p>In <a href="http://github.com/csexton/ohai-plugin-howto/blob/master/plugins/darwin/lolcode.rb">plugins/darwin/lolcode.rb</a>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">provides "languages/lolcode"
+require_plugin "languages"
+languages[:lolcode] = Mash.new unless languages[:lolcode]
+languages[:lolcode][:platform] = "MACKERS"</pre>
+		</div>
+</div></div>
+
+<p>Checkout ohai's <a href="http://github.com/opscode/ohai/blob/master/lib/ohai/plugins/os.rb">os.rb</a> for the list of platform names.</p>
+
+<p><font color="#f7681a">All of these examples can be found in the <a href="http://github.com/csexton/ohai-plugin-howto/">ohai-plugin-howto github repo</a>, you should be able to clone that and run the ruby scripts in the repo's root directory.</font> If you figure out any other handy tricks please fork the project and add them.</p>
+
+<h2><a name="WritingOhaiPlugins-Extendinganexistingplugin"></a>Extending an existing plugin</h2>
+<p><font color="#f7681a">Ohai makes it very easy to extend a current plugin with new information. Simply require the plugin you want to extend and extend away.</font> In this example we want to add LOLCODE to languages.</p>
+
+<p>In <a href="http://github.com/csexton/ohai-plugin-howto/blob/master/plugins/lolcode.rb">plugins/lolcode.rb</a>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">provides "languages/lolcode"
+require_plugin "languages"
+languages[:lolcode] = Mash.new
+languages[:lolcode][:version] = "TEH VERSHIONS"</pre>
+		</div>
+</div></div>
+
+<h2><a name="WritingOhaiPlugins-ChefCommunityPlugins"></a>Chef Community Plugins</h2>
+<p>Review (or contribute to) a collection of <b><a href="Community Plugins.html" title="Community Plugins">Community Plugins Found In The Wild</a></b>. You may find a plugin created by someone in the community that fills a need. And if you end up creating one that you believe may have appeal beyond your infrastructure, please <a href="How to Contribute.html" title="How to Contribute">contribute it to the community</a> for others as well. </p>
+
+<h2><a name="WritingOhaiPlugins-LoadingandDistributingCustomOhaiPlugins"></a>Loading and Distributing Custom Ohai Plugins</h2>
+<p><b><a href="Loading Custom Ohai Plugins.html" title="Loading Custom Ohai Plugins">Loading Custom Ohai Plugins</a></b> provides detail on how to load a custom plugin to chef-client. <b><a href="Distributing Ohai Plugins.html" title="Distributing Ohai Plugins">Distributing Ohai Plugins</a></b> details how to distribute custom plugins to your <a href="Nodes.html" title="Nodes">Nodes</a>.</p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/3178506/20840693.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Ohai Installation and Use.html" title="Ohai Installation and Use">Ohai Installation and Use</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/3178506/20840692.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Loading Custom Ohai Plugins.html" title="Loading Custom Ohai Plugins">Loading Custom Ohai Plugins</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/3178506/20840691.jpg">3301830-green-radar-screen-on-a-black-background.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/3178506/20840692.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/3178506/20840693.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

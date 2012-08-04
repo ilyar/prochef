@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Opscode Chef Short-Term Roadmap and Performance Improvements</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Opscode Chef Short-Term Roadmap and Performance Improvements
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 09, 2011 by <font color="#0050B2">skeptomai</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<h3><a name="OpscodeChefShort-TermRoadmapandPerformanceImprovements-SessionTitle%3A"></a>Session Title:</h3>
+
+
+<p><b>Convener:</b><br/>
+Christopher Brown (cb@opscode.com, @skeptomai), Kevin Smith (k@opscode.com, @kevsmith)</p>
+
+<p><b>Participants:</b><br/>
+A cast of thousands... Well, at least a couple dozen and <a href="http://wiki.opscode.com/display/~furikake1">Sean Horn</a></p>
+
+<p><b>Slides:</b><br/>
+<a href="../attachments/21398218/22216707.pdf">chef_summit_scaling.pdf</a></p>
+
+
+<h4><a name="OpscodeChefShort-TermRoadmapandPerformanceImprovements-Summaryofdiscussions%3A"></a>Summary of discussions:</h4>
+
+
+<h4><a name="OpscodeChefShort-TermRoadmapandPerformanceImprovements-RobHirschfeld%27sNotes"></a>Rob Hirschfeld's Notes</h4>
+
+<p>Chef &lt;3 Erlang</p>
+
+<p>Scaling</p>
+<ul class="alternate" type="square">
+	<li>moving to more Erlang on REST APIs, made a 2x in memory use difference</li>
+	<li>Erlang bits have realy steady performance</li>
+</ul>
+
+
+<p>Database performance</p>
+<ul class="alternate" type="square">
+	<li>they do not like CouchDB for their use cases</li>
+	<li>moving to mySQL, but will allow users to pick</li>
+</ul>
+
+
+<p>Noop/Dry Run mode</p>
+<ul class="alternate" type="square">
+	<li>asking for suggestions</li>
+</ul>
+
+
+<p>Search improvements</p>
+<ul class="alternate" type="square">
+	<li>tune for most common: single attribute &amp; single mode</li>
+	<li>considering new syntax for simple search</li>
+	<li>subsets of data</li>
+</ul>
+
+
+<p>Reporting</p>
+
+<h4><a name="OpscodeChefShort-TermRoadmapandPerformanceImprovements-Whatwillwedonow%3FWhatneedstohappennext%3F"></a>What will we do now? What needs to happen next? </h4>
+<p>Q from Sean Horn: Are the search improvements mutually exclusive with retaining all currently available search syntax? Could there be two different modes?<br/>
+   I think there will always be someone who will miss the full power, even when 90% don't need it.<br/>
+A: (from @skeptomai) Some of the search improvements will dovetail right in with the current implementation and will share and augment syntax in a backward-compatible way.  <br/>
+We are thinking of a new feature as well, that fits many use cases, but would have a different syntax.</p>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/21398218/22216707.pdf">chef_summit_scaling.pdf</a> (application/pdf)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-22118410"></a>
+                                    <font class="smallfont"><p>Great session. Can you post a link to the slides?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jim.hopp@mylookout.com at Dec 05, 2011 17:53
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-22118422"></a>
+                                    <font class="smallfont"><p>I've attached the PDF version of the slides we used during the session.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by kevin at Dec 05, 2011 20:06
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

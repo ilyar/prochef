@@ -1,0 +1,458 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Cookbooks</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Cookbooks
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Jun 25, 2012 by <font color="#0050B2">tyler</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />  <span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 341x381" href='http://wiki.opscode.com/download../attachments/1179782/952.gif'><img src="../attachments/thumbnails/1179782/14876685" hspace="10" vspace="10" style="border: 0px solid black"/></a></span></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<p><br class="atl-forced-newline" /></p>
+
+<h3><a name="Cookbooks-"></a><font color="#f7681a">Cookbooks are the fundamental units of distribution in Chef.</font> <font color="#f7681a">They encapsulate all the resources you need to automate your infrastructure and are easily sharable with other Chef users.</font></h3>
+
+<p><br class="atl-forced-newline" /></p>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+
+<h1><a name="Cookbooks-What%27sinaCookbook%3F"></a>What's in a Cookbook?</h1>
+
+<p><b>Cookbooks contain:</b></p>
+
+<ul>
+	<li><b><a href="Attributes.html" title="Attributes">Attributes</a></b> that are values on <a href="Nodes.html" title="Nodes">Node</a> to set default values used elsewhere in the cookbook.</li>
+	<li><b><a href="Definitions.html" title="Definitions">Definitions</a></b> that allow you to create reusable collections of one or more <a href="Resources.html" title="Resources">Resources</a>.</li>
+	<li><b><a href="File Distribution.html" title="File Distribution">File Distribution</a></b> that are transferred to your Chef-administered machines via <a href="Resources.html#Resources-CookbookFile">Cookbook File</a> resource.</li>
+	<li><b><a href="Libraries.html" title="Libraries">Libraries</a></b> that extend Chef or provide helpers with Ruby code.</li>
+	<li><b><a href="Recipes.html" title="Recipes">Recipes</a></b> that specify <a href="Resources.html" title="Resources">Resources</a> to manage, in the order they should be managed.</li>
+	<li><b><a href="Lightweight Resources and Providers (LWRP).html" title="Lightweight Resources and Providers (LWRP)">Lightweight Resources and Providers (LWRP)</a></b> that allow you to create your own custom resources and providers.</li>
+	<li><b><a href="Templates.html" title="Templates">Templates</a></b> that are rendered on Chef-configured machines with your dynamically substituted values.  Think config files on steroids, then read <a href="Resources.html#Resources-Template">ERB templates</a>.</li>
+	<li><b><a href="Metadata.html" title="Metadata">Metadata</a></b> that tells Chef about your recipes, including dependencies, <a href="Version Constraints.html" title="Version Constraints">version constraints</a>, supported platforms and more.</li>
+</ul>
+
+
+<p>Each of these components is a directory or file. An example cookbook directory after running the <tt>cookbook create</tt> <a href="Chef Repository.html#ChefRepository-cookbooks">knife command</a>:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>Cookbook Contents</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">attributes/
+definitions/
+files/
+libraries/
+metadata.rb
+providers/
+README.rdoc
+recipes/
+resources/
+templates/</pre>
+		</div>
+</div></div>
+
+<p>You develop cookbooks on your local system in the <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a>, in the <tt>cookbooks/</tt> sub-directory.</p>
+
+<h1><a name="Cookbooks-HowdoIworkwithcookbooks%3F"></a>How do I work with cookbooks?</h1>
+
+<p><font color="#f7681a">We recommend you develop cookbooks in the</font> <font color="#f7681a"><b><a href="Chef Repository.html" title="Chef Repository">Chef Repository</a></b></font><font color="#f7681a">.</font> You can create your own cookbooks, or you can download other people's shared cookbooks.</p>
+
+<p>Then, you can upload your cookbooks to your Chef Server or to the <a href="http://community.opscode.com/">Opscode Community Cookbooks site</a> through <b><a href="Managing Cookbooks With Knife.html" title="Managing Cookbooks With Knife">Managing Cookbooks With Knife</a></b>.</p>
+
+<h1><a name="Cookbooks-HowdoIcreateanewCookbook%3F"></a>How do I create a new Cookbook?</h1>
+
+<p><font color="#f7681a">You can create a new cookbook in your</font> <font color="#f7681a"><a href="Chef Repository.html" title="Chef Repository">Chef Repository</a></font> <font color="#f7681a"><tt>cookbooks/</tt></font> <font color="#f7681a">sub-directory with</font> <font color="#f7681a"><a href="Chef Repository.html#ChefRepository-cookbooks">Knife</a></font><font color="#f7681a">.</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook create MYCOOKBOOK
+** Creating cookbook MYCOOKBOOK
+** Creating README for cookbook: MYCOOKBOOK
+** Creating metadata for cookbook: MYCOOKBOOK</pre>
+		</div>
+</div></div>
+
+<p>Then start editing the various components, such as the default recipe, as needed.   (See <b><a href="Guide to Creating A Cookbook and Writing A Recipe.html" title="Guide to Creating A Cookbook and Writing A Recipe">Guide to Creating A Cookbook and Writing A Recipe</a></b> for an additional examples.)</p></td>
+<td class="confluenceTd" valign="top" width="1%"></td>
+<td class="confluenceTd" valign="top" width="24%">
+<p><br class="atl-forced-newline" />
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+<ul>
+    <li><a href='#Cookbooks-'> <span style="color: #F7681A">Cookbooks are the fundamental units of distribution in Chef.</span> <span style="color: #F7681A">They encapsulate all the resources you need to automate your infrastructure and are easily sharable with other Chef users.</span></a></li>
+</ul>
+    <li><a href='#Cookbooks-What%27sinaCookbook%3F'>What's in a Cookbook?</a></li>
+    <li><a href='#Cookbooks-HowdoIworkwithcookbooks%3F'>How do I work with cookbooks?</a></li>
+    <li><a href='#Cookbooks-HowdoIcreateanewCookbook%3F'>How do I create a new Cookbook?</a></li>
+    <li><a href='#Cookbooks-WherecanIfindsomeCookbooks%3F'>Where can I find some Cookbooks?</a></li>
+<ul>
+    <li><a href='#Cookbooks-GithubRepositories'>Github Repositories</a></li>
+    <li><a href='#Cookbooks-CookbookDevelopmentWorkflow'>Cookbook Development Workflow</a></li>
+</ul>
+    <li><a href='#Cookbooks-HowdoIuploadcookbookstotheChefServer%3F'>How do I upload cookbooks to the Chef Server?</a></li>
+    <li><a href='#Cookbooks-HowdoIcustomizeexistingcookbooks%3F'>How do I customize existing cookbooks?</a></li>
+<ul>
+    <li><a href='#Cookbooks-Changingthelocationofyourcookbooks'>Changing the location of your cookbooks</a></li>
+    <li><a href='#Cookbooks-SiteSpecificCookbooks'>Site Specific Cookbooks</a></li>
+    <li><a href='#Cookbooks-CustomizingTemplatesandFiles'>Customizing Templates and Files</a></li>
+    <li><a href='#Cookbooks-OtherSitespecificCookbooks'>Other Site-specific Cookbooks</a></li>
+    <li><a href='#Cookbooks-CookbookDependencies'>Cookbook Dependencies</a></li>
+</ul>
+    <li><a href='#Cookbooks-UseCaseStudy'>Use Case Study</a></li>
+</ul></div>
+</div></div><br class="atl-forced-newline" /></p>
+<div class="panel" style="border-color: #f7681a;border-width: 2px;"><div class="panelContent">
+<div class="" align="center">
+<h4><a name="Cookbooks-"></a><font color="#f7681a">Tutorials from the Community</font></h4></div>
+
+<hr />
+<p><font color="navy"><b>Nagios and Chef at Fotopedia</b></font></p>
+
+<p><a href="http://www.fotopedia.com">Fotopedia</a> uses Chef in the management of their infrastructure. <font color="#f7681a">Among many other things, Chef generates the Nagios configuration for all their services.</font> Their Fotopedia Labs blog entry: <b><a href="http://code.fotopedia.com/2011/08/nagios-and-chef-at-fotopedia.html">Nagios and Chef at Fotopedia</a></b> includes extensive detail on the use of recipes, roles, ruby blocks, helpers and other Chef components - all within their Nagios Cookbook.</p>
+
+<p><font color="navy"><b>Guide to Writing Cookbooks by Joshua Timberman</b></font></p>
+
+<p>Opscode team member Joshua Timberman posted a guide to writing cookbooks on <a href="http://jtimberman.housepub.org/blog/2011/09/03/guide-to-writing-chef-cookbooks/">his blog</a>.</p>
+</div></div></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+
+<h1><a name="Cookbooks-WherecanIfindsomeCookbooks%3F"></a>Where can I find some Cookbooks?</h1>
+
+<p><font color="#f7681a">Opscode maintains the</font> <font color="#f7681a"><b><a href="http://cookbooks.opscode.com/">Chef Community Cookbook Site</a></b></font> <font color="#f7681a">as a location for finding and sharing Chef cookbooks.</font> It includes dedicated listings for each cookbook, is easy to navigate and can be accessed via a <a href="Cookbook Site API.html" title="Cookbook Site API">RESTful API</a>. Opscode publishes all our cookbooks there and encourages others to do the same. <a href="Cookbook Site Help.html" title="Cookbook Site Help">Cookbook Site Help</a> includes access to help articles for the <a href="http://cookbooks.opscode.com/">Chef Community Cookbook Site</a>.</p>
+
+<p>You can download cookbooks from the cookbooks site through the API using knife. This will retrieve a tar.gz of the cookbook that you can extract into the <tt>cookbooks/</tt> directory of the <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook site download COOKBOOK</pre>
+		</div>
+</div></div>
+
+<p>If you are using Git, you can have cookbooks downloaded, then automatically extracted into <tt>cookbooks/</tt> and tracked with their own branch using:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook site install COOKBOOK</pre>
+		</div>
+</div></div>
+
+<p>For more information about this command see <a href="Chef Repository.html#ChefRepository-cookbooks">Chef Repository#cookbooks</a>.</p>
+
+<h3><a name="Cookbooks-GithubRepositories"></a>Github Repositories</h3>
+
+<p><font color="#f7681a">Opscode's cookbooks on the Chef Community site are considered "released", and the cookbooks repository on Github is considered "development."</font> <em>Opscode recommends that users download cookbooks from</em> <em><a href="http://community.opscode.com/cookbooks/">the Community site</a></em> <em>instead of using the Github repositories, as those repositories reflect an in-development state and may not work as expected.</em></p>
+
+<p>Beyond the Opscode development Github repository, some members of the Chef Community have only shared their cookbooks on Github. Some repositories that are available:</p>
+
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Repository </th>
+<th class='confluenceTh'> Description </th>
+<th class='confluenceTh'> Maintainer </th>
+</tr>
+<tr>
+<td class='confluenceTd'> <a href="https://github.com/opscode-cookbooks">https://github.com/opscode-cookbooks</a> </td>
+<td class='confluenceTd'> Cookbooks created by Opscode </td>
+<td class='confluenceTd'> Opscode </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <a href="https://github.com/37signals/37s_cookbooks">https://github.com/37signals/37s_cookbooks</a> </td>
+<td class='confluenceTd'> 37 Signals Repository </td>
+<td class='confluenceTd'> 37 Signals </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <a href="https://github.com/engineyard/ey-cloud-recipes">https://github.com/engineyard/ey-cloud-recipes</a> </td>
+<td class='confluenceTd'> EY Cloud Recipes </td>
+<td class='confluenceTd'> Engine Yard </td>
+</tr>
+<tr>
+<td class='confluenceTd'> <a href="https://github.com/cookbooks">https://github.com/cookbooks</a> </td>
+<td class='confluenceTd'> Community Curated Cookbooks </td>
+<td class='confluenceTd'> <a href="https://github.com/cookbooks/about">"Cookbooks" Organization</a> </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<h3><a name="Cookbooks-CookbookDevelopmentWorkflow"></a>Cookbook Development Workflow</h3>
+
+<p><font color="#f7681a">See</font> <font color="#f7681a"><a href="Working with Git and Cookbooks.html" title="Working with Git and Cookbooks">Working with Git and Cookbooks</a></font> <font color="#f7681a">for a development workflow for Chef cookbooks, using</font> <font color="#f7681a"><a href="http://git-scm.com/">Git</a></font> <font color="#f7681a">as the version control system.</font><br/>
+If you are not using Git, you should be able to review these details and adapt your approach for the specifics of your version control system.</p>
+
+<h1><a name="Cookbooks-HowdoIuploadcookbookstotheChefServer%3F"></a>How do I upload cookbooks to the Chef Server?</h1>
+<div class='navmenu' style='float:right; width:320px; background:#eeeeee; border:4px solid #d7d4c3; margin:18px; padding:8px'><div class="" align="center"><font color="navy"><b>Use of Knife to Manage Your Cookbooks</b></font></div>
+
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/1179782/21463219.png" hspace="8" vspace="4" style="border: 0px solid black"/></span></p>
+
+<p><b><a href="Knife.html" title="Knife">Knife</a></b> is a powerful command line interface for Chef.</p>
+
+<p>See <b><a href="Managing Cookbooks With Knife.html" title="Managing Cookbooks With Knife">Managing Cookbooks With Knife</a></b> for additional detail to that presented here on using Knife to manage your cookbooks.</p></div>
+<p><font color="#f7681a">Use knife cookbook upload sub-command.</font> There is no difference in use for Open Source Chef Server, Hosted Chef or Private Chef.</p>
+
+<p>To upload a single named COOKBOOK:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook upload COOKBOOK</pre>
+		</div>
+</div></div>
+
+<p>To upload multiple cookbooks, as the command parses the name args as 1..n cookbook names:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook upload COOKBOOK COOKBOOK COOKBOOK ...</pre>
+		</div>
+</div></div>
+
+<p>To upload all cookbooks:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook upload -a</pre>
+		</div>
+</div></div>
+
+<p>If you're using <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a>, you need to copy all the cookbooks necessary to the system that will be running Chef Solo. See the <a href="Chef Solo.html" title="Chef Solo">Chef Solo</a> page for more information.</p>
+
+<h1><a name="Cookbooks-HowdoIcustomizeexistingcookbooks%3F"></a>How do I customize existing cookbooks?</h1>
+<div class='navmenu' style='float:right; width:320px; background:#eeeeee; border:4px solid #d7d4c3; margin:18px; padding:8px'><div class="" align="center"><font color="navy"><b>Need Help With the Community Site?</b></font></div>
+
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/1179782/21463218.jpg" hspace="8" vspace="4" style="border: 0px solid black"/></span></p>
+
+<p><b><a href="Cookbook Site Help.html" title="Cookbook Site Help">Cookbook Site Help</a></b> is the place to go.</p>
+
+<p>If you are using one of the <font color="#f7681a">Opscode Cookbooks</font>, <b><a href="Cookbook Support.html" title="Cookbook Support">Cookbook Support</a></b> provides detail on how they are built and maintained - and where to turn with any questions.</p></div>
+<p>When you download cookbooks from the Community Site or Github repositories, you may wish to make changes. <font color="#f7681a">Using the "cookbook site install" knife command above makes this really easy.</font></p>
+
+<p>Simply modify the cookbook as desired, and if you want to retrieve a new release of the cookbook, you can simply run the command again, and your changes will be preserved.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook site install COOKBOOK
+% vi cookbooks/COOKBOOK/recipes/default.rb
+% git add cookbooks/COOKBOOK/recipes/default.rb
+% git commit -m 'made my own changes to COOKBOOK'</pre>
+		</div>
+</div></div>
+
+<p>Then, as the maintainer of COOKBOOK releases a new version, you could merge the new version into your changes.</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">% knife cookbook site install COOKBOOK</pre>
+		</div>
+</div></div>
+
+<p>If there are any conflicts, git will let you know, and you can resolve those and commit the changes.</p>
+
+<h3><a name="Cookbooks-Changingthelocationofyourcookbooks"></a>Changing the location of your cookbooks</h3>
+
+<p>You can specify a cookbook path using the <tt>&#45;o</tt> option after the cookbook subcommand.  For example,</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload -o /path/to/cookbook mycookbookname</pre>
+		</div>
+</div></div>
+
+<p>Alternatively, you can specify the location of your cookbooks by changing <tt>cookbook_path</tt> in your knife.rb.</p>
+
+<h3><a name="Cookbooks-SiteSpecificCookbooks"></a>Site Specific Cookbooks</h3>
+
+<p>You can also make your own site specific copies of cookbooks.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>~/.chef/knife.rb or ~/chef-repo/.chef/knife.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">cookbook_path      [ "chef-repo/cookbooks", "chef-repo/site-cookbooks" ]</pre>
+		</div>
+</div></div>
+
+<p>Next, copy the entire contents of the cookbook, go forth and customize it, then upload the cookbook(s) to the server. When Chef runs, it will only use the cookbook from <tt>site-cookbooks</tt>, not the one in <tt>cookbooks</tt>.</p>
+
+<p>For example, say you have:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">chef-repo/cookbooks/djbdns
+chef-repo/site-cookbooks/djbdns</pre>
+		</div>
+</div></div>
+
+<p>When the cookbook is uploaded, Knife will use the cookbook in <tt>chef-repo/site-cookbooks/djbdns</tt>.</p>
+
+<h3><a name="Cookbooks-CustomizingTemplatesandFiles"></a>Customizing Templates and Files</h3>
+
+<p>WARNING&#33; &nbsp;This technique has been depreciated - see&nbsp;<a href="http://tickets.opscode.com/browse/CHEF-2308">CHEF-2308</a></p>
+
+<p><font color="#f7681a">If you would like to customize just the files or templates used by a cookbook, you can create just those as well, copying them over from the upstream version and making your local changes.</font> For example, you're deploying OpenLDAP and want to customize the slapd.conf and add your own certificates.</p>
+
+<p>Assuming you've followed along with the <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a> and have created the ldap certificate:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">mkdir -p site-cookbooks/openldap/files/default/ssl
+mkdir -p site-cookbooks/openldap/templates/default
+cp certificates/ldap.example.com.pem site-cookbooks/openldap/files/default/ssl
+cp cookbooks/openldap/templates/default/slapd.conf.erb site-cookbooks/openldap/templates/default/slapd.conf.erb
+vi site-cookbooks/openldap/templates/default/slapd.conf.erb</pre>
+		</div>
+</div></div>
+
+<p>Make changes, update the repository and install the cookbooks, and when Chef runs, it will get the certificte and slapd.conf from the site-cookbooks, but otherwise use the rest of the openldap cookbook.</p>
+
+<h3><a name="Cookbooks-OtherSitespecificCookbooks"></a>Other Site-specific Cookbooks</h3>
+
+<p><font color="#f7681a">You can also use</font> <font color="#f7681a"><tt>site-cookbooks</tt></font> <font color="#f7681a">for setting up other site-specific cookbooks</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;"><b>chef-repo/site-cookbooks/web_server/recipes/default.rb</b></div><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: ruby; gutter: false">include_recipe "apache2"
+include_recipe "php::php5"
+
+apache_site "php_server.conf" do
+  enable :true
+end</pre>
+		</div>
+</div></div>
+
+<p>Then add "web_server" to <tt>recipes</tt> for the node in the webui, and it will apply the configuration. Prior to Chef 0.7.0, you might have a cookbook that merely includes several other recipes/cookbooks. Now you'll use <a href="Roles.html" title="Roles">Roles</a> to define that.</p>
+
+<h3><a name="Cookbooks-CookbookDependencies"></a>Cookbook Dependencies</h3>
+
+<p><font color="#f7681a">The Chef Server tries to only distribute the cookbooks that are needed to configure each individual</font> <font color="#f7681a"><a href="Nodes.html" title="Nodes">Node</a></font><font color="#f7681a">.</font> In order to do that, we take the list of <a href="Roles.html" title="Roles">Roles</a> and <a href="Recipes.html" title="Recipes">Recipes</a> that are assigned directly to that system, expand the list of dependencies for them, and then ship that set to the <a href="Nodes.html" title="Nodes">Node</a>.</p>
+
+<p>If there is a dependency on a particular cookbook being in place in order to complete a configuration, edit the template metadata.rb file to specify that dependency through the 'depends' field. <a href="Metadata.html" title="Metadata">Metadata</a> has details on this field, and the other fields that are available to you in the metadata.rb file.</p>
+
+<p><em>Whenever you include a recipe in a cookbook via "include_recipe" you need to add the included cookbook to the depends list.</em></p>
+
+<h1><a name="Cookbooks-UseCaseStudy"></a>Use Case Study</h1>
+
+<p><font color="navy"><b><em>In our environment we don’t have only Windows / Ubuntu/Debian / RH servers. So my problem is that we want to create a maintenance role for updating these servers, but the server name doesn’t describe the function or the OS running on it. Is there a way to create “server-groups” which include only windows servers or something like this because with these groups we can easily put a the correct “maintenance-role” (cookbooks for maintenance) to them if they are needed?</em></b></font></p>
+
+<p>Probably the best and most direct way to go about this is to have a single "Maintenance Cookbook" as part of every system, which will selectively include recipes based on platform. It'd look something like this:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">case node.platform
+    when :debian
+      include_recipe("maintenance::debian")
+    when :ubuntu
+      include_recipe("mainentance::ubuntu")
+    else
+      # ...
+    end</pre>
+		</div>
+</div></div>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179782/14876685.gif">952.gif</a> (image/gif)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179782/21463218.jpg">5864160-lots-of-questions-like-where-what-when-why-who-and-how.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179782/21463219.png">4711471-multipurpose-knife-isolated-on-white.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                                            <div class="tabletitle">
+                            <a name="comments">
+                                <h2>Comments:</h2>
+                            </a>
+                        </div>
+
+                        <table border="0" width="100%">
+                                                        <tr>
+                                <td >
+                                    <a name="comment-2457839"></a>
+                                    <font class="smallfont"><p>The git cloning doesn't allow clone repository to existed directory. Then, how can I get pre-made cookbooks into my cookbooks directory?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by classpath@gmail.com at Jul 31, 2009 02:24
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-2457844"></a>
+                                    <font class="smallfont"><p>Sounds like you're using the <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a>, simply remove the <tt>cookbooks/</tt> directory and then you can clone <tt>opscode/cookbooks</tt> from GitHub.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jtimberman at Aug 01, 2009 02:11
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-2457851"></a>
+                                    <font class="smallfont"><p>I already organized chef-repo in our own git server. So I did like below:</p>
+
+<p>cd ~/chef-repo<br/>
+git rm -r cookbooks<br/>
+git commit -m "Delete cookbooks directory to use Opscode pre-made cookbooks"<br/>
+git submodule add git://github.com/opscode/cookbooks.git ./cookbooks<br/>
+git add .gitmodules cookbooks/<br/>
+git commit -m "Import Opscode pre-made cookbooks"</p>
+
+<p>Is it reasonable(Sorry, I'm a newbie of chef and git)?</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by classpath@gmail.com at Aug 05, 2009 07:56
+                                    </div>
+                                </td>
+                            </tr>
+                                                        <tr>
+                                <td  style="border-top: 1px dashed #666666">
+                                    <a name="comment-2457856"></a>
+                                    <font class="smallfont"><p>Using Git submodules is perfectly ok. I know there's some others that use that method as well. It keeps your version consistent too, since its tied a commit.</p></font>
+                                    <div align="left" class="smallfont" style="color: #666666; width: 98%; margin-bottom: 10px;">
+                                        <img src="images/icons/comment_16.gif" height="16" width="16" border="0" align="absmiddle"/>
+                                        Posted by jtimberman at Aug 06, 2009 02:58
+                                    </div>
+                                </td>
+                            </tr>
+                                                    </table>
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

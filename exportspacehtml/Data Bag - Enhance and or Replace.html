@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Data Bag - Enhance and or Replace</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Data Bag - Enhance and or Replace
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Dec 15, 2011 by <font color="#0050B2">jamesc</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<h3><a name="DataBag-EnhanceandorReplace-SessionTitle%3ACookbooks%3AEnhanceand%2ForReplace"></a>Session Title: Cookbooks: Enhance and/or Replace</h3>
+
+
+<p><b>Convener:</b> Carl Perry</p>
+
+<p><b>Participants:</b> <br/>
+Kate Leroux<br/>
+Kurt Yoder<br/>
+<a href="http://wiki.opscode.com/display/~jamesc">James Casey</a><br/>
+<a href="http://wiki.opscode.com/display/~msf">Mathieu Sauve-Frankel</a><br/>
+<a href="http://wiki.opscode.com/display/~spkane">Sean P. Kane</a></p>
+
+<h4><a name="DataBag-EnhanceandorReplace-Summaryofdiscussions%3A"></a>Summary of discussions:</h4>
+
+<p>The primary topic of discussion was limitations within the data bag system.  The basis was there are several things that chef does not and should not support (eg: a full graph database system for tracking dependencies and interconnects for networking).  External systems and application are much better suited for some specific needs, but they need a way to put that information into chef.</p>
+
+<p>An idea was proposed to have an "link URL" in which the necessary information could be periodically fetched from an external system, cached for certain period of time, and then merged into the existing JSON structure.  However, it was decided that a much simpler approach would be implement a form of deltas and opportunistic locking for all JSON transactions: data bags, roles, and node attributes.</p>
+
+<h5><a name="DataBag-EnhanceandorReplace-OpportunisticLocking"></a>Opportunistic Locking</h5>
+
+<p>Currently, all JSON documents stored are given a unique identifier by CouchDB.  With the move to a SQL based backend, that ID field will need to be preserved.  We discussed just using an incremental integer, but some discussions after made it sound like a last modified timestamp field would be better.</p>
+
+<p>Once this last modified timestamp is in place, whenever a save is done to a JSON document (node attributes, role attributes, or data bag) the last modified timestamp in the PUT must match the last modified timestamp in the currently stored document.  If there is a mismatch, then another PUT has occurred and the new contents are invalid.  This will result in a failure.  If they match, then the server will update the last modified timestamp in the PUT JSON document and then save to the data store.</p>
+
+<p>It was suggested that this change can be implemented now, with little impact to existing tools and will provide a much greater level of data integrity.</p>
+
+<h5><a name="DataBag-EnhanceandorReplace-JSONDeltas"></a>JSON Deltas</h5>
+
+<p>In some cases, data written by external tools to chef JSON documents is meant as read-only for the chef client.  In order to better support these, the idea of JSON deltas was proposed.  The idea is to have a new API endpoint where only parts of the JSON document could be submitted.  These would be in a dict containing three keys:</p>
+
+<ul>
+	<li><b>update</b> keys which have changes and would need to be replaced</li>
+	<li><b>create</b> keys which did not previously exists and would need to be created</li>
+	<li><b>delete</b> keys which did previously exist and need to be removed</li>
+</ul>
+
+
+<p>Under normal conditions a failure of the above statements, such as attempting to update or delete a key which does not already exist, or creating a key which does already exist, would result in a failure.  This would be the standard method for a save call within a recipe.  However, the save at the end of a chef-client run would have the force flag enabled on the call.  This would cause most errors to continue (deletion of a non-existent key is ignored, creation of a key which already exists acts as an update, updating a key which already exists acts as a create).  The idea is that the delta API could ignore the last modified timestamp used for opportunistic locking.</p>
+
+<h5><a name="DataBag-EnhanceandorReplace-EncryptedDataBagEnhancements"></a>Encrypted Data Bag Enhancements</h5>
+
+<p>There was also discussion about making encrypted data bags more friendly.  The idea is to use the the existing chef client keys for the encrypted data bags as well.  In order for this to be as secure as possible, the validation.pem method of creating a client needs to be changed slightly.  The client key should be generated on the client and never sent to the server.  Instead, a CSR should be sent, and the server should return the signed certificate.  This also means fixing the node creation method where a client can submit their own public key to the server (may work in the platform, does not work on open source server).</p>
+
+<p><em>Mathieu Sauve-Frankel will detail the server side public key escrow system here</em></p>
+
+<h4><a name="DataBag-EnhanceandorReplace-Whatwillwedonow%3FWhatneedstohappennext%3F"></a>What will we do now? What needs to happen next? </h4>
+
+<ul>
+	<li>Addition of Opportunistic Locking for all JSON objects within chef</li>
+	<li>Addition of JSON Delta API for updating all JSON objects within chef</li>
+	<li>Modification of chef-client to create private keys on server and send public key or CSR to server when using validation.pem node creation method</li>
+	<li>Modification of chef server to allow creation of a node while providing a public key</li>
+	<li>Creation of Encrypted Data Bag Public Key Escrow System</li>
+</ul>
+
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:07</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

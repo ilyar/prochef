@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Creating a &quot;First Run Only&quot; Resource</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Creating a &quot;First Run Only&quot; Resource
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Nov 29, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td> 
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/15728818/15892491.jpg" hspace="12" vspace="2" style="border: 0px solid black"/></span></p>
+
+<h5><a name="Creatinga%22FirstRunOnly%22Resource-"></a><font color="#f7681a">This page describes how to construct a resource that will perform an action on the first run of chef-client and do nothing on subsequent runs.</font></h5>
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Use Sparingly</b><br />Most resources are idempotent by construction and do not require the methods discussed on this page. <em>Whenever possible, it is best to use an idempotent resource.</em></td></tr></table></div>
+<p><br class="atl-forced-newline" />
+One case where this would be desired, for example, is to ensure <a href="Glossary.html#Glossary-GlossaryIdempotent">idempotency</a> when a command within an <a href="http://wiki.opscode.com/display/chef/Resources#Resources-Execute">execute resource</a> would move the state of the node away from the desired state if run a second time.</p>
+
+<p>The ideal way to achieve idempotence when using a non-idempotent resource is to inspect the state of the node and condition the resource on that state using the <tt>not_if</tt> or <tt>only_if</tt> <a href="Resources.html#Resources-ResourcesConditionalExecution">conditional execution resource attributes</a>.  However, it may be difficult or impossible to correctly inspect the state of the system, or you may never want to run the command again, even if the system's state is incorrect.</p>
+
+<p><br class="atl-forced-newline" />
+<b>In order to create a resource that runs only on the first run of chef-client:</b></p>
+
+<ol>
+	<li>set a node attribute after successfully completing the task</li>
+	<li>test for the presence of that attribute within the resource.</li>
+</ol>
+
+
+<p><br class="atl-forced-newline" />
+<font color="#f7681a">The following code will run the command "command to run once" on the first run of chef-client and will not run it upon subsequent runs:</font></p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">execute "some_command" do
+  command "command to run once"
+  notifies :create, "ruby_block[some_command_run_flag]", :immediately
+  not_if { node.attribute?("some_command_complete") }
+end
+
+ruby_block "some_command_run_flag" do
+  block do
+    node.set['some_command_complete'] = true
+    node.save
+  end
+  action :nothing
+end</pre>
+		</div>
+</div></div>
+
+<p><font color="#f7681a">This method has a couple of benefits over other possible approaches:</font></p>
+
+<ol>
+	<li>Like any other attribute, the flag will be searchable:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife search node "some_command_complete:*"</pre>
+		</div>
+</div></div></li>
+	<li>All of the flags can be unset using knife:
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife exec -E 'nodes.all { |n| n.delete("some_command_complete"); n.save() }'</pre>
+		</div>
+</div></div>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></li>
+</ol>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/15728818/20840595.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Recipes.html" title="Recipes">Recipes</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/15728818/20840594.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Guide to Creating A Cookbook and Writing A Recipe.html" title="Guide to Creating A Cookbook and Writing A Recipe">Guide to Creating A Cookbook and Writing A Recipe</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/15728818/15892491.jpg">9817157-jogging.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/15728818/20840594.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/15728818/20840595.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

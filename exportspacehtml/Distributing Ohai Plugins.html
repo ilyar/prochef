@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Distributing Ohai Plugins</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Distributing Ohai Plugins
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Feb 13, 2012 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/7897261/24182838.jpg" hspace="20" style="border: 0px solid black"/></span></p>
+
+<h2><a name="DistributingOhaiPlugins-"></a><font color="#f7681a">Opscode provides a <a href="http://cookbooks.opscode.com/cookbooks/ohai">cookbook</a> for distributing custom Ohai plugins.</font></h2>
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p>
+
+<h3><a name="DistributingOhaiPlugins-Addcookbooktochefrepo"></a>Add cookbook to chef-repo</h3>
+<p>Download the cookbook to your <a href="Chef Repository.html" title="Chef Repository">Chef Repository</a>.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook site install ohai
+INFO: Downloading ohai from the cookbooks site at version 0.9.0
+INFO: Cookbook saved: /Users/jtimberman/chef-repo/cookbooks/ohai.tar.gz
+INFO: Checking out the master branch.
+INFO: Checking the status of the vendor branch.
+INFO: Creating vendor branch.
+INFO: Removing pre-existing version.
+INFO: Uncompressing ohai version 0.9.0.
+INFO: Adding changes.
+INFO: Committing changes.
+INFO: Creating tag chef-vendor-ohai-0.9.0.
+INFO: Checking out the master branch.
+INFO: Merging changes from ohai version 0.9.0.
+[ ... SNIP ... ]
+INFO: Cookbook ohai version 0.9.0 successfully vendored!</pre>
+		</div>
+</div></div>
+
+<h3><a name="DistributingOhaiPlugins-Writecustomplugins"></a>Write custom plugins</h3>
+<p>See the <a href="Writing Ohai Plugins.html" title="Writing Ohai Plugins">Writing Ohai Plugins</a> page for instructions on how to write new Ohai plugins. These files will go under <tt>cookbooks/ohai/files/default/plugins</tt>. They should be Ruby files.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">$EDITOR cookbooks/ohai/files/default/plugins/my_plugin.rb</pre>
+		</div>
+</div></div>
+
+<h3><a name="DistributingOhaiPlugins-ChangethePluginPath"></a>Change the Plugin Path</h3>
+<p>If you wish to change the directory where the plugins are copied, edit the cookbook attributes file and change the path for the <tt>node[:ohai][:plugin_path]</tt> attribute.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">default[:ohai][:plugin_path] = "/etc/chef/ohai_plugins"</pre>
+		</div>
+</div></div>
+
+<h3><a name="DistributingOhaiPlugins-UploadtoyourChefServer"></a>Upload to your Chef Server</h3>
+<p>The cookbook needs to be uploaded to the Chef Server to be used.</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">knife cookbook upload ohai
+INFO: Saving ohai
+INFO: Validating ruby files
+INFO: Validating templates
+INFO: Syntax OK
+INFO: Generating Metadata
+INFO: Uploading files
+[ ... SNIP ... ]</pre>
+		</div>
+</div></div>
+
+<h3><a name="DistributingOhaiPlugins-Addtherecipetoarunlist"></a>Add the recipe to a run list</h3>
+<p>Add the <tt>recipe<a href="Ohai.html" title="Ohai">Ohai</a></tt> to a node or role run list. Put it first to make sure your custom plugins are loaded and available to other recipes. When Chef <a href="Anatomy of a Chef Run.html" title="Anatomy of a Chef Run">runs</a>, during the compile phase the plugins will be copied into place and then loaded and merged with the node. This does cause Ohai to be run twice which can add a few seconds to the total run time of Chef.</p>
+
+<h3><a name="DistributingOhaiPlugins-AdditionalInformation"></a>Additional Information</h3>
+<p>See the README.md of the Ohai cookbook for additional information.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/7897261/20840698.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Loading Custom Ohai Plugins.html" title="Loading Custom Ohai Plugins">Loading Custom Ohai Plugins</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/7897261/20840697.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Disabling Ohai Plugins.html" title="Disabling Ohai Plugins">Disabling Ohai Plugins</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897261/20840697.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897261/20840698.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/7897261/24182838.jpg">3301830-green-radar-screen-on-a-black-background.jpg</a> (image/jpeg)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:03</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Management Console Users</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Management Console Users
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Nov 27, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><img src="../attachments/5406881/21463187.png" hspace="20" style="border: 0px solid black"/></span></p>
+
+<hr />
+
+<div class="" align="center"><h3><a name="ManagementConsoleUsers-"></a><font color="#f7681a">In Chef 0.8.2 and above, Management Console users are maintained separately from <a href="API Clients.html" title="API Clients">API Client</a> and <a href="Nodes.html" title="Nodes">Node</a> credentials.<br/>
+ <br/>
+You can associate an OpenID to your user and use that to authenticate, or authenticate using your user credentials in Chef's CouchDB database.</font></h3></div>
+
+<hr />
+
+<h2><a name="ManagementConsoleUsers-LogginginFortheFirstTime"></a>Logging in For the First Time</h2>
+<p>The Management Console runs on port 4040 by default. Navigate your browser to <a href="http://chef.example.com:4040/">http://chef.example.com:4040/</a> (replacing chef.example.com with the actual hostname of your Chef server, of course). You'll be redirected to the login screen.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="error">Cannot resolve external resource into attachment.</span>
+<br class="atl-forced-newline" /></p>
+
+<table cellspacing="20"><tr><td width="400px"><p><b>When logging in for the first time, use the default credentials</b></p>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'><b>Username:</b></th>
+<td class='confluenceTd'> admin </td>
+</tr>
+<tr>
+<th class='confluenceTh'><b>Password:</b></th>
+<td class='confluenceTd'> p@ssw0rd1 </td>
+</tr>
+</tbody></table>
+</div>
+
+<p><br class="atl-forced-newline" /></p>
+<h6><a name="ManagementConsoleUsers-Whenyouloginasthedefaultadminuser%2Cyou%27reimmediatelyredirectedtotheeditpageforthatuser."></a>When you log in as the default admin user, you're immediately redirected to the edit page for that user. </h6>
+
+<h6><a name="ManagementConsoleUsers-Afterchangingthedefaultpassword%2CyoucanaddaddnewusersoruseanyotherfeaturesoftheManagementConsole."></a>After changing the default password, you can add add new users or use any other features of the Management Console.</h6></td>
+<td><div class='panelMacro'><table class='warningMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/forbidden.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Change the Default Password</b><br /><br class="atl-forced-newline" />
+Default passwords are no better than not having a password. They're evil. They must die. Please change the default password and never use it again.</td></tr></table></div>
+<p><br class="atl-forced-newline" /></p>
+
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Using the Bootstrap Recipe</b><br />When using the <a href="Installing Chef Server using Chef Solo.html" title="Installing Chef Server using Chef Solo">bootstrap::server</a> recipe, this is actually a randomly generated password, and set in <tt>/etc/chef/server.rb</tt> through the template, with the setting <tt>web_ui_admin_default_password</tt>. This can be set to a different value by setting <tt>webui_admin_password</tt> in the chef.json.</td></tr></table></div></td></tr></table>
+
+<p><span class="error">Cannot resolve external resource into attachment.</span>
+<br class="atl-forced-newline" /></p>
+
+<h2><a name="ManagementConsoleUsers-ManagingUserswiththeWebInterface"></a>Managing Users with the Web Interface</h2>
+<p>Users are managed from the users tab:</p>
+
+<p><br class="atl-forced-newline" />
+<span class="error">Cannot resolve external resource into attachment.</span>
+<br class="atl-forced-newline" /></p>
+
+<h3><a name="ManagementConsoleUsers-CreatingNewUsers"></a>Creating New Users</h3>
+<p>To create a new user, click "create" on the Users page, then fill in the user's name and password. Tick the box if the new user will be an administrator, then hit the "create" button.</p>
+
+<p><br class="atl-forced-newline" />
+<span class="error">Cannot resolve external resource into attachment.</span>
+<br class="atl-forced-newline" /></p>
+
+<h3><a name="ManagementConsoleUsers-DeletingUsers"></a>Deleting Users</h3>
+<p>To delete a user, click the link for "delete" next to the user's name in the list. Chef will ask if you're sure about deleting the user. Click "ok" to confirm.
+<br class="atl-forced-newline" /></p>
+
+<p><span class="error">Cannot resolve external resource into attachment.</span>
+<br class="atl-forced-newline" /></p>
+
+<h3><a name="ManagementConsoleUsers-EditingUsers"></a>Editing Users</h3>
+<p>To edit a user, click the edit link next to the user's name in the list. You'll see the same edit form you saw when you first logged in as the "admin" user.
+<br class="atl-forced-newline" /></p>
+
+<p><span class="error">Cannot resolve external resource into attachment.</span></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/5406881/21463189.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Looking up node status through the Management Console.html" title="Looking up node status through the Management Console">Looking up node status through the Management Console</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/5406881/21463188.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing API Clients through the Management Console.html" title="Managing API Clients through the Management Console">Managing API Clients through the Management Console</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/5406881/21463187.png">OC_Chef_Logo_small.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/5406881/21463188.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/5406881/21463189.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

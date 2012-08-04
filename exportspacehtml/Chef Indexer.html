@@ -1,0 +1,247 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Chef Indexer</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Chef Indexer
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Aug 03, 2012 by <font color="#0050B2">jtimberman</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" />
+<span class="image-wrap" style="float: left"><a class="confluence-thumbnail-link 500x519" href='http://wiki.opscode.com/download../attachments/1179884/volmer_oval_indexer.jpg'><img src="../attachments/thumbnails/1179884/14057480" hspace="12" vspace="4" style="border: 0px solid black"/></a></span></p>
+
+<h5><a name="ChefIndexer-"></a><font color="#f7681a">The Chef Indexer is comprised of a <a href="http://www.rabbitmq.com/">RabbitMQ</a> message queue, chef-expander, which pulls messages from the queue and formats them, and chef-solr, a thin wrapper around <a href="http://lucene.apache.org/solr/">Solr</a>.</font></h5>
+
+<h2><a name="ChefIndexer-RabbitMQ"></a>RabbitMQ</h2>
+
+<p><font color="#f7681a">RabbitMQ provides a queuing service which stores requests for updates to the <a href="Search.html#Search-SearchIndexNames">search index</a>.</font> This allows the API server to handle load spikes while maintaining an even load on Solr.</p>
+
+<p><b>We recommend you read RabbitMQ's <a href="http://www.rabbitmq.com/admin-guide.html">administration guide</a> before deploying it into production.</b></p>
+
+<p><br class="atl-forced-newline" /></p>
+
+<h3><a name="ChefIndexer-ConfiguringChef%27sRabbitMQSpecificSettings"></a>Configuring Chef's RabbitMQ-Specific Settings</h3>
+<div class='table-wrap'>
+<table class='confluenceTable'><tbody>
+<tr>
+<th class='confluenceTh'> Setting </th>
+<th class='confluenceTh'> Default Value </th>
+<th class='confluenceTh'> Description </th>
+</tr>
+<tr>
+<th class='confluenceTh'> amqp_host </th>
+<td class='confluenceTd'> '0.0.0.0' </td>
+<td class='confluenceTd'> The IP address or resolvable hostname of the server running RabbitMQ </td>
+</tr>
+<tr>
+<th class='confluenceTh'> amqp_port </th>
+<td class='confluenceTd'> '5672' </td>
+<td class='confluenceTd'> The port on which RabbitMQ listens for requests </td>
+</tr>
+<tr>
+<th class='confluenceTh'> amqp_user </th>
+<td class='confluenceTd'> 'chef' </td>
+<td class='confluenceTd'> The username to use when connecting to RabbitMQ </td>
+</tr>
+<tr>
+<th class='confluenceTh'> amqp_pass </th>
+<td class='confluenceTd'> 'testing' </td>
+<td class='confluenceTd'> The password to use when connecting to RabbitMQ </td>
+</tr>
+<tr>
+<th class='confluenceTh'> amqp_vhost </th>
+<td class='confluenceTd'> '/chef' </td>
+<td class='confluenceTd'> The RabbitMQ vhost to use </td>
+</tr>
+<tr>
+<th class='confluenceTh'> amqp_consumer_id </th>
+<td class='confluenceTd'> nil </td>
+<td class='confluenceTd'> A tag to append to the queue name. The implications of this setting are discussed in the <em>redundancy and scaling</em> section below </td>
+</tr>
+</tbody></table>
+</div>
+
+
+<p>More information:</p>
+<ul>
+	<li><a href="http://www.rabbitmq.com/admin-guide.html#user-management">RabbitMQ User Management</a></li>
+	<li><a href="http://www.rabbitmq.com/admin-guide.html#access-control">RabbitMQ Access Control and VHosts </a></li>
+	<li><a href="http://www.rabbitmq.com/admin-guide.html#server_status">Getting status information about a running RabbitMQ</a> <b>Note:</b> be sure to include <tt>-p /chef</tt> (or <tt>-p /VHOST_NAME</tt> if you are using a custom vhost) when running <tt>rabbitmqctl</tt> to query for information about the chef vhost.</li>
+</ul>
+
+</td> 
+<td class="confluenceTd" valign="top" width="20%">
+<p><br class="atl-forced-newline" /></p>
+<div class="panel" style="background-color: #d7d4c3;border-width: 1px;"><div class="panelContent" style="background-color: #d7d4c3;">
+<div>
+<ul>
+    <li><a href='#ChefIndexer-RabbitMQ'>RabbitMQ</a></li>
+<ul>
+    <li><a href='#ChefIndexer-ConfiguringChef%27sRabbitMQSpecificSettings'>Configuring Chef's RabbitMQ-Specific Settings</a></li>
+    <li><a href='#ChefIndexer-ConfiguringRabbitMQforChef'>Configuring RabbitMQ for Chef</a></li>
+    <li><a href='#ChefIndexer-RabbitMQPersistence'>RabbitMQ Persistence</a></li>
+</ul>
+    <li><a href='#ChefIndexer-ChefExpander'>Chef Expander</a></li>
+<ul>
+    <li><a href='#ChefIndexer-RunningChefExpander'>Running Chef Expander</a></li>
+    <li><a href='#ChefIndexer-ChefExpanderOperationandTroubleshooting'>Chef Expander Operation and Troubleshooting</a></li>
+    <li><a href='#ChefIndexer-Design'>Design</a></li>
+</ul>
+    <li><a href='#ChefIndexer-RedundancyandScalingOptionswithChefIndexer'>Redundancy and Scaling Options with Chef Indexer</a></li>
+</ul></div>
+</div></div> 
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Node in Knife, but not in Chef Searches?</b><br /><br class="atl-forced-newline" />
+This has happened when there has been an additional quotation mark, tripping up the indexer.  (for example: 3.5" rather than 3.5)
+
+<p>There are two possible solutions: remove offending lines and then run <tt>knife index rebuild</tt>, or install <a href="https://rubygems.org/gems/fast_xs">fast_xs</a>.</p></td></tr></table></div></td>
+<td class="confluenceTd" valign="top" width="7%"></td></tr></tbody></table> 
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="2%"></td>
+<td class="confluenceTd" valign="top" width="60%">
+
+<h3><a name="ChefIndexer-ConfiguringRabbitMQforChef"></a>Configuring RabbitMQ for Chef</h3>
+<p><font color="#f7681a">Chef requires you to configure a user and vhost in RabbitMQ.</font> Normally, this configuration will be handled for you by either post-install scripts in Chef packages, or in the <a href="http://github.com/opscode/cookbooks/blob/master/rabbitmq_chef/recipes/default.rb">rabbitmq_chef</a> recipe included in the bootstrap install. <b>You only need to run these commands if you are doing a fully manual installation or have destroyed your RabbitMQ configuration somehow.</b></p>
+
+<p>To configure RabbitMQ for Chef using the default vhost "/chef", user "chef", and password "testing". (You may need to do this as "rabbitmq" user or whatever user rabbitmq runs as):</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">rabbitmqctl add_vhost /chef
+rabbitmqctl add_user chef testing
+rabbitmqctl set_permissions -p /chef chef ".*" ".*" ".*"</pre>
+		</div>
+</div></div>
+
+<p>To verify that your configuration is correct:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<div id="root">
+		<pre class="theme: Confluence; brush: java; gutter: false">shell$ rabbitmqctl list_vhosts
+Listing vhosts ...
+/
+/chef
+...done.
+
+shell$ rabbitmqctl list_users
+Listing users ...
+chef
+guest
+...done.
+
+shell$ rabbitmqctl list_user_permissions chef
+Listing permissions for user "chef" ...
+/chef	.*	.*	.*
+...done.</pre>
+		</div>
+</div></div>
+
+<h3><a name="ChefIndexer-RabbitMQPersistence"></a>RabbitMQ Persistence</h3>
+<p><font color="#f7681a">As of Chef 0.10, you can configure Chef to use RabbitMQ persistence.</font> This means that RabbitMQ will store queued messages on disk, allowing them to be recovered if RabbitMQ should fail (but not if the disk on the box running RabbitMQ fails). To enable persistence, make sure you are running RabbitMQ 2.2 or higher. Then set <tt>persistent_queue</tt> to true in your server.rb configuration file.</p>
+
+<h2><a name="ChefIndexer-ChefExpander"></a>Chef Expander</h2>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>New in Chef 0.10</b><br />Chef Expander is new in Chef 0.10 and replaces chef-solr-indexer</td></tr></table></div>
+
+<p><font color="#f7681a">Chef Expander fetches messages from RabbitMQ, processes them into the correct format to be loaded into Solr and loads them into Solr.</font></p>
+
+<h3><a name="ChefIndexer-RunningChefExpander"></a>Running Chef Expander</h3>
+<p>Chef Expander is designed for clustered operation, though small installations will only need one worker process. To run Chef Expander with one worker process, run <tt>chef-expander -n 1</tt>. You will then have a master and worker process, which looks like this in <tt>ps</tt>:</p>
+<div class="preformatted panel" style="border-width: 1px;"><div class="preformattedContent panelContent">
+<pre>your-shell&gt; ps aux|grep expander
+you   52110   0.1  0.7  2515476  62748 s003  S+    3:49PM   0:00.80 chef-expander worker #1 (vnodes 0-1023)   
+you   52108   0.1  0.5  2492880  41696 s003  S+    3:49PM   0:00.91 ruby bin/chef-expander -n 1
+</pre>
+</div></div>
+<p>Workers are single threaded and therefore cannot use more than 100% of a single CPU. If you find that your queues are getting backlogged (see Operation and Troubleshooting, below), increase the number of workers.</p>
+
+<h3><a name="ChefIndexer-ChefExpanderOperationandTroubleshooting"></a>Chef Expander Operation and Troubleshooting</h3>
+<p><font color="#f7681a">Chef Expander includes <tt>chef-expanderctl</tt>, a management program that allows you to get status information or change the logging verbosity (without restarting).</font> <tt>chef-expanderctl</tt> has the following commands:</p>
+<ul>
+	<li><tt>chef-expanderctl help</tt> prints usage.</li>
+	<li><tt>chef-expanderctl queue-depth</tt> Shows the total number of messages in the queues. See the design section for more explanation.</li>
+	<li><tt>chef-expanderctl queue-status</tt> Show the number of messages in each queue. This is mainly of use when debugging a Chef Expander cluster</li>
+	<li><tt>chef-expanderctl log-level LEVEL</tt> Sets the log level on a running Chef Expander or cluster.</li>
+</ul>
+
+
+<p>If you suspect that a worker process is stuck, as long as you are using clustered operation, you can simply kill the worker process and it will be restarted by the master process.</p>
+
+<h3><a name="ChefIndexer-Design"></a>Design</h3>
+<p>Chef Expander uses 1024 queues (called <em>vnodes</em> in some places) to allow you to scale the number of Chef Expander workers to meet the needs of your infrastructure. When objects are saved in the API server, they are added to queues based on their database IDs. These queues can be assigned to different Chef Expander workers to distribute the load of processing the index updates.</p>
+
+<h2><a name="ChefIndexer-RedundancyandScalingOptionswithChefIndexer"></a>Redundancy and Scaling Options with Chef Indexer</h2>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>0.9.x and Lower</b><br />The discussion below applies only to Chef 0.8.x and 0.9.x. In Chef 0.10 and higher, you can increase Chef Expander throughput by increasing the number of workers in the cluster</td></tr></table></div>
+
+<p>The point of setting the queue name is to switch between messages going from 1 producer to N consumers or messages going from 1 producer to (1 of N) consumers. When multiple consumers share the same queue name, you'll have the 1-&gt;(1 of N) behavior; with multiple consumers with distinct queue names, you'll get the 1-&gt; N behavior.</p>
+
+<p>The use cases these address in Chef are:</p>
+<ul>
+	<li>With 1 to (1 of N) behavior, you can have multiple chef-solr-indexer processes reading data from the queue, munging the data and then posting the data to the same SOLR instance. You would want to do this if: you want redundancy in chef-solr-indexer and/or the data munging that chef-solr-indexer does becomes a bottleneck. To configure this behavior, configure each instance of chef-solr-indexer to use the same amqp_consumer_id setting.</li>
+	<li>With 1 to N behavior, you have multiple chef-solr-indexer processes each passing the data to unique SOLR instances. You want to do this if: you want redundancy in chef-solr, and you prefer to achieve it this way instead of replicating at the SOLR level. To configure this behavior, configure each instance of chef-solr-indexer to use a different amqp_consumer_id setting, or set amqp_consumer_id to nil.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></li>
+</ul>
+</td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><a href="Chef Server.html" title="Chef Server"><span class="image-wrap" style="float: left"><img src="../attachments/1179884/20840497.png" hspace="4" style="border: 0px solid black"/></span> Chef Server </a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><a href="CouchDB Administration for Chef Server.html" title="CouchDB Administration for Chef Server"><span class="image-wrap" style="float: right"><img src="../attachments/1179884/20840496.png" hspace="4" style="border: 0px solid black"/></span> CouchDB Administration for Chef Server </a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179884/14057480.jpg">volmer_oval_indexer.jpg</a> (image/jpeg)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179884/20840496.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/1179884/20840497.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:02</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Chef : Managing Environments through the Management Console</title>
+	    <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">	    
+    </head>
+
+    <body>
+	    <table class="pagecontent" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+		    <tr>
+			    <td valign="top" class="pagebody">
+				    <div class="pageheader">
+					    <span class="pagetitle">
+                            Chef : Managing Environments through the Management Console
+                                                    </span>
+				    </div>
+				    <div class="pagesubheading">
+					    This page last changed on Nov 27, 2011 by <font color="#0050B2">tom@opscode.com</font>.
+				    </div>
+
+				    <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="3%"></td>
+<td class="confluenceTd" valign="top">
+<p><br class="atl-forced-newline" /></p>
+<div class='panelMacro'><table class='tipMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/check.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td><b>Chef 0.10.0+ only feature</b><br />Environments feature is only available in (and after) Chef 0.10.0.</td></tr></table></div>
+
+<h3><a name="ManagingEnvironmentsthroughtheManagementConsole-"></a><font color="#f7681a">The Management Console allows users to create, read, update, delete environments, and to select a specific environment to view nodes and cookbooks in that environment.</font></h3>
+
+<h2><a name="ManagingEnvironmentsthroughtheManagementConsole-Selectinganenvironment"></a>Selecting an environment</h2>
+
+<p>On the header of the Management Console, there is an Environment drop down box where you can select either "none" or a specific environment. </p>
+
+<p>If "none" is selected, the Management Console shows everything when you view nodes and cookbooks; if a specific environment is selected, the Management Console only shows the available objects in that environment for nodes and cookbooks. For cookbooks, if you do not define any restriction in the environment, the Management Console shows all cookbooks. </p>
+
+<p>When viewing a specific role, the per environment run list for the selected environment shows up; if "none" or "_default" is selected in the Environment drop down box, or there is no environment specific run list for the selected environment, the role page shows the "default" run list. </p>
+
+<p>Objects other than nodes, cookbooks, and roles are not affected by the environment selection.</p>
+
+<h2><a name="ManagingEnvironmentsthroughtheManagementConsole-ListingEnvironments"></a>Listing Environments</h2>
+
+<p>The List page under Environments tab shows all existing Environments. Clicking the link of the Environment name allows you to view the Environment. You can also select the Environment by clicking "Select" next to the name; doing so is equivalent to selecting an environment from the drop down box on the top of the page. </p>
+
+<h2><a name="ManagingEnvironmentsthroughtheManagementConsole-ViewinganEnvironment"></a>Viewing an Environment</h2>
+
+<p>Click the name of the Environment on the List page under Environments allows you to view the Environment. You are able to see the description, cookbook version constraints, and attributes defined in the Environment you are viewing.</p>
+
+<h2><a name="ManagingEnvironmentsthroughtheManagementConsole-CreatinganEnvironment"></a>Creating an Environment</h2>
+
+<p>By clicking the Create tab under Environments, you are able to create a new Environment. In the Create form you can specify a name (required), description, cookbook version constraints, and attributes.</p>
+
+<h2><a name="ManagingEnvironmentsthroughtheManagementConsole-DeletinganEnvironment"></a>Deleting an Environment</h2>
+
+<p>An Environment can be deleted by clicking the "delete" link on the List page next to the name of the Environment; or by clicking the "Delete" tab on the Show page when you view a specific Environment.
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td>
+<td class="confluenceTd" valign="top" width="5%"></td></tr></tbody></table>
+<table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<hr />
+<td class="confluenceTd" valign="top" width="45%">
+
+<p><span class="image-wrap" style="float: left"><img src="../attachments/8257686/21463197.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Data bags through the Management Console.html" title="Managing Data bags through the Management Console">Managing Data bags through the Management Console</a></p>
+</td>
+<td class="confluenceTd" valign="top" width="40%"></td>
+
+<td class="confluenceTd" valign="top" width="15%">
+
+<p><span class="image-wrap" style="float: right"><img src="../attachments/8257686/21463196.png" hspace="4" style="border: 0px solid black"/></span> <br/>
+<a href="Managing Nodes through the Management Console.html" title="Managing Nodes through the Management Console">Managing Nodes through the Management Console</a></p>
+
+<p><br class="atl-forced-newline" />
+<br class="atl-forced-newline" /></p></td></tr></tbody></table>
+
+				    					    <br/>
+                        <div class="tabletitle">
+                            <a name="attachments">
+                                <h2>Attachments:</h2>
+                            </a>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257686/21463196.png">rightarrow.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="../attachments/8257686/21463197.png">leftarrow.png</a> (image/png)
+                                <br/>
+                                                    </div>
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="http://wiki.opscode.com/images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Aug 04, 2012 00:06</font></td>
+		    </tr>
+	    </table>
+    </body>
+</html>
